@@ -19,19 +19,44 @@ Pykka is similar to typed actors in the Akka framework.
 What can it do?
 ---------------
 
-See end of ``pykka.py`` for a code example. The code example results in
-approximately the following output, where ``Pinger`` and ``Ponger`` are two
-different objects and threads::
+Given the following code::
 
-    Pinger: calling Ponger.do() ...
-    Pinger: calling Ponger.get() ...
-    Pinger: printing result ... (blocking)
-    Ponger: this was printed by Ponger.do()
-    Pinger: this was returned by Ponger.get()
-    Pinger: reading Ponger.field ...
-    Pinger: printing result ... (blocking)
-    Pinger: this is the value of Ponger.field
-    ...
+    from pykka import Actor
+
+    class Adder(Actor):
+        def add_one(self, i):
+            print '%s: %d' % (self.name, i)
+            return i + 1
+
+    class Counter(Actor):
+        def count_to(self, target):
+            i = 0
+            while i < target:
+                print '%s: %d' % (self.name, i)
+                i = self.other.add_one(i + 1).get()
+
+    if __name__ == '__main__':
+        adder = Adder().start()
+        counter = Counter(other=adder).start()
+        counter.count_to(10).get() # Block until finished
+        counter.stop()
+        adder.stop()
+
+We get the following output::
+
+    $ PYTHONPATH=. python examples/counter.py
+    Thread-2: 0
+    Thread-1: 1
+    Thread-2: 2
+    Thread-1: 3
+    Thread-2: 4
+    Thread-1: 5
+    Thread-2: 6
+    Thread-1: 7
+    Thread-2: 8
+    Thread-1: 9
+
+See the ``examples/`` dir for more runnable examples.
 
 
 License
