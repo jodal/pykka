@@ -100,7 +100,7 @@ class Future(object):
         return self.get()
 
     def __str__(self):
-        return self.get()
+        return str(self.get())
 
     def get(self):
         self.connection.poll(None)
