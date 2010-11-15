@@ -56,13 +56,13 @@ class Actor(Process):
 
 class ActorProxy(object):
     def __init__(self, actor):
-        self._actor_queue = actor.inbox
+        self._actor_inbox = actor.inbox
         self._can_call = dict([(attr, callable(getattr(actor, attr)))
             for attr in dir(actor) if not attr.startswith('_')])
 
     def __getattr__(self, name):
         if self._can_call[name]:
-            return CallableProxy(self._actor_queue, name)
+            return CallableProxy(self._actor_inbox, name)
         else:
             (read_end, write_end) = Pipe(duplex=False)
             message = {
@@ -70,25 +70,25 @@ class ActorProxy(object):
                 'attribute': name,
                 'reply_to': pickle_connection(write_end),
             }
-            self._actor_queue.put(message)
+            self._actor_inbox.put(message)
             return Future(read_end)
 
 
 class CallableProxy(object):
-    def __init__(self, actor_queue, attribute):
-        self.actor_queue = actor_queue
-        self.attribute = attribute
+    def __init__(self, actor_inbox, attribute):
+        self._actor_inbox = actor_inbox
+        self._attribute = attribute
 
     def __call__(self, *args, **kwargs):
         (read_end, write_end) = Pipe(duplex=False)
         message = {
             'command': 'call',
-            'attribute': self.attribute,
+            'attribute': self._attribute,
             'args': args,
             'kwargs': kwargs,
             'reply_to': pickle_connection(write_end),
         }
-        self.actor_queue.put(message)
+        self._actor_inbox.put(message)
         return Future(read_end)
 
 
