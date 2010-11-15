@@ -50,7 +50,7 @@ class Actor(Process):
         super(Actor, self).start()
         return ActorProxy(self)
 
-    def quit(self):
+    def stop(self):
         self.runnable = False
 
 
@@ -139,7 +139,7 @@ if __name__ == '__main__':
                 result = self.ponger.field # Does not block, returns a future
                 print '%s: printing result ... (blocking)' % self.name
                 print '%s: %s' % (self.name, result) # Blocks until result ready
-            self.ponger.quit()
+            self.ponger.stop()
 
     ponger = Ponger().start()
     pinger = Pinger(ponger=ponger).start()
