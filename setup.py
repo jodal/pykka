@@ -11,7 +11,7 @@ setup(
     description='Pykka makes actors look like regular objects',
     long_description=open('README.rst').read(),
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2.6',
