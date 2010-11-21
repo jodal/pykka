@@ -116,6 +116,22 @@ class Future(object):
     def __str__(self):
         return str(self.get())
 
-    def get(self):
-        self.connection.poll(None)
-        return self.connection.recv()
+    def get(self, timeout=None):
+        """
+        Get the value encapsulated by the future.
+
+        Will block until the value is available, unless the optional *timeout*
+        argument is set to:
+
+        - :class:`None` -- block forever (default)
+        - :class:`False` -- return immediately
+        - numeric -- timeout after given number of seconds
+        """
+        if timeout is False:
+            poll_args = []
+        else:
+            poll_args = [timeout]
+        if self.connection.poll(*poll_args):
+            return self.connection.recv()
+        else:
+            return None
