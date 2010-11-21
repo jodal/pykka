@@ -57,11 +57,15 @@ class Actor(Process):
 
 class ActorProxy(object):
     def __init__(self, actor):
+        self._actor_name = actor.__class__.__name__
         self._actor_inbox = actor.inbox
         self._can_call = dict([(attr, callable(getattr(actor, attr)))
             for attr in dir(actor) if not attr.startswith('_')])
 
     def __getattr__(self, name):
+        if not name in self._can_call:
+            raise AttributeError("proxy for '%s' object has no attribute '%s'"
+                % (self._actor_name, name))
         if self._can_call[name]:
             return CallableProxy(self._actor_inbox, name)
         else:

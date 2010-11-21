@@ -25,3 +25,11 @@ class MethodCallTest(unittest.TestCase):
         self.assertEqual('bar', self.actor.foo.get())
         self.actor.set_foo('baz')
         self.assertEqual('baz', self.actor.foo.get())
+
+    def test_calling_unknown_method_raises_attribute_error(self):
+        try:
+            self.actor.unknown_method()
+            self.fail('Should raise AttributeError')
+        except AttributeError as e:
+            self.assertEquals("proxy for 'ActorWithMethods' object " +
+                "has no attribute 'unknown_method'", str(e))
