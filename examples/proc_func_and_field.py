@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import time
 
 from pykka import Actor
@@ -26,13 +28,13 @@ class Pinger(Actor):
             print '%s: calling Ponger.get() ...' % self.name
             result = self.ponger.get() # Does not block, returns a future
             print '%s: printing result ... (blocking)' % self.name
-            print '%s: %s' % (self.name, result) # Blocks until result ready
+            print '%s: %s' % (self.name, result.get()) # Blocks until ready
 
             # Field access
             print '%s: reading Ponger.field ...' % self.name
             result = self.ponger.field # Does not block, returns a future
             print '%s: printing result ... (blocking)' % self.name
-            print '%s: %s' % (self.name, result) # Blocks until result ready
+            print '%s: %s' % (self.name, result.get()) # Blocks until ready
         self.ponger.stop()
 
 if __name__ == '__main__':

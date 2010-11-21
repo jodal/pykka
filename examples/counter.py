@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from pykka import Actor
 
 class Adder(Actor):
