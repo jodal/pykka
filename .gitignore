@@ -1,5 +1,8 @@
 *.pyc
 *.swp
+.coverage
 MANIFEST
 build/
+cover
 dist/
+nosetests.xml
