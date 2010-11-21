@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='Pykka',
-    version='0.1',
+    version='0.2',
     author='Stein Magnus Jodal',
     author_email='stein.magnus@jodal.no',
     packages=['pykka'],
