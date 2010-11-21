@@ -9,11 +9,11 @@ class Ponger(Actor):
     field = 'this is the value of Ponger.field'
 
     def proc(self):
-        print '%s: this was printed by Ponger.do()' % self.name
+        print '%s: this was printed by Ponger.proc()' % self.name
 
     def func(self):
         time.sleep(0.5) # Block a bit to make it realistic
-        return 'this was returned by Ponger.get()'
+        return 'this was returned by Ponger.func()'
 
 class Pinger(Actor):
     name = 'Pinger'
