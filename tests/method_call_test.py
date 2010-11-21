@@ -33,3 +33,18 @@ class MethodCallTest(unittest.TestCase):
         except AttributeError as e:
             self.assertEquals("proxy for 'ActorWithMethods' object " +
                 "has no attribute 'unknown_method'", str(e))
+
+
+class MethodAddedAtRuntimeTest(unittest.TestCase):
+    def setUp(self):
+        class ActorExtendableAtRuntime(Actor):
+            def add_method(self, name):
+                setattr(self, name, lambda: 'returned by ' + name)
+        self.actor = ActorExtendableAtRuntime().start()
+
+    def tearDown(self):
+        self.actor.stop()
+
+    def test_can_call_method_that_was_added_at_runtime(self):
+        self.actor.add_method('foo')
+        self.assertEqual('returned by foo', self.actor.foo().get())

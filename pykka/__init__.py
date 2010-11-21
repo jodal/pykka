@@ -54,19 +54,28 @@ class Actor(Process):
     def stop(self):
         self.runnable = False
 
+    def get_attributes(self):
+        """Returns a dict where the keys are all the available attributes and
+        the value is whether the attribute is callable."""
+        result = {}
+        for attr in dir(self):
+            if not attr.startswith('_'):
+                result[attr] = callable(getattr(self, attr))
+        return result
 
 class ActorProxy(object):
     def __init__(self, actor):
         self._actor_name = actor.__class__.__name__
         self._actor_inbox = actor.inbox
-        self._can_call = dict([(attr, callable(getattr(actor, attr)))
-            for attr in dir(actor) if not attr.startswith('_')])
+        self._attributes = actor.get_attributes()
 
     def __getattr__(self, name):
-        if not name in self._can_call:
-            raise AttributeError("proxy for '%s' object has no attribute '%s'"
-                % (self._actor_name, name))
-        if self._can_call[name]:
+        if not name in self._attributes:
+            self._attributes = self.get_attributes().get()
+            if not name in self._attributes:
+                raise AttributeError("proxy for '%s' object has no "
+                    "attribute '%s'" % (self._actor_name, name))
+        if self._attributes[name]:
             return CallableProxy(self._actor_inbox, name)
         else:
             return self._get_field(name)
