@@ -2,7 +2,7 @@ import unittest
 
 from pykka import Actor
 
-class ActorProxyTest(unittest.TestCase):
+class ProxyDirTest(unittest.TestCase):
     def setUp(self):
         class ActorWithAttributesAndCallables(Actor):
             foo = 'bar'
