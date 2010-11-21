@@ -20,6 +20,13 @@ class Actor(Process):
         self.runnable = True
         self.inbox = Queue()
 
+    def start(self):
+        super(Actor, self).start()
+        return ActorProxy(self)
+
+    def stop(self):
+        self.runnable = False
+
     def run(self):
         try:
             while self.runnable:
@@ -29,7 +36,7 @@ class Actor(Process):
 
     def _event_loop(self):
         message = self.inbox.get()
-        response = self.react(message)
+        response = self._react(message)
         if 'reply_to' in message:
             connection = unpickle_connection(message['reply_to'])
             try:
@@ -37,7 +44,8 @@ class Actor(Process):
             except IOError:
                 pass
 
-    def react(self, message):
+    def _react(self, message):
+        """Reacts to messages sent to the actor."""
         if message['command'] == 'call':
             return getattr(self, message['attribute'])(
                 *message['args'], **message['kwargs'])
@@ -46,13 +54,6 @@ class Actor(Process):
         if message['command'] == 'write':
             return setattr(self, message['attribute'], message['value'])
         raise NotImplementedError
-
-    def start(self):
-        super(Actor, self).start()
-        return ActorProxy(self)
-
-    def stop(self):
-        self.runnable = False
 
     def get_attributes(self):
         """Returns a dict where the keys are all the available attributes and
