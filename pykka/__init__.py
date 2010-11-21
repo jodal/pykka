@@ -63,6 +63,7 @@ class Actor(Process):
                 result[attr] = callable(getattr(self, attr))
         return result
 
+
 class ActorProxy(object):
     def __init__(self, actor):
         self._actor_name = actor.__class__.__name__
@@ -102,6 +103,13 @@ class ActorProxy(object):
         }
         self._actor_inbox.put(message)
         return Future(read_end)
+
+    def __dir__(self):
+        result = ['__class__']
+        result += self.__class__.__dict__.keys()
+        result += self.__dict__.keys()
+        result += self._attributes.keys()
+        return sorted(result)
 
 
 class CallableProxy(object):
