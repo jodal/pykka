@@ -68,15 +68,15 @@ class ActorProxy(object):
     def __init__(self, actor):
         self._actor_name = actor.__class__.__name__
         self._actor_inbox = actor.inbox
-        self._attributes = actor.get_attributes()
+        self._actor_attributes = actor.get_attributes()
 
     def __getattr__(self, name):
-        if not name in self._attributes:
-            self._attributes = self.get_attributes().get()
-            if not name in self._attributes:
+        if not name in self._actor_attributes:
+            self._actor_attributes = self.get_attributes().get()
+            if not name in self._actor_attributes:
                 raise AttributeError("proxy for '%s' object has no "
                     "attribute '%s'" % (self._actor_name, name))
-        if self._attributes[name]:
+        if self._actor_attributes[name]:
             return CallableProxy(self._actor_inbox, name)
         else:
             return self._get_field(name)
@@ -108,7 +108,7 @@ class ActorProxy(object):
         result = ['__class__']
         result += self.__class__.__dict__.keys()
         result += self.__dict__.keys()
-        result += self._attributes.keys()
+        result += self._actor_attributes.keys()
         return sorted(result)
 
 
