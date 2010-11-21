@@ -22,20 +22,20 @@ class Actor(Process):
 
     def run(self):
         try:
-            self.run_inside_try()
+            while self.runnable:
+                self._event_loop()
         except KeyboardInterrupt:
             sys.exit()
 
-    def run_inside_try(self):
-        while self.runnable:
-            message = self.inbox.get()
-            response = self.react(message)
-            if 'reply_to' in message:
-                connection = unpickle_connection(message['reply_to'])
-                try:
-                    connection.send(response)
-                except IOError:
-                    pass
+    def _event_loop(self):
+        message = self.inbox.get()
+        response = self.react(message)
+        if 'reply_to' in message:
+            connection = unpickle_connection(message['reply_to'])
+            try:
+                connection.send(response)
+            except IOError:
+                pass
 
     def react(self, message):
         if message['command'] == 'call':

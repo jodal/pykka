@@ -5,7 +5,7 @@ from pykka import Actor
 class ActorInterruptTest(unittest.TestCase):
     def setUp(self):
         class ActorWithInterrupt(Actor):
-            def run_inside_try(self):
+            def _event_loop(self):
                 raise KeyboardInterrupt
         self.actor = ActorWithInterrupt()
 
