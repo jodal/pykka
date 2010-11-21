@@ -53,6 +53,10 @@ class Actor(Process):
             return getattr(self, message['attribute'])
         if message['command'] == 'write':
             return setattr(self, message['attribute'], message['value'])
+        return self.react(message)
+
+    def react(self, message):
+        """May be implemented for the actor to handle custom messages."""
         raise NotImplementedError
 
     def get_attributes(self):
@@ -70,6 +74,14 @@ class ActorProxy(object):
         self._actor_name = actor.__class__.__name__
         self._actor_inbox = actor.inbox
         self._actor_attributes = actor.get_attributes()
+
+    def send(self, message):
+        """
+        Send message to actor.
+
+        The message must be a picklable dict.
+        """
+        self._actor_inbox.put(message)
 
     def __getattr__(self, name):
         if not name in self._actor_attributes:
