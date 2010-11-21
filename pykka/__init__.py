@@ -43,6 +43,8 @@ class Actor(Process):
                 *message['args'], **message['kwargs'])
         if message['command'] == 'read':
             return getattr(self, message['attribute'])
+        if message['command'] == 'write':
+            return setattr(self, message['attribute'], message['value'])
         raise NotImplementedError
 
     def start(self):
@@ -63,14 +65,30 @@ class ActorProxy(object):
         if self._can_call[name]:
             return CallableProxy(self._actor_inbox, name)
         else:
-            (read_end, write_end) = Pipe(duplex=False)
-            message = {
-                'command': 'read',
-                'attribute': name,
-                'reply_to': pickle_connection(write_end),
-            }
-            self._actor_inbox.put(message)
-            return Future(read_end)
+            return self._get_field(name)
+
+    def _get_field(self, name):
+        (read_end, write_end) = Pipe(duplex=False)
+        message = {
+            'command': 'read',
+            'attribute': name,
+            'reply_to': pickle_connection(write_end),
+        }
+        self._actor_inbox.put(message)
+        return Future(read_end)
+
+    def __setattr__(self, name, value):
+        if name.startswith('_'):
+            return super(ActorProxy, self).__setattr__(name, value)
+        (read_end, write_end) = Pipe(duplex=False)
+        message = {
+            'command': 'write',
+            'attribute': name,
+            'value': value,
+            'reply_to': pickle_connection(write_end),
+        }
+        self._actor_inbox.put(message)
+        return Future(read_end)
 
 
 class CallableProxy(object):
