@@ -1,3 +1,10 @@
+"""
+Pykka is a concurrency abstraction which makes actors look like regular
+objects.
+
+See https://github.com/jodal/pykka for more information.
+"""
+
 from multiprocessing import Queue, Pipe
 from multiprocessing.dummy import Process
 from multiprocessing.reduction import reduce_connection
@@ -5,15 +12,30 @@ import pickle
 import sys
 
 def pickle_connection(connection):
+    """Pickles a connection object"""
     return pickle.dumps(reduce_connection(connection))
 
 def unpickle_connection(pickled_connection):
+    """Unpickles a connection object"""
     # From http://stackoverflow.com/questions/1446004
     (func, args) = pickle.loads(pickled_connection)
     return func(*args)
 
 
 class Actor(Process):
+    """
+    A concurrently running actor.
+
+    To create an actor:
+
+    1. subclass :class:`Actor`,
+    2. implement your methods as usual,
+    3. instantiate the actor as usual,
+    4. call :meth:`Actor.start()` on the actor instance.
+
+    To stop an actor, call :meth:`Actor.stop()`.
+    """
+
     def __init__(self, **kwargs):
         super(Actor, self).__init__()
         self.__dict__.update(kwargs)
@@ -25,6 +47,12 @@ class Actor(Process):
         return ActorProxy(self)
 
     def stop(self):
+        """
+        Stop the actor and terminate its thread.
+
+        The actor will not stop until it is done processing the current
+        message.
+        """
         self.runnable = False
 
     def run(self):
@@ -35,6 +63,8 @@ class Actor(Process):
             sys.exit()
 
     def _event_loop(self):
+        """The actor's event loop which is called continously to handle
+        incoming messages, one at the time."""
         message = self.inbox.get()
         response = self._react(message)
         if 'reply_to' in message:
@@ -70,6 +100,13 @@ class Actor(Process):
 
 
 class ActorProxy(object):
+    """
+    Proxy for a running actor which allows the actor to be used through a
+    normal method calls and field accesses.
+
+    You should never need to create :class:`ActorProxy` instances yourself.
+    """
+
     def __init__(self, actor):
         self._actor_name = actor.__class__.__name__
         self._actor_inbox = actor.inbox
@@ -95,6 +132,7 @@ class ActorProxy(object):
             return self._get_field(name)
 
     def _get_field(self, name):
+        """Get a field from the actor."""
         (read_end, write_end) = Pipe(duplex=False)
         message = {
             'command': 'read',
@@ -105,6 +143,7 @@ class ActorProxy(object):
         return Future(read_end)
 
     def __setattr__(self, name, value):
+        """Set a field on the actor."""
         if name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
         (read_end, write_end) = Pipe(duplex=False)
@@ -126,6 +165,7 @@ class ActorProxy(object):
 
 
 class CallableProxy(object):
+    """Helper class for proxying callables."""
     def __init__(self, actor_inbox, attribute):
         self._actor_inbox = actor_inbox
         self._attribute = attribute
@@ -144,6 +184,14 @@ class CallableProxy(object):
 
 
 class Future(object):
+    """
+    A :class:`Future` is a handle to a value which will be available in the
+    future.
+
+    Typically returned by calls to actor methods or accesses to actor fields.
+
+    To get hold of the encapsulated value, call :meth:`Future.get()`.
+    """
     def __init__(self, connection):
         self.connection = connection
 
