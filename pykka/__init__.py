@@ -95,9 +95,6 @@ class Future(object):
     def __init__(self, connection):
         self.connection = connection
 
-    def __repr__(self):
-        return self.get()
-
     def __str__(self):
         return str(self.get())
 
