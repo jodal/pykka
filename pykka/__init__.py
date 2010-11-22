@@ -8,8 +8,10 @@ See https://github.com/jodal/pykka for more information.
 from multiprocessing import Queue, Pipe
 from multiprocessing.dummy import Process
 from multiprocessing.reduction import reduce_connection
+import copy
 import pickle
 import sys
+import threading
 
 def pickle_connection(connection):
     """Pickles a connection object"""
@@ -20,6 +22,26 @@ def unpickle_connection(pickled_connection):
     # From http://stackoverflow.com/questions/1446004
     (func, args) = pickle.loads(pickled_connection)
     return func(*args)
+
+
+class ActorRegistry(object):
+    _actors = []
+    _actors_lock = threading.RLock()
+
+    @classmethod
+    def get_all(cls):
+        with cls._actors_lock:
+            return copy.copy(cls._actors)
+
+    @classmethod
+    def register(cls, actor):
+        with cls._actors_lock:
+            cls._actors.append(actor)
+
+    @classmethod
+    def unregister(cls, actor):
+        with cls._actors_lock:
+            cls._actors.remove(actor)
 
 
 class Actor(Process):
@@ -41,10 +63,13 @@ class Actor(Process):
         self.__dict__.update(kwargs)
         self.runnable = True
         self.inbox = Queue()
+        self._proxy = None
 
     def start(self):
         super(Actor, self).start()
-        return ActorProxy(self)
+        self._proxy = ActorProxy(self)
+        ActorRegistry.register(self._proxy)
+        return self._proxy
 
     def stop(self):
         """
@@ -54,6 +79,7 @@ class Actor(Process):
         message.
         """
         self.runnable = False
+        ActorRegistry.unregister(self._proxy)
 
     def run(self):
         try:
