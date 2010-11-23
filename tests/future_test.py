@@ -26,3 +26,6 @@ class FutureTest(unittest.TestCase):
     def test_future_get_can_timeout_immediately(self):
         # Do not send anything on the connection
         self.assertEqual(None, self.future.get(timeout=False))
+
+    def test_future_wait_is_alias_of_get(self):
+        self.assertEqual(self.future.get, self.future.wait)

@@ -243,3 +243,5 @@ class Future(object):
             return self.connection.recv()
         else:
             return None
+
+    wait = get

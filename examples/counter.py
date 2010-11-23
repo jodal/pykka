@@ -17,6 +17,6 @@ class Counter(Actor):
 if __name__ == '__main__':
     adder = Adder().start()
     counter = Counter(other=adder).start()
-    counter.count_to(10).get() # Block until finished
+    counter.count_to(10).wait()
     counter.stop()
     adder.stop()
