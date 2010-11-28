@@ -2,7 +2,7 @@
 Pykka is a concurrency abstraction which makes actors look like regular
 objects.
 
-See https://github.com/jodal/pykka for more information.
+See http://jodal.github.com/pykka/ for more information.
 """
 
 from multiprocessing import Queue, Pipe

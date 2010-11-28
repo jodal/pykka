@@ -84,3 +84,15 @@ To upgrade your Pykka installation to the latest released version::
 
     pip install --upgrade pykka
 
+To install the latest development snapshot::
+
+    pip install pykka==dev
+
+
+Project resources
+=================
+
+- `Documentation <http://jodal.github.com/pykka/>`_
+- `Source code <http://github.com/jodal/pykka>`_
+- `Issue tracker <http://github.com/jodal/pykka/issues>`_
+- `Download development snapshot <http://github.com/jodal/pykka/tarball/master#egg=pykka-dev>`_
