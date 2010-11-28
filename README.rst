@@ -1,3 +1,4 @@
+=====
 Pykka
 =====
 
@@ -17,7 +18,7 @@ Pykka is similar to typed actors in the Akka framework.
 
 
 What can it do?
----------------
+===============
 
 Given the following code::
 
@@ -38,7 +39,7 @@ Given the following code::
     if __name__ == '__main__':
         adder = Adder().start()
         counter = Counter(other=adder).start()
-        counter.count_to(10).get() # Block until finished
+        counter.count_to(10).wait()
         counter.stop()
         adder.stop()
 
@@ -60,7 +61,26 @@ See the ``examples/`` dir for more runnable examples.
 
 
 License
--------
+=======
 
 Pykka is licensed under the Apache License, Version 2.0. See ``LICENSE`` for
 the full license text.
+
+
+Dependencies
+============
+
+Python 2.6 or 2.7
+
+
+Installation
+============
+
+To install Pykka you can use pip::
+
+    pip install pykka
+
+To upgrade your Pykka installation to the latest released version::
+
+    pip install --upgrade pykka
+
