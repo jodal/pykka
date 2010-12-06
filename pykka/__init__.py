@@ -39,6 +39,13 @@ class ActorRegistry(object):
             return filter(lambda a: a._actor_class == actor_class, cls._actors)
 
     @classmethod
+    def get_by_class_name(cls, actor_class_name):
+        with cls._actors_lock:
+            return filter(
+                lambda a: a._actor_class.__name__ == actor_class_name,
+                cls._actors)
+
+    @classmethod
     def register(cls, actor):
         with cls._actors_lock:
             cls._actors.append(actor)
