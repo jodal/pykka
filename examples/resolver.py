@@ -19,9 +19,9 @@ import random
 import socket
 import sys
 
-from pykka import Actor
+import pykka
 
-class Resolver(Actor):
+class Resolver(pykka.Actor):
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)
@@ -41,11 +41,11 @@ def run(pool_size, *ips):
         hosts.append(resolvers[i % len(resolvers)].resolve(ip))
 
     # Gather results (blocking)
-    ip_to_host = zip(ips, map(lambda x: x.get(), hosts))
+    ip_to_host = zip(ips, pykka.get_all(hosts))
     pprint(ip_to_host)
 
     # Clean up
-    map(lambda x: x.stop(), resolvers)
+    pykka.ActorRegistry.stop_all()
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) >= 2:
