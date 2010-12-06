@@ -285,4 +285,11 @@ class Future(object):
         else:
             return None
 
-    wait = get
+    def wait(self, timeout=None):
+        """
+        Block until the future is available.
+
+        An alias for :meth:`get`, but with a name that is more describing if
+        you do not care about the return value.
+        """
+        return self.get(timeout)

@@ -28,4 +28,10 @@ class FutureTest(unittest.TestCase):
         self.assertEqual(None, self.future.get(timeout=False))
 
     def test_future_wait_is_alias_of_get(self):
-        self.assertEqual(self.future.get, self.future.wait)
+        self.connection.send(10)
+        result1 = self.future.get()
+
+        self.connection.send(10)
+        result2 = self.future.wait()
+
+        self.assertEqual(result1, result2)
