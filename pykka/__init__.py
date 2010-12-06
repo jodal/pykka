@@ -34,6 +34,11 @@ class ActorRegistry(object):
             return copy.copy(cls._actors)
 
     @classmethod
+    def get_by_class(cls, actor_class):
+        with cls._actors_lock:
+            return filter(lambda a: a._actor_class == actor_class, cls._actors)
+
+    @classmethod
     def register(cls, actor):
         with cls._actors_lock:
             cls._actors.append(actor)
@@ -134,7 +139,7 @@ class ActorProxy(object):
     """
 
     def __init__(self, actor):
-        self._actor_name = actor.__class__.__name__
+        self._actor_class = actor.__class__
         self._actor_inbox = actor.inbox
         self._actor_attributes = actor.get_attributes()
 
@@ -151,7 +156,7 @@ class ActorProxy(object):
             self._actor_attributes = self.get_attributes().get()
             if not name in self._actor_attributes:
                 raise AttributeError("proxy for '%s' object has no "
-                    "attribute '%s'" % (self._actor_name, name))
+                    "attribute '%s'" % (self._actor_class.__name__, name))
         if self._actor_attributes[name]:
             return CallableProxy(self._actor_inbox, name)
         else:
