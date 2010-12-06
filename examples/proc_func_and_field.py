@@ -1,49 +1,50 @@
 #! /usr/bin/env python
 
+import threading
 import time
 
 from pykka import Actor
 
-class Ponger(Actor):
-    name = 'Ponger'
-    field = 'this is the value of Ponger.field'
+class AnActor(Actor):
+    name = 'AnActorThread'
+    field = 'this is the value of AnActor.field'
 
     def proc(self):
-        print '%s: this was printed by Ponger.proc()' % self.name
+        log('this was printed by AnActor.proc()')
 
     def func(self):
         time.sleep(0.5) # Block a bit to make it realistic
-        return 'this was returned by Ponger.func()'
+        return 'this was returned by AnActor.func()'
 
-class Pinger(Actor):
-    name = 'Pinger'
+def run(actor):
+    for i in range(5):
+        # Method with side effect
+        log('calling Ponger.proc() ...')
+        actor.proc()
 
-    def run(self):
-        for i in range(5):
-            # Method with side effect
-            print '%s: calling Ponger.proc() ...' % self.name
-            self.ponger.proc()
+        # Method with return value
+        log('calling Ponger.func() ...')
+        result = actor.func() # Does not block, returns a future
+        log('printing result ... (blocking)')
+        log(result.get()) # Blocks until ready
 
-            # Method with return value
-            print '%s: calling Ponger.func() ...' % self.name
-            result = self.ponger.func() # Does not block, returns a future
-            print '%s: printing result ... (blocking)' % self.name
-            print '%s: %s' % (self.name, result.get()) # Blocks until ready
+        # Field reading
+        log('reading Ponger.field ...')
+        result = actor.field # Does not block, returns a future
+        log('printing result ... (blocking)')
+        log(result.get()) # Blocks until ready
 
-            # Field reading
-            print '%s: reading Ponger.field ...' % self.name
-            result = self.ponger.field # Does not block, returns a future
-            print '%s: printing result ... (blocking)' % self.name
-            print '%s: %s' % (self.name, result.get()) # Blocks until ready
+        # Field writing
+        log('writing Ponger.field ...')
+        actor.field = 'new value' # Assignment does not block
+        result = actor.field # Does not block, returns a future
+        log('printing new field value ... (blocking)')
+        log(result.get()) # Blocks until ready
+    actor.stop()
 
-            # Field writing
-            print '%s: writing Ponger.field ...' % self.name
-            self.ponger.field = 'new value' # Does not block
-            result = self.ponger.field # Does not block, returns a future
-            print '%s: printing new field value ... (blocking)' % self.name
-            print '%s: %s' % (self.name, result.get()) # Blocks until ready
-        self.ponger.stop()
+def log(s):
+    print "%s: %s" % (threading.current_thread().name, s)
 
 if __name__ == '__main__':
-    ponger = Ponger().start()
-    pinger = Pinger(ponger=ponger).start()
+    actor = AnActor().start()
+    run(actor)
