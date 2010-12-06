@@ -25,6 +25,7 @@ class ActorRegistrationTest(unittest.TestCase):
         ActorRegistry.register(self.actor)
         self.assert_(self.actor in ActorRegistry.get_all())
 
+
 class ActorLookupTest(unittest.TestCase):
     class AnActor(Actor): pass
     class BeeActor(Actor): pass
@@ -49,3 +50,15 @@ class ActorLookupTest(unittest.TestCase):
             self.assert_(a_actor in result)
         for b_actor in self.b_actors:
             self.assert_(b_actor not in result)
+
+
+class ActorStoppingTest(unittest.TestCase):
+    def setUp(self):
+        class AnActor(Actor): pass
+        self.actors = [AnActor().start() for i in range(3)]
+
+    def test_all_actors_can_be_stopped_through_registry(self):
+        self.assertEquals(3, len(ActorRegistry.get_all()))
+        futures = ActorRegistry.stop_all()
+        map(lambda f: f.wait(), futures)
+        self.assertEquals(0, len(ActorRegistry.get_all()))

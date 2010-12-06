@@ -64,6 +64,17 @@ class ActorRegistry(object):
             cls._actors.append(actor)
 
     @classmethod
+    def stop_all(cls):
+        """
+        Stops all running actors.
+
+        Returns a list of futures for all the stopping actors, so that you can
+        block until they have stopped if you need to.
+        """
+        with cls._actors_lock:
+            return [a.stop() for a in cls._actors]
+
+    @classmethod
     def unregister(cls, actor):
         """
         Remove an actor from the registry.
