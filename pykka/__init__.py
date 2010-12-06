@@ -102,12 +102,12 @@ class Actor(Process):
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""
-        if message['command'] == 'call':
+        if message.get('command') == 'call':
             return getattr(self, message['attribute'])(
                 *message['args'], **message['kwargs'])
-        if message['command'] == 'read':
+        if message.get('command') == 'read':
             return getattr(self, message['attribute'])
-        if message['command'] == 'write':
+        if message.get('command') == 'write':
             return setattr(self, message['attribute'], message['value'])
         return self.react(message)
 
