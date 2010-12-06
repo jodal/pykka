@@ -8,7 +8,6 @@ See http://jodal.github.com/pykka/ for more information.
 from multiprocessing import Queue, Pipe
 from multiprocessing.dummy import Process
 from multiprocessing.reduction import reduce_connection
-import copy
 import pickle
 import sys
 import threading
@@ -31,7 +30,7 @@ class ActorRegistry(object):
     @classmethod
     def get_all(cls):
         with cls._actors_lock:
-            return copy.copy(cls._actors)
+            return cls._actors[:]
 
     @classmethod
     def get_by_class(cls, actor_class):
