@@ -293,3 +293,21 @@ class Future(object):
         you do not care about the return value.
         """
         return self.get(timeout)
+
+
+def get_all(futures, timeout=None):
+    """
+    Get all the values encapsulated by the given features.
+
+    :attr:`timeout` has the same behaviour as for :meth:`Future.get`.
+    """
+    return map(lambda future: future.wait(timeout), futures)
+
+def wait_all(futures, timeout=None):
+    """
+    Block until all the given features are available.
+
+    An alias for :func:`get_all`, but with a name that is more describing if
+    you do not care about the return values.
+    """
+    return get_all(futures, timeout)
