@@ -12,16 +12,6 @@ import pickle
 import sys
 import threading
 
-def pickle_connection(connection):
-    """Pickles a connection object"""
-    return pickle.dumps(reduce_connection(connection))
-
-def unpickle_connection(pickled_connection):
-    """Unpickles a connection object"""
-    # From http://stackoverflow.com/questions/1446004
-    (func, args) = pickle.loads(pickled_connection)
-    return func(*args)
-
 
 class ActorRegistry(object):
     """
@@ -135,7 +125,7 @@ class Actor(Process):
         message = self.inbox.get()
         response = self._react(message)
         if 'reply_to' in message:
-            connection = unpickle_connection(message['reply_to'])
+            connection = _unpickle_connection(message['reply_to'])
             try:
                 connection.send(response)
             except IOError:
@@ -204,7 +194,7 @@ class ActorProxy(object):
         message = {
             'command': 'read',
             'attribute': name,
-            'reply_to': pickle_connection(write_end),
+            'reply_to': _pickle_connection(write_end),
         }
         self._actor_inbox.put(message)
         return Future(read_end)
@@ -218,7 +208,7 @@ class ActorProxy(object):
             'command': 'write',
             'attribute': name,
             'value': value,
-            'reply_to': pickle_connection(write_end),
+            'reply_to': _pickle_connection(write_end),
         }
         self._actor_inbox.put(message)
         return Future(read_end)
@@ -244,7 +234,7 @@ class CallableProxy(object):
             'attribute': self._attribute,
             'args': args,
             'kwargs': kwargs,
-            'reply_to': pickle_connection(write_end),
+            'reply_to': _pickle_connection(write_end),
         }
         self._actor_inbox.put(message)
         return Future(read_end)
@@ -303,6 +293,7 @@ def get_all(futures, timeout=None):
     """
     return map(lambda future: future.wait(timeout), futures)
 
+
 def wait_all(futures, timeout=None):
     """
     Block until all the given features are available.
@@ -311,3 +302,15 @@ def wait_all(futures, timeout=None):
     you do not care about the return values.
     """
     return get_all(futures, timeout)
+
+
+def _pickle_connection(connection):
+    """Pickles a connection object"""
+    return pickle.dumps(reduce_connection(connection))
+
+
+def _unpickle_connection(pickled_connection):
+    """Unpickles a connection object"""
+    # From http://stackoverflow.com/questions/1446004
+    (func, args) = pickle.loads(pickled_connection)
+    return func(*args)
