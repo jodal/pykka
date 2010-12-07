@@ -13,6 +13,9 @@ import sys
 import threading
 
 
+__all__ = ['Actor', 'ActorRegistry', 'get_all', 'wait_all']
+
+
 class ActorRegistry(object):
     """
     Registry which provides easy access to all running actors.
