@@ -11,6 +11,10 @@ from pykka.proxy import ActorProxy, CallableProxy
 from pykka.registry import ActorRegistry
 
 
+__all__ = ['Actor', 'ActorProxy', 'ActorRegistry', 'CallableProxy', 'Future',
+    'get_all', 'wait_all']
+
+
 VERSION = (0, 4)
 
 def get_version():
