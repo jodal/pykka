@@ -2,11 +2,11 @@
 Pykka
 =====
 
-Pykka is a concurrency abstraction which makes actors look like regular
-objects.
+Pykka is a concurrency abstraction which let you use concurrent actors like
+regular objects.
 
-It lets you call methods on an actor like you would on a regular object, but it
-runs the code in the actor's own thread. Similarily, when you access the
+Pykka let you call methods on an actor like you would on a regular object, but
+it runs the code in the actor's own thread. Similarily, when you access the
 actor's fields, they are read in the actor's thread, serialized and copied to
 the reading thread.
 
@@ -14,7 +14,8 @@ Both method calling and attribute reads returns futures which ensures that the
 calling thread does not block before the value from the object's thread is
 actually used.
 
-Pykka is similar to typed actors in the Akka framework.
+The goal of Pykka is to provide a convenient to use concurrency abstractions
+for Python. If you need raw performance, look somewhere else.
 
 
 What can it do?
