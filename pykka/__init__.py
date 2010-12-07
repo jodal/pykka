@@ -113,8 +113,12 @@ class Actor(Process):
         super(cls, self).__init__()
         self.inbox = Queue()
         self._proxy = ActorProxy(self)
+
         ActorRegistry.register(self._proxy)
+
+        self.daemon = True
         super(Actor, self).start()
+
         return self._proxy
 
     def stop(self):
