@@ -33,7 +33,7 @@ class Resolver(pykka.Actor):
 
 def run(pool_size, *ips):
     # Start resolvers
-    resolvers = [Resolver().start() for _ in range(pool_size)]
+    resolvers = [Resolver.start() for _ in range(pool_size)]
 
     # Distribute work by mapping IPs to resolvers (not blocking)
     hosts = []

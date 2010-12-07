@@ -46,5 +46,5 @@ def log(s):
     print "%s: %s" % (threading.current_thread().name, s)
 
 if __name__ == '__main__':
-    actor = AnActor().start()
+    actor = AnActor.start()
     run(actor)

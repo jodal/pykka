@@ -10,7 +10,7 @@ class MethodCallTest(unittest.TestCase):
                 return 'Hello, %s!' % s
             def set_foo(self, s):
                 self.foo = s
-        self.actor = ActorWithMethods().start()
+        self.actor = ActorWithMethods.start()
 
     def tearDown(self):
         self.actor.stop()

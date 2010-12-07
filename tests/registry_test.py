@@ -4,9 +4,8 @@ import pykka
 
 class ActorRegistrationTest(unittest.TestCase):
     def setUp(self):
-        class AnActor(pykka.Actor):
-            pass
-        self.actor = AnActor().start()
+        class AnActor(pykka.Actor): pass
+        self.actor = AnActor.start()
 
     def tearDown(self):
         self.actor.stop()
@@ -31,8 +30,8 @@ class ActorLookupTest(unittest.TestCase):
     class BeeActor(pykka.Actor): pass
 
     def setUp(self):
-        self.a_actors = [self.AnActor().start() for i in range(3)]
-        self.b_actors = [self.BeeActor().start() for i in range(5)]
+        self.a_actors = [self.AnActor.start() for i in range(3)]
+        self.b_actors = [self.BeeActor.start() for i in range(5)]
 
     def tearDown(self):
         map(lambda a: a.stop(), self.a_actors + self.b_actors)
@@ -55,7 +54,7 @@ class ActorLookupTest(unittest.TestCase):
 class ActorStoppingTest(unittest.TestCase):
     def setUp(self):
         class AnActor(pykka.Actor): pass
-        self.actors = [AnActor().start() for i in range(3)]
+        self.actors = [AnActor.start() for i in range(3)]
 
     def test_all_actors_can_be_stopped_through_registry(self):
         self.assertEquals(3, len(pykka.ActorRegistry.get_all()))

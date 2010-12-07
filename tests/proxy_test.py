@@ -11,7 +11,7 @@ class ProxyDirTest(unittest.TestCase):
                 self.baz = 'quox'
             def func(self):
                 pass
-        self.actor = ActorWithAttributesAndCallables().start()
+        self.actor = ActorWithAttributesAndCallables.start()
 
     def tearDown(self):
         self.actor.stop()
@@ -36,7 +36,7 @@ class ProxySendMessageTest(unittest.TestCase):
             received_messages = []
             def react(self, message):
                 self.received_messages.append(message)
-        self.actor = ActorWithCustomReact().start()
+        self.actor = ActorWithCustomReact.start()
 
     def tearDown(self):
         self.actor.stop()

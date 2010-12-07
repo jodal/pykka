@@ -91,24 +91,30 @@ class Actor(Process):
     To create an actor:
 
     1. subclass :class:`Actor`,
-    2. implement your methods as usual,
-    3. instantiate the actor as usual,
-    4. call :meth:`Actor.start()` on the actor instance.
+    2. implement your methods, including `__init__()`, as usual,
+    3. call :meth:`Actor.start()` on the actor class, passing the method any
+       arguments for your constructor.
 
     To stop an actor, call :meth:`Actor.stop()`.
     """
 
-    def __init__(self, **kwargs):
-        super(Actor, self).__init__()
-        self.__dict__.update(kwargs)
-        self.runnable = True
-        self.inbox = Queue()
-        self._proxy = None
+    @classmethod
+    def start(cls, *args, **kwargs):
+        """
+        Start the actor in its own thread and register it in the
+        :class:`ActorRegistry`.
 
-    def start(self):
-        super(Actor, self).start()
+        Pass any arguments for the class constructor to this method instead.
+
+        Returns a :class:`ActorProxy` which can be used to access the actor in
+        a safe manner.
+        """
+        self = cls(*args, **kwargs)
+        super(cls, self).__init__()
+        self.inbox = Queue()
         self._proxy = ActorProxy(self)
         ActorRegistry.register(self._proxy)
+        super(Actor, self).start()
         return self._proxy
 
     def stop(self):
@@ -122,6 +128,7 @@ class Actor(Process):
         ActorRegistry.unregister(self._proxy)
 
     def run(self):
+        self.runnable = True
         try:
             while self.runnable:
                 self._event_loop()

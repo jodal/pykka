@@ -6,7 +6,7 @@ class FieldAccessTest(unittest.TestCase):
     def setUp(self):
         class ActorWithField(Actor):
             foo = 'bar'
-        self.actor = ActorWithField().start()
+        self.actor = ActorWithField.start()
 
     def tearDown(self):
         self.actor.stop()
