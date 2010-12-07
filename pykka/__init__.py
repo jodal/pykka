@@ -13,9 +13,6 @@ import sys
 import threading
 
 
-__all__ = ['Actor', 'ActorRegistry', 'get_all', 'wait_all']
-
-
 VERSION = (0, 4)
 
 def get_version():
