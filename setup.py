@@ -10,10 +10,11 @@ setup(
     packages=['pykka'],
     url='http://github.com/jodal/pykka',
     license='Apache License, Version 2.0',
-    description='Pykka makes actors look like regular objects',
+    description='Pykka is a concurrency abstraction which let you use ' +
+        'concurrent actors like regular objects',
     long_description=open('README.rst').read(),
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2.6',
