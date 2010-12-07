@@ -1,10 +1,3 @@
-"""
-Pykka is a concurrency abstraction which makes actors look like regular
-objects.
-
-See http://jodal.github.com/pykka/ for more information.
-"""
-
 from pykka.actor import Actor
 from pykka.future import Future, get_all, wait_all
 from pykka.proxy import ActorProxy, CallableProxy
