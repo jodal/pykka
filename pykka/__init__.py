@@ -16,6 +16,15 @@ import threading
 __all__ = ['Actor', 'ActorRegistry', 'get_all', 'wait_all']
 
 
+VERSION = (0, 4)
+
+def get_version():
+    version = '%s.%s' % (VERSION[0], VERSION[1])
+    if len(VERSION) > 2:
+        version = '%s.%s' % (version, VERSION[2])
+    return version
+
+
 class ActorRegistry(object):
     """
     Registry which provides easy access to all running actors.

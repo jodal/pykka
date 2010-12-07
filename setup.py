@@ -1,8 +1,10 @@
 from distutils.core import setup
 
+import pykka
+
 setup(
     name='Pykka',
-    version='0.3',
+    version=pykka.get_version(),
     author='Stein Magnus Jodal',
     author_email='stein.magnus@jodal.no',
     packages=['pykka'],
