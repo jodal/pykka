@@ -17,7 +17,7 @@ class FutureTest(unittest.TestCase):
         repr(self.future)
 
     def test_future_repr_returns_a_string_which_includes_the_word_future(self):
-        self.assert_('pykka.Future' in repr(self.future))
+        self.assert_('Future' in repr(self.future))
 
     def test_future_get_can_timeout_and_return_none(self):
         # Do not send anything on the connection
