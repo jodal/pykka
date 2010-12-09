@@ -1,3 +1,5 @@
 include LICENSE *.rst setup.cfg
+recursive-include docs *
+prune docs/_build
 recursive-include examples *.py
 recursive-include tests *.py
