@@ -8,7 +8,7 @@ setup(
     author='Stein Magnus Jodal',
     author_email='stein.magnus@jodal.no',
     packages=['pykka'],
-    url='http://github.com/jodal/pykka',
+    url='http://jodal.github.com/pykka/',
     license='Apache License, Version 2.0',
     description='Pykka is a concurrency abstraction which let you use ' +
         'concurrent actors like regular objects',
