@@ -14,7 +14,7 @@ Both method calling and attribute reads returns futures which ensures that the
 calling thread does not block before the value from the object's thread is
 actually used.
 
-The goal of Pykka is to provide a convenient to use concurrency abstractions
+The goal of Pykka is to provide a convenient to use concurrency abstraction
 for Python. If you need raw performance, look somewhere else.
 
 
