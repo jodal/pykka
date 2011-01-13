@@ -45,7 +45,7 @@ class Future(object):
 
 def get_all(futures, timeout=None):
     """
-    Get all the values encapsulated by the given features.
+    Get all the values encapsulated by the given futures.
 
     :attr:`timeout` has the same behaviour as for :meth:`Future.get`.
     """
