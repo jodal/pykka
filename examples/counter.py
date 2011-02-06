@@ -4,7 +4,7 @@ from pykka import Actor
 
 class Adder(Actor):
     def add_one(self, i):
-        print '%s: %d' % (self.name, i)
+        print 'Adder: %d' % i
         return i + 1
 
 class Counter(Actor):
@@ -14,7 +14,7 @@ class Counter(Actor):
     def count_to(self, target):
         i = 0
         while i < target:
-            print '%s: %d' % (self.name, i)
+            print 'Counter: %d' % i
             i = self.adder.add_one(i + 1).get()
 
 if __name__ == '__main__':

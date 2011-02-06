@@ -19,16 +19,19 @@ import random
 import socket
 import sys
 
+import gevent.monkey
 import pykka
+
+gevent.monkey.patch_all()
 
 class Resolver(pykka.Actor):
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)
-            print "%s finished resolving %s" % (self.name, ip)
+            print "Finished resolving %s" % ip
             return info[0]
         except:
-            print "%s failed resolving %s" % (self.name, ip)
+            print "Failed resolving %s" % ip
             return None
 
 def run(pool_size, *ips):

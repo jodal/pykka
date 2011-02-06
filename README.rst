@@ -74,7 +74,8 @@ the full license text.
 Dependencies
 ============
 
-Python 2.6 or 2.7
+- Python 2.6 or 2.7
+- `gevent <http://www.gevent.org/>`_
 
 
 Installation

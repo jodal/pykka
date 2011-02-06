@@ -1,13 +1,12 @@
-from multiprocessing import Queue
-from multiprocessing.dummy import Process
+import gevent
+import gevent.queue
 import sys
 
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
-from pykka.utils import unpickle_connection
 
 
-class Actor(Process):
+class Actor(gevent.Greenlet):
     """
     A concurrently running actor.
 
@@ -34,12 +33,11 @@ class Actor(Process):
         """
         self = cls(*args, **kwargs)
         super(cls, self).__init__()
-        self.inbox = Queue()
+        self.inbox = gevent.queue.Queue()
         self._proxy = ActorProxy(self)
 
         ActorRegistry.register(self._proxy)
 
-        self.daemon = True
         super(Actor, self).start()
 
         return self._proxy
@@ -54,7 +52,7 @@ class Actor(Process):
         self.runnable = False
         ActorRegistry.unregister(self._proxy)
 
-    def run(self):
+    def _run(self):
         self.runnable = True
         try:
             while self.runnable:
@@ -68,11 +66,7 @@ class Actor(Process):
         message = self.inbox.get()
         response = self._react(message)
         if 'reply_to' in message:
-            connection = unpickle_connection(message['reply_to'])
-            try:
-                connection.send(response)
-            except IOError:
-                pass
+            message['reply_to'].set(response)
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""

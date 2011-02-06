@@ -1,7 +1,6 @@
-from multiprocessing import Pipe
+import gevent.event
 
 from pykka.future import Future
-from pykka.utils import pickle_connection
 
 
 class ActorProxy(object):
@@ -38,28 +37,28 @@ class ActorProxy(object):
 
     def _get_field(self, name):
         """Get a field from the actor."""
-        (read_end, write_end) = Pipe(duplex=False)
+        result = gevent.event.AsyncResult()
         message = {
             'command': 'read',
             'attribute': name,
-            'reply_to': pickle_connection(write_end),
+            'reply_to': result,
         }
         self._actor_inbox.put(message)
-        return Future(read_end)
+        return Future(result)
 
     def __setattr__(self, name, value):
         """Set a field on the actor."""
         if name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
-        (read_end, write_end) = Pipe(duplex=False)
+        result = gevent.event.AsyncResult()
         message = {
             'command': 'write',
             'attribute': name,
             'value': value,
-            'reply_to': pickle_connection(write_end),
+            'reply_to': result,
         }
         self._actor_inbox.put(message)
-        return Future(read_end)
+        return Future(result)
 
     def __dir__(self):
         result = ['__class__']
@@ -76,13 +75,13 @@ class CallableProxy(object):
         self._attribute = attribute
 
     def __call__(self, *args, **kwargs):
-        (read_end, write_end) = Pipe(duplex=False)
+        result = gevent.event.AsyncResult()
         message = {
             'command': 'call',
             'attribute': self._attribute,
             'args': args,
             'kwargs': kwargs,
-            'reply_to': pickle_connection(write_end),
+            'reply_to': result,
         }
         self._actor_inbox.put(message)
-        return Future(read_end)
+        return Future(result)

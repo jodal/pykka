@@ -1,3 +1,5 @@
+import gevent
+
 class Future(object):
     """
     A :class:`Future` is a handle to a value which will be available in the
@@ -13,24 +15,19 @@ class Future(object):
     def __str__(self):
         return str(self.get())
 
-    def get(self, timeout=None):
+    def get(self, block=True, timeout=None):
         """
         Get the value encapsulated by the future.
 
-        Will block until the value is available, unless the optional *timeout*
-        argument is set to:
+        If *block* is :class:`True`, it will block until the value is available
+        or the *timeout* in seconds is reached.
 
-        - :class:`None` -- block forever (default)
-        - :class:`False` -- return immediately
-        - numeric -- timeout after given number of seconds
+        If *block* is :class:`False` it will immediately return the value if
+        available or None if not.
         """
-        if timeout is False:
-            poll_args = []
-        else:
-            poll_args = [timeout]
-        if self.connection.poll(*poll_args):
-            return self.connection.recv()
-        else:
+        try:
+            return self.connection.get(block, timeout)
+        except gevent.Timeout:
             return None
 
     def wait(self, timeout=None):
@@ -40,7 +37,7 @@ class Future(object):
         An alias for :meth:`get`, but with a name that is more describing if
         you do not care about the return value.
         """
-        return self.get(timeout)
+        return self.get(timeout=timeout)
 
 
 def get_all(futures, timeout=None):

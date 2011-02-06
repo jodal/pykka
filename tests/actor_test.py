@@ -11,7 +11,7 @@ class ActorInterruptTest(unittest.TestCase):
 
     def test_issuing_keyboard_interrupt_stops_process(self):
         try:
-            self.actor.run()
+            self.actor._run()
             self.fail('Should throw SystemExit exception')
         except SystemExit:
             pass

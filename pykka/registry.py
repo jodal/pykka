@@ -1,4 +1,4 @@
-import threading
+import gevent.coros
 
 
 class ActorRegistry(object):
@@ -9,7 +9,7 @@ class ActorRegistry(object):
     """
 
     _actors = []
-    _actors_lock = threading.RLock()
+    _actors_lock = gevent.coros.RLock()
 
     @classmethod
     def get_all(cls):

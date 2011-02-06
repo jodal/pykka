@@ -8,7 +8,7 @@ class ActorRegistrationTest(unittest.TestCase):
         self.actor = AnActor.start()
 
     def tearDown(self):
-        self.actor.stop()
+        pykka.ActorRegistry.stop_all()
 
     def test_actor_is_registered_when_started(self):
         self.assert_(self.actor in pykka.ActorRegistry.get_all())
@@ -34,7 +34,7 @@ class ActorLookupTest(unittest.TestCase):
         self.b_actors = [self.BeeActor.start() for i in range(5)]
 
     def tearDown(self):
-        map(lambda a: a.stop(), self.a_actors + self.b_actors)
+        pykka.ActorRegistry.stop_all()
 
     def test_actors_may_be_looked_up_class(self):
         result = pykka.ActorRegistry.get_by_class(self.AnActor)
