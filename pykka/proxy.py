@@ -19,7 +19,7 @@ class ActorProxy(object):
     def __init__(self, actor):
         self.actor_urn = actor._actor_urn
         self._actor_class = actor.__class__
-        self._actor_inbox = actor.inbox
+        self._actor_inbox = actor._actor_inbox
         self._actor_attributes = actor.get_attributes()
 
     def send(self, message):

@@ -35,7 +35,7 @@ class Actor(gevent.Greenlet):
         self = cls(*args, **kwargs)
         super(cls, self).__init__()
         self._actor_urn = uuid.uuid4().urn
-        self.inbox = gevent.queue.Queue()
+        self._actor_inbox = gevent.queue.Queue()
         self._proxy = ActorProxy(self)
 
         ActorRegistry.register(self._proxy)
@@ -65,7 +65,7 @@ class Actor(gevent.Greenlet):
     def _event_loop(self):
         """The actor's event loop which is called continously to handle
         incoming messages, one at the time."""
-        message = self.inbox.get()
+        message = self._actor_inbox.get()
         response = self._react(message)
         if 'reply_to' in message:
             message['reply_to'].set(response)
