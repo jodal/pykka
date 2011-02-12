@@ -32,6 +32,18 @@ class ActorRegistry(object):
                 cls._actors)
 
     @classmethod
+    def get_by_urn(cls, actor_urn):
+        """
+        Get an actor by its universally unique URN.
+
+        Returns :class:`None` if no matching actor is found.
+        """
+        with cls._actors_lock:
+            actors = filter(lambda a: a.actor_urn == actor_urn, cls._actors)
+            if actors:
+                return actors[0]
+
+    @classmethod
     def register(cls, actor):
         """
         Register an actor in the registry.

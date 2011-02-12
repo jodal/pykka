@@ -32,23 +32,32 @@ class ActorLookupTest(unittest.TestCase):
     def setUp(self):
         self.a_actors = [self.AnActor.start() for i in range(3)]
         self.b_actors = [self.BeeActor.start() for i in range(5)]
+        self.a_actor_0_urn = self.a_actors[0].actor_urn
 
     def tearDown(self):
         pykka.ActorRegistry.stop_all()
 
-    def test_actors_may_be_looked_up_class(self):
+    def test_actors_may_be_looked_up_by_class(self):
         result = pykka.ActorRegistry.get_by_class(self.AnActor)
         for a_actor in self.a_actors:
             self.assert_(a_actor in result)
         for b_actor in self.b_actors:
             self.assert_(b_actor not in result)
 
-    def test_actors_may_be_looked_up_class_name(self):
+    def test_actors_may_be_looked_up_by_class_name(self):
         result = pykka.ActorRegistry.get_by_class_name('AnActor')
         for a_actor in self.a_actors:
             self.assert_(a_actor in result)
         for b_actor in self.b_actors:
             self.assert_(b_actor not in result)
+
+    def test_actors_may_be_looked_up_by_urn(self):
+        result = pykka.ActorRegistry.get_by_urn(self.a_actor_0_urn)
+        self.assertEqual(self.a_actors[0], result)
+
+    def test_get_by_urn_returns_none_if_not_found(self):
+        result = pykka.ActorRegistry.get_by_urn('urn:foo:bar')
+        self.assertEqual(None, result)
 
 
 class ActorStoppingTest(unittest.TestCase):

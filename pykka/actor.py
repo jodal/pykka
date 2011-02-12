@@ -1,6 +1,7 @@
 import gevent
 import gevent.queue
 import sys
+import uuid
 
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
@@ -33,6 +34,7 @@ class Actor(gevent.Greenlet):
         """
         self = cls(*args, **kwargs)
         super(cls, self).__init__()
+        self._actor_urn = uuid.uuid4().urn
         self.inbox = gevent.queue.Queue()
         self._proxy = ActorProxy(self)
 

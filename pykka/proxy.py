@@ -11,7 +11,13 @@ class ActorProxy(object):
     You should never need to create :class:`ActorProxy` instances yourself.
     """
 
+    #: The actor URN is a universally unique identifier for the actor.
+    #: It may be used for looking up a specific actor using
+    #: :class:`ActorRegistry.get_by_urn`.
+    actor_urn = None
+
     def __init__(self, actor):
+        self.actor_urn = actor._actor_urn
         self._actor_class = actor.__class__
         self._actor_inbox = actor.inbox
         self._actor_attributes = actor.get_attributes()
@@ -48,7 +54,7 @@ class ActorProxy(object):
 
     def __setattr__(self, name, value):
         """Set a field on the actor."""
-        if name.startswith('_'):
+        if name.startswith('_') or name.startswith('actor_'):
             return super(ActorProxy, self).__setattr__(name, value)
         result = gevent.event.AsyncResult()
         message = {
