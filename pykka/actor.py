@@ -9,13 +9,35 @@ from pykka.registry import ActorRegistry
 
 class Actor(gevent.Greenlet):
     """
-    A concurrently running actor.
+    An actor has the following characteristics:
+
+    - It does not share state with anybody else.
+
+    - It can have its own state.
+
+    - It can only communicate with other actors by sending and receiving
+      messages.
+
+    - It can only send messages to actors whose address it has.
+
+    - When an actor receives a message it may take actions like:
+
+      - altering its own state, e.g. so that it can react differently to a
+        future message,
+      - sending messages to other actors, or
+      - starting new actors.
+
+    - None of the actions are required, and they may be applied in any order.
+
+    - It only processes one message at a time. In other words, a single actor
+      does not give you any concurrency, and it does not need to use e.g. locks
+      to protect its own state.
 
     To create an actor:
 
     1. subclass :class:`Actor`,
-    2. implement your methods, including `__init__()`, as usual,
-    3. call :meth:`Actor.start()` on the actor class, passing the method any
+    2. implement your methods, including :meth:`__init__`, as usual,
+    3. call :meth:`Actor.start(...)` on the actor class, passing the method any
        arguments for your constructor.
 
     To stop an actor, call :meth:`Actor.stop()`.
