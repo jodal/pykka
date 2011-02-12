@@ -28,6 +28,12 @@ class ActorProxy(object):
             'class': self._actor_class.__name__,
         }
 
+    def __str__(self):
+        return '%(class)s (%(urn)s)' % {
+            'urn': self.actor_urn,
+            'class': self._actor_class.__name__,
+        }
+
     def send(self, message):
         """
         Send message to actor.

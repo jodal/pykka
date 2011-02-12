@@ -47,7 +47,7 @@ class ProxySendMessageTest(unittest.TestCase):
             self.actor.received_messages.get())
 
 
-class ProxyReprTest(unittest.TestCase):
+class ProxyReprAndStrTest(unittest.TestCase):
     def setUp(self):
         class AnyActor(Actor):
             pass
@@ -69,3 +69,9 @@ class ProxyReprTest(unittest.TestCase):
 
     def test_repr_on_proxy_contains_actor_urn(self):
         self.assert_(self.actor.actor_urn in repr(self.actor))
+
+    def test_str_on_proxy_contains_actor_class_name(self):
+        self.assert_('AnyActor' in str(self.actor))
+
+    def test_str_on_proxy_contains_actor_urn(self):
+        self.assert_(self.actor.actor_urn in str(self.actor))
