@@ -1,10 +1,13 @@
 import gevent
 import gevent.queue
+import logging
 import sys
 import uuid
 
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
+
+logger = logging.getLogger('pykka')
 
 
 class Actor(gevent.Greenlet):
@@ -70,6 +73,7 @@ class Actor(gevent.Greenlet):
         """
         obj = cls(*args, **kwargs)
         super(Actor, obj).start()
+        logger.debug(u'Started %s', obj)
         ActorRegistry.register(obj._actor_proxy)
         return obj._actor_proxy
 
@@ -104,11 +108,12 @@ class Actor(gevent.Greenlet):
         """
         Stop the actor and terminate its thread.
 
-        The actor will not stop until it is done processing the current
-        message.
+        The actor will finish processing any messages already in its queue
+        before stopping.
         """
         self.runnable = False
         ActorRegistry.unregister(self._actor_proxy)
+        logger.debug(u'Stopped %s', self)
 
     def _run(self):
         self.runnable = True

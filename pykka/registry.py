@@ -1,4 +1,7 @@
 import gevent.coros
+import logging
+
+logger = logging.getLogger('pykka')
 
 
 class ActorRegistry(object):
@@ -52,6 +55,7 @@ class ActorRegistry(object):
         """
         with cls._actors_lock:
             cls._actors.append(actor)
+        logger.debug(u'Registered %s', actor)
 
     @classmethod
     def stop_all(cls):
@@ -73,3 +77,4 @@ class ActorRegistry(object):
         """
         with cls._actors_lock:
             cls._actors.remove(actor)
+        logger.debug(u'Unregistered %s', actor)
