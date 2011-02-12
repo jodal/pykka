@@ -36,13 +36,13 @@ class Actor(gevent.Greenlet):
         super(cls, self).__init__()
         self._actor_urn = uuid.uuid4().urn
         self._actor_inbox = gevent.queue.Queue()
-        self._proxy = ActorProxy(self)
+        self._actor_proxy = ActorProxy(self)
 
-        ActorRegistry.register(self._proxy)
+        ActorRegistry.register(self._actor_proxy)
 
         super(Actor, self).start()
 
-        return self._proxy
+        return self._actor_proxy
 
     def stop(self):
         """
@@ -52,7 +52,7 @@ class Actor(gevent.Greenlet):
         message.
         """
         self.runnable = False
-        ActorRegistry.unregister(self._proxy)
+        ActorRegistry.unregister(self._actor_proxy)
 
     def _run(self):
         self.runnable = True
