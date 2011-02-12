@@ -45,3 +45,27 @@ class ProxySendMessageTest(unittest.TestCase):
         self.actor.send({'command': 'a custom message'})
         self.assert_({'command': 'a custom message'} in
             self.actor.received_messages.get())
+
+
+class ProxyReprTest(unittest.TestCase):
+    def setUp(self):
+        class AnyActor(Actor):
+            pass
+        self.actor = AnyActor.start()
+
+    def tearDown(self):
+        self.actor.stop()
+
+    def test_repr_on_proxy_is_wrapped_in_lt_and_gt(self):
+        result = repr(self.actor)
+        self.assert_(result.startswith('<'))
+        self.assert_(result.endswith('>'))
+
+    def test_repr_on_proxy_reveals_that_this_is_a_proxy(self):
+        self.assert_('ActorProxy' in repr(self.actor))
+
+    def test_repr_on_proxy_contains_actor_class_name(self):
+        self.assert_('AnyActor' in repr(self.actor))
+
+    def test_repr_on_proxy_contains_actor_urn(self):
+        self.assert_(self.actor.actor_urn in repr(self.actor))

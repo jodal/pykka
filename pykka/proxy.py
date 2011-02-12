@@ -22,6 +22,12 @@ class ActorProxy(object):
         self._actor_inbox = actor._actor_inbox
         self._actor_attributes = actor.get_attributes()
 
+    def __repr__(self):
+        return '<ActorProxy for %(urn)s of type %(class)s>' % {
+            'urn': self.actor_urn,
+            'class': self._actor_class.__name__,
+        }
+
     def send(self, message):
         """
         Send message to actor.
