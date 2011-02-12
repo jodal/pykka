@@ -17,6 +17,7 @@ class ActorInterruptTest(unittest.TestCase):
         except SystemExit:
             pass
 
+
 class ActorReactTest(unittest.TestCase):
     def setUp(self):
         class ActorWithoutCustomReact(Actor):
@@ -30,11 +31,12 @@ class ActorReactTest(unittest.TestCase):
         except NotImplementedError:
             pass
 
+
 class ActorUrnTest(unittest.TestCase):
     def setUp(self):
-        class AnyActor(Actor):
+        class AnActor(Actor):
             pass
-        self.actors = [AnyActor.start() for _ in range(3)]
+        self.actors = [AnActor.start() for _ in range(3)]
 
     def tearDown(self):
         for actor in self.actors:
@@ -47,3 +49,17 @@ class ActorUrnTest(unittest.TestCase):
         self.assertNotEqual(self.actors[0].actor_urn, self.actors[1].actor_urn)
         self.assertNotEqual(self.actors[1].actor_urn, self.actors[2].actor_urn)
         self.assertNotEqual(self.actors[2].actor_urn, self.actors[0].actor_urn)
+
+
+class ActorStrTest(unittest.TestCase):
+    def setUp(self):
+        class AnActor(Actor):
+            pass
+        self.unstarted_actor = AnActor()
+
+    def test_str_on_proxy_contains_actor_class_name(self):
+        self.assert_('AnActor' in str(self.unstarted_actor))
+
+    def test_str_on_proxy_contains_actor_urn(self):
+        self.assert_(self.unstarted_actor._actor_urn
+            in str(self.unstarted_actor))

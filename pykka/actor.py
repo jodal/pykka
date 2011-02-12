@@ -24,25 +24,59 @@ class Actor(gevent.Greenlet):
     @classmethod
     def start(cls, *args, **kwargs):
         """
-        Start the actor in its own thread and register it in the
-        :class:`ActorRegistry`.
+        Start an actor and register it in the :class:`ActorRegistry`.
 
-        Pass any arguments for the class constructor to this method instead.
+        Any arguments passed to :meth:`start` will be passed on to the class
+        constructor.
 
         Returns a :class:`ActorProxy` which can be used to access the actor in
         a safe manner.
+
+        Behind the scenes, the following is happening when you call
+        :meth:`start`::
+
+            Actor.start()
+                Actor.__new__()
+                    Greenlet.__new__()
+                    Greenlet.__init__()
+                    UUID assignment
+                    Inbox creation
+                    Proxy creation
+                Actor.__init__()        # Your code can run here
+                Greenlet.start()
+                ActorRegistry.register()
         """
-        self = cls(*args, **kwargs)
-        super(cls, self).__init__()
-        self._actor_urn = uuid.uuid4().urn
-        self._actor_inbox = gevent.queue.Queue()
-        self._actor_proxy = ActorProxy(self)
+        obj = cls(*args, **kwargs)
+        super(Actor, obj).start()
+        ActorRegistry.register(obj._actor_proxy)
+        return obj._actor_proxy
 
-        ActorRegistry.register(self._actor_proxy)
+    def __new__(cls, *args, **kwargs):
+        obj = super(Actor, cls).__new__(cls, *args, **kwargs)
+        super(Actor, obj).__init__()
+        obj._actor_urn = uuid.uuid4().urn
+        obj._actor_inbox = gevent.queue.Queue()
+        obj._actor_proxy = ActorProxy(obj)
+        return obj
 
-        super(Actor, self).start()
+    def __init__(self):
+        """
+        Your are free to override :meth:`__init__` and do any setup you need to
+        do. You should not call ``super(YourClass, self).__init__(...)``, as
+        that has already been done when your constructor is called.
 
-        return self._actor_proxy
+        When :meth:`__init__` is called, the internal fields
+        :attr:`_actor_urn`, :attr:`_actor_inbox`, and :attr:`_actor_proxy` are
+        already set, but the actor is not started or registered in
+        :class:`ActorRegistry`.
+        """
+        pass
+
+    def __str__(self):
+        return '%(class)s (%(urn)s)' % {
+            'class': self.__class__.__name__,
+            'urn': self._actor_urn,
+        }
 
     def stop(self):
         """
