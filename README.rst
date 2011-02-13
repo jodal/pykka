@@ -69,7 +69,7 @@ first actor can continue executing.
 
     #! /usr/bin/env python
 
-    from pykka import Actor, ActorProxy
+    from pykka import Actor
 
     class Adder(Actor):
         def add_one(self, i):
