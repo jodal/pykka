@@ -14,26 +14,26 @@ Or specify pool size and IPs to resolve:
     ./resolver.py 3 129.240.2.{1,2,3,4,5,6,7,8,9}
 """
 
+import pykka
+
 from pprint import pprint
 import random
 import socket
 import sys
 
-import pykka
-
 class Resolver(pykka.Actor):
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)
-            print "%s finished resolving %s" % (self.name, ip)
+            print "Finished resolving %s" % ip
             return info[0]
         except:
-            print "%s failed resolving %s" % (self.name, ip)
+            print "Failed resolving %s" % ip
             return None
 
 def run(pool_size, *ips):
     # Start resolvers
-    resolvers = [Resolver.start() for _ in range(pool_size)]
+    resolvers = [Resolver.start_proxy() for _ in range(pool_size)]
 
     # Distribute work by mapping IPs to resolvers (not blocking)
     hosts = []
@@ -52,4 +52,4 @@ if __name__ == '__main__':
         run(int(sys.argv[1]), *sys.argv[2:])
     else:
         ips = ['129.241.93.%s' % i for i in range(1, 50)]
-        run(5, *ips)
+        run(10, *ips)
