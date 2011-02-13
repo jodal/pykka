@@ -3,20 +3,6 @@ import uuid
 
 from pykka import Actor
 
-class ActorInterruptTest(unittest.TestCase):
-    def setUp(self):
-        class ActorWithInterrupt(Actor):
-            def _event_loop(self):
-                raise KeyboardInterrupt
-        self.actor = ActorWithInterrupt()
-
-    def test_issuing_keyboard_interrupt_stops_process(self):
-        try:
-            self.actor._run()
-            self.fail('Should throw SystemExit exception')
-        except SystemExit:
-            pass
-
 
 class ActorReactTest(unittest.TestCase):
     def setUp(self):
@@ -61,5 +47,5 @@ class ActorStrTest(unittest.TestCase):
         self.assert_('AnActor' in str(self.unstarted_actor))
 
     def test_str_on_proxy_contains_actor_urn(self):
-        self.assert_(self.unstarted_actor._actor_urn
+        self.assert_(self.unstarted_actor.actor_urn
             in str(self.unstarted_actor))

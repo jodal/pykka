@@ -1,82 +1,41 @@
-import gevent.event
-
-from pykka.future import Future
-
-
 class ActorProxy(object):
     """
-    Proxy for a running actor which allows the actor to be used through a
-    normal method calls and field accesses.
+    An :class:`ActorProxy` wraps an :class:`ActorRef`. The proxy allows the
+    referenced actor to be used through a normal method calls and field
+    access.
 
-    You should never need to create :class:`ActorProxy` instances yourself.
+    You can create an :class:`ActorProxy` from any :class:`ActorRef` by::
+
+        actor_proxy = ActorProxy(actor_ref)
     """
 
-    #: The actor URN is a universally unique identifier for the actor.
-    #: It may be used for looking up a specific actor using
-    #: :class:`ActorRegistry.get_by_urn`.
-    actor_urn = None
-
-    def __init__(self, actor):
-        self.actor_urn = actor._actor_urn
-        self._actor_class = actor.__class__
-        self._actor_inbox = actor._actor_inbox
-        self._actor_attributes = actor.get_attributes()
+    def __init__(self, actor_ref):
+        self._actor_ref = actor_ref
+        self._actor_attributes = self._get_attributes()
 
     def __repr__(self):
-        return '<ActorProxy for %(urn)s of type %(class)s>' % {
-            'urn': self.actor_urn,
-            'class': self._actor_class.__name__,
-        }
+        return '<ActorProxy for %s>' % self._actor_ref
 
-    def __str__(self):
-        return '%(class)s (%(urn)s)' % {
-            'urn': self.actor_urn,
-            'class': self._actor_class.__name__,
-        }
-
-    def send(self, message):
-        """
-        Send message to actor.
-
-        The message must be a picklable dict.
-        """
-        self._actor_inbox.put(message)
+    def _get_attributes(self):
+        return self._actor_ref.send_request_reply(
+            {'command': 'get_attributes'})
 
     def __getattr__(self, name):
-        if not name in self._actor_attributes:
-            self._actor_attributes = self.get_attributes().get()
-            if not name in self._actor_attributes:
-                raise AttributeError("proxy for '%s' object has no "
-                    "attribute '%s'" % (self._actor_class.__name__, name))
-        if self._actor_attributes[name]:
-            return CallableProxy(self._actor_inbox, name)
+        if name not in self._actor_attributes:
+            self._actor_attributes = self._get_attributes()
+        attr_info = self._actor_attributes.get(name)
+        if attr_info is None:
+            raise AttributeError('%s has no attribute "%s"' % (self, name))
+        if attr_info['callable']:
+            return CallableProxy(self._actor_ref, name)
         else:
-            return self._get_field(name)
-
-    def _get_field(self, name):
-        """Get a field from the actor."""
-        result = gevent.event.AsyncResult()
-        message = {
-            'command': 'read',
-            'attribute': name,
-            'reply_to': result,
-        }
-        self._actor_inbox.put(message)
-        return Future(result)
+            return self._get_actor_field(name)
 
     def __setattr__(self, name, value):
         """Set a field on the actor."""
-        if name.startswith('_') or name.startswith('actor_'):
+        if name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
-        result = gevent.event.AsyncResult()
-        message = {
-            'command': 'write',
-            'attribute': name,
-            'value': value,
-            'reply_to': result,
-        }
-        self._actor_inbox.put(message)
-        return Future(result)
+        return self._set_actor_field(name, value)
 
     def __dir__(self):
         result = ['__class__']
@@ -85,21 +44,35 @@ class ActorProxy(object):
         result += self._actor_attributes.keys()
         return sorted(result)
 
+    def _get_actor_field(self, name):
+        """Get a field from the actor."""
+        message = {
+            'command': 'read',
+            'attribute': name,
+        }
+        return self._actor_ref.send_request_reply(message, block=False)
+
+    def _set_actor_field(self, name, value):
+        """Set a field on the actor."""
+        message = {
+            'command': 'write',
+            'attribute': name,
+            'value': value,
+        }
+        return self._actor_ref.send_request_reply(message, block=False)
+
 
 class CallableProxy(object):
     """Helper class for proxying callables."""
-    def __init__(self, actor_inbox, attribute):
-        self._actor_inbox = actor_inbox
+    def __init__(self, ref, attribute):
+        self._actor_ref = ref
         self._attribute = attribute
 
     def __call__(self, *args, **kwargs):
-        result = gevent.event.AsyncResult()
         message = {
             'command': 'call',
             'attribute': self._attribute,
             'args': args,
             'kwargs': kwargs,
-            'reply_to': result,
         }
-        self._actor_inbox.put(message)
-        return Future(result)
+        return self._actor_ref.send_request_reply(message, block=False)

@@ -1,10 +1,9 @@
 import gevent
 import gevent.queue
 import logging
-import sys
 import uuid
 
-from pykka.proxy import ActorProxy
+from pykka.ref import ActorRef
 from pykka.registry import ActorRegistry
 
 logger = logging.getLogger('pykka')
@@ -46,6 +45,11 @@ class Actor(gevent.Greenlet):
     To stop an actor, call :meth:`Actor.stop()`.
     """
 
+    actor_urn = None
+    actor_inbox = None
+    actor_ref = None
+    actor_runnable = True
+
     @classmethod
     def start(cls, *args, **kwargs):
         """
@@ -54,8 +58,8 @@ class Actor(gevent.Greenlet):
         Any arguments passed to :meth:`start` will be passed on to the class
         constructor.
 
-        Returns a :class:`ActorProxy` which can be used to access the actor in
-        a safe manner.
+        Returns a :class:`ActorRef` which can be used to access the actor in a
+        safe manner.
 
         Behind the scenes, the following is happening when you call
         :meth:`start`::
@@ -66,25 +70,26 @@ class Actor(gevent.Greenlet):
                     Greenlet.__init__()
                     UUID assignment
                     Inbox creation
-                    Proxy creation
+                    ActorRef creation
                 Actor.__init__()        # Your code can run here
                 Greenlet.start()
                 ActorRegistry.register()
         """
         obj = cls(*args, **kwargs)
-        super(Actor, obj).start()
+        gevent.Greenlet.start(obj)
         logger.debug(u'Started %s', obj)
-        ActorRegistry.register(obj._actor_proxy)
-        return obj._actor_proxy
+        ActorRegistry.register(obj.actor_ref)
+        return obj.actor_ref
 
     def __new__(cls, *args, **kwargs):
-        obj = super(Actor, cls).__new__(cls, *args, **kwargs)
-        super(Actor, obj).__init__()
-        obj._actor_urn = uuid.uuid4().urn
-        obj._actor_inbox = gevent.queue.Queue()
-        obj._actor_proxy = ActorProxy(obj)
+        obj = gevent.Greenlet.__new__(cls, *args, **kwargs)
+        gevent.Greenlet.__init__(obj)
+        obj.actor_urn = uuid.uuid4().urn
+        obj.actor_inbox = gevent.queue.Queue()
+        obj.actor_ref = ActorRef(obj)
         return obj
 
+    # pylint: disable=W0231
     def __init__(self):
         """
         Your are free to override :meth:`__init__` and do any setup you need to
@@ -92,47 +97,45 @@ class Actor(gevent.Greenlet):
         that has already been done when your constructor is called.
 
         When :meth:`__init__` is called, the internal fields
-        :attr:`_actor_urn`, :attr:`_actor_inbox`, and :attr:`_actor_proxy` are
+        :attr:`actor_urn`, :attr:`actor_inbox`, and :attr:`actor_ref` are
         already set, but the actor is not started or registered in
         :class:`ActorRegistry`.
         """
         pass
+    # pylint: enable=W0231
 
     def __str__(self):
         return '%(class)s (%(urn)s)' % {
             'class': self.__class__.__name__,
-            'urn': self._actor_urn,
+            'urn': self.actor_urn,
         }
 
     def stop(self):
         """
-        Stop the actor and terminate its thread.
+        Stop the actor.
 
         The actor will finish processing any messages already in its queue
-        before stopping.
+        before stopping. It may not be restarted.
         """
-        self.runnable = False
-        ActorRegistry.unregister(self._actor_proxy)
+        self.actor_runnable = False
+        ActorRegistry.unregister(self.actor_ref)
         logger.debug(u'Stopped %s', self)
 
     def _run(self):
-        self.runnable = True
-        try:
-            while self.runnable:
-                self._event_loop()
-        except KeyboardInterrupt:
-            sys.exit()
-
-    def _event_loop(self):
-        """The actor's event loop which is called continously to handle
-        incoming messages, one at the time."""
-        message = self._actor_inbox.get()
-        response = self._react(message)
-        if 'reply_to' in message:
-            message['reply_to'].set(response)
+        """The Greenlet main method"""
+        self.actor_runnable = True
+        while self.actor_runnable:
+            message = self.actor_inbox.get()
+            response = self._react(message)
+            if 'reply_to' in message:
+                message['reply_to'].set(response)
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""
+        if message.get('command') == 'get_attributes':
+            return self._get_attributes()
+        if message.get('command') == 'stop':
+            return self.stop()
         if message.get('command') == 'call':
             return getattr(self, message['attribute'])(
                 *message['args'], **message['kwargs'])
@@ -146,11 +149,19 @@ class Actor(gevent.Greenlet):
         """May be implemented for the actor to handle custom messages."""
         raise NotImplementedError
 
-    def get_attributes(self):
-        """Returns a dict where the keys are all the available attributes and
-        the value is whether the attribute is callable."""
+    def _is_exposable_attribute(self, attr):
+        """
+        Returns true for any attribute name that may be exposed through
+        :class:`ActorProxy`.
+        """
+        return not attr.startswith('_')
+
+    def _get_attributes(self):
+        """Gathers attribute information needed by :class:`ActorProxy`."""
         result = {}
         for attr in dir(self):
-            if not attr.startswith('_'):
-                result[attr] = callable(getattr(self, attr))
+            if self._is_exposable_attribute(attr):
+                result[attr] = {
+                    'callable': callable(getattr(self, attr)),
+                }
         return result

@@ -11,28 +11,31 @@ class ActorRegistry(object):
     Contains global state, but should be thread-safe.
     """
 
-    _actors = []
-    _actors_lock = gevent.coros.RLock()
+    _actor_refs = []
+    _actor_refs_lock = gevent.coros.RLock()
 
     @classmethod
     def get_all(cls):
-        """Get all running actors"""
-        with cls._actors_lock:
-            return cls._actors[:]
+        """Get :class:`ActorRef` for all running actors"""
+        with cls._actor_refs_lock:
+            return cls._actor_refs[:]
 
     @classmethod
     def get_by_class(cls, actor_class):
-        """Get all running actors of the given class"""
-        with cls._actors_lock:
-            return filter(lambda a: a._actor_class == actor_class, cls._actors)
+        """Get :class:`ActorRef` for all running actors of the given class"""
+        with cls._actor_refs_lock:
+            return [ref for ref in cls._actor_refs
+                if ref.actor_class == actor_class]
 
     @classmethod
     def get_by_class_name(cls, actor_class_name):
-        """Get all running actors of the given class name"""
-        with cls._actors_lock:
-            return filter(
-                lambda a: a._actor_class.__name__ == actor_class_name,
-                cls._actors)
+        """
+        Get :class:`ActorRef` for all running actors of the given class
+        name
+        """
+        with cls._actor_refs_lock:
+            return [ref for ref in cls._actor_refs
+                if ref.actor_class.__name__ == actor_class_name]
 
     @classmethod
     def get_by_urn(cls, actor_urn):
@@ -41,40 +44,45 @@ class ActorRegistry(object):
 
         Returns :class:`None` if no matching actor is found.
         """
-        with cls._actors_lock:
-            actors = filter(lambda a: a.actor_urn == actor_urn, cls._actors)
-            if actors:
-                return actors[0]
+        with cls._actor_refs_lock:
+            refs = [ref for ref in cls._actor_refs
+                if ref.actor_urn == actor_urn]
+            if refs:
+                return refs[0]
 
     @classmethod
-    def register(cls, actor):
+    def register(cls, ref):
         """
-        Register an actor in the registry.
+        Register an :class:`ActorRef` in the registry.
 
-        This is done automatically when an actor is started.
+        This is done automatically when an actor is started, e.g. by calling
+        :meth:`Actor.start`.
         """
-        with cls._actors_lock:
-            cls._actors.append(actor)
-        logger.debug(u'Registered %s', actor)
-
-    @classmethod
-    def stop_all(cls):
-        """
-        Stops all running actors.
-
-        Returns a list of futures for all the stopping actors, so that you can
-        block until they have stopped if you need to.
-        """
-        with cls._actors_lock:
-            return [a.stop() for a in cls._actors]
+        with cls._actor_refs_lock:
+            cls._actor_refs.append(ref)
+        logger.debug(u'Registered %s', ref)
 
     @classmethod
-    def unregister(cls, actor):
+    def stop_all(cls, block=True, timeout=None):
         """
-        Remove an actor from the registry.
+        Stop all running actors.
 
-        This is done automatically when an actor is stopped.
+        If ``block`` is :class:`True`, it blocks forever or, if not
+        :class:`None`, until ``timeout`` seconds has passed.
+
+        If ``block`` is False, it returns a list with a future for each stop
+        action.
         """
-        with cls._actors_lock:
-            cls._actors.remove(actor)
-        logger.debug(u'Unregistered %s', actor)
+        return [ref.stop(block, timeout) for ref in cls.get_all()]
+
+    @classmethod
+    def unregister(cls, ref):
+        """
+        Remove an :class:`ActorRef` from the registry.
+
+        This is done automatically when an actor is stopped, e.g. by calling
+        :meth:`Actor.stop`.
+        """
+        with cls._actor_refs_lock:
+            cls._actor_refs.remove(ref)
+        logger.debug(u'Unregistered %s', ref)
