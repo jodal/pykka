@@ -11,7 +11,7 @@ __all__ = ['Actor', 'ActorProxy', 'ActorRef', 'ActorRegistry', 'CallableProxy',
     'get_all', 'wait_all']
 
 
-VERSION = (0, 5)
+VERSION = (0, 6)
 
 def get_version():
     """Returns a formatted version number"""
