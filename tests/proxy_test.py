@@ -14,6 +14,17 @@ class ActorWithAttributesAndCallables(Actor):
         pass
 
 
+class ProxyFromActorStartTest(unittest.TestCase):
+    def setUp(self):
+        self.proxy = AnActor.start_proxy()
+
+    def tearDown(self):
+        self.proxy.stop()
+
+    def test_proxy_is_a_proxy(self):
+        self.assert_(isinstance(self.proxy, ActorProxy))
+
+
 class ProxyDirTest(unittest.TestCase):
     def setUp(self):
         self.proxy = ActorProxy(ActorWithAttributesAndCallables.start())

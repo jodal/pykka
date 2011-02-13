@@ -3,6 +3,7 @@ import gevent.queue
 import logging
 import uuid
 
+from pykka.proxy import ActorProxy
 from pykka.ref import ActorRef
 from pykka.registry import ActorRegistry
 
@@ -80,6 +81,14 @@ class Actor(gevent.Greenlet):
         logger.debug(u'Started %s', obj)
         ActorRegistry.register(obj.actor_ref)
         return obj.actor_ref
+
+    @classmethod
+    def start_proxy(cls, *args, **kwargs):
+        """
+        Just like :meth:`start`, but wraps the returned :class:`ActorRef` in a
+        :class:`ActorProxy`.
+        """
+        return ActorProxy(cls.start(*args, **kwargs))
 
     def __new__(cls, *args, **kwargs):
         obj = gevent.Greenlet.__new__(cls, *args, **kwargs)
