@@ -70,8 +70,8 @@ class ActorRegistry(object):
         If ``block`` is :class:`True`, it blocks forever or, if not
         :class:`None`, until ``timeout`` seconds has passed.
 
-        If ``block`` is False, it returns a list with a future for each stop
-        action.
+        If ``block`` is :class:`False`, it returns a list with a future for
+        each stop action.
         """
         return [ref.stop(block, timeout) for ref in cls.get_all()]
 
