@@ -13,7 +13,7 @@ class PlainActor(Actor):
             self.stored_messages.append(message)
 
 if __name__ == '__main__':
-    actor = PlainActor().start()
+    actor = PlainActor.start()
     actor.send_one_way({'no': 'Norway', 'se': 'Sweden'})
     actor.send_one_way({'a': 3, 'b': 4, 'c': 5})
     actor.send_request_reply({'command': 'print'})
