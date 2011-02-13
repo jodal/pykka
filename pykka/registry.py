@@ -51,7 +51,7 @@ class ActorRegistry(object):
                 return refs[0]
 
     @classmethod
-    def register(cls, ref):
+    def register(cls, actor_ref):
         """
         Register an :class:`ActorRef` in the registry.
 
@@ -59,8 +59,8 @@ class ActorRegistry(object):
         :meth:`Actor.start`.
         """
         with cls._actor_refs_lock:
-            cls._actor_refs.append(ref)
-        logger.debug(u'Registered %s', ref)
+            cls._actor_refs.append(actor_ref)
+        logger.debug(u'Registered %s', actor_ref)
 
     @classmethod
     def stop_all(cls, block=True, timeout=None):
@@ -76,7 +76,7 @@ class ActorRegistry(object):
         return [ref.stop(block, timeout) for ref in cls.get_all()]
 
     @classmethod
-    def unregister(cls, ref):
+    def unregister(cls, actor_ref):
         """
         Remove an :class:`ActorRef` from the registry.
 
@@ -84,5 +84,5 @@ class ActorRegistry(object):
         :meth:`Actor.stop`.
         """
         with cls._actor_refs_lock:
-            cls._actor_refs.remove(ref)
-        logger.debug(u'Unregistered %s', ref)
+            cls._actor_refs.remove(actor_ref)
+        logger.debug(u'Unregistered %s', actor_ref)

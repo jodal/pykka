@@ -85,7 +85,7 @@ class Actor(gevent.Greenlet):
     @classmethod
     def start_proxy(cls, *args, **kwargs):
         """
-        Just like :meth:`start`, but wraps the returned :class:`ActorRef` in a
+        Just like :meth:`start`, but wraps the returned :class:`ActorRef` in an
         :class:`ActorProxy`.
         """
         return ActorProxy(cls.start(*args, **kwargs))
