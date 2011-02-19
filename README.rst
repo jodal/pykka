@@ -2,13 +2,12 @@
 Pykka
 =====
 
-Pykka implements the actor model for concurrent programming on top of the
-`gevent <http://www.gevent.org/>`_ library, which again is based on greenlet
-and libevent.
+The goal of Pykka is to provide easy to use concurrency abstractions for Python
+by using the `actor model <http://en.wikipedia.org/wiki/Actor_model>`_.
 
-The goal of Pykka is to provide easy to use concurrency abstraction for Python.
-And since Pykka is built on gevent, the performance should be quite all right
-too.
+Pykka is built on the `gevent <http://www.gevent.org/>`_ library. gevent is a
+coroutine-based Python networking library that uses greenlet to provide a
+high-level synchronous API on top of libevent event loop.
 
 
 Project resources
