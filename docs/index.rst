@@ -9,27 +9,7 @@ This method can decide what action is needed in response to the message. The
 messages are expected to be Python dictionaries, containing anything that can
 be serialized.
 
-::
-
-    #! /usr/bin/env python
-
-    from pykka import Actor
-
-    class PlainActor(Actor):
-        def __init__(self):
-            self.stored_messages = []
-
-        def react(self, message):
-            if message.get('command') == 'get_messages':
-                return self.stored_messages
-            else:
-                self.stored_messages.append(message)
-
-    if __name__ == '__main__':
-        actor = PlainActor.start()
-        actor.send_one_way({'no': 'Norway', 'se': 'Sweden'})
-        actor.send_one_way({'a': 3, 'b': 4, 'c': 5})
-        print actor.send_request_reply({'command': 'get_messages'})
+.. literalinclude:: ../examples/plain_actor.py
 
 We get the following output::
 
@@ -55,31 +35,7 @@ They seemingly communicate with each other by calling regular methods, but,
 under the hood, the calls are serialized and sent the other actor while the
 first actor can continue executing.
 
-::
-
-    #! /usr/bin/env python
-
-    from pykka import Actor
-
-    class Adder(Actor):
-        def add_one(self, i):
-            print '%s is increasing %d' % (self, i)
-            return i + 1
-
-    class Bookkeeper(Actor):
-        def __init__(self, adder):
-            self.adder = adder
-
-        def count_to(self, target):
-            i = 0
-            while i < target:
-                i = self.adder.add_one(i).get()
-                print '%s got %d back' % (self, i)
-
-    if __name__ == '__main__':
-        adder = Adder.start_proxy()
-        bookkeeper = Bookkeeper.start_proxy(adder)
-        bookkeeper.count_to(10).wait()
+.. literalinclude:: ../examples/counter.py
 
 We get the following output::
 
