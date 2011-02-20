@@ -13,7 +13,7 @@ be serialized.
 
 We get the following output::
 
-    $ PYTHONPATH=. examples/plain_actor.py
+    $ PYTHONPATH=. python examples/plain_actor.py
     [{'se': 'Sweden', 'no': 'Norway'}, {'a': 3, 'c': 5, 'b': 4}]
 
 
@@ -39,7 +39,7 @@ first actor can continue executing.
 
 We get the following output::
 
-    $ PYTHONPATH=. examples/counter.py
+    $ PYTHONPATH=. python examples/counter.py
     Adder (urn:uuid:35d5216f-332b-4c04-97bb-a02016ba4121) is increasing 0
     Bookkeeper (urn:uuid:fd8df21d-8a58-451b-a1b8-77bd19d868b8) got 1 back
     Adder (urn:uuid:35d5216f-332b-4c04-97bb-a02016ba4121) is increasing 1
