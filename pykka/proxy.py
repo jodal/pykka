@@ -31,7 +31,7 @@ class ActorProxy(object):
 
     def _get_attributes(self):
         return self._actor_ref.send_request_reply(
-            {'command': 'get_attributes'})
+            {'command': 'pykka_get_attributes'})
 
     def __getattr__(self, name):
         """Get a field or callable from the actor."""
@@ -61,7 +61,7 @@ class ActorProxy(object):
     def _get_actor_field(self, name):
         """Get a field from the actor."""
         message = {
-            'command': 'read',
+            'command': 'pykka_getattr',
             'attribute': name,
         }
         return self._actor_ref.send_request_reply(message, block=False)
@@ -69,7 +69,7 @@ class ActorProxy(object):
     def _set_actor_field(self, name, value):
         """Set a field on the actor."""
         message = {
-            'command': 'write',
+            'command': 'pykka_setattr',
             'attribute': name,
             'value': value,
         }
@@ -84,7 +84,7 @@ class _CallableProxy(object):
 
     def __call__(self, *args, **kwargs):
         message = {
-            'command': 'call',
+            'command': 'pykka_call',
             'attribute': self._attribute,
             'args': args,
             'kwargs': kwargs,

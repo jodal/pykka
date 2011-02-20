@@ -171,22 +171,25 @@ class Actor(gevent.Greenlet):
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""
-        if message.get('command') == 'get_attributes':
+        if message.get('command') == 'pykka_get_attributes':
             return self._get_attributes()
-        if message.get('command') == 'stop':
+        if message.get('command') == 'pykka_stop':
             return self.stop()
-        if message.get('command') == 'call':
+        if message.get('command') == 'pykka_call':
             return getattr(self, message['attribute'])(
                 *message['args'], **message['kwargs'])
-        if message.get('command') == 'read':
+        if message.get('command') == 'pykka_getattr':
             return getattr(self, message['attribute'])
-        if message.get('command') == 'write':
+        if message.get('command') == 'pykka_setattr':
             return setattr(self, message['attribute'], message['value'])
         return self.react(message)
 
     def react(self, message):
         """
         May be implemented for the actor to handle non-proxy messages.
+
+        Messages where the value of the 'command' key matches 'pykka_*' are
+        reserved for internal use in Pykka.
 
         :param message: the message to handle
         :type message: picklable dict
@@ -295,4 +298,4 @@ class ActorRef(object):
 
         ``block`` and ``timeout`` works as for :meth:`send_request_reply`.
         """
-        self.send_request_reply({'command': 'stop'}, block, timeout)
+        self.send_request_reply({'command': 'pykka_stop'}, block, timeout)
