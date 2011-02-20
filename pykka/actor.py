@@ -40,21 +40,35 @@ class Actor(gevent.Greenlet):
 
     1. subclass :class:`Actor`,
     2. implement your methods, including :meth:`__init__`, as usual,
-    3. call :meth:`Actor.start(...)` on the actor class, passing the method any
+    3. call :meth:`Actor.start` on the actor class, passing the method any
        arguments for your constructor.
 
-    To stop an actor, call :meth:`Actor.stop()`.
-    """
+    To stop an actor, call :meth:`Actor.stop()` or :meth:`ActorRef.stop()`.
 
-    actor_urn = None
-    actor_inbox = None
-    actor_ref = None
-    actor_runnable = True
+    For example::
+
+        from pykka.actor import Actor
+
+        class MyActor(Actor):
+            def __init__(self, my_arg):
+                ... # my init code
+
+            def react(self, message):
+                ... # my react code for a plain actor
+
+            def a_method(self, ...):
+                ... # my regular method to be used through an ActorProxy
+
+        my_arg = ... # some value
+        my_actor_ref = MyActor.start(my_arg)
+        my_actor_ref.stop()
+    """
 
     @classmethod
     def start(cls, *args, **kwargs):
         """
-        Start an actor and register it in the :class:`ActorRegistry`.
+        Start an actor and register it in the
+        :class:`pykka.registry.ActorRegistry`.
 
         Any arguments passed to :meth:`start` will be passed on to the class
         constructor.
@@ -90,6 +104,22 @@ class Actor(gevent.Greenlet):
         """
         return ActorProxy(cls.start(*args, **kwargs))
 
+    #: The actor URN string is a universally unique identifier for the actor.
+    #: It may be used for looking up a specific actor using
+    #: :meth:`pykka.registry.ActorRegistry.get_by_urn`.
+    actor_urn = None
+
+    #: The actors inbox. Use :meth:`ActorRef.send_one_way` and friends to put
+    #: messages in the inbox.
+    actor_inbox = None
+
+    #: The actor's :class:`ActorRef` instance.
+    actor_ref = None
+
+    #: Wether or not the actor should continue processing messages. Use
+    #: :meth:`stop` to change it.
+    actor_runnable = True
+
     def __new__(cls, *args, **kwargs):
         obj = gevent.Greenlet.__new__(cls, *args, **kwargs)
         gevent.Greenlet.__init__(obj)
@@ -108,7 +138,7 @@ class Actor(gevent.Greenlet):
         When :meth:`__init__` is called, the internal fields
         :attr:`actor_urn`, :attr:`actor_inbox`, and :attr:`actor_ref` are
         already set, but the actor is not started or registered in
-        :class:`ActorRegistry`.
+        :class:`pykka.registry.ActorRegistry`.
         """
         pass
     # pylint: enable=W0231
@@ -155,7 +185,14 @@ class Actor(gevent.Greenlet):
         return self.react(message)
 
     def react(self, message):
-        """May be implemented for the actor to handle custom messages."""
+        """
+        May be implemented for the actor to handle non-proxy messages.
+
+        :param message: the message to handle
+        :type message: picklable dict
+
+        :returns: anything that should be sent as a reply to the sender
+        """
         raise NotImplementedError
 
     def _is_exposable_attribute(self, attr):
@@ -181,16 +218,14 @@ class ActorRef(object):
     Reference to a running actor which may safely be passed around.
 
     :class:`ActorRef` instances are returned by :meth:`Actor.start` and the
-    lookup methods in :class:`ActorRegistry`. You should never need to create
-    :class:`ActorRef` instances yourself.
+    lookup methods in :class:`pykka.registry.ActorRegistry`. You should never
+    need to create :class:`ActorRef` instances yourself.
 
     :param actor: the actor to wrap
     :type actor: :class:`Actor`
     """
 
-    #: The actor URN is a universally unique identifier for the actor.
-    #: It may be used for looking up a specific actor using
-    #: :class:`ActorRegistry.get_by_urn`.
+    #: See :attr:`Actor.actor_urn`
     actor_urn = None
 
     def __init__(self, actor):

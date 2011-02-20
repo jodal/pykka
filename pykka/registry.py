@@ -16,13 +16,24 @@ class ActorRegistry(object):
 
     @classmethod
     def get_all(cls):
-        """Get :class:`ActorRef` for all running actors"""
+        """
+        Get :class:`pykka.actor.ActorRef` for all running actors.
+
+        :returns: list of :class:`pykka.actor.ActorRef`
+        """
         with cls._actor_refs_lock:
             return cls._actor_refs[:]
 
     @classmethod
     def get_by_class(cls, actor_class):
-        """Get :class:`ActorRef` for all running actors of the given class"""
+        """
+        Get :class:`ActorRef` for all running actors of the given class.
+
+        :param actor_class: actor class
+        :type actor_class: :class:`pykka.actor.Actor` subclass
+
+        :returns: list of :class:`pykka.actor.ActorRef`
+        """
         with cls._actor_refs_lock:
             return [ref for ref in cls._actor_refs
                 if ref.actor_class == actor_class]
@@ -31,7 +42,12 @@ class ActorRegistry(object):
     def get_by_class_name(cls, actor_class_name):
         """
         Get :class:`ActorRef` for all running actors of the given class
-        name
+        name.
+
+        :param actor_class_name: actor class name
+        :type actor_class_name: string
+
+        :returns: list of :class:`pykka.actor.ActorRef`
         """
         with cls._actor_refs_lock:
             return [ref for ref in cls._actor_refs
@@ -42,7 +58,10 @@ class ActorRegistry(object):
         """
         Get an actor by its universally unique URN.
 
-        Returns :class:`None` if no matching actor is found.
+        :param actor_urn: actor URN
+        :type actor_urn: string
+
+        :returns: :class:`pykka.actor.ActorRef` or :class:`None` if not found
         """
         with cls._actor_refs_lock:
             refs = [ref for ref in cls._actor_refs
@@ -56,7 +75,10 @@ class ActorRegistry(object):
         Register an :class:`ActorRef` in the registry.
 
         This is done automatically when an actor is started, e.g. by calling
-        :meth:`Actor.start`.
+        :meth:`pykka.actor.Actor.start`.
+
+        :param actor_ref: reference to the actor to register
+        :type actor_ref: :class:`pykka.actor.ActorRef`
         """
         with cls._actor_refs_lock:
             cls._actor_refs.append(actor_ref)
@@ -67,21 +89,25 @@ class ActorRegistry(object):
         """
         Stop all running actors.
 
-        If ``block`` is :class:`True`, it blocks forever or, if not
-        :class:`None`, until ``timeout`` seconds has passed.
+        ``block`` and ``timeout`` works as for
+        :meth:`pykka.actor.ActorRef.stop`.
 
-        If ``block`` is :class:`False`, it returns a list with a future for
-        each stop action.
+        :returns: If not blocking, a list with a future for each stop action.
+            If blocking, a list of return values from
+            :meth:`pykka.actor.ActorRef.stop`.
         """
         return [ref.stop(block, timeout) for ref in cls.get_all()]
 
     @classmethod
     def unregister(cls, actor_ref):
         """
-        Remove an :class:`ActorRef` from the registry.
+        Remove an :class:`pykka.actor.ActorRef` from the registry.
 
         This is done automatically when an actor is stopped, e.g. by calling
-        :meth:`Actor.stop`.
+        :meth:`pykka.actor.Actor.stop`.
+
+        :param actor_ref: reference to the actor to unregister
+        :type actor_ref: :class:`pykka.actor.ActorRef`
         """
         with cls._actor_refs_lock:
             cls._actor_refs.remove(actor_ref)
