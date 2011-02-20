@@ -35,7 +35,7 @@ actors.
 Plain actors
 ------------
 
-Plain actors get all incoming messages delivered to :meth:`Actor.react`.
+Plain actors get all incoming messages delivered to the :meth:`react` method.
 This method can decide what action is needed in response to the message. The
 messages are expected to be Python dictionaries, containing anything that can
 be serialized.
@@ -51,20 +51,20 @@ We get the following output::
 Typed actors
 ------------
 
-If you wrap a plain actor in an :class:`ActorProxy`, Pykka let you call methods
-on the actor like you would on a regular object, but it runs the code in the
-actor. Similarly, when you access the actor's fields, they are read in the
-actor, serialized and copied to the reader.
+If you wrap a plain actor in an :class:`pykka.proxy.ActorProxy`, Pykka let you
+call methods on the actor like you would on a regular object, but it runs the
+code in the actor. Similarly, when you access the actor's fields, they are read
+in the actor, serialized and copied to the reader.
 
 Both method calling and attribute reads immediately returns future objects.
 This means that your code can continue while the result is calculated in some
 other actor, and that you're code will not block until you actually use the
 returned value.
 
-Here is a small example of two actors wrapped in :class:`ActorProxy` objects.
-They seemingly communicate with each other by calling regular methods, but,
-under the hood, the calls are serialized and sent the other actor while the
-first actor can continue executing.
+Here is a small example of two actors wrapped in
+:class:`pykka.proxy.ActorProxy` objects.  They seemingly communicate with each
+other by calling regular methods, but, under the hood, the calls are serialized
+and sent the other actor while the first actor can continue executing.
 
 .. literalinclude:: ../examples/counter.py
 
