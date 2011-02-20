@@ -6,10 +6,7 @@ VERSION = (0, 6)
 
 def get_version():
     """Returns Pykka's version as a formatted string"""
-    version = '%s.%s' % (VERSION[0], VERSION[1])
-    if len(VERSION) > 2:
-        version = '%s.%s' % (version, VERSION[2])
-    return version
+    return '.'.join(map(str, VERSION))
 
 def get_all(futures, timeout=None):
     """
