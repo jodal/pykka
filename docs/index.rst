@@ -96,5 +96,30 @@ the full license text.
 Pykka API
 =========
 
+
+pykka
+=====
+
 .. automodule:: pykka
+    :members:
+
+
+pykka.actor
+===========
+
+.. automodule:: pykka.actor
+    :members:
+
+
+pykka.proxy
+===========
+
+.. automodule:: pykka.proxy
+    :members:
+
+
+pykka.registry
+==============
+
+.. automodule:: pykka.registry
     :members:
