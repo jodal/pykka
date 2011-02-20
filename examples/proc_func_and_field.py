@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from pykka import Actor
+from pykka.actor import Actor
 
 import gevent
 import threading

@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from pykka import Actor
+from pykka.actor import Actor
 
 class Adder(Actor):
     def add_one(self, i):

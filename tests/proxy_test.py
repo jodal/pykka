@@ -1,6 +1,7 @@
 import unittest
 
-from pykka import Actor, ActorProxy
+from pykka.actor import Actor
+from pykka.proxy import ActorProxy
 
 class AnActor(Actor):
     pass

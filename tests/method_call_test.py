@@ -1,6 +1,6 @@
 import unittest
 
-from pykka import Actor, ActorProxy
+from pykka.actor import Actor
 
 class ActorWithMethods(Actor):
     foo = 'bar'
@@ -16,7 +16,7 @@ class ActorExtendableAtRuntime(Actor):
 
 class MethodCallTest(unittest.TestCase):
     def setUp(self):
-        self.proxy = ActorProxy(ActorWithMethods.start())
+        self.proxy = ActorWithMethods.start_proxy()
 
     def tearDown(self):
         self.proxy.stop()
@@ -44,7 +44,7 @@ class MethodCallTest(unittest.TestCase):
 
 class MethodAddedAtRuntimeTest(unittest.TestCase):
     def setUp(self):
-        self.proxy = ActorProxy(ActorExtendableAtRuntime().start())
+        self.proxy = ActorExtendableAtRuntime().start_proxy()
 
     def tearDown(self):
         self.proxy.stop()

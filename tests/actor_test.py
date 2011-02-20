@@ -1,7 +1,7 @@
 import unittest
 import uuid
 
-from pykka import Actor
+from pykka.actor import Actor
 
 
 class ActorReactTest(unittest.TestCase):

@@ -2,7 +2,7 @@ import gevent
 import gevent.event
 import unittest
 
-from pykka import Actor, ActorRef
+from pykka.actor import Actor, ActorRef
 
 class AnActor(Actor):
     pass

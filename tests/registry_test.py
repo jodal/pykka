@@ -1,6 +1,7 @@
 import unittest
 
-from pykka import Actor, ActorRegistry
+from pykka.actor import Actor
+from pykka.registry import ActorRegistry
 
 class AnActor(Actor):
     pass

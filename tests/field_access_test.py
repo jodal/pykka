@@ -1,12 +1,12 @@
 import unittest
 
-from pykka import Actor, ActorProxy
+from pykka.actor import Actor
 
 class FieldAccessTest(unittest.TestCase):
     def setUp(self):
         class ActorWithField(Actor):
             foo = 'bar'
-        self.proxy = ActorProxy(ActorWithField.start())
+        self.proxy = ActorWithField.start_proxy()
 
     def tearDown(self):
         self.proxy.stop()

@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from pykka import Actor
+from pykka.actor import Actor
 
 class PlainActor(Actor):
     def __init__(self):

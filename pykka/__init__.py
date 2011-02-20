@@ -1,16 +1,6 @@
 import gevent.monkey
 gevent.monkey.patch_all()
 
-from pykka.actor import Actor
-from pykka.proxy import ActorProxy, CallableProxy
-from pykka.ref import ActorRef
-from pykka.registry import ActorRegistry
-
-
-__all__ = ['Actor', 'ActorProxy', 'ActorRef', 'ActorRegistry', 'CallableProxy',
-    'get_all', 'wait_all']
-
-
 VERSION = (0, 6)
 
 def get_version():
