@@ -9,6 +9,10 @@ Pykka is built on the `gevent <http://www.gevent.org/>`_ library. gevent is a
 coroutine-based Python networking library that uses greenlet to provide a
 high-level synchronous API on top of libevent event loop.
 
+Much of the naming in Pykka is inspired by the `Akka <http://akka.io/>`_
+project which implements actors on the JVM. Though, Pykka does not aim to be a
+Python port of Akka.
+
 
 Project resources
 =================
