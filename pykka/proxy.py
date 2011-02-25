@@ -35,13 +35,15 @@ class ActorProxy(object):
 
     def __getattr__(self, name):
         """Get a field or callable from the actor."""
-        if name not in self._actor_attributes:
+        if (name,) not in self._actor_attributes:
             self._actor_attributes = self._get_attributes()
-        attr_info = self._actor_attributes.get(name)
+        attr_info = self._actor_attributes.get((name,))
         if attr_info is None:
             raise AttributeError('%s has no attribute "%s"' % (self, name))
         if attr_info['callable']:
             return _CallableProxy(self._actor_ref, name)
+        elif attr_info['traversable']:
+            raise NotImplementedError # TODO Continue here
         else:
             return self._get_actor_field(name)
 
@@ -55,7 +57,7 @@ class ActorProxy(object):
         result = ['__class__']
         result += self.__class__.__dict__.keys()
         result += self.__dict__.keys()
-        result += self._actor_attributes.keys()
+        result += [attr_path[0] for attr_path in self._actor_attributes.keys()]
         return sorted(result)
 
     def _get_actor_field(self, name):

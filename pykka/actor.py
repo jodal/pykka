@@ -174,21 +174,44 @@ class Actor(gevent.Greenlet):
         """
         raise NotImplementedError
 
-    def _is_exposable_attribute(self, attr):
+    def _is_exposable_attribute(self, attr_name):
         """
         Returns true for any attribute name that may be exposed through
         :class:`ActorProxy`.
         """
-        return not attr.startswith('_')
+        return not attr_name.startswith('_')
+
+    def _is_traversable_attribute(self, attr):
+        """
+        Returns true for any attribute that may be traversed from another
+        actor through :class:`ActorProxy`.
+        """
+        return hasattr(attr, 'pykka_traversable')
+
+    def _get_attribute_from_path(self, attr_path):
+        """
+        Traverses the path and returns the attribute at the end of the path.
+        """
+        attr = self
+        for attr_name in attr_path:
+            attr = getattr(attr, attr_name)
+        return attr
 
     def _get_attributes(self):
         """Gathers attribute information needed by :class:`ActorProxy`."""
         result = {}
-        for attr in dir(self):
-            if self._is_exposable_attribute(attr):
-                result[attr] = {
-                    'callable': callable(getattr(self, attr)),
+        attr_paths_to_visit = [[attr_name] for attr_name in dir(self)]
+        while attr_paths_to_visit:
+            attr_path = attr_paths_to_visit.pop(0)
+            if self._is_exposable_attribute(attr_path[-1]):
+                attr = self._get_attribute_from_path(attr_path)
+                result[tuple(attr_path)] = {
+                    'callable': callable(attr),
+                    'traversable': self._is_traversable_attribute(attr),
                 }
+                if self._is_traversable_attribute(attr):
+                    for attr_name in dir(attr):
+                        attr_paths_to_visit.append(attr_path + [attr_name])
         return result
 
 
