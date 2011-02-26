@@ -82,7 +82,7 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             cls._actor_refs.append(actor_ref)
-        logger.debug(u'Registered %s', actor_ref)
+        logger.debug('Registered %s', actor_ref)
 
     @classmethod
     def stop_all(cls, block=True, timeout=None):
@@ -111,4 +111,4 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             cls._actor_refs.remove(actor_ref)
-        logger.debug(u'Unregistered %s', actor_ref)
+        logger.debug('Unregistered %s', actor_ref)

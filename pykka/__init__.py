@@ -20,7 +20,7 @@ def get_all(futures, timeout=None):
 
     :returns: list of results
     """
-    return map(lambda future: future.get(timeout=timeout), futures)
+    return [future.get(timeout=timeout) for future in futures]
 
 def wait_all(futures, timeout=None):
     """

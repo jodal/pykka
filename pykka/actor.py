@@ -1,3 +1,4 @@
+import collections
 import gevent
 import gevent.event
 import gevent.queue
@@ -68,7 +69,7 @@ class Actor(gevent.Greenlet):
         """
         obj = cls(*args, **kwargs)
         gevent.Greenlet.start(obj)
-        logger.debug(u'Started %s', obj)
+        logger.debug('Started %s', obj)
         ActorRegistry.register(obj.actor_ref)
         return obj.actor_ref
 
@@ -134,7 +135,7 @@ class Actor(gevent.Greenlet):
         """
         self.actor_runnable = False
         ActorRegistry.unregister(self.actor_ref)
-        logger.debug(u'Stopped %s', self)
+        logger.debug('Stopped %s', self)
 
     def _run(self):
         """The Greenlet main method"""
@@ -214,7 +215,7 @@ class Actor(gevent.Greenlet):
             if self._is_exposable_attribute(attr_path[-1]):
                 attr = self._get_attribute_from_path(attr_path)
                 result[tuple(attr_path)] = {
-                    'callable': callable(attr),
+                    'callable': isinstance(attr, collections.Callable),
                     'traversable': self._is_traversable_attribute(attr),
                 }
                 if self._is_traversable_attribute(attr):
