@@ -95,6 +95,29 @@ We get the following output::
 See the ``examples/`` dir for more runnable examples.
 
 
+Traversable attributes
+^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes you don't care about an actor's attribute, but you want to access the
+attributes of the attribute, or call methods on the attribute. For this case,
+Pykka supports traversable attributes. By marking an actor attribute as
+traversable, Pykka will not return the attribute when accessed, but wrap it in
+a new :class:`pykka.proxy.ActorProxy`. When the wrapped attribute is used,
+Pykka will get/set attributes or call methods on the actor attribute, just as
+it normally would on the actor, if wrapped in an actor proxy.
+
+To mark an attribute as traversable, simply add the :attr:`pykka_traversable`
+to it::
+
+    class AnActor(Actor):
+        an_attribute = SomeOtherObject()
+        an_attribute.pykka_traversable = True
+
+You can mark the attributes of attributes of the actor as traversable, and so
+on, as long as all objects in the path from the actor to the deepest nested
+attribute is marked as traversable.
+
+
 Installation
 ============
 
