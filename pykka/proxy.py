@@ -32,7 +32,8 @@ class ActorProxy(object):
             {'command': 'pykka_get_attributes'})
 
     def __repr__(self):
-        return '<ActorProxy for %s>' % (self._actor_ref)
+        return '<ActorProxy for %s, attr_path=%s>' % (self._actor_ref,
+            self._attr_path)
 
     def __dir__(self):
         result = ['__class__']

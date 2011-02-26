@@ -3,14 +3,22 @@ import unittest
 from pykka.actor import Actor
 from pykka.proxy import ActorProxy
 
+
+class SomeObject(object):
+    baz = 'bar.baz'
+
+
 class AnActor(Actor):
-    pass
+    bar = SomeObject()
+    bar.pykka_traversable = True
 
 
 class ActorWithAttributesAndCallables(Actor):
-    foo = 'bar'
+    foo = 'foo'
+
     def __init__(self):
         self.baz = 'quox'
+
     def func(self):
         pass
 
@@ -67,6 +75,9 @@ class ProxyReprAndStrTest(unittest.TestCase):
 
     def test_repr_contains_actor_urn(self):
         self.assert_(self.proxy._actor_ref.actor_urn in repr(self.proxy))
+
+    def test_repr_contains_attr_path(self):
+        self.assert_('bar' in repr(self.proxy.bar))
 
     def test_str_contains_actor_class_name(self):
         self.assert_('AnActor' in str(self.proxy))
