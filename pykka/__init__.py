@@ -1,6 +1,3 @@
-import gevent.monkey
-gevent.monkey.patch_all()
-
 #: Pykka's version as a tuple that can be used for comparison
 VERSION = (0, 8)
 
