@@ -141,9 +141,13 @@ class Actor(gevent.Greenlet):
         self.actor_runnable = True
         while self.actor_runnable:
             message = self.actor_inbox.get()
-            response = self._react(message)
-            if 'reply_to' in message:
-                message['reply_to'].set(response)
+            try:
+                response = self._react(message)
+                if 'reply_to' in message:
+                    message['reply_to'].set(response)
+            except Exception as exception:
+                if 'reply_to' in message:
+                    message['reply_to'].set_exception(exception)
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""

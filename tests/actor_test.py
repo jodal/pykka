@@ -3,16 +3,17 @@ import uuid
 
 from pykka.actor import Actor
 
+class AnActor(Actor):
+    pass
+
 
 class ActorReactTest(unittest.TestCase):
     def setUp(self):
-        class ActorWithoutCustomReact(Actor):
-            pass
-        self.actor = ActorWithoutCustomReact()
+        self.actor = AnActor.start()
 
     def test_sending_unexpected_message_raises_not_implemented_error(self):
         try:
-            self.actor._react({'unhandled': 'message'})
+            self.actor.send_request_reply({'unhandled': 'message'})
             self.fail('Should throw NotImplementedError')
         except NotImplementedError:
             pass
@@ -20,8 +21,6 @@ class ActorReactTest(unittest.TestCase):
 
 class ActorUrnTest(unittest.TestCase):
     def setUp(self):
-        class AnActor(Actor):
-            pass
         self.actors = [AnActor.start() for _ in range(3)]
 
     def tearDown(self):
@@ -39,8 +38,6 @@ class ActorUrnTest(unittest.TestCase):
 
 class ActorStrTest(unittest.TestCase):
     def setUp(self):
-        class AnActor(Actor):
-            pass
         self.unstarted_actor = AnActor()
 
     def test_str_on_proxy_contains_actor_class_name(self):
