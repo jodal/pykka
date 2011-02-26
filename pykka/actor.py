@@ -152,12 +152,16 @@ class Actor(gevent.Greenlet):
         if message.get('command') == 'pykka_stop':
             return self.stop()
         if message.get('command') == 'pykka_call':
-            return getattr(self, message['attribute'])(
-                *message['args'], **message['kwargs'])
+            callee = self._get_attribute_from_path(message['attr_path'])
+            return callee(*message['args'], **message['kwargs'])
         if message.get('command') == 'pykka_getattr':
-            return getattr(self, message['attribute'])
+            attr = self._get_attribute_from_path(message['attr_path'])
+            return attr
         if message.get('command') == 'pykka_setattr':
-            return setattr(self, message['attribute'], message['value'])
+            parent_attr = self._get_attribute_from_path(
+                message['attr_path'][:-1])
+            attr_name = message['attr_path'][-1]
+            return setattr(parent_attr, attr_name, message['value'])
         return self.react(message)
 
     def react(self, message):
