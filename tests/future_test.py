@@ -4,6 +4,7 @@ import unittest
 
 from pykka import get_all, wait_all
 
+
 class GetAllTest(unittest.TestCase):
     def setUp(self):
         self.results = [gevent.event.AsyncResult() for _ in range(3)]

@@ -2,24 +2,28 @@ import unittest
 
 from pykka.actor import Actor
 
-class ActorWithMethods(Actor):
+
+class ActorWithMethods(object):
     foo = 'bar'
     def functional_hello(self, s):
         return 'Hello, %s!' % s
     def set_foo(self, s):
         self.foo = s
 
-class ActorExtendableAtRuntime(Actor):
+
+class ActorExtendableAtRuntime(object):
     def add_method(self, name):
         setattr(self, name, lambda: 'returned by ' + name)
 
 
-class MethodCallTest(unittest.TestCase):
+class MethodCallTest(object):
     def setUp(self):
-        self.proxy = ActorWithMethods.start_proxy()
+        self.proxy = self.ActorWithMethods.start_proxy()
+        self.proxy_extendable = self.ActorExtendableAtRuntime().start_proxy()
 
     def tearDown(self):
         self.proxy.stop()
+        self.proxy_extendable.stop()
 
     def test_functional_method_call_returns_correct_value(self):
         self.assertEqual('Hello, world!',
@@ -41,14 +45,14 @@ class MethodCallTest(unittest.TestCase):
             self.assert_(result.startswith('<ActorProxy for ActorWithMethods'))
             self.assert_(result.endswith('has no attribute "unknown_method"'))
 
-
-class MethodAddedAtRuntimeTest(unittest.TestCase):
-    def setUp(self):
-        self.proxy = ActorExtendableAtRuntime().start_proxy()
-
-    def tearDown(self):
-        self.proxy.stop()
-
     def test_can_call_method_that_was_added_at_runtime(self):
-        self.proxy.add_method('foo')
-        self.assertEqual('returned by foo', self.proxy.foo().get())
+        self.proxy_extendable.add_method('foo')
+        self.assertEqual('returned by foo', self.proxy_extendable.foo().get())
+
+
+class GeventMethodCallTest(MethodCallTest, unittest.TestCase):
+    class ActorWithMethods(ActorWithMethods, Actor):
+        pass
+
+    class ActorExtendableAtRuntime(ActorExtendableAtRuntime, Actor):
+        pass

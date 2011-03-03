@@ -8,12 +8,10 @@ class SomeObject(object):
     baz = 'bar.baz'
 
 
-class AnActor(Actor):
+class AnActor(object):
     bar = SomeObject()
     bar.pykka_traversable = True
 
-
-class ActorWithAttributesAndCallables(Actor):
     foo = 'foo'
 
     def __init__(self):
@@ -23,41 +21,9 @@ class ActorWithAttributesAndCallables(Actor):
         pass
 
 
-class ProxyFromActorStartTest(unittest.TestCase):
+class ProxyTest(object):
     def setUp(self):
-        self.proxy = AnActor.start_proxy()
-
-    def tearDown(self):
-        self.proxy.stop()
-
-    def test_proxy_is_a_proxy(self):
-        self.assert_(isinstance(self.proxy, ActorProxy))
-
-
-class ProxyDirTest(unittest.TestCase):
-    def setUp(self):
-        self.proxy = ActorProxy(ActorWithAttributesAndCallables.start())
-
-    def tearDown(self):
-        self.proxy.stop()
-
-    def test_dir_on_proxy_lists_attributes_of_the_actor(self):
-        result = dir(self.proxy)
-        self.assert_('foo' in result)
-        self.assert_('baz' in result)
-        self.assert_('func' in result)
-
-    def test_dir_on_proxy_lists_private_attributes_of_the_proxy(self):
-        result = dir(self.proxy)
-        self.assert_('__class__' in result)
-        self.assert_('__dict__' in result)
-        self.assert_('__getattr__' in result)
-        self.assert_('__setattr__' in result)
-
-
-class ProxyReprAndStrTest(unittest.TestCase):
-    def setUp(self):
-        self.proxy = ActorProxy(AnActor.start())
+        self.proxy = ActorProxy(self.AnActor.start())
 
     def tearDown(self):
         self.proxy.stop()
@@ -84,3 +50,26 @@ class ProxyReprAndStrTest(unittest.TestCase):
 
     def test_str_contains_actor_urn(self):
         self.assert_(self.proxy._actor_ref.actor_urn in str(self.proxy))
+
+    def test_dir_on_proxy_lists_attributes_of_the_actor(self):
+        result = dir(self.proxy)
+        self.assert_('foo' in result)
+        self.assert_('baz' in result)
+        self.assert_('func' in result)
+
+    def test_dir_on_proxy_lists_private_attributes_of_the_proxy(self):
+        result = dir(self.proxy)
+        self.assert_('__class__' in result)
+        self.assert_('__dict__' in result)
+        self.assert_('__getattr__' in result)
+        self.assert_('__setattr__' in result)
+
+    def test_proxy_from_start_proxy_is_a_proxy(self):
+        proxy_from_start_proxy = self.AnActor.start_proxy()
+        self.assert_(isinstance(proxy_from_start_proxy, ActorProxy))
+        proxy_from_start_proxy.stop()
+
+
+class GeventProxyTest(ProxyTest, unittest.TestCase):
+    class AnActor(AnActor, Actor):
+        pass

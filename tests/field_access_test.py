@@ -2,18 +2,22 @@ import unittest
 
 from pykka.actor import Actor
 
+
 class SomeObject(object):
     baz = 'bar.baz'
 
-class ActorWithFields(Actor):
+
+class ActorWithFields(object):
     foo = 'foo'
 
     bar = SomeObject()
     bar.pykka_traversable = True
 
-class FieldAccessTest(unittest.TestCase):
+
+class FieldAccessTest(object):
     def setUp(self):
-        self.proxy = ActorWithFields.start_proxy()
+        self.actor = self.ActorWithFields()
+        self.proxy = self.ActorWithFields.start_proxy()
 
     def tearDown(self):
         self.proxy.stop()
@@ -26,11 +30,6 @@ class FieldAccessTest(unittest.TestCase):
         self.proxy.foo = 'foo2'
         self.assertEqual('foo2', self.proxy.foo.get())
 
-class TraversableFieldAccessTest(unittest.TestCase):
-    def setUp(self):
-        self.actor = ActorWithFields()
-        self.proxy = ActorWithFields.start_proxy()
-
     def test_attr_of_traversable_attr_can_be_read(self):
         self.assertEqual('bar.baz', self.proxy.bar.baz.get())
 
@@ -39,3 +38,8 @@ class TraversableFieldAccessTest(unittest.TestCase):
         self.assert_(('foo',) in attr_paths)
         self.assert_(('bar',) in attr_paths)
         self.assert_(('bar', 'baz') in attr_paths)
+
+
+class GeventFieldAccessTest(FieldAccessTest, unittest.TestCase):
+    class ActorWithFields(ActorWithFields, Actor):
+        pass
