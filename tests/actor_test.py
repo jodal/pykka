@@ -1,7 +1,8 @@
 import unittest
 import uuid
 
-from pykka.actor import GeventActor
+from pykka.actor import GeventActor, ThreadingActor
+
 
 class ActorTest(object):
     def setUp(self):
@@ -35,6 +36,10 @@ class ActorTest(object):
         self.assert_(self.unstarted_actor.actor_urn
             in str(self.unstarted_actor))
 
+
 class GeventActorTest(ActorTest, unittest.TestCase):
-    class AnActor(GeventActor):
-       pass
+    class AnActor(GeventActor): pass
+
+
+class ThreadingActorTest(ActorTest, unittest.TestCase):
+    class AnActor(ThreadingActor): pass
