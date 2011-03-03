@@ -1,8 +1,9 @@
-import gevent
-import gevent.event
 import unittest
 
+import gevent
+
 from pykka.actor import GeventActor, ActorRef
+from pykka.future import Timeout, GeventFuture
 
 
 class AnActor(object):
@@ -11,7 +12,7 @@ class AnActor(object):
 
     def react(self, message):
         if message.get('command') == 'ping':
-            gevent.sleep(0.01)
+            self.sleep(0.01)
             return 'pong'
         else:
             self.received_message.set(message)
@@ -19,7 +20,7 @@ class AnActor(object):
 
 class RefTest(object):
     def setUp(self):
-        self.received_message = gevent.event.AsyncResult()
+        self.received_message = self.future_class()
         self.ref = self.AnActor.start(self.received_message)
 
     def tearDown(self):
@@ -58,7 +59,7 @@ class RefTest(object):
         try:
             self.ref.send_request_reply({'command': 'ping'}, timeout=0)
             self.fail('Should raise Timeout exception')
-        except gevent.Timeout:
+        except Timeout:
             pass
 
     def test_send_request_reply_can_return_future_instead_of_blocking(self):
@@ -67,5 +68,8 @@ class RefTest(object):
 
 
 class GeventRefTest(RefTest, unittest.TestCase):
+    future_class = GeventFuture
+
     class AnActor(AnActor, GeventActor):
-        pass
+        def sleep(self, seconds):
+            gevent.sleep(seconds)

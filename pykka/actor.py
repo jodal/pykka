@@ -4,9 +4,7 @@ import multiprocessing
 import multiprocessing.dummy
 import uuid
 
-# TODO Make optional
-import gevent.event
-
+from pykka.future import ThreadingFuture
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
 
@@ -235,6 +233,7 @@ class Actor(object):
 try:
     import gevent
     import gevent.queue
+    from pykka.future import GeventFuture
 
     class GeventActor(Actor, gevent.Greenlet):
         """
@@ -248,6 +247,7 @@ try:
         """
 
         _superclass = gevent.Greenlet
+        _future_class = GeventFuture
 
         def _get_actor_inbox(self):
             return gevent.queue.Queue()
@@ -266,6 +266,7 @@ class ThreadingActor(Actor, multiprocessing.dummy.Process):
     """
 
     _superclass = multiprocessing.dummy.Process
+    _future_class = ThreadingFuture
 
     def _get_actor_inbox(self):
         return multiprocessing.Queue()
@@ -293,6 +294,7 @@ class ActorRef(object):
         self.actor_urn = actor.actor_urn
         self.actor_class = actor.__class__
         self.actor_inbox = actor.actor_inbox
+        self._future_class = actor._future_class
 
     def __repr__(self):
         return '<ActorRef for %s>' % str(self)
@@ -323,13 +325,13 @@ class ActorRef(object):
 
         The message must be a picklable dict.
         If ``block`` is :class:`False`, it will immediately return a
-        :class:`gevent.event.AsyncResult` instead of blocking.
+        :class:`pykka.future.Future` instead of blocking.
 
         If ``block`` is :class:`True`, and ``timeout`` is :class:`None`, as
         default, the method will block until it gets a reply, potentially
         forever. If ``timeout`` is an integer or float, the method will wait
         for a reply for ``timeout`` seconds, and then raise
-        :exc:`gevent.Timeout`.
+        :exc:`pykka.future.Timeout`.
 
         :param message: message to send
         :type message: picklable dict
@@ -340,9 +342,9 @@ class ActorRef(object):
         :param timeout: seconds to wait before timeout if blocking
         :type timeout: float or :class:`None`
 
-        :return: :class:`gevent.event.AsyncResult` or response
+        :return: :class:`pykka.future.Future` or response
         """
-        reply = gevent.event.AsyncResult()
+        reply = self._future_class()
         message['reply_to'] = reply
         self.send_one_way(message)
         if block:
