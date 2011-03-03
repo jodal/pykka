@@ -1,13 +1,13 @@
 #! /usr/bin/env python
 
-from pykka.actor import Actor
+from pykka.actor import GeventActor
 
-class Adder(Actor):
+class Adder(GeventActor):
     def add_one(self, i):
         print '%s is increasing %d' % (self, i)
         return i + 1
 
-class Bookkeeper(Actor):
+class Bookkeeper(GeventActor):
     def __init__(self, adder):
         self.adder = adder
 

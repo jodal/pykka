@@ -2,7 +2,7 @@ import gevent
 import gevent.event
 import unittest
 
-from pykka.actor import Actor, ActorRef
+from pykka.actor import GeventActor, ActorRef
 
 
 class AnActor(object):
@@ -67,5 +67,5 @@ class RefTest(object):
 
 
 class GeventRefTest(RefTest, unittest.TestCase):
-    class AnActor(AnActor, Actor):
+    class AnActor(AnActor, GeventActor):
         pass

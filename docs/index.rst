@@ -106,10 +106,10 @@ a new :class:`pykka.proxy.ActorProxy`. When the wrapped attribute is used,
 Pykka will get/set attributes or call methods on the actor attribute, just as
 it normally would on the actor, if wrapped in an actor proxy.
 
-To mark an attribute as traversable, simply add the :attr:`pykka_traversable`
-to it::
+To mark an attribute as traversable, simply set the :attr:`pykka_traversable`
+attribute to e.g. :class:`True`::
 
-    class AnActor(Actor):
+    class AnActor(GeventActor):
         an_attribute = SomeOtherObject()
         an_attribute.pykka_traversable = True
 

@@ -1,7 +1,7 @@
 import unittest
 import uuid
 
-from pykka.actor import Actor
+from pykka.actor import GeventActor
 
 class ActorTest(object):
     def setUp(self):
@@ -36,5 +36,5 @@ class ActorTest(object):
             in str(self.unstarted_actor))
 
 class GeventActorTest(ActorTest, unittest.TestCase):
-    class AnActor(Actor):
+    class AnActor(GeventActor):
        pass

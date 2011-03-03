@@ -1,11 +1,11 @@
 #! /usr/bin/env python
 
-from pykka.actor import Actor
+from pykka.actor import GeventActor
 
 import gevent
 import threading
 
-class AnActor(Actor):
+class AnActor(GeventActor):
     field = 'this is the value of AnActor.field'
 
     def proc(self):

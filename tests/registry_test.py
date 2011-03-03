@@ -1,6 +1,6 @@
 import unittest
 
-from pykka.actor import Actor
+from pykka.actor import GeventActor
 from pykka.registry import ActorRegistry
 
 
@@ -57,5 +57,5 @@ class ActorRegistryTest(object):
 
 
 class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-    class AnActor(Actor): pass
-    class BeeActor(Actor): pass
+    class AnActor(GeventActor): pass
+    class BeeActor(GeventActor): pass

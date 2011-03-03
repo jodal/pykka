@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-from pykka.actor import Actor
+from pykka.actor import GeventActor
 
-class PlainActor(Actor):
+class PlainActor(GeventActor):
     def __init__(self):
         self.stored_messages = []
 

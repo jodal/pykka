@@ -15,7 +15,7 @@ Or specify pool size and IPs to resolve:
 """
 
 from pykka import get_all
-from pykka.actor import Actor
+from pykka.actor import GeventActor
 from pykka.registry import ActorRegistry
 
 from pprint import pprint
@@ -23,7 +23,7 @@ import random
 import socket
 import sys
 
-class Resolver(Actor):
+class Resolver(GeventActor):
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)

@@ -11,13 +11,14 @@ from pykka.registry import ActorRegistry
 logger = logging.getLogger('pykka')
 
 
-class Actor(gevent.Greenlet):
+class Actor(object):
     """
     To create an actor:
 
-    1. subclass :class:`Actor`,
+    1. subclass one of the :class:`Actor` implementations, e.g.
+       :class:`GeventActor`,
     2. implement your methods, including :meth:`__init__`, as usual,
-    3. call :meth:`Actor.start` on the actor class, passing the method any
+    3. call :meth:`Actor.start` on your actor class, passing the method any
        arguments for your constructor.
 
     To stop an actor, call :meth:`Actor.stop()` or :meth:`ActorRef.stop()`.
@@ -58,13 +59,13 @@ class Actor(gevent.Greenlet):
 
             Actor.start()
                 Actor.__new__()
-                    Greenlet.__new__()
-                    Greenlet.__init__()
+                    superclass.__new__()
+                    superclass.__init__()
                     UUID assignment
                     Inbox creation
                     ActorRef creation
                 Actor.__init__()        # Your code can run here
-                Greenlet.start()
+                superclass.start()
                 ActorRegistry.register()
         """
         obj = cls(*args, **kwargs)
@@ -222,6 +223,19 @@ class Actor(gevent.Greenlet):
                     for attr_name in dir(attr):
                         attr_paths_to_visit.append(attr_path + [attr_name])
         return result
+
+
+class GeventActor(Actor, gevent.Greenlet):
+    """
+    :class:`GeventActor` implements :class:`Actor` using the `gevent
+    <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
+    networking library that uses greenlet to provide a high-level synchronous
+    API on top of libevent event loop.
+
+    This is a very fast implementation, but it does not work in combination
+    with other threads.
+    """
+    pass
 
 
 class ActorRef(object):
