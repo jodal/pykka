@@ -14,6 +14,27 @@ class ActorProxy(object):
 
         actor_proxy = MyActor.start_proxy()
 
+    When reading an attribute or getting a return value from a method, you get
+    a :class:`pykka.future.Future` object back. To get the enclosed value from
+    the future, you must call :meth:`pykka.future.Future.get` on the returned
+    future::
+
+        print actor_proxy.string_attribute.get()
+        print actor_proxy.count().get() + 1
+
+    If you call a method just for it's side effects and do not care about the
+    return value, you do not need to accept the returned future or call
+    :meth:`pykka.future.Future.get` on the future. Simply call the method, and
+    it will be executed concurrently with your own code::
+
+        actor_proxy.method_with_side_effect()
+
+    If you want to block your own code from continuing while the other method
+    is processing, you can use :meth:`pykka.future.Future.get` to block until
+    it completes::
+
+        actor_proxy.method_with_side_effect().get()
+
     An example of :class:`ActorProxy` usage:
 
     .. literalinclude:: ../examples/counter.py
