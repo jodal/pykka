@@ -152,10 +152,14 @@ class Actor(object):
             try:
                 response = self._react(message)
                 if 'reply_to' in message:
-                    message['reply_to'].set(response)
+                    serialized_future = message['reply_to']
+                    future = self._future_class.unserialize(serialized_future)
+                    future.set(response)
             except Exception as exception:
                 if 'reply_to' in message:
-                    message['reply_to'].set_exception(exception)
+                    serialized_future = message['reply_to']
+                    future = self._future_class.unserialize(serialized_future)
+                    future.set_exception(exception)
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""
@@ -344,13 +348,13 @@ class ActorRef(object):
 
         :return: :class:`pykka.future.Future` or response
         """
-        reply = self._future_class()
-        message['reply_to'] = reply
+        future = self._future_class()
+        message['reply_to'] = future.serialize()
         self.send_one_way(message)
         if block:
-            return reply.get(timeout=timeout)
+            return future.get(timeout=timeout)
         else:
-            return reply
+            return future
 
     def stop(self, block=True, timeout=None):
         """

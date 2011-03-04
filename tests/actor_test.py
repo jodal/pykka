@@ -41,6 +41,5 @@ class GeventActorTest(ActorTest, unittest.TestCase):
     class AnActor(GeventActor): pass
 
 
-# TODO
-#class ThreadingActorTest(ActorTest, unittest.TestCase):
-#    class AnActor(ThreadingActor): pass
+class ThreadingActorTest(ActorTest, unittest.TestCase):
+    class AnActor(ThreadingActor): pass
