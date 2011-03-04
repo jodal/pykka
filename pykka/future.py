@@ -1,3 +1,6 @@
+import multiprocessing
+
+
 class Timeout(Exception):
     pass
 
@@ -89,7 +92,26 @@ except ImportError:
 
 
 class ThreadingFuture(Future):
-    pass # TODO
+    def __init__(self):
+        self.reader, self.writer = multiprocessing.Pipe(False)
+
+    def get(self, timeout=None):
+        pass
+        if not self.reader.poll(timeout):
+            raise Timeout('%s seconds' % timeout)
+        result = self.reader.recv()
+        if isinstance(result, Exception):
+            raise result
+        else:
+            return result
+
+    def set(self, value):
+        self.writer.send(value)
+
+    def set_exception(self, exception):
+        self.set(exception)
+
+    # TODO Implement pickle()/unpickle()
 
 
 def get_all(futures, timeout=None):
