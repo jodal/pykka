@@ -1,4 +1,4 @@
-include LICENSE *.rst setup.cfg
+include LICENSE *.rst pylintrc setup.cfg tox.ini
 recursive-include docs *
 prune docs/_build
 recursive-include examples *.py
