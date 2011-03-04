@@ -99,7 +99,7 @@ class Actor(object):
     actor_runnable = True
 
     def __new__(cls, *args, **kwargs):
-        obj = cls._superclass.__new__(cls, *args, **kwargs)
+        obj = cls._superclass.__new__(cls)
         cls._superclass.__init__(obj)
         obj.actor_urn = uuid.uuid4().urn
         obj.actor_inbox = obj._get_actor_inbox()

@@ -1,9 +1,10 @@
+import time
 import unittest
 
 import gevent
 
-from pykka.actor import GeventActor, ActorRef
-from pykka.future import Timeout, GeventFuture
+from pykka.actor import GeventActor, ThreadingActor, ActorRef
+from pykka.future import Timeout, GeventFuture, ThreadingFuture
 
 
 class AnActor(object):
@@ -73,3 +74,11 @@ class GeventRefTest(RefTest, unittest.TestCase):
     class AnActor(AnActor, GeventActor):
         def sleep(self, seconds):
             gevent.sleep(seconds)
+
+
+class ThreadingRefTest(RefTest, unittest.TestCase):
+    future_class = ThreadingFuture
+
+    class AnActor(AnActor, ThreadingActor):
+        def sleep(self, seconds):
+            time.sleep(seconds)

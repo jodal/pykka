@@ -1,6 +1,6 @@
 import unittest
 
-from pykka.actor import GeventActor
+from pykka.actor import GeventActor, ThreadingActor
 
 
 class ActorWithMethods(object):
@@ -55,4 +55,12 @@ class GeventMethodCallTest(MethodCallTest, unittest.TestCase):
         pass
 
     class ActorExtendableAtRuntime(ActorExtendableAtRuntime, GeventActor):
+        pass
+
+
+class ThreadingMethodCallTest(MethodCallTest, unittest.TestCase):
+    class ActorWithMethods(ActorWithMethods, ThreadingActor):
+        pass
+
+    class ActorExtendableAtRuntime(ActorExtendableAtRuntime, ThreadingActor):
         pass

@@ -1,6 +1,6 @@
 import unittest
 
-from pykka.actor import GeventActor
+from pykka.actor import GeventActor, ThreadingActor
 
 
 class SomeObject(object):
@@ -42,4 +42,9 @@ class FieldAccessTest(object):
 
 class GeventFieldAccessTest(FieldAccessTest, unittest.TestCase):
     class ActorWithFields(ActorWithFields, GeventActor):
+        pass
+
+
+class ThreadingFieldAccessTest(FieldAccessTest, unittest.TestCase):
+    class ActorWithFields(ActorWithFields, ThreadingActor):
         pass
