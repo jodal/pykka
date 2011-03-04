@@ -1,4 +1,6 @@
+import pickle
 import multiprocessing
+import multiprocessing.reduction
 
 
 class Timeout(Exception):
@@ -58,6 +60,27 @@ class Future(object):
         """
         raise NotImplementedError
 
+    def serialize(self):
+        """
+        Serialize the future for sending between actors.
+
+        :returns: a serialized future
+        """
+        raise NotImplementedError
+
+    @classmethod
+    def unserialize(cls, serialized_future):
+        """
+        Unserialize a future serialized with :meth:`serialize` into a working
+        future again.
+
+        :params serialized_future: a serialized future
+        :type serialized_future: any
+
+        :returns: a future
+        """
+        raise NotImplementedError
+
 
 try:
     import gevent
@@ -75,8 +98,11 @@ try:
         #: The encapsulated :class:`gevent.event.AsyncResult`
         async_result = None
 
-        def __init__(self):
-            self.async_result = gevent.event.AsyncResult()
+        def __init__(self, async_result=None):
+            if async_result is not None:
+                self.async_result = async_result
+            else:
+                self.async_result = gevent.event.AsyncResult()
 
         def get(self, timeout=None):
             try:
@@ -90,13 +116,23 @@ try:
         def set_exception(self, exception):
             self.async_result.set_exception(exception)
 
+        def serialize(self):
+            return self.async_result
+
+        @classmethod
+        def unserialize(cls, serialized_future):
+            return GeventFuture(async_result=serialized_future)
+
 except ImportError:
     pass
 
 
 class ThreadingFuture(Future):
-    def __init__(self):
-        self.reader, self.writer = multiprocessing.Pipe(False)
+    def __init__(self, pipe=None):
+        if pipe is not None:
+            self.reader, self.writer = pipe
+        else:
+            self.reader, self.writer = multiprocessing.Pipe(False)
         self.value_received = False
         self.value = None
 
@@ -119,7 +155,19 @@ class ThreadingFuture(Future):
     def set_exception(self, exception):
         self.set(exception)
 
-    # TODO Implement pickle()/unpickle()
+    def serialize(self):
+        return pickle.dumps((
+            multiprocessing.reduction.reduce_connection(self.reader),
+            multiprocessing.reduction.reduce_connection(self.writer),
+        ))
+
+    @classmethod
+    def unserialize(cls, serialized_future):
+        ((reader_func, reader_args), (writer_func, writer_args)) = \
+            pickle.loads(serialized_future)
+        reader = reader_func(*reader_args)
+        writer = writer_func(*writer_args)
+        return ThreadingFuture(pipe=(reader, writer))
 
 
 def get_all(futures, timeout=None):
