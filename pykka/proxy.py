@@ -60,7 +60,8 @@ class ActorProxy(object):
         result = ['__class__']
         result += list(self.__class__.__dict__.keys())
         result += list(self.__dict__.keys())
-        result += [attr_path[0] for attr_path in list(self._actor_attributes.keys())]
+        result += [attr_path[0]
+            for attr_path in list(self._actor_attributes.keys())]
         return sorted(result)
 
     def __getattr__(self, name):

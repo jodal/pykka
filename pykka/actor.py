@@ -102,11 +102,13 @@ class Actor(object):
         obj = cls._superclass.__new__(cls)
         cls._superclass.__init__(obj)
         obj.actor_urn = uuid.uuid4().urn
-        obj.actor_inbox = obj._get_actor_inbox()
+        # pylint: disable = W0212
+        obj.actor_inbox = obj._new_actor_inbox()
+        # pylint: enable = W0212
         obj.actor_ref = ActorRef(obj)
         return obj
 
-    # pylint: disable=W0231
+    # pylint: disable = W0231
     def __init__(self):
         """
         Your are free to override :meth:`__init__` and do any setup you need to
@@ -119,7 +121,7 @@ class Actor(object):
         :class:`pykka.registry.ActorRegistry`.
         """
         pass
-    # pylint: enable=W0231
+    # pylint: enable = W0231
 
     def __str__(self):
         return '%(class)s (%(urn)s)' % {
@@ -138,6 +140,7 @@ class Actor(object):
         ActorRegistry.unregister(self.actor_ref)
         logger.debug('Stopped %s', self)
 
+    # pylint: disable = W0703
     def _run(self):
         """
         The actor's main method.
@@ -161,6 +164,7 @@ class Actor(object):
                     serialized_future = message['reply_to']
                     future = self._future_class.unserialize(serialized_future)
                     future.set_exception(exception)
+    # pylint: enable = W0703
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""
@@ -236,6 +240,7 @@ class Actor(object):
         return result
 
 
+# pylint: disable = R0901
 class ThreadingActor(Actor, multiprocessing.dummy.Process):
     """
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
@@ -248,11 +253,15 @@ class ThreadingActor(Actor, multiprocessing.dummy.Process):
     _superclass = multiprocessing.dummy.Process
     _future_class = ThreadingFuture
 
-    def _get_actor_inbox(self):
+    def _new_actor_inbox(self):
         return multiprocessing.Queue()
 
     def run(self):
         return Actor._run(self)
+
+    def react(self, message):
+        raise NotImplementedError
+# pylint: enable = R0901
 
 
 class ActorRef(object):
@@ -274,7 +283,9 @@ class ActorRef(object):
         self.actor_urn = actor.actor_urn
         self.actor_class = actor.__class__
         self.actor_inbox = actor.actor_inbox
+        # pylint: disable = W0212
         self._future_class = actor._future_class
+        # pylint: enable = W0212
 
     def __repr__(self):
         return '<ActorRef for %s>' % str(self)

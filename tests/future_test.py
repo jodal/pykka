@@ -1,5 +1,3 @@
-import gevent
-import gevent.event
 import unittest
 
 from pykka.future import Timeout, ThreadingFuture, get_all

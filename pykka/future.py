@@ -83,6 +83,7 @@ class Future(object):
 
 class ThreadingFuture(Future):
     def __init__(self, pipe=None):
+        super(ThreadingFuture, self).__init__()
         if pipe is not None:
             self.reader, self.writer = pipe
         else:
@@ -90,6 +91,7 @@ class ThreadingFuture(Future):
         self.value_received = False
         self.value = None
 
+    # pylint: disable = E0702
     def get(self, timeout=None):
         if self.value_received:
             if isinstance(self.value, Exception):
@@ -102,8 +104,9 @@ class ThreadingFuture(Future):
             return self.get()
         else:
             raise Timeout('%s seconds' % timeout)
+    # pylint: enable = E0702
 
-    def set(self, value):
+    def set(self, value=None):
         self.writer.send(value)
 
     def set_exception(self, exception):

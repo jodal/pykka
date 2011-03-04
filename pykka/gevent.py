@@ -21,6 +21,7 @@ class GeventFuture(Future):
     async_result = None
 
     def __init__(self, async_result=None):
+        super(GeventFuture, self).__init__()
         if async_result is not None:
             self.async_result = async_result
         else:
@@ -32,7 +33,7 @@ class GeventFuture(Future):
         except gevent.Timeout as e:
             raise Timeout(e)
 
-    def set(self, value):
+    def set(self, value=None):
         self.async_result.set(value)
 
     def set_exception(self, exception):
@@ -60,5 +61,8 @@ class GeventActor(Actor, gevent.Greenlet):
     _superclass = gevent.Greenlet
     _future_class = GeventFuture
 
-    def _get_actor_inbox(self):
+    def _new_actor_inbox(self):
         return gevent.queue.Queue()
+
+    def react(self, message):
+        raise NotImplementedError

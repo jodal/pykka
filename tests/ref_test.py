@@ -3,7 +3,7 @@ import unittest
 
 import gevent
 
-from pykka.actor import ThreadingActor, ActorRef
+from pykka.actor import ThreadingActor
 from pykka.gevent import GeventActor, GeventFuture
 from pykka.future import Timeout, ThreadingFuture
 
