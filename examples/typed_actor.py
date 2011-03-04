@@ -1,18 +1,18 @@
 #! /usr/bin/env python
 
-from pykka.actor import GeventActor
+from pykka.actor import ThreadingActor
 
-import gevent
 import threading
+import time
 
-class AnActor(GeventActor):
+class AnActor(ThreadingActor):
     field = 'this is the value of AnActor.field'
 
     def proc(self):
         log('this was printed by AnActor.proc()')
 
     def func(self):
-        gevent.sleep(0.5) # Block a bit to make it realistic
+        time.sleep(0.5) # Block a bit to make it realistic
         return 'this was returned by AnActor.func() after a delay'
 
 def log(s):
@@ -43,3 +43,4 @@ if __name__ == '__main__':
         result = actor.field # Does not block, returns a future
         log('printing new field value ... (blocking)')
         log(result.get()) # Blocks until ready
+    actor.stop()
