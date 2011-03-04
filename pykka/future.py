@@ -74,8 +74,7 @@ class Future(object):
         Unserialize a future serialized with :meth:`serialize` into a working
         future again.
 
-        :params serialized_future: a serialized future
-        :type serialized_future: any
+        :param serialized_future: a serialized future
 
         :returns: a future
         """
