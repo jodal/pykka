@@ -1,6 +1,6 @@
 import unittest
 
-from pykka.actor import GeventActor
+from pykka.actor import GeventActor, ThreadingActor
 from pykka.proxy import ActorProxy
 
 
@@ -72,4 +72,9 @@ class ProxyTest(object):
 
 class GeventProxyTest(ProxyTest, unittest.TestCase):
     class AnActor(AnActor, GeventActor):
+        pass
+
+
+class ThreadingProxyTest(ProxyTest, unittest.TestCase):
+    class AnActor(AnActor, ThreadingActor):
         pass

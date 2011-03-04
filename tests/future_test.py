@@ -2,12 +2,13 @@ import gevent
 import gevent.event
 import unittest
 
-from pykka import get_all, wait_all
+from pykka.future import (Timeout, GeventFuture, ThreadingFuture, get_all,
+    wait_all)
 
 
-class GetAllTest(unittest.TestCase):
+class FutureTest(object):
     def setUp(self):
-        self.results = [gevent.event.AsyncResult() for _ in range(3)]
+        self.results = [self.future_class() for _ in range(3)]
 
     def test_get_all_blocks_until_all_futures_are_available(self):
         self.results[0].set(0)
@@ -22,7 +23,7 @@ class GetAllTest(unittest.TestCase):
             self.results[2].set(2)
             result = get_all(self.results, timeout=0)
             self.fail('Should timeout')
-        except gevent.Timeout:
+        except Timeout:
             pass
 
     def test_wait_all_is_alias_of_get_all(self):
@@ -32,3 +33,19 @@ class GetAllTest(unittest.TestCase):
         result1 = get_all(self.results)
         result2 = wait_all(self.results)
         self.assertEqual(result1, result2)
+
+    def test_future_works_across_serialization(self):
+        future1 = self.future_class()
+        serialized_future = future1.serialize()
+        future2 = self.future_class.unserialize(serialized_future)
+        future1.set('foo')
+        result = future2.get()
+        self.assertEqual(result, 'foo')
+
+
+class GeventFutureTest(FutureTest, unittest.TestCase):
+    future_class = GeventFuture
+
+
+class ThreadingFutureTest(FutureTest, unittest.TestCase):
+    future_class = ThreadingFuture

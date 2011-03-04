@@ -165,6 +165,13 @@ pykka.actor
     :members:
 
 
+pykka.future
+============
+
+.. automodule:: pykka.future
+    :members:
+
+
 pykka.proxy
 ===========
 

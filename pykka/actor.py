@@ -1,10 +1,10 @@
 import collections
-import gevent
-import gevent.event
-import gevent.queue
 import logging
+import multiprocessing
+import multiprocessing.dummy
 import uuid
 
+from pykka.future import ThreadingFuture
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
 
@@ -16,7 +16,7 @@ class Actor(object):
     To create an actor:
 
     1. subclass one of the :class:`Actor` implementations, e.g.
-       :class:`GeventActor`,
+       :class:`GeventActor` or :class:`ThreadingActor`,
     2. implement your methods, including :meth:`__init__`, as usual,
     3. call :meth:`Actor.start` on your actor class, passing the method any
        arguments for your constructor.
@@ -69,7 +69,7 @@ class Actor(object):
                 ActorRegistry.register()
         """
         obj = cls(*args, **kwargs)
-        gevent.Greenlet.start(obj)
+        cls._superclass.start(obj)
         logger.debug('Started %s', obj)
         ActorRegistry.register(obj.actor_ref)
         return obj.actor_ref
@@ -99,10 +99,10 @@ class Actor(object):
     actor_runnable = True
 
     def __new__(cls, *args, **kwargs):
-        obj = gevent.Greenlet.__new__(cls, *args, **kwargs)
-        gevent.Greenlet.__init__(obj)
+        obj = cls._superclass.__new__(cls)
+        cls._superclass.__init__(obj)
         obj.actor_urn = uuid.uuid4().urn
-        obj.actor_inbox = gevent.queue.Queue()
+        obj.actor_inbox = obj._get_actor_inbox()
         obj.actor_ref = ActorRef(obj)
         return obj
 
@@ -139,17 +139,27 @@ class Actor(object):
         logger.debug('Stopped %s', self)
 
     def _run(self):
-        """The Greenlet main method"""
+        """
+        The actor's main method.
+
+        :class:`GeventActor` expects this method to be named :meth:`_run`.
+
+        :class:`ThreadingActor` expects this method to be named :meth:`run`.
+        """
         self.actor_runnable = True
         while self.actor_runnable:
             message = self.actor_inbox.get()
             try:
                 response = self._react(message)
                 if 'reply_to' in message:
-                    message['reply_to'].set(response)
+                    serialized_future = message['reply_to']
+                    future = self._future_class.unserialize(serialized_future)
+                    future.set(response)
             except Exception as exception:
                 if 'reply_to' in message:
-                    message['reply_to'].set_exception(exception)
+                    serialized_future = message['reply_to']
+                    future = self._future_class.unserialize(serialized_future)
+                    future.set_exception(exception)
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""
@@ -224,18 +234,49 @@ class Actor(object):
                         attr_paths_to_visit.append(attr_path + [attr_name])
         return result
 
+try:
+    import gevent
+    import gevent.queue
+    from pykka.future import GeventFuture
 
-class GeventActor(Actor, gevent.Greenlet):
-    """
-    :class:`GeventActor` implements :class:`Actor` using the `gevent
-    <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
-    networking library that uses greenlet to provide a high-level synchronous
-    API on top of libevent event loop.
+    class GeventActor(Actor, gevent.Greenlet):
+        """
+        :class:`GeventActor` implements :class:`Actor` using the `gevent
+        <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
+        networking library that uses greenlet to provide a high-level
+        synchronous API on top of libevent event loop.
 
-    This is a very fast implementation, but it does not work in combination
-    with other threads.
+        This is a very fast implementation, but it does not work in combination
+        with other threads.
+        """
+
+        _superclass = gevent.Greenlet
+        _future_class = GeventFuture
+
+        def _get_actor_inbox(self):
+            return gevent.queue.Queue()
+
+except ImportError as e:
+    logger.debug(e)
+
+
+class ThreadingActor(Actor, multiprocessing.dummy.Process):
     """
-    pass
+    :class:`ThreadingActor` implements :class:`Actor` using regular Python
+    threads, via the :mod:`multiprocessing.dummy` package.
+
+    This implementation is slower than :class:`GeventActor`, but can be used in
+    a process with other threads that are not Pykka actors.
+    """
+
+    _superclass = multiprocessing.dummy.Process
+    _future_class = ThreadingFuture
+
+    def _get_actor_inbox(self):
+        return multiprocessing.Queue()
+
+    def run(self):
+        return Actor._run(self)
 
 
 class ActorRef(object):
@@ -257,6 +298,7 @@ class ActorRef(object):
         self.actor_urn = actor.actor_urn
         self.actor_class = actor.__class__
         self.actor_inbox = actor.actor_inbox
+        self._future_class = actor._future_class
 
     def __repr__(self):
         return '<ActorRef for %s>' % str(self)
@@ -287,13 +329,13 @@ class ActorRef(object):
 
         The message must be a picklable dict.
         If ``block`` is :class:`False`, it will immediately return a
-        :class:`gevent.event.AsyncResult` instead of blocking.
+        :class:`pykka.future.Future` instead of blocking.
 
         If ``block`` is :class:`True`, and ``timeout`` is :class:`None`, as
         default, the method will block until it gets a reply, potentially
         forever. If ``timeout`` is an integer or float, the method will wait
         for a reply for ``timeout`` seconds, and then raise
-        :exc:`gevent.Timeout`.
+        :exc:`pykka.future.Timeout`.
 
         :param message: message to send
         :type message: picklable dict
@@ -304,15 +346,15 @@ class ActorRef(object):
         :param timeout: seconds to wait before timeout if blocking
         :type timeout: float or :class:`None`
 
-        :return: :class:`gevent.event.AsyncResult` or response
+        :return: :class:`pykka.future.Future` or response
         """
-        reply = gevent.event.AsyncResult()
-        message['reply_to'] = reply
+        future = self._future_class()
+        message['reply_to'] = future.serialize()
         self.send_one_way(message)
         if block:
-            return reply.get(timeout=timeout)
+            return future.get(timeout=timeout)
         else:
-            return reply
+            return future
 
     def stop(self, block=True, timeout=None):
         """
