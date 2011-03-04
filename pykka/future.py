@@ -27,6 +27,9 @@ class Future(object):
         integer or float, the method will wait for a reply for ``timeout``
         seconds, and then raise :exc:`Timeout`.
 
+        The encapsulated value can be retrieved multiple times. The future will
+        only block the first time the value is accessed.
+
         :param block: whether to block while waiting for a reply
         :type block: boolean
 
@@ -94,16 +97,21 @@ except ImportError:
 class ThreadingFuture(Future):
     def __init__(self):
         self.reader, self.writer = multiprocessing.Pipe(False)
+        self.value_received = False
+        self.value = None
 
     def get(self, timeout=None):
-        pass
-        if not self.reader.poll(timeout):
-            raise Timeout('%s seconds' % timeout)
-        result = self.reader.recv()
-        if isinstance(result, Exception):
-            raise result
+        if self.value_received:
+            if isinstance(self.value, Exception):
+                raise self.value
+            else:
+                return self.value
+        if self.reader.poll(timeout):
+            self.value = self.reader.recv()
+            self.value_received = True
+            return self.get()
         else:
-            return result
+            raise Timeout('%s seconds' % timeout)
 
     def set(self, value):
         self.writer.send(value)
