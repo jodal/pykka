@@ -3,8 +3,9 @@ import unittest
 
 import gevent
 
-from pykka.actor import GeventActor, ThreadingActor, ActorRef
-from pykka.future import Timeout, GeventFuture, ThreadingFuture
+from pykka.actor import ThreadingActor, ActorRef
+from pykka.gevent import GeventActor, GeventFuture
+from pykka.future import Timeout, ThreadingFuture
 
 
 class AnActor(object):

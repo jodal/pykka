@@ -2,8 +2,8 @@ import gevent
 import gevent.event
 import unittest
 
-from pykka.future import (Timeout, GeventFuture, ThreadingFuture, get_all,
-    wait_all)
+from pykka.future import Timeout, ThreadingFuture, get_all, wait_all
+from pykka.gevent import GeventFuture
 
 
 class FutureTest(object):

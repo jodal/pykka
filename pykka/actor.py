@@ -16,7 +16,7 @@ class Actor(object):
     To create an actor:
 
     1. subclass one of the :class:`Actor` implementations, e.g.
-       :class:`GeventActor` or :class:`ThreadingActor`,
+       :class:`pykka.gevent.GeventActor` or :class:`ThreadingActor`,
     2. implement your methods, including :meth:`__init__`, as usual,
     3. call :meth:`Actor.start` on your actor class, passing the method any
        arguments for your constructor.
@@ -142,7 +142,8 @@ class Actor(object):
         """
         The actor's main method.
 
-        :class:`GeventActor` expects this method to be named :meth:`_run`.
+        :class:`pykka.gevent.GeventActor` expects this method to be named
+        :meth:`_run`.
 
         :class:`ThreadingActor` expects this method to be named :meth:`run`.
         """
@@ -233,31 +234,6 @@ class Actor(object):
                     for attr_name in dir(attr):
                         attr_paths_to_visit.append(attr_path + [attr_name])
         return result
-
-try:
-    import gevent
-    import gevent.queue
-    from pykka.future import GeventFuture
-
-    class GeventActor(Actor, gevent.Greenlet):
-        """
-        :class:`GeventActor` implements :class:`Actor` using the `gevent
-        <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
-        networking library that uses greenlet to provide a high-level
-        synchronous API on top of libevent event loop.
-
-        This is a very fast implementation, but it does not work in combination
-        with other threads.
-        """
-
-        _superclass = gevent.Greenlet
-        _future_class = GeventFuture
-
-        def _get_actor_inbox(self):
-            return gevent.queue.Queue()
-
-except ImportError as e:
-    logger.debug(e)
 
 
 class ThreadingActor(Actor, multiprocessing.dummy.Process):

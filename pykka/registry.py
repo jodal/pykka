@@ -1,5 +1,5 @@
-import gevent.coros
 import logging
+import threading
 
 logger = logging.getLogger('pykka')
 
@@ -12,7 +12,7 @@ class ActorRegistry(object):
     """
 
     _actor_refs = []
-    _actor_refs_lock = gevent.coros.RLock()
+    _actor_refs_lock = threading.RLock()
 
     @classmethod
     def get_all(cls):

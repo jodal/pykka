@@ -81,51 +81,6 @@ class Future(object):
         raise NotImplementedError
 
 
-try:
-    import gevent
-    import gevent.event
-
-    class GeventFuture(Future):
-        """
-        :class:`GeventFuture` implements :class:`Future` for use with
-        :class:`pykka.actor.GeventActor`.
-
-        It encapsulates a :class:`gevent.event.AsyncResult` object which may be
-        used directly, though it will couple your code with gevent.
-        """
-
-        #: The encapsulated :class:`gevent.event.AsyncResult`
-        async_result = None
-
-        def __init__(self, async_result=None):
-            if async_result is not None:
-                self.async_result = async_result
-            else:
-                self.async_result = gevent.event.AsyncResult()
-
-        def get(self, timeout=None):
-            try:
-                return self.async_result.get(timeout=timeout)
-            except gevent.Timeout as e:
-                raise Timeout(e)
-
-        def set(self, value):
-            self.async_result.set(value)
-
-        def set_exception(self, exception):
-            self.async_result.set_exception(exception)
-
-        def serialize(self):
-            return self.async_result
-
-        @classmethod
-        def unserialize(cls, serialized_future):
-            return GeventFuture(async_result=serialized_future)
-
-except ImportError:
-    pass
-
-
 class ThreadingFuture(Future):
     def __init__(self, pipe=None):
         if pipe is not None:

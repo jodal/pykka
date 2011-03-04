@@ -1,7 +1,8 @@
 import unittest
 import uuid
 
-from pykka.actor import GeventActor, ThreadingActor
+from pykka.actor import ThreadingActor
+from pykka.gevent import GeventActor
 
 
 class ActorTest(object):

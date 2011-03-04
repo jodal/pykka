@@ -1,6 +1,7 @@
 import unittest
 
-from pykka.actor import GeventActor, ThreadingActor
+from pykka.actor import ThreadingActor
+from pykka.gevent import GeventActor
 
 
 class SomeObject(object):

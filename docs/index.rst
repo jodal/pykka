@@ -127,8 +127,8 @@ Installation
 Install Pykka's dependencies:
 
 - Python 2.6 or greater. Python 3.x should work too if you don't use gevent.
-- Optionally,`gevent <http://www.gevent.org/>`_ if you want to use gevent based
-  actors
+- Optionally, `gevent <http://www.gevent.org/>`_, if you want to use gevent
+  based actors from :mod:`pykka.gevent`.
 
 To install Pykka you can use pip::
 
@@ -173,6 +173,13 @@ pykka.future
 ============
 
 .. automodule:: pykka.future
+    :members:
+
+
+pykka.gevent
+============
+
+.. automodule:: pykka.gevent
     :members:
 
 
