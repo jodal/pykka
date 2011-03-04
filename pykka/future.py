@@ -140,12 +140,3 @@ def get_all(futures, timeout=None):
     :returns: list of results
     """
     return [future.get(timeout=timeout) for future in futures]
-
-def wait_all(futures, timeout=None):
-    """
-    Wait for all futures in the results list are available.
-
-    This is an alias for :func:`get_all`, but with a name that is more
-    describing if you do not care about the return values.
-    """
-    return get_all(futures, timeout)

@@ -2,7 +2,7 @@ import gevent
 import gevent.event
 import unittest
 
-from pykka.future import Timeout, ThreadingFuture, get_all, wait_all
+from pykka.future import Timeout, ThreadingFuture, get_all
 from pykka.gevent import GeventFuture
 
 
@@ -26,12 +26,12 @@ class FutureTest(object):
         except Timeout:
             pass
 
-    def test_wait_all_is_alias_of_get_all(self):
+    def test_get_all_can_be_called_multiple_times(self):
         self.results[0].set(0)
         self.results[1].set(1)
         self.results[2].set(2)
         result1 = get_all(self.results)
-        result2 = wait_all(self.results)
+        result2 = get_all(self.results)
         self.assertEqual(result1, result2)
 
     def test_future_works_across_serialization(self):
