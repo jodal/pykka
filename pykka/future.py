@@ -61,6 +61,11 @@ class Future(object):
 
 
 class _ConnectionWrapper(object):
+    """
+    Internal class used by :class:`ThreadingFuture` to make
+    :class:`multiprocessing.Connection` objects picklable.
+    """
+
     def __init__(self, connection):
         self._connection = connection
 
@@ -75,6 +80,15 @@ class _ConnectionWrapper(object):
 
 
 class _ConnectionWrapperRebuilder(object):
+    """
+    Internal class used by :class:`_ConnectionWrapper` to rewrap
+    :class:`multiprocessing.Connection` objects when they are depickled.
+
+    A function defined inside :meth:`_ConnectionWrapper.__reduce__` which takes
+    :attr:`conn_func` from its scope cannot be used, as functions must be
+    defined at the module's top level to be picklable.
+    """
+
     def __init__(self, inner_func):
         self._inner_func = inner_func
 
