@@ -40,6 +40,18 @@ class FutureTest(object):
         result = future2.get()
         self.assertEqual(result, 'foo')
 
+    def test_future_in_future_works_across_serialization(self):
+        inner_future1 = self.future_class()
+        inner_future1.set('foo')
+        outer_future1 = self.future_class()
+        outer_future1.set(inner_future1)
+
+        serialized_future = outer_future1.serialize()
+        outer_future2 = self.future_class.unserialize(serialized_future)
+        inner_future2 = outer_future2.get()
+        result = inner_future2.get()
+        self.assertEqual(result, 'foo')
+
 
 class GeventFutureTest(FutureTest, unittest.TestCase):
     future_class = GeventFuture

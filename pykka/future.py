@@ -81,6 +81,17 @@ class Future(object):
         raise NotImplementedError
 
 
+class _ConnectionWrapper(object):
+    def __init__(self, connection):
+        self._connection = connection
+
+    def __reduce__(self):
+        return multiprocessing.reduction.reduce_connection( self._connection)
+
+    def __getattr__(self, name):
+        return getattr(self._connection, name)
+
+
 class ThreadingFuture(Future):
     def __init__(self, pipe=None):
         super(ThreadingFuture, self).__init__()
@@ -88,6 +99,10 @@ class ThreadingFuture(Future):
             self.reader, self.writer = pipe
         else:
             self.reader, self.writer = multiprocessing.Pipe(False)
+        if not isinstance(self.reader, _ConnectionWrapper):
+            self.reader = _ConnectionWrapper(self.reader)
+        if not isinstance(self.writer, _ConnectionWrapper):
+            self.writer = _ConnectionWrapper(self.writer)
         self.value_received = False
         self.value = None
 
@@ -113,18 +128,11 @@ class ThreadingFuture(Future):
         self.set(exception)
 
     def serialize(self):
-        return pickle.dumps((
-            multiprocessing.reduction.reduce_connection(self.reader),
-            multiprocessing.reduction.reduce_connection(self.writer),
-        ))
+        return self
 
     @classmethod
     def unserialize(cls, serialized_future):
-        ((reader_func, reader_args), (writer_func, writer_args)) = \
-            pickle.loads(serialized_future)
-        reader = reader_func(*reader_args)
-        writer = writer_func(*writer_args)
-        return ThreadingFuture(pipe=(reader, writer))
+        return serialized_future
 
 
 def get_all(futures, timeout=None):
