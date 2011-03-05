@@ -25,10 +25,10 @@ class Actor(object):
 
     For example::
 
-        from pykka.actor import Actor
+        from pykka.actor import ThreadingActor
 
-        class MyActor(Actor):
-            def __init__(self, my_arg):
+        class MyActor(ThreadingActor):
+            def __init__(self, my_arg=None):
                 ... # my init code
 
             def react(self, message):
@@ -37,8 +37,7 @@ class Actor(object):
             def a_method(self, ...):
                 ... # my regular method to be used through an ActorProxy
 
-        my_arg = ... # some value
-        my_actor_ref = MyActor.start(my_arg)
+        my_actor_ref = MyActor.start(my_arg=...)
         my_actor_ref.stop()
     """
 
@@ -246,8 +245,8 @@ class ThreadingActor(Actor, multiprocessing.dummy.Process):
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
     threads, via the :mod:`multiprocessing.dummy` package.
 
-    This implementation is slower than :class:`GeventActor`, but can be used in
-    a process with other threads that are not Pykka actors.
+    This implementation is slower than :class:`pykka.gevent.GeventActor`, but
+    can be used in a process with other threads that are not Pykka actors.
     """
 
     _superclass = multiprocessing.dummy.Process
