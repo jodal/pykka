@@ -39,13 +39,6 @@ class GeventFuture(Future):
     def set_exception(self, exception):
         self.async_result.set_exception(exception)
 
-    def serialize(self):
-        return self.async_result
-
-    @classmethod
-    def unserialize(cls, serialized_future):
-        return GeventFuture(async_result=serialized_future)
-
 
 class GeventActor(Actor, gevent.Greenlet):
     """

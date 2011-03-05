@@ -1,3 +1,4 @@
+import pickle
 import unittest
 
 from pykka.future import Timeout, ThreadingFuture, get_all
@@ -34,11 +35,10 @@ class FutureTest(object):
 
     def test_future_works_across_serialization(self):
         future1 = self.future_class()
-        serialized_future = future1.serialize()
-        future2 = self.future_class.unserialize(serialized_future)
         future1.set('foo')
-        result = future2.get()
-        self.assertEqual(result, 'foo')
+        serialized_future = pickle.dumps(future1)
+        future2 = pickle.loads(serialized_future)
+        self.assertEqual(future2.get(), 'foo')
 
     def test_future_in_future_works_across_serialization(self):
         inner_future1 = self.future_class()
@@ -46,11 +46,10 @@ class FutureTest(object):
         outer_future1 = self.future_class()
         outer_future1.set(inner_future1)
 
-        serialized_future = outer_future1.serialize()
-        outer_future2 = self.future_class.unserialize(serialized_future)
+        serialized_future = pickle.dumps(outer_future1)
+        outer_future2 = pickle.loads(serialized_future)
         inner_future2 = outer_future2.get()
-        result = inner_future2.get()
-        self.assertEqual(result, 'foo')
+        self.assertEqual(inner_future2.get(), 'foo')
 
 
 class GeventFutureTest(FutureTest, unittest.TestCase):

@@ -1,4 +1,3 @@
-import pickle
 import multiprocessing
 import multiprocessing.reduction
 
@@ -60,26 +59,6 @@ class Future(object):
         """
         raise NotImplementedError
 
-    def serialize(self):
-        """
-        Serialize the future for sending between actors.
-
-        :returns: a serialized future
-        """
-        raise NotImplementedError
-
-    @classmethod
-    def unserialize(cls, serialized_future):
-        """
-        Unserialize a future serialized with :meth:`serialize` into a working
-        future again.
-
-        :param serialized_future: a serialized future
-
-        :returns: a future
-        """
-        raise NotImplementedError
-
 
 class _ConnectionWrapper(object):
     def __init__(self, connection):
@@ -126,13 +105,6 @@ class ThreadingFuture(Future):
 
     def set_exception(self, exception):
         self.set(exception)
-
-    def serialize(self):
-        return self
-
-    @classmethod
-    def unserialize(cls, serialized_future):
-        return serialized_future
 
 
 def get_all(futures, timeout=None):
