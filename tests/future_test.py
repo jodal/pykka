@@ -51,6 +51,15 @@ class FutureTest(object):
         inner_future2 = outer_future2.get()
         self.assertEqual(inner_future2.get(), 'foo')
 
+    def test_future_works_after_multiple_serializations(self):
+        future1 = self.future_class()
+        future1.set('foo')
+        serialized_future1 = pickle.dumps(future1)
+        future2 = pickle.loads(serialized_future1)
+        serialized_future2 = pickle.dumps(future2)
+        future3 = pickle.loads(serialized_future2)
+        self.assertEqual(future3.get(), 'foo')
+
 
 class GeventFutureTest(FutureTest, unittest.TestCase):
     future_class = GeventFuture

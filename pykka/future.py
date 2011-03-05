@@ -65,10 +65,22 @@ class _ConnectionWrapper(object):
         self._connection = connection
 
     def __reduce__(self):
-        return multiprocessing.reduction.reduce_connection( self._connection)
+        (conn_func, conn_args) = multiprocessing.reduction.reduce_connection(
+            self._connection)
+        wrapper_func = _ConnectionWrapperRebuilder(conn_func)
+        return (wrapper_func, conn_args)
 
     def __getattr__(self, name):
         return getattr(self._connection, name)
+
+
+class _ConnectionWrapperRebuilder(object):
+    def __init__(self, inner_func):
+        self._inner_func = inner_func
+
+    def __call__(self, *args):
+        connection = self._inner_func(*args)
+        return _ConnectionWrapper(connection)
 
 
 class ThreadingFuture(Future):
