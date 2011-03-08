@@ -73,14 +73,6 @@ class Actor(object):
         ActorRegistry.register(obj.actor_ref)
         return obj.actor_ref
 
-    @classmethod
-    def start_proxy(cls, *args, **kwargs):
-        """
-        Just like :meth:`start`, but wraps the returned :class:`ActorRef` in an
-        :class:`ActorProxy`.
-        """
-        return ActorProxy(cls.start(*args, **kwargs))
-
     #: The actor URN string is a universally unique identifier for the actor.
     #: It may be used for looking up a specific actor using
     #: :meth:`pykka.registry.ActorRegistry.get_by_urn`.
@@ -357,3 +349,18 @@ class ActorRef(object):
         ``block`` and ``timeout`` works as for :meth:`send_request_reply`.
         """
         self.send_request_reply({'command': 'pykka_stop'}, block, timeout)
+
+    def proxy(self):
+        """
+        Wraps the :class:`ActorRef` in an :class:`pykka.proxy.ActorProxy`.
+
+        Using this method like this::
+
+            ref = AnActor.start()
+            proxy = ActorProxy(ref)
+
+        is analogous to::
+
+            proxy = AnActor.start().proxy()
+        """
+        return ActorProxy(self)

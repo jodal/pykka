@@ -19,7 +19,7 @@ class Bookkeeper(ThreadingActor):
             print '%s got %d back' % (self, i)
 
 if __name__ == '__main__':
-    adder = Adder.start_proxy()
-    bookkeeper = Bookkeeper.start_proxy(adder)
+    adder = Adder.start().proxy()
+    bookkeeper = Bookkeeper.start(adder).proxy()
     bookkeeper.count_to(10).get()
     ActorRegistry.stop_all()

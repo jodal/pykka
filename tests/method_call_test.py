@@ -19,8 +19,8 @@ class ActorExtendableAtRuntime(object):
 
 class MethodCallTest(object):
     def setUp(self):
-        self.proxy = self.ActorWithMethods.start_proxy()
-        self.proxy_extendable = self.ActorExtendableAtRuntime().start_proxy()
+        self.proxy = self.ActorWithMethods.start().proxy()
+        self.proxy_extendable = self.ActorExtendableAtRuntime().start().proxy()
 
     def tearDown(self):
         self.proxy.stop()

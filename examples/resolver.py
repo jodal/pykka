@@ -35,7 +35,7 @@ class Resolver(ThreadingActor):
 
 def run(pool_size, *ips):
     # Start resolvers
-    resolvers = [Resolver.start_proxy() for _ in range(pool_size)]
+    resolvers = [Resolver.start().proxy() for _ in range(pool_size)]
 
     # Distribute work by mapping IPs to resolvers (not blocking)
     hosts = []

@@ -10,9 +10,10 @@ class ActorProxy(object):
         actor_ref = MyActor.start()
         actor_proxy = ActorProxy(actor_ref)
 
-    You can also get an :class:`ActorProxy` directly when starting the actor::
+    You can also get an :class:`ActorProxy` by using
+    :meth:`pykka.actor.ActorRef.proxy`::
 
-        actor_proxy = MyActor.start_proxy()
+        actor_proxy = MyActor.start().proxy()
 
     When reading an attribute or getting a return value from a method, you get
     a :class:`pykka.future.Future` object back. To get the enclosed value from

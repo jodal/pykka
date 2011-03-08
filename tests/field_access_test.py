@@ -18,7 +18,7 @@ class ActorWithFields(object):
 class FieldAccessTest(object):
     def setUp(self):
         self.actor = self.ActorWithFields()
-        self.proxy = self.ActorWithFields.start_proxy()
+        self.proxy = self.ActorWithFields.start().proxy()
 
     def tearDown(self):
         self.proxy.stop()

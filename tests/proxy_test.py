@@ -65,10 +65,10 @@ class ProxyTest(object):
         self.assert_('__getattr__' in result)
         self.assert_('__setattr__' in result)
 
-    def test_proxy_from_start_proxy_is_a_proxy(self):
-        proxy_from_start_proxy = self.AnActor.start_proxy()
-        self.assert_(isinstance(proxy_from_start_proxy, ActorProxy))
-        proxy_from_start_proxy.stop()
+    def test_refs_proxy_method_returns_a_proxy(self):
+        proxy_from_ref_proxy = self.AnActor.start().proxy()
+        self.assert_(isinstance(proxy_from_ref_proxy, ActorProxy))
+        proxy_from_ref_proxy.stop()
 
 
 class GeventProxyTest(ProxyTest, unittest.TestCase):
