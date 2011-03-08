@@ -41,6 +41,13 @@ class ActorRegistryTest(object):
         for b_actor in self.b_actors:
             self.assert_(b_actor not in result)
 
+    def test_actors_may_be_looked_up_by_superclass(self):
+        result = ActorRegistry.get_by_class(AnActorSuperclass)
+        for a_actor in self.a_actors:
+            self.assert_(a_actor in result)
+        for b_actor in self.b_actors:
+            self.assert_(b_actor not in result)
+
     def test_actors_may_be_looked_up_by_class_name(self):
         result = ActorRegistry.get_by_class_name('AnActor')
         for a_actor in self.a_actors:
@@ -57,11 +64,15 @@ class ActorRegistryTest(object):
         self.assertEqual(None, result)
 
 
+class AnActorSuperclass(object):
+    pass
+
+
 class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-    class AnActor(GeventActor): pass
+    class AnActor(GeventActor, AnActorSuperclass): pass
     class BeeActor(GeventActor): pass
 
 
 class ThreadingActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-    class AnActor(ThreadingActor): pass
+    class AnActor(ThreadingActor, AnActorSuperclass): pass
     class BeeActor(ThreadingActor): pass

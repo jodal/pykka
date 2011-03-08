@@ -27,16 +27,17 @@ class ActorRegistry(object):
     @classmethod
     def get_by_class(cls, actor_class):
         """
-        Get :class:`ActorRef` for all running actors of the given class.
+        Get :class:`ActorRef` for all running actors of the given class, or of
+        any subclass of the given class.
 
-        :param actor_class: actor class
-        :type actor_class: :class:`pykka.actor.Actor` subclass
+        :param actor_class: actor class, or any superclass of the actor
+        :type actor_class: class
 
         :returns: list of :class:`pykka.actor.ActorRef`
         """
         with cls._actor_refs_lock:
             return [ref for ref in cls._actor_refs
-                if ref.actor_class == actor_class]
+                if issubclass(ref.actor_class, actor_class)]
 
     @classmethod
     def get_by_class_name(cls, actor_class_name):
