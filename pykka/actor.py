@@ -149,6 +149,7 @@ class Actor(object):
 
         :class:`ThreadingActor` expects this method to be named :meth:`run`.
         """
+        self.post_start()
         self.actor_runnable = True
         while self.actor_runnable:
             message = self.actor_inbox.get()
@@ -160,6 +161,17 @@ class Actor(object):
                 if 'reply_to' in message:
                     message['reply_to'].set_exception(exception)
     # pylint: enable = W0703
+
+    def post_start(self):
+        """
+        Hook for doing any setup that should be done *after* the actor is
+        started, but *before* it starts processing messages.
+
+        For :class:`ThreadingActor`, this method is executed in the actor's own
+        thread, while :meth:`__init__` is executed in the thread that created
+        the actor.
+        """
+        pass
 
     def _react(self, message):
         """Reacts to messages sent to the actor."""
