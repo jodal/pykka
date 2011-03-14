@@ -1,0 +1,2 @@
+# Need gevent installed to build the docs for pykka.gevent
+gevent
