@@ -7,12 +7,16 @@ from pykka.gevent import GeventActor
 class SomeObject(object):
     baz = 'bar.baz'
 
+    _private_field = 'secret'
+
 
 class ActorWithFields(object):
     foo = 'foo'
 
     bar = SomeObject()
     bar.pykka_traversable = True
+
+    _private_field = 'secret'
 
 
 class FieldAccessTest(object):
@@ -30,6 +34,15 @@ class FieldAccessTest(object):
         self.assertEqual('foo', self.proxy.foo.get())
         self.proxy.foo = 'foo2'
         self.assertEqual('foo2', self.proxy.foo.get())
+
+    def test_private_field_access_raises_exception(self):
+        try:
+            self.proxy._private_field.get()
+            self.fail('Should raise AttributeError exception')
+        except AttributeError:
+            pass
+        except Exception:
+            self.fail('Should raise AttributeError exception')
 
     def test_attr_of_traversable_attr_can_be_read(self):
         self.assertEqual('bar.baz', self.proxy.bar.baz.get())
