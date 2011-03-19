@@ -1,8 +1,14 @@
 import collections
 import logging
-import multiprocessing
-import multiprocessing.dummy
+import threading
 import uuid
+
+try:
+    # Python 2.x
+    import Queue as queue
+except ImportError:
+    # Python 3.x
+    import queue
 
 from pykka.future import ThreadingFuture
 from pykka.proxy import ActorProxy
@@ -240,20 +246,20 @@ class Actor(object):
 
 
 # pylint: disable = R0901
-class ThreadingActor(Actor, multiprocessing.dummy.Process):
+class ThreadingActor(Actor, threading.Thread):
     """
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
-    threads, via the :mod:`multiprocessing.dummy` package.
+    threads.
 
     This implementation is slower than :class:`pykka.gevent.GeventActor`, but
     can be used in a process with other threads that are not Pykka actors.
     """
 
-    _superclass = multiprocessing.dummy.Process
+    _superclass = threading.Thread
     _future_class = ThreadingFuture
 
     def _new_actor_inbox(self):
-        return multiprocessing.Queue()
+        return queue.Queue()
 
     def run(self):
         return Actor._run(self)

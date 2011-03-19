@@ -8,8 +8,8 @@ by using the `actor model <http://en.wikipedia.org/wiki/Actor_model>`_.
 Pykka provides an actor API with two different implementations:
 
 - **ThreadingActor** is built on the Python Standard Library's `threading` and
-  `multiprocessing` modules, and has no dependencies outside Python itself. It
-  plays well together with non-actor threads.
+  `Queue` modules, and has no dependencies outside Python itself. It plays well
+  together with non-actor threads.
 
 - **GeventActor** is built on the `gevent <http://www.gevent.org/>`_ library.
   gevent is a coroutine-based Python networking library that uses greenlet to

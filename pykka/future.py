@@ -1,5 +1,11 @@
-import multiprocessing
-import multiprocessing.reduction
+import copy
+
+try:
+    # Python 2.x
+    import Queue as queue
+except ImportError:
+    # Python 3.x
+    import queue
 
 
 class Timeout(Exception):
@@ -60,74 +66,45 @@ class Future(object):
         raise NotImplementedError
 
 
-class _ConnectionWrapper(object):
-    """
-    Internal class used by :class:`ThreadingFuture` to make
-    :class:`multiprocessing.Connection` objects picklable.
-    """
-
-    def __init__(self, connection):
-        self._connection = connection
-
-    def __reduce__(self):
-        (conn_func, conn_args) = multiprocessing.reduction.reduce_connection(
-            self._connection)
-        wrapper_func = _ConnectionWrapperRebuilder(conn_func)
-        return (wrapper_func, conn_args)
-
-    def __getattr__(self, name):
-        return getattr(self._connection, name)
-
-
-class _ConnectionWrapperRebuilder(object):
-    """
-    Internal class used by :class:`_ConnectionWrapper` to rewrap
-    :class:`multiprocessing.Connection` objects when they are depickled.
-
-    A function defined inside :meth:`_ConnectionWrapper.__reduce__` which takes
-    :attr:`conn_func` from its scope cannot be used, as functions must be
-    defined at the module's top level to be picklable.
-    """
-
-    def __init__(self, inner_func):
-        self._inner_func = inner_func
-
-    def __call__(self, *args):
-        connection = self._inner_func(*args)
-        return _ConnectionWrapper(connection)
-
-
 class ThreadingFuture(Future):
-    def __init__(self, pipe=None):
+    """
+    :class:`ThreadingFuture` implements :class:`Future` for use with
+    :class:`pykka.actor.ThreadingActor`.
+
+    The future is implemented using a :class:`Queue.Queue`.
+
+    The encapsulated value is a copy made with :func:`copy.deepcopy`, unless
+    the encapsulated value is another :class:`ThreadingFuture`, in which case
+    the original future is encapsulated.
+    """
+
+    def __init__(self):
         super(ThreadingFuture, self).__init__()
-        if pipe is not None:
-            self.reader, self.writer = pipe
-        else:
-            self.reader, self.writer = multiprocessing.Pipe(False)
-        if not isinstance(self.reader, _ConnectionWrapper):
-            self.reader = _ConnectionWrapper(self.reader)
-        if not isinstance(self.writer, _ConnectionWrapper):
-            self.writer = _ConnectionWrapper(self.writer)
-        self.value_received = False
-        self.value = None
+        self._queue = queue.Queue()
+        self._value_received = False
+        self._value = None
 
     # pylint: disable = E0702
     def get(self, timeout=None):
-        if self.value_received:
-            if isinstance(self.value, Exception):
-                raise self.value
+        if self._value_received:
+            if isinstance(self._value, Exception):
+                raise self._value
             else:
-                return self.value
-        if self.reader.poll(timeout):
-            self.value = self.reader.recv()
-            self.value_received = True
+                return self._value
+        try:
+            self._value = self._queue.get(True, timeout)
+            self._value_received = True
             return self.get()
-        else:
+        except queue.Empty:
             raise Timeout('%s seconds' % timeout)
     # pylint: enable = E0702
 
     def set(self, value=None):
-        self.writer.send(value)
+        if isinstance(value, ThreadingFuture):
+            value = value
+        else:
+            value = copy.deepcopy(value)
+        self._queue.put(value)
 
     def set_exception(self, exception):
         self.set(exception)
