@@ -8,7 +8,7 @@ try:
     import Queue as queue
 except ImportError:
     # Python 3.x
-    import queue
+    import queue # pylint: disable = F0401
 
 from pykka.future import ThreadingFuture
 from pykka.proxy import ActorProxy
