@@ -85,15 +85,14 @@ class ThreadingFuture(Future):
         self._value = None
 
     def get(self, timeout=None):
-        if self._value_received:
+        try:
+            if not self._value_received:
+                self._value = self._queue.get(True, timeout)
+                self._value_received = True
             if isinstance(self._value, Exception):
                 raise self._value # pylint: disable = E0702
             else:
                 return self._value
-        try:
-            self._value = self._queue.get(True, timeout)
-            self._value_received = True
-            return self.get()
         except queue.Empty:
             raise Timeout('%s seconds' % timeout)
 
