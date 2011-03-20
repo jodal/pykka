@@ -47,10 +47,10 @@ class ActorProxy(object):
     def __init__(self, actor_ref, attr_path=None):
         self._actor_ref = actor_ref
         self._attr_path = attr_path or tuple()
-        self._actor_attributes = self._get_attributes()
+        self._known_attrs = None
 
-    def _get_attributes(self):
-        return self._actor_ref.send_request_reply(
+    def _update_attrs(self):
+        self._known_attrs = self._actor_ref.send_request_reply(
             {'command': 'pykka_get_attributes'})
 
     def __repr__(self):
@@ -58,19 +58,21 @@ class ActorProxy(object):
             self._attr_path)
 
     def __dir__(self):
+        if self._known_attrs is None:
+            self._update_attrs()
         result = ['__class__']
         result += list(self.__class__.__dict__.keys())
         result += list(self.__dict__.keys())
         result += [attr_path[0]
-            for attr_path in list(self._actor_attributes.keys())]
+            for attr_path in list(self._known_attrs.keys())]
         return sorted(result)
 
     def __getattr__(self, name):
         """Get a field or callable from the actor."""
         attr_path = self._attr_path + (name,)
-        if attr_path not in self._actor_attributes:
-            self._actor_attributes = self._get_attributes()
-        attr_info = self._actor_attributes.get(attr_path)
+        if self._known_attrs is None or attr_path not in self._known_attrs:
+            self._update_attrs()
+        attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:
             raise AttributeError('%s has no attribute "%s"' % (self, name))
         if attr_info['callable']:
