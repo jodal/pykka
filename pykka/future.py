@@ -5,7 +5,7 @@ try:
     import Queue as queue
 except ImportError:
     # Python 3.x
-    import queue # pylint: disable = F0401
+    import queue  # pylint: disable = F0401
 
 
 class Timeout(Exception):
@@ -90,7 +90,7 @@ class ThreadingFuture(Future):
                 self._value = self._queue.get(True, timeout)
                 self._value_received = True
             if isinstance(self._value, BaseException):
-                raise self._value # pylint: disable = E0702
+                raise self._value  # pylint: disable = E0702
             else:
                 return self._value
         except queue.Empty:

@@ -58,8 +58,10 @@ class ActorTest(object):
 
 
 class GeventActorTest(ActorTest, unittest.TestCase):
-    class AnActor(AnActor, GeventActor): pass
+    class AnActor(AnActor, GeventActor):
+        pass
 
 
 class ThreadingActorTest(ActorTest, unittest.TestCase):
-    class AnActor(AnActor, ThreadingActor): pass
+    class AnActor(AnActor, ThreadingActor):
+        pass

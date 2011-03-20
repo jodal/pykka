@@ -2,6 +2,7 @@ import unittest
 
 import pykka
 
+
 class VersionTest(unittest.TestCase):
     def test_version_with_two_components(self):
         pykka.VERSION = (1, 2)

@@ -6,10 +6,13 @@ from pykka.gevent import GeventActor
 
 class ActorWithMethods(object):
     foo = 'bar'
+
     def functional_hello(self, s):
         return 'Hello, %s!' % s
+
     def set_foo(self, s):
         self.foo = s
+
     def raise_keyboard_interrupt(self):
         raise KeyboardInterrupt
 

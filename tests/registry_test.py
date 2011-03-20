@@ -69,10 +69,16 @@ class AnActorSuperclass(object):
 
 
 class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-    class AnActor(GeventActor, AnActorSuperclass): pass
-    class BeeActor(GeventActor): pass
+    class AnActor(GeventActor, AnActorSuperclass):
+        pass
+
+    class BeeActor(GeventActor):
+        pass
 
 
 class ThreadingActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-    class AnActor(ThreadingActor, AnActorSuperclass): pass
-    class BeeActor(ThreadingActor): pass
+    class AnActor(ThreadingActor, AnActorSuperclass):
+        pass
+
+    class BeeActor(ThreadingActor):
+        pass
