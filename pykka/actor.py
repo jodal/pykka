@@ -1,4 +1,3 @@
-import collections
 import logging
 import threading
 import uuid
@@ -236,7 +235,10 @@ class Actor(object):
             if self._is_exposable_attribute(attr_path[-1]):
                 attr = self._get_attribute_from_path(attr_path)
                 result[tuple(attr_path)] = {
-                    'callable': isinstance(attr, collections.Callable),
+                    # NOTE isinstance(attr, collections.Callable), as
+                    # recommended by 2to3, does not work on CPython 2.6.4 if
+                    # the attribute is an Queue.Queue, but works on 2.6.6.
+                    'callable': callable(attr),
                     'traversable': self._is_traversable_attribute(attr),
                 }
                 if self._is_traversable_attribute(attr):
