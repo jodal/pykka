@@ -10,6 +10,8 @@ class ActorWithMethods(object):
         return 'Hello, %s!' % s
     def set_foo(self, s):
         self.foo = s
+    def raise_keyboard_interrupt(self):
+        raise KeyboardInterrupt
 
 
 class ActorExtendableAtRuntime(object):
@@ -45,6 +47,13 @@ class MethodCallTest(object):
             result = str(e)
             self.assert_(result.startswith('<ActorProxy for ActorWithMethods'))
             self.assert_(result.endswith('has no attribute "unknown_method"'))
+
+    def test_calling_method_which_throws_subclass_of_BaseException(self):
+        try:
+            self.proxy.raise_keyboard_interrupt().get()
+            self.fail('Should raise KeyboardInterrupt, but got no exception')
+        except KeyboardInterrupt as e:
+            pass
 
     def test_can_call_method_that_was_added_at_runtime(self):
         self.proxy_extendable.add_method('foo')

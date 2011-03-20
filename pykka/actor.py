@@ -155,7 +155,7 @@ class Actor(object):
                 response = self._react(message)
                 if 'reply_to' in message:
                     message['reply_to'].set(response)
-            except Exception as exception:
+            except BaseException as exception:
                 if 'reply_to' in message:
                     message['reply_to'].set_exception(exception)
     # pylint: enable = W0703
