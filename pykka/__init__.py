@@ -5,3 +5,15 @@ VERSION = (0, 11, 1)
 def get_version():
     """Returns Pykka's version as a formatted string"""
     return '.'.join(map(str, VERSION))
+
+def _add_null_handler_for_logging():
+    import logging
+    try:
+        NullHandler = logging.NullHandler  # Python 2.7 and upwards
+    except AttributeError:
+        class NullHandler(logging.Handler):
+            def emit(self, record):
+                pass
+    logging.getLogger('pykka').addHandler(NullHandler())
+
+_add_null_handler_for_logging()
