@@ -17,3 +17,8 @@ def _add_null_handler_for_logging():
     logging.getLogger('pykka').addHandler(NullHandler())
 
 _add_null_handler_for_logging()
+
+
+class ActorDeadError(Exception):
+    """Excepion raised when trying to use a dead or unavailable actor."""
+    pass

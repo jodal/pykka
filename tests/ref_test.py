@@ -3,6 +3,7 @@ import unittest
 
 import gevent
 
+from pykka import ActorDeadError
 from pykka.actor import ThreadingActor
 from pykka.gevent import GeventActor, GeventFuture
 from pykka.future import Timeout, ThreadingFuture
@@ -48,10 +49,35 @@ class RefTest(object):
     def test_str_contains_actor_urn(self):
         self.assert_(self.ref.actor_urn in str(self.ref))
 
+    def test_is_alive_returns_true_for_running_actor(self):
+        self.assertTrue(self.ref.is_alive())
+
+    def test_is_alive_returns_false_for_dead_actor(self):
+        self.ref.stop()
+        self.assertFalse(self.ref.is_alive())
+
+    def test_stop_returns_true_if_actor_is_stopped(self):
+        self.assertTrue(self.ref.stop())
+
+    def test_stop_does_not_stop_already_dead_actor(self):
+        self.ref.stop()
+        try:
+            self.assertFalse(self.ref.stop())
+        except ActorDeadError:
+            self.fail('Should never raise ActorDeadError')
+
     def test_send_one_way_delivers_message_to_actors_custom_react(self):
         self.ref.send_one_way({'command': 'a custom message'})
         self.assertEqual({'command': 'a custom message'},
             self.received_message.get())
+
+    def test_send_one_way_fails_if_actor_is_stopped(self):
+        self.ref.stop()
+        try:
+            self.ref.send_one_way({'command': 'a custom message'})
+            self.fail('Should raise ActorDeadError')
+        except ActorDeadError as exception:
+            self.assertEqual('%s not found' % self.ref, exception.message)
 
     def test_send_request_reply_blocks_until_response_arrives(self):
         result = self.ref.send_request_reply({'command': 'ping'})
@@ -67,6 +93,14 @@ class RefTest(object):
     def test_send_request_reply_can_return_future_instead_of_blocking(self):
         future = self.ref.send_request_reply({'command': 'ping'}, block=False)
         self.assertEqual('pong', future.get())
+
+    def test_send_request_reply_fails_if_actor_is_stopped(self):
+        self.ref.stop()
+        try:
+            self.ref.send_request_reply({'command': 'ping'})
+            self.fail('Should raise ActorDeadError')
+        except ActorDeadError as exception:
+            self.assertEqual('%s not found' % self.ref, exception.message)
 
 
 class GeventRefTest(RefTest, unittest.TestCase):

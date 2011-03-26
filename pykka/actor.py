@@ -10,6 +10,7 @@ except ImportError:
     # Python 3.x
     import queue  # pylint: disable = F0401
 
+from pykka import ActorDeadError
 from pykka.future import ThreadingFuture
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
@@ -326,6 +327,19 @@ class ActorRef(object):
             'class': self.actor_class.__name__,
         }
 
+    def is_alive(self):
+        """
+        Check if actor is alive.
+
+        As this check is just based on the actor being registered in the actor
+        registry or, the actor is not guaranteed to be alive and responding
+        even though :meth:`is_alive` returns :class:`True`.
+
+        :return:
+            Returns :class:`True` if actor is alive, :class:`False` otherwise.
+        """
+        return ActorRegistry.get_by_urn(self.actor_urn) is not None
+
     def send_one_way(self, message):
         """
         Send message to actor without waiting for any response.
@@ -336,8 +350,11 @@ class ActorRef(object):
         :param message: message to send
         :type message: picklable dict
 
+        :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: nothing
         """
+        if not self.is_alive():
+            raise ActorDeadError('%s not found' % self)
         self.actor_inbox.put(message)
 
     def send_request_reply(self, message, block=True, timeout=None):
@@ -363,6 +380,7 @@ class ActorRef(object):
         :param timeout: seconds to wait before timeout if blocking
         :type timeout: float or :class:`None`
 
+        :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.future.Future` or response
         """
         future = self._future_class()
@@ -378,8 +396,15 @@ class ActorRef(object):
         Send a message to the actor, asking it to stop.
 
         ``block`` and ``timeout`` works as for :meth:`send_request_reply`.
+
+        :return: :class:`True` if actor is stopped. :class:`False` if actor was
+            already dead.
         """
-        self.send_request_reply({'command': 'pykka_stop'}, block, timeout)
+        if self.is_alive():
+            self.send_request_reply({'command': 'pykka_stop'}, block, timeout)
+            return True
+        else:
+            return False
 
     def proxy(self):
         """
@@ -387,11 +412,13 @@ class ActorRef(object):
 
         Using this method like this::
 
-            ref = AnActor.start()
-            proxy = ActorProxy(ref)
+            proxy = AnActor.start().proxy()
 
         is analogous to::
 
-            proxy = AnActor.start().proxy()
+            proxy = ActorProxy(AnActor.start())
+
+        :raise: :exc:`pykka.ActorDeadError` if actor is not available
+        :return: :class:`pykka.proxy.ActorProxy`
         """
         return ActorProxy(self)

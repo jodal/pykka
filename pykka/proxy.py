@@ -1,3 +1,6 @@
+from pykka import ActorDeadError
+
+
 class ActorProxy(object):
     """
     An :class:`ActorProxy` wraps an :class:`pykka.actor.ActorRef`. The proxy
@@ -42,9 +45,13 @@ class ActorProxy(object):
 
     :param actor_ref: reference to the actor to proxy
     :type actor_ref: :class:`pykka.actor.ActorRef`
+
+    :raise: :exc:`pykka.ActorDeadError` if actor is not available
     """
 
     def __init__(self, actor_ref, attr_path=None):
+        if not actor_ref.is_alive():
+            raise ActorDeadError('%s not found' % actor_ref)
         self._actor_ref = actor_ref
         self._attr_path = attr_path or tuple()
         self._known_attrs = None
