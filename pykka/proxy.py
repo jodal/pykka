@@ -1,4 +1,4 @@
-from pykka import ActorDeadError
+from pykka import ActorDeadError as _ActorDeadError
 
 
 class ActorProxy(object):
@@ -51,7 +51,7 @@ class ActorProxy(object):
 
     def __init__(self, actor_ref, attr_path=None):
         if not actor_ref.is_alive():
-            raise ActorDeadError('%s not found' % actor_ref)
+            raise _ActorDeadError('%s not found' % actor_ref)
         self._actor_ref = actor_ref
         self._attr_path = attr_path or tuple()
         self._known_attrs = None

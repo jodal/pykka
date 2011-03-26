@@ -4,12 +4,12 @@ import gevent
 import gevent.event
 import gevent.queue
 
-from pykka import Timeout
-from pykka.actor import Actor
-from pykka.future import Future
+from pykka import Timeout as _Timeout
+from pykka.actor import Actor as _Actor
+from pykka.future import Future as _Future
 
 
-class GeventFuture(Future):
+class GeventFuture(_Future):
     """
     :class:`GeventFuture` implements :class:`pykka.future.Future` for use with
     :class:`GeventActor`.
@@ -32,7 +32,7 @@ class GeventFuture(Future):
         try:
             return self.async_result.get(timeout=timeout)
         except gevent.Timeout as e:
-            raise Timeout(e)
+            raise _Timeout(e)
 
     def set(self, value=None):
         self.async_result.set(value)
@@ -41,7 +41,7 @@ class GeventFuture(Future):
         self.async_result.set_exception(exception)
 
 
-class GeventActor(Actor, gevent.Greenlet):
+class GeventActor(_Actor, gevent.Greenlet):
     """
     :class:`GeventActor` implements :class:`Actor` using the `gevent
     <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python

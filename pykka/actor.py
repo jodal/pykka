@@ -10,10 +10,10 @@ except ImportError:
     # Python 3.x
     import queue  # pylint: disable = F0401
 
-from pykka import ActorDeadError
-from pykka.future import ThreadingFuture
-from pykka.proxy import ActorProxy
-from pykka.registry import ActorRegistry
+from pykka import ActorDeadError as _ActorDeadError
+from pykka.future import ThreadingFuture as _ThreadingFuture
+from pykka.proxy import ActorProxy as _ActorProxy
+from pykka.registry import ActorRegistry as _ActorRegistry
 
 logger = logging.getLogger('pykka')
 
@@ -83,7 +83,7 @@ class Actor(object):
         obj = cls(*args, **kwargs)
         cls._superclass.start(obj)
         logger.debug('Started %s', obj)
-        ActorRegistry.register(obj.actor_ref)
+        _ActorRegistry.register(obj.actor_ref)
         return obj.actor_ref
 
     #: The actor URN string is a universally unique identifier for the actor.
@@ -141,7 +141,7 @@ class Actor(object):
         before stopping. It may not be restarted.
         """
         self.actor_runnable = False
-        ActorRegistry.unregister(self.actor_ref)
+        _ActorRegistry.unregister(self.actor_ref)
         logger.debug('Stopped %s', self)
 
     # pylint: disable = W0703
@@ -282,7 +282,7 @@ class ThreadingActor(Actor, threading.Thread):
     """
 
     _superclass = threading.Thread
-    _future_class = ThreadingFuture
+    _future_class = _ThreadingFuture
 
     def _new_actor_inbox(self):
         return queue.Queue()
@@ -338,7 +338,7 @@ class ActorRef(object):
         :return:
             Returns :class:`True` if actor is alive, :class:`False` otherwise.
         """
-        return ActorRegistry.get_by_urn(self.actor_urn) is not None
+        return _ActorRegistry.get_by_urn(self.actor_urn) is not None
 
     def send_one_way(self, message):
         """
@@ -354,7 +354,7 @@ class ActorRef(object):
         :return: nothing
         """
         if not self.is_alive():
-            raise ActorDeadError('%s not found' % self)
+            raise _ActorDeadError('%s not found' % self)
         self.actor_inbox.put(message)
 
     def send_request_reply(self, message, block=True, timeout=None):
@@ -421,4 +421,4 @@ class ActorRef(object):
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.proxy.ActorProxy`
         """
-        return ActorProxy(self)
+        return _ActorProxy(self)

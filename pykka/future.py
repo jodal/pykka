@@ -7,7 +7,7 @@ except ImportError:
     # Python 3.x
     import queue  # pylint: disable = F0401
 
-from pykka import Timeout
+from pykka import Timeout as _Timeout
 
 
 class Future(object):
@@ -93,7 +93,7 @@ class ThreadingFuture(Future):
             else:
                 return self._value
         except queue.Empty:
-            raise Timeout('%s seconds' % timeout)
+            raise _Timeout('%s seconds' % timeout)
 
     def set(self, value=None):
         if isinstance(value, ThreadingFuture):
