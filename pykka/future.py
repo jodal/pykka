@@ -9,6 +9,7 @@ except ImportError:
 
 
 class Timeout(Exception):
+    """Exception raised at future timeout."""
     pass
 
 
