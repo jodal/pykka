@@ -3,10 +3,10 @@ import unittest
 
 import gevent
 
-from pykka import ActorDeadError
+from pykka import ActorDeadError, Timeout
 from pykka.actor import ThreadingActor
 from pykka.gevent import GeventActor, GeventFuture
-from pykka.future import Timeout, ThreadingFuture
+from pykka.future import ThreadingFuture
 
 
 class AnActor(object):

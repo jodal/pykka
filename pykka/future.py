@@ -7,10 +7,7 @@ except ImportError:
     # Python 3.x
     import queue  # pylint: disable = F0401
 
-
-class Timeout(Exception):
-    """Exception raised at future timeout."""
-    pass
+from pykka import Timeout
 
 
 class Future(object):
@@ -33,7 +30,7 @@ class Future(object):
         If ``timeout`` is :class:`None`, as default, the method will block
         until it gets a reply, potentially forever. If ``timeout`` is an
         integer or float, the method will wait for a reply for ``timeout``
-        seconds, and then raise :exc:`Timeout`.
+        seconds, and then raise :exc:`pykka.Timeout`.
 
         The encapsulated value can be retrieved multiple times. The future will
         only block the first time the value is accessed.
@@ -44,6 +41,7 @@ class Future(object):
         :param timeout: seconds to wait before timeout
         :type timeout: float or :class:`None`
 
+        :raise: :exc:`pykka.Timeout` if timeout is reached
         :return: encapsulated value
         """
         raise NotImplementedError
@@ -113,7 +111,7 @@ def get_all(futures, timeout=None):
     Collect all values encapsulated in the list of futures.
 
     If ``timeout`` is not :class:`None`, the method will wait for a reply for
-    ``timeout`` seconds, and then raise :exc:`pykka.future.Timeout`.
+    ``timeout`` seconds, and then raise :exc:`pykka.Timeout`.
 
     :param futures: futures for the results to collect
     :type futures: list of `pykka.future.Future`
@@ -121,6 +119,7 @@ def get_all(futures, timeout=None):
     :param timeout: seconds to wait before timeout
     :type timeout: float or :class:`None`
 
+    :raise: :exc:`pykka.Timeout` if timeout is reached
     :returns: list of results
     """
     return [future.get(timeout=timeout) for future in futures]

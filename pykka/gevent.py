@@ -4,8 +4,9 @@ import gevent
 import gevent.event
 import gevent.queue
 
+from pykka import Timeout
 from pykka.actor import Actor
-from pykka.future import Timeout, Future
+from pykka.future import Future
 
 
 class GeventFuture(Future):

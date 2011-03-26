@@ -1,6 +1,7 @@
 import unittest
 
-from pykka.future import Timeout, ThreadingFuture, get_all
+from pykka import Timeout
+from pykka.future import ThreadingFuture, get_all
 from pykka.gevent import GeventFuture
 
 

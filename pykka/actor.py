@@ -369,7 +369,7 @@ class ActorRef(object):
         default, the method will block until it gets a reply, potentially
         forever. If ``timeout`` is an integer or float, the method will wait
         for a reply for ``timeout`` seconds, and then raise
-        :exc:`pykka.future.Timeout`.
+        :exc:`pykka.Timeout`.
 
         :param message: message to send
         :type message: picklable dict
