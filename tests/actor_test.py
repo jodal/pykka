@@ -26,7 +26,8 @@ class AnActor(object):
 class ActorTest(object):
     def setUp(self):
         self.unstarted_actor = self.AnActor()
-        self.actor = self.AnActor.start()
+        self.actor_ref = self.AnActor.start()
+        self.actor_proxy = self.actor_ref.proxy()
         self.actors = [self.AnActor.start() for _ in range(3)]
 
     def tearDown(self):
@@ -34,7 +35,7 @@ class ActorTest(object):
 
     def test_sending_unexpected_message_raises_not_implemented_error(self):
         try:
-            self.actor.send_request_reply({'unhandled': 'message'})
+            self.actor_ref.send_request_reply({'unhandled': 'message'})
             self.fail('Should throw NotImplementedError')
         except NotImplementedError:
             pass
@@ -56,7 +57,7 @@ class ActorTest(object):
 
     def test_pre_start_is_executed_before_first_message_is_processed(self):
         self.assertFalse(self.unstarted_actor.pre_start_was_executed)
-        self.assertTrue(self.actor.send_request_reply(
+        self.assertTrue(self.actor_ref.send_request_reply(
             {'command': 'get pre_start_was_executed'}))
 
     def test_post_stop_is_executed_when_actor_is_stopped(self):
