@@ -3,6 +3,7 @@ import uuid
 
 from pykka.actor import ThreadingActor
 from pykka.gevent import GeventActor
+from pykka.registry import ActorRegistry
 
 
 class AnActor(object):
@@ -11,6 +12,9 @@ class AnActor(object):
 
     def pre_start(self):
         self.pre_start_was_executed = True
+
+    def post_stop(self):
+        pass
 
     def react(self, message):
         if message.get('command') == 'get pre_start_was_executed':
@@ -26,8 +30,7 @@ class ActorTest(object):
         self.actors = [self.AnActor.start() for _ in range(3)]
 
     def tearDown(self):
-        for actor in self.actors:
-            actor.stop()
+        ActorRegistry.stop_all()
 
     def test_sending_unexpected_message_raises_not_implemented_error(self):
         try:
@@ -55,6 +58,9 @@ class ActorTest(object):
         self.assertFalse(self.unstarted_actor.pre_start_was_executed)
         self.assertTrue(self.actor.send_request_reply(
             {'command': 'get pre_start_was_executed'}))
+
+    def test_post_stop_is_executed_when_actor_is_stopped(self):
+        pass  # What's a good way of testing this?
 
 
 class GeventActorTest(ActorTest, unittest.TestCase):

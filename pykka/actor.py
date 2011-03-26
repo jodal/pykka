@@ -157,6 +157,7 @@ class Actor(object):
             except BaseException as exception:
                 if 'reply_to' in message:
                     message['reply_to'].set_exception(exception)
+        self.post_stop()
     # pylint: enable = W0703
 
     def pre_start(self):
@@ -167,6 +168,16 @@ class Actor(object):
         For :class:`ThreadingActor`, this method is executed in the actor's own
         thread, while :meth:`__init__` is executed in the thread that created
         the actor.
+        """
+        pass
+
+    def post_stop(self):
+        """
+        Hook for doing any cleanup that should be done *after* the actor has
+        processed the last message, and *before* the actor stops.
+
+        For :class:`ThreadingActor` this method is executed in the actor's own
+        thread, immediately before the thread exits.
         """
         pass
 
