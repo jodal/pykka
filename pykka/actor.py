@@ -34,13 +34,19 @@ class Actor(object):
 
         class MyActor(ThreadingActor):
             def __init__(self, my_arg=None):
-                ... # my init code
+                ... # My optional init code with access to start() arguments
+
+            def pre_start(self):
+                ... # My optional setup code in same context as react()
+
+            def post_stop(self):
+                ... # My optional cleanup code in same context as react()
 
             def react(self, message):
-                ... # my react code for a plain actor
+                ... # My optional react code for a plain actor
 
             def a_method(self, ...):
-                ... # my regular method to be used through an ActorProxy
+                ... # My regular method to be used through an ActorProxy
 
         my_actor_ref = MyActor.start(my_arg=...)
         my_actor_ref.stop()
