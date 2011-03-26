@@ -1,4 +1,5 @@
 import logging
+import sys
 import threading
 import uuid
 
@@ -162,6 +163,8 @@ class Actor(object):
                     message['reply_to'].set(response)
             except BaseException as exception:
                 if 'reply_to' in message:
+                    logger.debug('Exception returned from %s to caller:' %
+                        self, exc_info=sys.exc_info())
                     message['reply_to'].set_exception(exception)
         self.post_stop()
     # pylint: enable = W0703
