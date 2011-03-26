@@ -7,14 +7,14 @@ from pykka.gevent import GeventActor
 
 class AnActor(object):
     def __init__(self):
-        self.post_start_was_executed = False
+        self.pre_start_was_executed = False
 
-    def post_start(self):
-        self.post_start_was_executed = True
+    def pre_start(self):
+        self.pre_start_was_executed = True
 
     def react(self, message):
-        if message.get('command') == 'get post_start_was_executed':
-            return self.post_start_was_executed
+        if message.get('command') == 'get pre_start_was_executed':
+            return self.pre_start_was_executed
         else:
             super(AnActor, self).react(message)
 
@@ -51,10 +51,10 @@ class ActorTest(object):
         self.assert_(self.unstarted_actor.actor_urn
             in str(self.unstarted_actor))
 
-    def test_post_start_is_executed_before_first_message_is_processed(self):
-        self.assertFalse(self.unstarted_actor.post_start_was_executed)
+    def test_pre_start_is_executed_before_first_message_is_processed(self):
+        self.assertFalse(self.unstarted_actor.pre_start_was_executed)
         self.assertTrue(self.actor.send_request_reply(
-            {'command': 'get post_start_was_executed'}))
+            {'command': 'get pre_start_was_executed'}))
 
 
 class GeventActorTest(ActorTest, unittest.TestCase):

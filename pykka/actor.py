@@ -146,7 +146,7 @@ class Actor(object):
 
         :class:`ThreadingActor` expects this method to be named :meth:`run`.
         """
-        self.post_start()
+        self.pre_start()
         self.actor_runnable = True
         while self.actor_runnable:
             message = self.actor_inbox.get()
@@ -159,7 +159,7 @@ class Actor(object):
                     message['reply_to'].set_exception(exception)
     # pylint: enable = W0703
 
-    def post_start(self):
+    def pre_start(self):
         """
         Hook for doing any setup that should be done *after* the actor is
         started, but *before* it starts processing messages.
