@@ -166,6 +166,9 @@ class Actor(object):
                     logger.debug('Exception returned from %s to caller:' %
                         self, exc_info=sys.exc_info())
                     message['reply_to'].set_exception(exception)
+                else:
+                    logger.error('Unhandled exception in %s:' % self,
+                        exc_info=sys.exc_info())
         self.post_stop()
     # pylint: enable = W0703
 

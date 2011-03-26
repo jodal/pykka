@@ -15,7 +15,8 @@ class LoggingNullHandlerTest(unittest.TestCase):
 
 class ActorLoggingTest(object):
     def setUp(self):
-        self.actor_proxy = self.AnActor.start().proxy()
+        self.actor_ref = self.AnActor.start()
+        self.actor_proxy = self.actor_ref.proxy()
         self.log_handler = TestLogHandler(logging.DEBUG)
         self.root_logger = logging.getLogger()
         self.root_logger.addHandler(self.log_handler)
@@ -34,6 +35,16 @@ class ActorLoggingTest(object):
         log_record = self.log_handler.messages['debug'][0]
         self.assertEqual('Exception returned from %s to caller:' %
             self.actor_ref, log_record.getMessage())
+        self.assertEqual(Exception, log_record.exc_info[0])
+        self.assertEqual('foo', log_record.exc_info[1].message)
+
+    def test_exception_is_logged_when_not_reply_requested(self):
+        self.actor_ref.send_one_way({'command': 'raise exception'})
+        self.actor_proxy.do_nothing().get()
+        self.assertEqual(1, len(self.log_handler.messages['error']))
+        log_record = self.log_handler.messages['error'][0]
+        self.assertEqual('Unhandled exception in %s:' % self.actor_ref,
+            log_record.getMessage())
         self.assertEqual(Exception, log_record.exc_info[0])
         self.assertEqual('foo', log_record.exc_info[1].message)
 
@@ -57,15 +68,24 @@ class TestLogHandler(logging.Handler):
 
 
 class AnActor(object):
+    def react(self, message):
+        if message.get('command') == 'raise exception':
+            return self.raise_exception()
+
     def raise_exception(self):
         raise Exception('foo')
 
+    def do_nothing(self):
+        # Does nothing, but can be used to block until the actor has
+        # completed processing a one-way message.
+        pass
+
 
 class GeventActorLoggingTest(ActorLoggingTest, unittest.TestCase):
-    class AnActor(GeventActor, AnActor):
+    class AnActor(AnActor, GeventActor):
         pass
 
 
 class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
-    class AnActor(ThreadingActor, AnActor):
+    class AnActor(AnActor, ThreadingActor):
         pass
