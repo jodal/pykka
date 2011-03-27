@@ -43,9 +43,9 @@ class GeventFuture(_Future):
 
 class GeventActor(_Actor, gevent.Greenlet):
     """
-    :class:`GeventActor` implements :class:`Actor` using the `gevent
-    <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
-    networking library that uses greenlet to provide a high-level
+    :class:`GeventActor` implements :class:`pykka.actor.Actor` using the
+    `gevent <http://www.gevent.org/>`_ library. gevent is a coroutine-based
+    Python networking library that uses greenlet to provide a high-level
     synchronous API on top of libevent event loop.
 
     This is a very fast implementation, but it does not work in combination

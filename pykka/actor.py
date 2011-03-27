@@ -97,7 +97,7 @@ class Actor(object):
     #: :meth:`pykka.registry.ActorRegistry.get_by_urn`.
     actor_urn = None
 
-    #: The actors inbox. Use :meth:`ActorRef.send_one_way` and friends to put
+    #: The actor's inbox. Use :meth:`ActorRef.send_one_way` and friends to put
     #: messages in the inbox.
     actor_inbox = None
 
@@ -334,9 +334,9 @@ class ActorRef(object):
         """
         Check if actor is alive.
 
-        As this check is just based on the actor being registered in the actor
-        registry or, the actor is not guaranteed to be alive and responding
-        even though :meth:`is_alive` returns :class:`True`.
+        This is based on whether the actor is registered in the actor registry
+        or not. The actor is not guaranteed to be alive and responding even
+        though :meth:`is_alive` returns :class:`True`.
 
         :return:
             Returns :class:`True` if actor is alive, :class:`False` otherwise.
@@ -383,6 +383,7 @@ class ActorRef(object):
         :param timeout: seconds to wait before timeout if blocking
         :type timeout: float or :class:`None`
 
+        :raise: :exc:`pykka.Timeout` if timeout is reached
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.future.Future` or response
         """

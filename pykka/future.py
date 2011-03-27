@@ -35,14 +35,12 @@ class Future(object):
         The encapsulated value can be retrieved multiple times. The future will
         only block the first time the value is accessed.
 
-        :param block: whether to block while waiting for a reply
-        :type block: boolean
-
         :param timeout: seconds to wait before timeout
         :type timeout: float or :class:`None`
 
         :raise: :exc:`pykka.Timeout` if timeout is reached
-        :return: encapsulated value
+        :raise: encapsulated value if it is an exception
+        :return: encapsulated value if it is not an exception
         """
         raise NotImplementedError
 
