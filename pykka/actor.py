@@ -1,3 +1,4 @@
+import collections
 import logging
 import sys
 import threading
@@ -16,6 +17,11 @@ from pykka.proxy import ActorProxy as _ActorProxy
 from pykka.registry import ActorRegistry as _ActorRegistry
 
 logger = logging.getLogger('pykka')
+
+if sys.version_info >= (3, 0):
+    def callable(attr):
+        """Reimplement callable() for Python 3.1"""
+        return isinstance(attr, collections.Callable)
 
 
 class Actor(object):
