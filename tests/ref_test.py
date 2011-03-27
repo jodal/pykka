@@ -75,7 +75,7 @@ class RefTest(object):
             self.ref.send_one_way({'command': 'a custom message'})
             self.fail('Should raise ActorDeadError')
         except ActorDeadError as exception:
-            self.assertEqual('%s not found' % self.ref, exception.message)
+            self.assertEqual('%s not found' % self.ref, str(exception))
 
     def test_send_request_reply_blocks_until_response_arrives(self):
         result = self.ref.send_request_reply({'command': 'ping'})
@@ -98,7 +98,7 @@ class RefTest(object):
             self.ref.send_request_reply({'command': 'ping'})
             self.fail('Should raise ActorDeadError')
         except ActorDeadError as exception:
-            self.assertEqual('%s not found' % self.ref, exception.message)
+            self.assertEqual('%s not found' % self.ref, str(exception))
 
 
 class ThreadingRefTest(RefTest, unittest.TestCase):

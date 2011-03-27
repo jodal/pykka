@@ -36,7 +36,7 @@ class ActorLoggingTest(object):
         self.assertEqual('Exception returned from %s to caller:' %
             self.actor_ref, log_record.getMessage())
         self.assertEqual(Exception, log_record.exc_info[0])
-        self.assertEqual('foo', log_record.exc_info[1].message)
+        self.assertEqual('foo', str(log_record.exc_info[1]))
 
     def test_exception_is_logged_when_not_reply_requested(self):
         self.actor_ref.send_one_way({'command': 'raise exception'})
@@ -46,7 +46,7 @@ class ActorLoggingTest(object):
         self.assertEqual('Unhandled exception in %s:' % self.actor_ref,
             log_record.getMessage())
         self.assertEqual(Exception, log_record.exc_info[0])
-        self.assertEqual('foo', log_record.exc_info[1].message)
+        self.assertEqual('foo', str(log_record.exc_info[1]))
 
 
 class TestLogHandler(logging.Handler):

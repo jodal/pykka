@@ -78,7 +78,7 @@ class ProxyTest(object):
             ActorProxy(actor_ref)
             self.fail('Should raise ActorDeadError')
         except ActorDeadError as exception:
-            self.assertEqual('%s not found' % actor_ref, exception.message)
+            self.assertEqual('%s not found' % actor_ref, str(exception))
 
 
 class ThreadingProxyTest(ProxyTest, unittest.TestCase):
