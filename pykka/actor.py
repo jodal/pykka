@@ -19,9 +19,11 @@ from pykka.registry import ActorRegistry as _ActorRegistry
 _logger = _logging.getLogger('pykka')
 
 if _sys.version_info >= (3, 0):
+    # pylint: disable = W0622
     def callable(attr):
         """Reimplement callable() for Python 3.1"""
         return isinstance(attr, _collections.Callable)
+    # pylint: enable = W0622
 
 
 class Actor(object):

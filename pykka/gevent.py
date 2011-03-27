@@ -1,8 +1,10 @@
 from __future__ import absolute_import
 
+# pylint: disable = E0611, W0406
 import gevent as _gevent
 import gevent.event as _gevent_event
 import gevent.queue as _gevent_queue
+# pylint: enable = E0611, W0406
 
 from pykka import Timeout as _Timeout
 from pykka.actor import Actor as _Actor

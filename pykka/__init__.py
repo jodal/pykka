@@ -6,6 +6,8 @@ def get_version():
     """Returns Pykka's version as a formatted string"""
     return '.'.join(map(str, VERSION))
 
+
+# pylint: disable = W0404
 def _add_null_handler_for_logging():
     import logging
     try:
@@ -17,6 +19,7 @@ def _add_null_handler_for_logging():
     logging.getLogger('pykka').addHandler(NullHandler())
 
 _add_null_handler_for_logging()
+# pylint: enable = W0404
 
 
 class ActorDeadError(Exception):
