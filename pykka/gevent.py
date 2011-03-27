@@ -57,6 +57,3 @@ class GeventActor(_Actor, gevent.Greenlet):
 
     def _new_actor_inbox(self):
         return gevent.queue.Queue()
-
-    def react(self, message):
-        raise NotImplementedError

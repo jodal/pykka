@@ -231,7 +231,7 @@ class Actor(object):
 
         :returns: anything that should be sent as a reply to the sender
         """
-        raise NotImplementedError
+        logger.warning('Unexpected message received by %s: %s', self, message)
 
     def _is_exposable_attribute(self, attr_name):
         """
@@ -295,9 +295,6 @@ class ThreadingActor(Actor, threading.Thread):
 
     def run(self):
         return Actor._run(self)
-
-    def react(self, message):
-        raise NotImplementedError
 # pylint: enable = R0901
 
 

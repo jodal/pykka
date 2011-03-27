@@ -1,9 +1,12 @@
+import logging
 import sys
 import unittest
 import uuid
 
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
+
+from tests import TestLogHandler
 
 
 class AnActor(object):
@@ -29,16 +32,20 @@ class ActorTest(object):
         self.actor_ref = self.AnActor.start()
         self.actor_proxy = self.actor_ref.proxy()
         self.actors = [self.AnActor.start() for _ in range(3)]
+        self.log_handler = TestLogHandler(logging.DEBUG)
+        self.root_logger = logging.getLogger()
+        self.root_logger.addHandler(self.log_handler)
 
     def tearDown(self):
+        self.log_handler.close()
         ActorRegistry.stop_all()
 
-    def test_sending_unexpected_message_raises_not_implemented_error(self):
-        try:
-            self.actor_ref.send_request_reply({'unhandled': 'message'})
-            self.fail('Should throw NotImplementedError')
-        except NotImplementedError:
-            pass
+    def test_unexpected_messages_are_logged(self):
+        self.actor_ref.send_request_reply({'unhandled': 'message'})
+        self.assertEqual(1, len(self.log_handler.messages['warning']))
+        log_record = self.log_handler.messages['warning'][0]
+        self.assertEqual('Unexpected message received by %s' % self.actor_ref,
+            log_record.getMessage().split(': ')[0])
 
     def test_actor_has_an_uuid4_based_urn(self):
         self.assertEqual(4, uuid.UUID(self.actors[0].actor_urn).version)
