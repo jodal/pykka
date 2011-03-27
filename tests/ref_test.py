@@ -1,11 +1,9 @@
+import sys
 import time
 import unittest
 
-import gevent
-
 from pykka import ActorDeadError, Timeout
 from pykka.actor import ThreadingActor
-from pykka.gevent import GeventActor, GeventFuture
 from pykka.future import ThreadingFuture
 
 
@@ -103,17 +101,21 @@ class RefTest(object):
             self.assertEqual('%s not found' % self.ref, exception.message)
 
 
-class GeventRefTest(RefTest, unittest.TestCase):
-    future_class = GeventFuture
-
-    class AnActor(AnActor, GeventActor):
-        def sleep(self, seconds):
-            gevent.sleep(seconds)
-
-
 class ThreadingRefTest(RefTest, unittest.TestCase):
     future_class = ThreadingFuture
 
     class AnActor(AnActor, ThreadingActor):
         def sleep(self, seconds):
             time.sleep(seconds)
+
+
+if sys.version_info < (3,):
+    import gevent
+    from pykka.gevent import GeventActor, GeventFuture
+
+    class GeventRefTest(RefTest, unittest.TestCase):
+        future_class = GeventFuture
+
+        class AnActor(AnActor, GeventActor):
+            def sleep(self, seconds):
+                gevent.sleep(seconds)

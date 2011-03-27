@@ -1,8 +1,8 @@
+import sys
 import logging
 import unittest
 
 from pykka.actor import ThreadingActor
-from pykka.gevent import GeventActor
 from pykka.registry import ActorRegistry
 
 
@@ -81,11 +81,14 @@ class AnActor(object):
         pass
 
 
-class GeventActorLoggingTest(ActorLoggingTest, unittest.TestCase):
-    class AnActor(AnActor, GeventActor):
-        pass
-
-
 class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
     class AnActor(AnActor, ThreadingActor):
         pass
+
+
+if sys.version_info < (3,):
+    from pykka.gevent import GeventActor
+
+    class GeventActorLoggingTest(ActorLoggingTest, unittest.TestCase):
+        class AnActor(AnActor, GeventActor):
+            pass

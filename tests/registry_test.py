@@ -1,7 +1,7 @@
+import sys
 import unittest
 
 from pykka.actor import ThreadingActor
-from pykka.gevent import GeventActor
 from pykka.registry import ActorRegistry
 
 
@@ -68,13 +68,6 @@ class AnActorSuperclass(object):
     pass
 
 
-class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-    class AnActor(GeventActor, AnActorSuperclass):
-        pass
-
-    class BeeActor(GeventActor):
-        pass
-
 
 class ThreadingActorRegistryTest(ActorRegistryTest, unittest.TestCase):
     class AnActor(ThreadingActor, AnActorSuperclass):
@@ -82,3 +75,14 @@ class ThreadingActorRegistryTest(ActorRegistryTest, unittest.TestCase):
 
     class BeeActor(ThreadingActor):
         pass
+
+
+if sys.version_info < (3,):
+    from pykka.gevent import GeventActor
+
+    class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):
+        class AnActor(GeventActor, AnActorSuperclass):
+            pass
+
+        class BeeActor(GeventActor):
+            pass

@@ -1,8 +1,8 @@
+import sys
 import unittest
 
 from pykka import Timeout
 from pykka.future import ThreadingFuture, get_all
-from pykka.gevent import GeventFuture
 
 
 class FutureTest(object):
@@ -41,9 +41,12 @@ class FutureTest(object):
         self.assertEqual(outer_future.get().get(), 'foo')
 
 
-class GeventFutureTest(FutureTest, unittest.TestCase):
-    future_class = GeventFuture
-
-
 class ThreadingFutureTest(FutureTest, unittest.TestCase):
     future_class = ThreadingFuture
+
+
+if sys.version_info < (3,):
+    from pykka.gevent import GeventFuture
+
+    class GeventFutureTest(FutureTest, unittest.TestCase):
+        future_class = GeventFuture

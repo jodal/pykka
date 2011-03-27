@@ -1,8 +1,8 @@
+import sys
 import unittest
 
 from pykka import ActorDeadError
 from pykka.actor import ThreadingActor
-from pykka.gevent import GeventActor
 from pykka.proxy import ActorProxy
 
 
@@ -81,11 +81,14 @@ class ProxyTest(object):
             self.assertEqual('%s not found' % actor_ref, exception.message)
 
 
-class GeventProxyTest(ProxyTest, unittest.TestCase):
-    class AnActor(AnActor, GeventActor):
-        pass
-
-
 class ThreadingProxyTest(ProxyTest, unittest.TestCase):
     class AnActor(AnActor, ThreadingActor):
         pass
+
+
+if sys.version_info < (3,):
+    from pykka.gevent import GeventActor
+
+    class GeventProxyTest(ProxyTest, unittest.TestCase):
+        class AnActor(AnActor, GeventActor):
+            pass

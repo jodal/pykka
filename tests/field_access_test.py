@@ -1,7 +1,7 @@
+import sys
 import unittest
 
 from pykka.actor import ThreadingActor
-from pykka.gevent import GeventActor
 
 
 class SomeObject(object):
@@ -54,11 +54,14 @@ class FieldAccessTest(object):
         self.assert_(('bar', 'baz') in attr_paths)
 
 
-class GeventFieldAccessTest(FieldAccessTest, unittest.TestCase):
-    class ActorWithFields(ActorWithFields, GeventActor):
-        pass
-
-
 class ThreadingFieldAccessTest(FieldAccessTest, unittest.TestCase):
     class ActorWithFields(ActorWithFields, ThreadingActor):
         pass
+
+
+if sys.version_info < (3,):
+    from pykka.gevent import GeventActor
+
+    class GeventFieldAccessTest(FieldAccessTest, unittest.TestCase):
+        class ActorWithFields(ActorWithFields, GeventActor):
+            pass

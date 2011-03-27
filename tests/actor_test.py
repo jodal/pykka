@@ -1,8 +1,8 @@
+import sys
 import unittest
 import uuid
 
 from pykka.actor import ThreadingActor
-from pykka.gevent import GeventActor
 from pykka.registry import ActorRegistry
 
 
@@ -64,11 +64,14 @@ class ActorTest(object):
         pass  # What's a good way of testing this?
 
 
-class GeventActorTest(ActorTest, unittest.TestCase):
-    class AnActor(AnActor, GeventActor):
-        pass
-
-
 class ThreadingActorTest(ActorTest, unittest.TestCase):
     class AnActor(AnActor, ThreadingActor):
         pass
+
+
+if sys.version_info < (3,):
+    from pykka.gevent import GeventActor
+
+    class GeventActorTest(ActorTest, unittest.TestCase):
+        class AnActor(AnActor, GeventActor):
+            pass
