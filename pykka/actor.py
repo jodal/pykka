@@ -1,27 +1,27 @@
-import collections
-import logging
-import sys
-import threading
-import uuid
+import collections as _collections
+import logging as _logging
+import sys as _sys
+import threading as _threading
+import uuid as _uuid
 
 try:
     # Python 2.x
-    import Queue as queue
+    import Queue as _queue
 except ImportError:
     # Python 3.x
-    import queue  # pylint: disable = F0401
+    import queue as _queue  # pylint: disable = F0401
 
 from pykka import ActorDeadError as _ActorDeadError
 from pykka.future import ThreadingFuture as _ThreadingFuture
 from pykka.proxy import ActorProxy as _ActorProxy
 from pykka.registry import ActorRegistry as _ActorRegistry
 
-logger = logging.getLogger('pykka')
+_logger = _logging.getLogger('pykka')
 
-if sys.version_info >= (3, 0):
+if _sys.version_info >= (3, 0):
     def callable(attr):
         """Reimplement callable() for Python 3.1"""
-        return isinstance(attr, collections.Callable)
+        return isinstance(attr, _collections.Callable)
 
 
 class Actor(object):
@@ -88,7 +88,7 @@ class Actor(object):
         """
         obj = cls(*args, **kwargs)
         cls._superclass.start(obj)
-        logger.debug('Started %s', obj)
+        _logger.debug('Started %s', obj)
         _ActorRegistry.register(obj.actor_ref)
         return obj.actor_ref
 
@@ -111,7 +111,7 @@ class Actor(object):
     def __new__(cls, *args, **kwargs):
         obj = cls._superclass.__new__(cls)
         cls._superclass.__init__(obj)
-        obj.actor_urn = uuid.uuid4().urn
+        obj.actor_urn = _uuid.uuid4().urn
         # pylint: disable = W0212
         obj.actor_inbox = obj._new_actor_inbox()
         # pylint: enable = W0212
@@ -148,7 +148,7 @@ class Actor(object):
         """
         self.actor_runnable = False
         _ActorRegistry.unregister(self.actor_ref)
-        logger.debug('Stopped %s', self)
+        _logger.debug('Stopped %s', self)
 
     # pylint: disable = W0703
     def _run(self):
@@ -170,12 +170,12 @@ class Actor(object):
                     message['reply_to'].set(response)
             except BaseException as exception:
                 if 'reply_to' in message:
-                    logger.debug('Exception returned from %s to caller:' %
-                        self, exc_info=sys.exc_info())
+                    _logger.debug('Exception returned from %s to caller:' %
+                        self, exc_info=_sys.exc_info())
                     message['reply_to'].set_exception(exception)
                 else:
-                    logger.error('Unhandled exception in %s:' % self,
-                        exc_info=sys.exc_info())
+                    _logger.error('Unhandled exception in %s:' % self,
+                        exc_info=_sys.exc_info())
         self.post_stop()
     # pylint: enable = W0703
 
@@ -231,7 +231,7 @@ class Actor(object):
 
         :returns: anything that should be sent as a reply to the sender
         """
-        logger.warning('Unexpected message received by %s: %s', self, message)
+        _logger.warning('Unexpected message received by %s: %s', self, message)
 
     def _is_exposable_attribute(self, attr_name):
         """
@@ -278,7 +278,7 @@ class Actor(object):
 
 
 # pylint: disable = R0901
-class ThreadingActor(Actor, threading.Thread):
+class ThreadingActor(Actor, _threading.Thread):
     """
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
     threads.
@@ -287,11 +287,11 @@ class ThreadingActor(Actor, threading.Thread):
     can be used in a process with other threads that are not Pykka actors.
     """
 
-    _superclass = threading.Thread
+    _superclass = _threading.Thread
     _future_class = _ThreadingFuture
 
     def _new_actor_inbox(self):
-        return queue.Queue()
+        return _queue.Queue()
 
     def run(self):
         return Actor._run(self)

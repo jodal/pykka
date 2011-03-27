@@ -1,11 +1,11 @@
-import copy
+import copy as _copy
 
 try:
     # Python 2.x
-    import Queue as queue
+    import Queue as _queue
 except ImportError:
     # Python 3.x
-    import queue  # pylint: disable = F0401
+    import queue as _queue  # pylint: disable = F0401
 
 from pykka import Timeout as _Timeout
 
@@ -77,7 +77,7 @@ class ThreadingFuture(Future):
 
     def __init__(self):
         super(ThreadingFuture, self).__init__()
-        self._queue = queue.Queue()
+        self._queue = _queue.Queue()
         self._value_received = False
         self._value = None
 
@@ -90,14 +90,14 @@ class ThreadingFuture(Future):
                 raise self._value  # pylint: disable = E0702
             else:
                 return self._value
-        except queue.Empty:
+        except _queue.Empty:
             raise _Timeout('%s seconds' % timeout)
 
     def set(self, value=None):
         if isinstance(value, ThreadingFuture):
             value = value
         else:
-            value = copy.deepcopy(value)
+            value = _copy.deepcopy(value)
         self._queue.put(value)
 
     def set_exception(self, exception):

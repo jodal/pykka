@@ -1,7 +1,7 @@
-import logging
-import threading
+import logging as _logging
+import threading as _threading
 
-logger = logging.getLogger('pykka')
+_logger = _logging.getLogger('pykka')
 
 
 class ActorRegistry(object):
@@ -12,7 +12,7 @@ class ActorRegistry(object):
     """
 
     _actor_refs = []
-    _actor_refs_lock = threading.RLock()
+    _actor_refs_lock = _threading.RLock()
 
     @classmethod
     def get_all(cls):
@@ -83,7 +83,7 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             cls._actor_refs.append(actor_ref)
-        logger.debug('Registered %s', actor_ref)
+        _logger.debug('Registered %s', actor_ref)
 
     @classmethod
     def stop_all(cls, block=True, timeout=None):
@@ -112,4 +112,4 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             cls._actor_refs.remove(actor_ref)
-        logger.debug('Unregistered %s', actor_ref)
+        _logger.debug('Unregistered %s', actor_ref)
