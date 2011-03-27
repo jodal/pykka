@@ -20,7 +20,7 @@ _add_null_handler_for_logging()
 
 
 class ActorDeadError(Exception):
-    """Excepion raised when trying to use a dead or unavailable actor."""
+    """Exception raised when trying to use a dead or unavailable actor."""
     pass
 
 
