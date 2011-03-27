@@ -5,6 +5,8 @@ import unittest
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
 
+from tests import TestLogHandler
+
 
 class LoggingNullHandlerTest(unittest.TestCase):
     def test_null_handler_is_added_to_avoid_warnings(self):
@@ -47,24 +49,6 @@ class ActorLoggingTest(object):
             log_record.getMessage())
         self.assertEqual(Exception, log_record.exc_info[0])
         self.assertEqual('foo', str(log_record.exc_info[1]))
-
-
-class TestLogHandler(logging.Handler):
-    def __init__(self, *args, **kwargs):
-        self.reset()
-        logging.Handler.__init__(self, *args, **kwargs)
-
-    def emit(self, record):
-        self.messages[record.levelname.lower()].append(record)
-
-    def reset(self):
-        self.messages = {
-            'debug': [],
-            'info': [],
-            'warning': [],
-            'error': [],
-            'critical': [],
-        }
 
 
 class AnActor(object):
