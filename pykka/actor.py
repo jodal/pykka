@@ -18,13 +18,6 @@ from pykka.registry import ActorRegistry as _ActorRegistry
 
 _logger = _logging.getLogger('pykka')
 
-if _sys.version_info >= (3, 0):
-    # pylint: disable = W0622
-    def callable(attr):
-        """Reimplement callable() for Python 3.1"""
-        return isinstance(attr, _collections.Callable)
-    # pylint: enable = W0622
-
 
 class Actor(object):
     """
@@ -242,6 +235,16 @@ class Actor(object):
         """
         return not attr_name.startswith('_')
 
+    def _is_callable_attribute(self, attr):
+        """Returns true for any attribute that is callable."""
+        # isinstance(attr, collections.Callable), as recommended by 2to3, does
+        # not work on CPython 2.6.4 if the attribute is an Queue.Queue, but
+        # works on 2.6.6.
+        if _sys.version_info < (3,):
+            return callable(attr)
+        else:
+            return isinstance(attr, _collections.Callable)
+
     def _is_traversable_attribute(self, attr):
         """
         Returns true for any attribute that may be traversed from another
@@ -267,10 +270,7 @@ class Actor(object):
             if self._is_exposable_attribute(attr_path[-1]):
                 attr = self._get_attribute_from_path(attr_path)
                 result[tuple(attr_path)] = {
-                    # NOTE isinstance(attr, collections.Callable), as
-                    # recommended by 2to3, does not work on CPython 2.6.4 if
-                    # the attribute is an Queue.Queue, but works on 2.6.6.
-                    'callable': callable(attr),
+                    'callable': self._is_callable_attribute(attr),
                     'traversable': self._is_traversable_attribute(attr),
                 }
                 if self._is_traversable_attribute(attr):
