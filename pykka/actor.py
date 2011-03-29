@@ -167,7 +167,7 @@ class Actor(object):
                 response = self._react(message)
                 if 'reply_to' in message:
                     message['reply_to'].set(response)
-            except BaseException as exception:
+            except Exception as exception:
                 if 'reply_to' in message:
                     _logger.debug('Exception returned from %s to caller:' %
                         self, exc_info=_sys.exc_info())
