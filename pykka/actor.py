@@ -401,6 +401,9 @@ class ActorRef(object):
         """
         Send a message to the actor, asking it to stop.
 
+        The actor will finish processing any messages already in its queue
+        before stopping. It may not be restarted.
+
         ``block`` and ``timeout`` works as for :meth:`send_request_reply`.
 
         :return: :class:`True` if actor is stopped. :class:`False` if actor was
