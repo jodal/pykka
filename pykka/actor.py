@@ -77,7 +77,7 @@ class Actor(object):
                 Actor.__new__()
                     superclass.__new__()
                     superclass.__init__()
-                    UUID assignment
+                    URN assignment
                     Inbox creation
                     ActorRef creation
                 Actor.__init__()        # Your code can run here
