@@ -26,6 +26,8 @@ class AnActor(object):
     def react(self, message):
         if message.get('command') == 'raise exception':
             raise Exception('foo')
+        elif message.get('command') == 'raise KeyboardInterrupt':
+            raise KeyboardInterrupt()
         else:
             super(AnActor, self).react(message)
 
@@ -85,6 +87,20 @@ class ActorTest(object):
         self.assertFalse(self.on_failure_was_called.is_set())
         self.actor_ref.send_one_way({'command': 'raise exception'})
         self.on_failure_was_called.wait()
+        self.assertEqual(0, len(ActorRegistry.get_all()))
+
+    def test_all_actors_are_stopped_on_keyboard_interrupt(self):
+        start_event = self.event_class()
+        stop_event = self.event_class()
+        fail_event = self.event_class()
+        another_actor = self.AnActor.start(start_event, stop_event, fail_event)
+
+        self.assertEqual(2, len(ActorRegistry.get_all()))
+        self.assertFalse(self.post_stop_was_called.is_set())
+        self.actor_ref.send_one_way({'command': 'raise KeyboardInterrupt'})
+        self.post_stop_was_called.wait()
+        self.assert_(1 >= len(ActorRegistry.get_all()))
+        stop_event.wait()
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
 

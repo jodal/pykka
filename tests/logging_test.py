@@ -18,9 +18,13 @@ class LoggingNullHandlerTest(unittest.TestCase):
 
 class ActorLoggingTest(object):
     def setUp(self):
-        self.on_failure_called = self.event_class()
-        self.actor_ref = self.AnActor.start(self.on_failure_called)
+        self.post_stop_was_called = self.event_class()
+        self.on_failure_was_called = self.event_class()
+
+        self.actor_ref = self.AnActor.start(self.post_stop_was_called,
+            self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
+
         self.log_handler = TestLogHandler(logging.DEBUG)
         self.root_logger = logging.getLogger()
         self.root_logger.addHandler(self.log_handler)
@@ -50,9 +54,9 @@ class ActorLoggingTest(object):
         self.assertEqual('foo', str(log_record.exc_info[1]))
 
     def test_exception_is_logged_when_not_reply_requested(self):
-        self.on_failure_called.clear()
+        self.on_failure_was_called.clear()
         self.actor_ref.send_one_way({'command': 'raise exception'})
-        self.on_failure_called.wait()
+        self.on_failure_was_called.wait()
         self.assertEqual(1, len(self.log_handler.messages['error']))
         log_record = self.log_handler.messages['error'][0]
         self.assertEqual('Unhandled exception in %s:' % self.actor_ref,
@@ -60,22 +64,39 @@ class ActorLoggingTest(object):
         self.assertEqual(Exception, log_record.exc_info[0])
         self.assertEqual('foo', str(log_record.exc_info[1]))
 
+    def test_keyboard_interrupt_is_logged(self):
+        self.log_handler.reset()
+        self.post_stop_was_called.clear()
+        self.actor_ref.send_one_way({'command': 'raise KeyboardInterrupt'})
+        self.post_stop_was_called.wait()
+        self.assertEqual(3, len(self.log_handler.messages['debug']))
+        log_record = self.log_handler.messages['debug'][0]
+        self.assertEqual('Keyboard interrupt in %s. Stopping all actors.'
+            % self.actor_ref, log_record.getMessage())
+
 
 class AnActor(object):
-    def __init__(self, on_failure_called):
-        self.on_failure_called = on_failure_called
+    def __init__(self, post_stop_was_called, on_failure_was_called):
+        self.post_stop_was_called = post_stop_was_called
+        self.on_failure_was_called = on_failure_was_called
+
+    def post_stop(self):
+        self.post_stop_was_called.set()
 
     def on_failure(self, exception_type, exception_value, traceback):
-        self.on_failure_called.set()
+        self.on_failure_was_called.set()
 
     def react(self, message):
         if message.get('command') == 'raise exception':
             return self.raise_exception()
+        elif message.get('command') == 'raise KeyboardInterrupt':
+            raise KeyboardInterrupt()
         else:
             super(AnActor, self).react(message)
 
     def raise_exception(self):
         raise Exception('foo')
+
 
 class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
     event_class = threading.Event
