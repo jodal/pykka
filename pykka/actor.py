@@ -45,6 +45,9 @@ class Actor(object):
             def post_stop(self):
                 ... # My optional cleanup code in same context as react()
 
+            def on_failure(self, exception_type, exception_value, traceback):
+                ... # My optional cleanup code in same context as react()
+
             def react(self, message):
                 ... # My optional react code for a plain actor
 
@@ -169,8 +172,7 @@ class Actor(object):
                         self, exc_info=_sys.exc_info())
                     message['reply_to'].set_exception(exception)
                 else:
-                    _logger.error('Unhandled exception in %s:' % self,
-                        exc_info=_sys.exc_info())
+                    self._on_failure(*_sys.exc_info())
         self.post_stop()
     # pylint: enable = W0703
 
@@ -192,6 +194,18 @@ class Actor(object):
 
         For :class:`ThreadingActor` this method is executed in the actor's own
         thread, immediately before the thread exits.
+        """
+        pass
+
+    def _on_failure(self, exception_type, exception_value, traceback):
+        """Handles actor failures."""
+        _logger.error('Unhandled exception in %s:' % self,
+            exc_info=(exception_type, exception_value, traceback))
+        self.on_failure(exception_type, exception_value, traceback)
+
+    def on_failure(self, exception_type, exception_value, traceback):
+        """
+        Hook for doing any cleanup when unhandled exceptions are raised.
         """
         pass
 

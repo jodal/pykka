@@ -82,6 +82,12 @@ class ActorTest(object):
         self.post_stop_was_called.wait()
         self.assertTrue(self.post_stop_was_called.is_set())
 
+    def test_on_failure_is_called_when_exception_cannot_be_returned(self):
+        self.assertFalse(self.on_failure_was_called.is_set())
+        self.actor_ref.send_one_way({'command': 'raise exception'})
+        self.on_failure_was_called.wait()
+        self.assertTrue(self.on_failure_was_called.is_set())
+
     def test_unexpected_messages_are_logged(self):
         self.actor_ref.send_request_reply({'unhandled': 'message'})
         self.assertEqual(1, len(self.log_handler.messages['warning']))
