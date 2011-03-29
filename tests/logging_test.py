@@ -1,5 +1,6 @@
 import sys
 import logging
+import threading
 import unittest
 
 from pykka.actor import ThreadingActor
@@ -17,7 +18,8 @@ class LoggingNullHandlerTest(unittest.TestCase):
 
 class ActorLoggingTest(object):
     def setUp(self):
-        self.actor_ref = self.AnActor.start()
+        self.on_failure_called = self.event_class()
+        self.actor_ref = self.AnActor.start(self.on_failure_called)
         self.actor_proxy = self.actor_ref.proxy()
         self.log_handler = TestLogHandler(logging.DEBUG)
         self.root_logger = logging.getLogger()
@@ -41,8 +43,9 @@ class ActorLoggingTest(object):
         self.assertEqual('foo', str(log_record.exc_info[1]))
 
     def test_exception_is_logged_when_not_reply_requested(self):
+        self.on_failure_called.clear()
         self.actor_ref.send_one_way({'command': 'raise exception'})
-        self.actor_proxy.do_nothing().get()
+        self.on_failure_called.wait()
         self.assertEqual(1, len(self.log_handler.messages['error']))
         log_record = self.log_handler.messages['error'][0]
         self.assertEqual('Unhandled exception in %s:' % self.actor_ref,
@@ -52,6 +55,9 @@ class ActorLoggingTest(object):
 
 
 class AnActor(object):
+    def __init__(self, on_failure_called):
+        self.on_failure_called = on_failure_called
+
     def react(self, message):
         if message.get('command') == 'raise exception':
             return self.raise_exception()
@@ -59,20 +65,24 @@ class AnActor(object):
     def raise_exception(self):
         raise Exception('foo')
 
-    def do_nothing(self):
-        # Does nothing, but can be used to block until the actor has
-        # completed processing a one-way message.
-        pass
+    def on_failure(self, exception_type, exception_value, traceback):
+        self.on_failure_called.set()
 
 
 class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
+    event_class = threading.Event
+
     class AnActor(AnActor, ThreadingActor):
         pass
 
 
 if sys.version_info < (3,):
+    import gevent.event
+
     from pykka.gevent import GeventActor
 
     class GeventActorLoggingTest(ActorLoggingTest, unittest.TestCase):
+        event_class = gevent.event.Event
+
         class AnActor(AnActor, GeventActor):
             pass
