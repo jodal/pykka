@@ -1,4 +1,3 @@
-import logging
 import sys
 import threading
 import unittest
@@ -6,8 +5,6 @@ import uuid
 
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
-
-from tests import TestLogHandler
 
 
 class AnActor(object):
@@ -28,7 +25,7 @@ class AnActor(object):
 
     def react(self, message):
         if message.get('command') == 'raise exception':
-            return self.raise_exception()
+            raise Exception('foo')
         else:
             super(AnActor, self).react(message)
 
@@ -43,12 +40,7 @@ class ActorTest(object):
             self.post_stop_was_called, self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
-        self.log_handler = TestLogHandler(logging.DEBUG)
-        self.root_logger = logging.getLogger()
-        self.root_logger.addHandler(self.log_handler)
-
     def tearDown(self):
-        self.log_handler.close()
         ActorRegistry.stop_all()
 
     def test_actor_has_an_uuid4_based_urn(self):
@@ -87,13 +79,6 @@ class ActorTest(object):
         self.actor_ref.send_one_way({'command': 'raise exception'})
         self.on_failure_was_called.wait()
         self.assertTrue(self.on_failure_was_called.is_set())
-
-    def test_unexpected_messages_are_logged(self):
-        self.actor_ref.send_request_reply({'unhandled': 'message'})
-        self.assertEqual(1, len(self.log_handler.messages['warning']))
-        log_record = self.log_handler.messages['warning'][0]
-        self.assertEqual('Unexpected message received by %s' % self.actor_ref,
-            log_record.getMessage().split(': ')[0])
 
 
 

@@ -29,6 +29,13 @@ class ActorLoggingTest(object):
         self.log_handler.close()
         ActorRegistry.stop_all()
 
+    def test_unexpected_messages_are_logged(self):
+        self.actor_ref.send_request_reply({'unhandled': 'message'})
+        self.assertEqual(1, len(self.log_handler.messages['warning']))
+        log_record = self.log_handler.messages['warning'][0]
+        self.assertEqual('Unexpected message received by %s' % self.actor_ref,
+            log_record.getMessage().split(': ')[0])
+
     def test_exception_is_logged_when_returned_to_caller(self):
         try:
             self.actor_proxy.raise_exception().get()
@@ -58,16 +65,17 @@ class AnActor(object):
     def __init__(self, on_failure_called):
         self.on_failure_called = on_failure_called
 
-    def react(self, message):
-        if message.get('command') == 'raise exception':
-            return self.raise_exception()
-
-    def raise_exception(self):
-        raise Exception('foo')
-
     def on_failure(self, exception_type, exception_value, traceback):
         self.on_failure_called.set()
 
+    def react(self, message):
+        if message.get('command') == 'raise exception':
+            return self.raise_exception()
+        else:
+            super(AnActor, self).react(message)
+
+    def raise_exception(self):
+        raise Exception('foo')
 
 class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
     event_class = threading.Event
