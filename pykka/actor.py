@@ -101,7 +101,7 @@ class Actor(object):
 
     #: Wether or not the actor should continue processing messages. Use
     #: :meth:`stop` to change it.
-    actor_runnable = True
+    _actor_runnable = True
 
     def __new__(cls, *args, **kwargs):
         obj = cls._superclass.__new__(cls)
@@ -141,7 +141,7 @@ class Actor(object):
         The actor will finish processing any messages already in its queue
         before stopping. It may not be restarted.
         """
-        self.actor_runnable = False
+        self._actor_runnable = False
         _ActorRegistry.unregister(self.actor_ref)
         _logger.debug('Stopped %s', self)
 
@@ -156,8 +156,8 @@ class Actor(object):
         :class:`ThreadingActor` expects this method to be named :meth:`run`.
         """
         self.pre_start()
-        self.actor_runnable = True
-        while self.actor_runnable:
+        self._actor_runnable = True
+        while self._actor_runnable:
             message = self.actor_inbox.get()
             try:
                 response = self._react(message)
