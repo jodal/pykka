@@ -144,9 +144,10 @@ class Actor(object):
         The actor will finish processing any messages already in its queue
         before stopping. It may not be restarted.
         """
-        self._actor_runnable = False
         _ActorRegistry.unregister(self.actor_ref)
+        self._actor_runnable = False
         _logger.debug('Stopped %s', self)
+        self.post_stop()
 
     # pylint: disable = W0703
     def _run(self):
@@ -172,8 +173,7 @@ class Actor(object):
                         self, exc_info=_sys.exc_info())
                     message['reply_to'].set_exception(exception)
                 else:
-                    self._on_failure(*_sys.exc_info())
-        self.post_stop()
+                    self._handle_failure(*_sys.exc_info())
     # pylint: enable = W0703
 
     def pre_start(self):
@@ -192,20 +192,32 @@ class Actor(object):
         Hook for doing any cleanup that should be done *after* the actor has
         processed the last message, and *before* the actor stops.
 
+        This hook is *not* called when the actor stops because of an unhandled
+        exception. In that case, the :meth:`on_failure` hook is called instead.
+
         For :class:`ThreadingActor` this method is executed in the actor's own
         thread, immediately before the thread exits.
         """
         pass
 
-    def _on_failure(self, exception_type, exception_value, traceback):
-        """Handles actor failures."""
+    def _handle_failure(self, exception_type, exception_value, traceback):
+        """Logs unexpected failures, unregisters and stops the actor."""
         _logger.error('Unhandled exception in %s:' % self,
             exc_info=(exception_type, exception_value, traceback))
+        _ActorRegistry.unregister(self.actor_ref)
+        self._actor_runnable = False
         self.on_failure(exception_type, exception_value, traceback)
 
     def on_failure(self, exception_type, exception_value, traceback):
         """
-        Hook for doing any cleanup when unhandled exceptions are raised.
+        Hook for doing any cleanup *after* an unhandled exception is raised,
+        and *before* the actor stops.
+
+        For :class:`ThreadingActor` this method is executed in the actor's own
+        thread, immediately before the thread exits.
+
+        The method's arguments are the relevant information from
+        :func:`sys.exc_info`.
         """
         pass
 

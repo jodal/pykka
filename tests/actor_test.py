@@ -79,7 +79,13 @@ class ActorTest(object):
         self.actor_ref.send_one_way({'command': 'raise exception'})
         self.on_failure_was_called.wait()
         self.assertTrue(self.on_failure_was_called.is_set())
+        self.assertFalse(self.post_stop_was_called.is_set())
 
+    def test_actor_is_stopped_when_unhandled_exceptions_are_raised(self):
+        self.assertFalse(self.on_failure_was_called.is_set())
+        self.actor_ref.send_one_way({'command': 'raise exception'})
+        self.on_failure_was_called.wait()
+        self.assertEqual(0, len(ActorRegistry.get_all()))
 
 
 class ThreadingActorTest(ActorTest, unittest.TestCase):
