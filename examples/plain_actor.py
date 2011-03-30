@@ -6,7 +6,7 @@ class PlainActor(ThreadingActor):
     def __init__(self):
         self.stored_messages = []
 
-    def react(self, message):
+    def on_receive(self, message):
         if message.get('command') == 'get_messages':
             return self.stored_messages
         else:

@@ -40,16 +40,16 @@ class Actor(object):
                 ... # My optional init code with access to start() arguments
 
             def on_start(self):
-                ... # My optional setup code in same context as react()
+                ... # My optional setup code in same context as on_receive()
 
             def on_stop(self):
-                ... # My optional cleanup code in same context as react()
+                ... # My optional cleanup code in same context as on_receive()
 
             def on_failure(self, exception_type, exception_value, traceback):
-                ... # My optional cleanup code in same context as react()
+                ... # My optional cleanup code in same context as on_receive()
 
-            def react(self, message):
-                ... # My optional react code for a plain actor
+            def on_receive(self, message):
+                ... # My optional message handling code for a plain actor
 
             def a_method(self, ...):
                 ... # My regular method to be used through an ActorProxy
@@ -164,7 +164,7 @@ class Actor(object):
         while self._actor_runnable:
             message = self.actor_inbox.get()
             try:
-                response = self._react(message)
+                response = self._handle_receive(message)
                 if 'reply_to' in message:
                     message['reply_to'].set(response)
             except Exception as exception:
@@ -226,8 +226,8 @@ class Actor(object):
         """
         pass
 
-    def _react(self, message):
-        """Reacts to messages sent to the actor."""
+    def _handle_receive(self, message):
+        """Handles messages sent to the actor."""
         if message.get('command') == 'pykka_get_attributes':
             return self._get_attributes()
         if message.get('command') == 'pykka_stop':
@@ -243,13 +243,13 @@ class Actor(object):
                 message['attr_path'][:-1])
             attr_name = message['attr_path'][-1]
             return setattr(parent_attr, attr_name, message['value'])
-        return self.react(message)
+        return self.on_receive(message)
 
-    def react(self, message):
+    def on_receive(self, message):
         """
-        May be implemented for the actor to handle non-proxy messages.
+        May be implemented for the actor to handle regular non-proxy messages.
 
-        Messages where the value of the 'command' key matches 'pykka_*' are
+        Messages where the value of the "command" key matches "pykka_*" are
         reserved for internal use in Pykka.
 
         :param message: the message to handle

@@ -23,13 +23,13 @@ class AnActor(object):
     def on_failure(self, *args):
         self.on_failure_was_called.set()
 
-    def react(self, message):
+    def on_receive(self, message):
         if message.get('command') == 'raise exception':
             raise Exception('foo')
         elif message.get('command') == 'raise KeyboardInterrupt':
             raise KeyboardInterrupt()
         else:
-            super(AnActor, self).react(message)
+            super(AnActor, self).on_receive(message)
 
 
 class ActorTest(object):

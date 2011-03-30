@@ -11,7 +11,7 @@ class AnActor(object):
     def __init__(self, received_message):
         self.received_message = received_message
 
-    def react(self, message):
+    def on_receive(self, message):
         if message.get('command') == 'ping':
             self.sleep(0.01)
             return 'pong'
@@ -64,7 +64,7 @@ class RefTest(object):
         except ActorDeadError:
             self.fail('Should never raise ActorDeadError')
 
-    def test_send_one_way_delivers_message_to_actors_custom_react(self):
+    def test_send_one_way_delivers_message_to_actors_custom_on_receive(self):
         self.ref.send_one_way({'command': 'a custom message'})
         self.assertEqual({'command': 'a custom message'},
             self.received_message.get())

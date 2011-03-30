@@ -35,10 +35,10 @@ actors.
 Plain actors
 ------------
 
-Plain actors get all incoming messages delivered to the :meth:`react` method.
-This method can decide what action is needed in response to the message. The
-messages are expected to be Python dictionaries, containing anything that can
-be serialized.
+Plain actors get all incoming messages delivered to the :meth:`on_receive`
+method. This method can decide what action is needed in response to the
+message. The messages are expected to be Python dictionaries, containing
+anything that can be serialized.
 
 .. literalinclude:: ../examples/plain_actor.py
 

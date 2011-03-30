@@ -86,13 +86,13 @@ class AnActor(object):
     def on_failure(self, exception_type, exception_value, traceback):
         self.on_failure_was_called.set()
 
-    def react(self, message):
+    def on_receive(self, message):
         if message.get('command') == 'raise exception':
             return self.raise_exception()
         elif message.get('command') == 'raise KeyboardInterrupt':
             raise KeyboardInterrupt()
         else:
-            super(AnActor, self).react(message)
+            super(AnActor, self).on_receive(message)
 
     def raise_exception(self):
         raise Exception('foo')
