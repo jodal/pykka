@@ -8,14 +8,14 @@ from pykka.registry import ActorRegistry
 
 
 class AnActor(object):
-    def __init__(self, pre_start_was_called, post_stop_was_called,
+    def __init__(self, on_start_was_called, post_stop_was_called,
             on_failure_was_called):
-        self.pre_start_was_called = pre_start_was_called
+        self.on_start_was_called = on_start_was_called
         self.post_stop_was_called = post_stop_was_called
         self.on_failure_was_called = on_failure_was_called
 
-    def pre_start(self):
-        self.pre_start_was_called.set()
+    def on_start(self):
+        self.on_start_was_called.set()
 
     def post_stop(self):
         self.post_stop_was_called.set()
@@ -34,11 +34,11 @@ class AnActor(object):
 
 class ActorTest(object):
     def setUp(self):
-        self.pre_start_was_called = self.event_class()
+        self.on_start_was_called = self.event_class()
         self.post_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
 
-        self.actor_ref = self.AnActor.start(self.pre_start_was_called,
+        self.actor_ref = self.AnActor.start(self.on_start_was_called,
             self.post_stop_was_called, self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
@@ -66,9 +66,9 @@ class ActorTest(object):
         unstarted_actor = self.AnActor(event, event, event)
         self.assert_(unstarted_actor.actor_urn in str(unstarted_actor))
 
-    def test_pre_start_is_called_before_first_message_is_processed(self):
-        self.pre_start_was_called.wait()
-        self.assertTrue(self.pre_start_was_called.is_set())
+    def test_on_start_is_called_before_first_message_is_processed(self):
+        self.on_start_was_called.wait()
+        self.assertTrue(self.on_start_was_called.is_set())
 
     def test_post_stop_is_called_when_actor_is_stopped(self):
         self.assertFalse(self.post_stop_was_called.is_set())

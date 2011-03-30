@@ -39,7 +39,7 @@ class Actor(object):
             def __init__(self, my_arg=None):
                 ... # My optional init code with access to start() arguments
 
-            def pre_start(self):
+            def on_start(self):
                 ... # My optional setup code in same context as react()
 
             def post_stop(self):
@@ -159,7 +159,7 @@ class Actor(object):
 
         :class:`ThreadingActor` expects this method to be named :meth:`run`.
         """
-        self.pre_start()
+        self.on_start()
         self._actor_runnable = True
         while self._actor_runnable:
             message = self.actor_inbox.get()
@@ -181,7 +181,7 @@ class Actor(object):
                 _ActorRegistry.stop_all()
     # pylint: enable = W0703
 
-    def pre_start(self):
+    def on_start(self):
         """
         Hook for doing any setup that should be done *after* the actor is
         started, but *before* it starts processing messages.
