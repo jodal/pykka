@@ -42,7 +42,7 @@ class Actor(object):
             def on_start(self):
                 ... # My optional setup code in same context as react()
 
-            def post_stop(self):
+            def on_stop(self):
                 ... # My optional cleanup code in same context as react()
 
             def on_failure(self, exception_type, exception_value, traceback):
@@ -147,7 +147,7 @@ class Actor(object):
         _ActorRegistry.unregister(self.actor_ref)
         self._actor_runnable = False
         _logger.debug('Stopped %s', self)
-        self.post_stop()
+        self.on_stop()
 
     # pylint: disable = W0703
     def _run(self):
@@ -192,7 +192,7 @@ class Actor(object):
         """
         pass
 
-    def post_stop(self):
+    def on_stop(self):
         """
         Hook for doing any cleanup that should be done *after* the actor has
         processed the last message, and *before* the actor stops.

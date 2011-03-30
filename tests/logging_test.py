@@ -18,10 +18,10 @@ class LoggingNullHandlerTest(unittest.TestCase):
 
 class ActorLoggingTest(object):
     def setUp(self):
-        self.post_stop_was_called = self.event_class()
+        self.on_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
 
-        self.actor_ref = self.AnActor.start(self.post_stop_was_called,
+        self.actor_ref = self.AnActor.start(self.on_stop_was_called,
             self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
@@ -66,9 +66,9 @@ class ActorLoggingTest(object):
 
     def test_keyboard_interrupt_is_logged(self):
         self.log_handler.reset()
-        self.post_stop_was_called.clear()
+        self.on_stop_was_called.clear()
         self.actor_ref.send_one_way({'command': 'raise KeyboardInterrupt'})
-        self.post_stop_was_called.wait()
+        self.on_stop_was_called.wait()
         self.assertEqual(3, len(self.log_handler.messages['debug']))
         log_record = self.log_handler.messages['debug'][0]
         self.assertEqual('Keyboard interrupt in %s. Stopping all actors.'
@@ -76,12 +76,12 @@ class ActorLoggingTest(object):
 
 
 class AnActor(object):
-    def __init__(self, post_stop_was_called, on_failure_was_called):
-        self.post_stop_was_called = post_stop_was_called
+    def __init__(self, on_stop_was_called, on_failure_was_called):
+        self.on_stop_was_called = on_stop_was_called
         self.on_failure_was_called = on_failure_was_called
 
-    def post_stop(self):
-        self.post_stop_was_called.set()
+    def on_stop(self):
+        self.on_stop_was_called.set()
 
     def on_failure(self, exception_type, exception_value, traceback):
         self.on_failure_was_called.set()

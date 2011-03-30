@@ -8,17 +8,17 @@ from pykka.registry import ActorRegistry
 
 
 class AnActor(object):
-    def __init__(self, on_start_was_called, post_stop_was_called,
+    def __init__(self, on_start_was_called, on_stop_was_called,
             on_failure_was_called):
         self.on_start_was_called = on_start_was_called
-        self.post_stop_was_called = post_stop_was_called
+        self.on_stop_was_called = on_stop_was_called
         self.on_failure_was_called = on_failure_was_called
 
     def on_start(self):
         self.on_start_was_called.set()
 
-    def post_stop(self):
-        self.post_stop_was_called.set()
+    def on_stop(self):
+        self.on_stop_was_called.set()
 
     def on_failure(self, *args):
         self.on_failure_was_called.set()
@@ -35,11 +35,11 @@ class AnActor(object):
 class ActorTest(object):
     def setUp(self):
         self.on_start_was_called = self.event_class()
-        self.post_stop_was_called = self.event_class()
+        self.on_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
 
         self.actor_ref = self.AnActor.start(self.on_start_was_called,
-            self.post_stop_was_called, self.on_failure_was_called)
+            self.on_stop_was_called, self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
     def tearDown(self):
@@ -70,18 +70,18 @@ class ActorTest(object):
         self.on_start_was_called.wait()
         self.assertTrue(self.on_start_was_called.is_set())
 
-    def test_post_stop_is_called_when_actor_is_stopped(self):
-        self.assertFalse(self.post_stop_was_called.is_set())
+    def test_on_stop_is_called_when_actor_is_stopped(self):
+        self.assertFalse(self.on_stop_was_called.is_set())
         self.actor_ref.stop()
-        self.post_stop_was_called.wait()
-        self.assertTrue(self.post_stop_was_called.is_set())
+        self.on_stop_was_called.wait()
+        self.assertTrue(self.on_stop_was_called.is_set())
 
     def test_on_failure_is_called_when_exception_cannot_be_returned(self):
         self.assertFalse(self.on_failure_was_called.is_set())
         self.actor_ref.send_one_way({'command': 'raise exception'})
         self.on_failure_was_called.wait()
         self.assertTrue(self.on_failure_was_called.is_set())
-        self.assertFalse(self.post_stop_was_called.is_set())
+        self.assertFalse(self.on_stop_was_called.is_set())
 
     def test_actor_is_stopped_when_unhandled_exceptions_are_raised(self):
         self.assertFalse(self.on_failure_was_called.is_set())
@@ -96,9 +96,9 @@ class ActorTest(object):
         another_actor = self.AnActor.start(start_event, stop_event, fail_event)
 
         self.assertEqual(2, len(ActorRegistry.get_all()))
-        self.assertFalse(self.post_stop_was_called.is_set())
+        self.assertFalse(self.on_stop_was_called.is_set())
         self.actor_ref.send_one_way({'command': 'raise KeyboardInterrupt'})
-        self.post_stop_was_called.wait()
+        self.on_stop_was_called.wait()
         self.assert_(1 >= len(ActorRegistry.get_all()))
         stop_event.wait()
         self.assertEqual(0, len(ActorRegistry.get_all()))
