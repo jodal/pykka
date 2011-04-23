@@ -174,9 +174,10 @@ class Actor(object):
                     message['reply_to'].set_exception(exception)
                 else:
                     self._handle_failure(*_sys.exc_info())
-            except KeyboardInterrupt:
-                _logger.debug('Keyboard interrupt in %s. ' % self +
-                    'Stopping all actors.')
+            except BaseException as exception:
+                (exception_type, exception_value, traceback) = _sys.exc_info()
+                _logger.debug('%s in %s. Stopping all actors.' %
+                    (repr(exception_value), self))
                 self.stop()
                 _ActorRegistry.stop_all()
     # pylint: enable = W0703

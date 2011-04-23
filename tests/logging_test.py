@@ -64,14 +64,14 @@ class ActorLoggingTest(object):
         self.assertEqual(Exception, log_record.exc_info[0])
         self.assertEqual('foo', str(log_record.exc_info[1]))
 
-    def test_keyboard_interrupt_is_logged(self):
+    def test_base_exception_is_logged(self):
         self.log_handler.reset()
         self.on_stop_was_called.clear()
-        self.actor_ref.send_one_way({'command': 'raise KeyboardInterrupt'})
+        self.actor_ref.send_one_way({'command': 'raise base exception'})
         self.on_stop_was_called.wait()
         self.assertEqual(3, len(self.log_handler.messages['debug']))
         log_record = self.log_handler.messages['debug'][0]
-        self.assertEqual('Keyboard interrupt in %s. Stopping all actors.'
+        self.assertEqual('BaseException() in %s. Stopping all actors.'
             % self.actor_ref, log_record.getMessage())
 
 
@@ -89,8 +89,8 @@ class AnActor(object):
     def on_receive(self, message):
         if message.get('command') == 'raise exception':
             return self.raise_exception()
-        elif message.get('command') == 'raise KeyboardInterrupt':
-            raise KeyboardInterrupt()
+        elif message.get('command') == 'raise base exception':
+            raise BaseException()
         else:
             super(AnActor, self).on_receive(message)
 

@@ -26,8 +26,8 @@ class AnActor(object):
     def on_receive(self, message):
         if message.get('command') == 'raise exception':
             raise Exception('foo')
-        elif message.get('command') == 'raise KeyboardInterrupt':
-            raise KeyboardInterrupt()
+        elif message.get('command') == 'raise base exception':
+            raise BaseException()
         else:
             super(AnActor, self).on_receive(message)
 
@@ -89,7 +89,7 @@ class ActorTest(object):
         self.on_failure_was_called.wait()
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
-    def test_all_actors_are_stopped_on_keyboard_interrupt(self):
+    def test_all_actors_are_stopped_on_base_exception(self):
         start_event = self.event_class()
         stop_event = self.event_class()
         fail_event = self.event_class()
@@ -97,7 +97,7 @@ class ActorTest(object):
 
         self.assertEqual(2, len(ActorRegistry.get_all()))
         self.assertFalse(self.on_stop_was_called.is_set())
-        self.actor_ref.send_one_way({'command': 'raise KeyboardInterrupt'})
+        self.actor_ref.send_one_way({'command': 'raise base exception'})
         self.on_stop_was_called.wait()
         self.assert_(1 >= len(ActorRegistry.get_all()))
         stop_event.wait()
