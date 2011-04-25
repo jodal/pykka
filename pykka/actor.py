@@ -175,7 +175,7 @@ class Actor(object):
                 else:
                     self._handle_failure(*_sys.exc_info())
             except BaseException as exception:
-                (exception_type, exception_value, traceback) = _sys.exc_info()
+                exception_value = _sys.exc_info()[1]
                 _logger.debug('%s in %s. Stopping all actors.' %
                     (repr(exception_value), self))
                 self.stop()
