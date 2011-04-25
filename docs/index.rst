@@ -8,3 +8,4 @@ Table of contents
 
     introduction
     api
+    changes
