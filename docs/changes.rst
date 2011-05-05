@@ -3,8 +3,8 @@ Changes
 =======
 
 
-v0.12.2 (in development)
-========================
+v0.12.2 (2011-05-05)
+====================
 
 - Actors are now registered in :class:`pykka.registry.ActorRegistry` before
   they are started. This fixes a race condition where an actor tried to stop
