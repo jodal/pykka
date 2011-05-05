@@ -9,13 +9,18 @@ from pykka.registry import ActorRegistry
 
 class AnActor(object):
     def __init__(self, on_start_was_called, on_stop_was_called,
-            on_failure_was_called):
+            on_failure_was_called,
+            actor_was_registered_before_on_start_was_called):
         self.on_start_was_called = on_start_was_called
         self.on_stop_was_called = on_stop_was_called
         self.on_failure_was_called = on_failure_was_called
+        self.actor_was_registered_before_on_start_was_called = \
+            actor_was_registered_before_on_start_was_called
 
     def on_start(self):
         self.on_start_was_called.set()
+        if ActorRegistry.get_by_urn(self.actor_urn) is not None:
+            self.actor_was_registered_before_on_start_was_called.set()
 
     def on_stop(self):
         self.on_stop_was_called.set()
@@ -37,9 +42,12 @@ class ActorTest(object):
         self.on_start_was_called = self.event_class()
         self.on_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
+        self.actor_was_registered_before_on_start_was_called = \
+            self.event_class()
 
         self.actor_ref = self.AnActor.start(self.on_start_was_called,
-            self.on_stop_was_called, self.on_failure_was_called)
+            self.on_stop_was_called, self.on_failure_was_called,
+            self.actor_was_registered_before_on_start_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
     def tearDown(self):
@@ -50,7 +58,8 @@ class ActorTest(object):
 
     def test_actor_has_unique_uuid(self):
         event = self.event_class()
-        actors = [self.AnActor.start(event, event, event) for _ in range(3)]
+        actors = [self.AnActor.start(event, event, event, event)
+            for _ in range(3)]
 
         self.assertNotEqual(actors[0].actor_urn, actors[1].actor_urn)
         self.assertNotEqual(actors[1].actor_urn, actors[2].actor_urn)
@@ -58,17 +67,27 @@ class ActorTest(object):
 
     def test_str_on_raw_actor_contains_actor_class_name(self):
         event = self.event_class()
-        unstarted_actor = self.AnActor(event, event, event)
+        unstarted_actor = self.AnActor(event, event, event, event)
         self.assert_('AnActor' in str(unstarted_actor))
 
     def test_str_on_raw_actor_contains_actor_urn(self):
         event = self.event_class()
-        unstarted_actor = self.AnActor(event, event, event)
+        unstarted_actor = self.AnActor(event, event, event, event)
         self.assert_(unstarted_actor.actor_urn in str(unstarted_actor))
 
     def test_on_start_is_called_before_first_message_is_processed(self):
         self.on_start_was_called.wait()
         self.assertTrue(self.on_start_was_called.is_set())
+
+    def test_on_start_is_called_after_the_actor_is_registered(self):
+        # NOTE: If the actor is registered after the actor is started, this
+        # test may still occasionally pass, as it is dependant on the exact
+        # timing of events. When the actor is first registered and then
+        # started, this test should always pass.
+        self.on_start_was_called.wait()
+        self.actor_was_registered_before_on_start_was_called.wait(0.1)
+        self.assertTrue(
+            self.actor_was_registered_before_on_start_was_called.is_set())
 
     def test_on_stop_is_called_when_actor_is_stopped(self):
         self.assertFalse(self.on_stop_was_called.is_set())
@@ -93,7 +112,9 @@ class ActorTest(object):
         start_event = self.event_class()
         stop_event = self.event_class()
         fail_event = self.event_class()
-        another_actor = self.AnActor.start(start_event, stop_event, fail_event)
+        registered_event = self.event_class()
+        another_actor = self.AnActor.start(start_event, stop_event, fail_event,
+            registered_event)
 
         self.assertEqual(2, len(ActorRegistry.get_all()))
         self.assertFalse(self.on_stop_was_called.is_set())

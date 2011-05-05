@@ -81,13 +81,13 @@ class Actor(object):
                     Inbox creation
                     ActorRef creation
                 Actor.__init__()        # Your code can run here
-                superclass.start()
                 ActorRegistry.register()
+                superclass.start()
         """
         obj = cls(*args, **kwargs)
+        _ActorRegistry.register(obj.actor_ref)
         cls._superclass.start(obj)
         _logger.debug('Started %s', obj)
-        _ActorRegistry.register(obj.actor_ref)
         return obj.actor_ref
 
     #: The actor URN string is a universally unique identifier for the actor.
