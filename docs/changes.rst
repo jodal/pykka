@@ -13,6 +13,11 @@ v0.12.3 (in development)
   fix ensures that the receive loop is never executed if the actor is stopped
   before the receive loop is started.
 
+- Set the thread name of any :class:`pykka.actor.ThreadingActor` to
+  ``PykkaActorThread-N`` instead of the default ``Thread-N``. This eases
+  debugging by clearly labeling actor threads in e.g. the output of
+  :func:`threading.enumerate`.
+
 
 v0.12.2 (2011-05-05)
 ====================

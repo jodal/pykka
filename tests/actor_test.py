@@ -157,6 +157,13 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
     class EarlyStoppingActor(EarlyStoppingActor, ThreadingActor):
         pass
 
+    def test_actor_thread_is_named_as_a_pykka_actor(self):
+        alive_threads = threading.enumerate()
+        alive_thread_names = [t.name for t in alive_threads]
+        named_correctly = [name.startswith('PykkaActorThread')
+            for name in alive_thread_names]
+        self.assert_(any(named_correctly))
+
 
 if sys.version_info < (3,):
     import gevent.event

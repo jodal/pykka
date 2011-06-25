@@ -323,6 +323,11 @@ class ThreadingActor(Actor, _threading.Thread):
     _superclass = _threading.Thread
     _future_class = _ThreadingFuture
 
+    def __new__(cls, *args, **kwargs):
+        obj = Actor.__new__(cls, *args, **kwargs)
+        obj.name = obj.name.replace('Thread', 'PykkaActorThread')
+        return obj
+
     def _new_actor_inbox(self):
         return _queue.Queue()
 
