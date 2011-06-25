@@ -22,6 +22,10 @@ v0.12.3 (in development)
   broadcasts a message to all registered actors or to a given class of
   registred actors. (Fixes: :issue:`7`)
 
+- Allow multiple calls to :meth:`pykka.registry.ActorRegistry.unregister`
+  with the same :class:`pykka.actor.ActorRef` as argument without throwing a
+  :exc:`ValueError`. (Fixes: :issue:`5`)
+
 
 v0.12.2 (2011-05-05)
 ====================

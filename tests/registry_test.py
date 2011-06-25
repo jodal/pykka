@@ -29,6 +29,14 @@ class ActorRegistryTest(object):
         ActorRegistry.register(self.ref)
         self.assert_(self.ref in ActorRegistry.get_all())
 
+    def test_actor_may_be_unregistered_multiple_times_without_error(self):
+        ActorRegistry.unregister(self.ref)
+        self.assert_(self.ref not in ActorRegistry.get_all())
+        ActorRegistry.unregister(self.ref)
+        self.assert_(self.ref not in ActorRegistry.get_all())
+        ActorRegistry.register(self.ref)
+        self.assert_(self.ref in ActorRegistry.get_all())
+
     def test_all_actors_can_be_stopped_through_registry(self):
         self.assertEquals(9, len(ActorRegistry.get_all()))
         ActorRegistry.stop_all(block=True)

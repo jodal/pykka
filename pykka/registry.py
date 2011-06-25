@@ -133,6 +133,13 @@ class ActorRegistry(object):
         :param actor_ref: reference to the actor to unregister
         :type actor_ref: :class:`pykka.actor.ActorRef`
         """
+        removed = False
         with cls._actor_refs_lock:
-            cls._actor_refs.remove(actor_ref)
-        _logger.debug('Unregistered %s', actor_ref)
+            if actor_ref in cls._actor_refs:
+                cls._actor_refs.remove(actor_ref)
+                removed = True
+        if removed:
+            _logger.debug('Unregistered %s', actor_ref)
+        else:
+            _logger.debug('Unregistered %s (not found in registry)',
+                actor_ref)

@@ -33,6 +33,9 @@ class AnActor(object):
             raise Exception('foo')
         elif message.get('command') == 'raise base exception':
             raise BaseException()
+        elif message.get('command') == 'stop twice':
+            self.stop()
+            self.stop()
         else:
             super(AnActor, self).on_receive(message)
 
@@ -146,6 +149,9 @@ class ActorTest(object):
         self.assert_(1 >= len(ActorRegistry.get_all()))
         stop_event.wait()
         self.assertEqual(0, len(ActorRegistry.get_all()))
+
+    def test_actor_can_call_stop_on_self_multiple_times(self):
+        self.actor_ref.send_request_reply({'command': 'stop twice'})
 
 
 class ThreadingActorTest(ActorTest, unittest.TestCase):
