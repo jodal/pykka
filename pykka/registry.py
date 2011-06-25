@@ -15,6 +15,29 @@ class ActorRegistry(object):
     _actor_refs_lock = _threading.RLock()
 
     @classmethod
+    def broadcast(cls, message, target_class=None):
+        """
+        Broadcast ``message`` to all actors of the specified ``target_class``.
+
+        If no ``target_class`` is specified, the message is broadcasted to all
+        actors.
+
+        :param message: the message to send
+        :type message: picklable dict
+
+        :param target_class: optional actor class to broadcast the message to
+        :type target_class: class or class name
+        """
+        if isinstance(target_class, basestring):
+            targets = cls.get_by_class_name(target_class)
+        elif target_class is not None:
+            targets = cls.get_by_class(target_class)
+        else:
+            targets = cls.get_all()
+        for ref in targets:
+            ref.send_one_way(message)
+
+    @classmethod
     def get_all(cls):
         """
         Get :class:`pykka.actor.ActorRef` for all running actors.

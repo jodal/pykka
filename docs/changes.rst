@@ -18,6 +18,10 @@ v0.12.3 (in development)
   debugging by clearly labeling actor threads in e.g. the output of
   :func:`threading.enumerate`.
 
+- Add utility method :meth:`pykka.registry.ActorRegistry.broadcast` which
+  broadcasts a message to all registered actors or to a given class of
+  registred actors. (Fixes: :issue:`7`)
+
 
 v0.12.2 (2011-05-05)
 ====================
