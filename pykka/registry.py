@@ -1,6 +1,14 @@
 import logging as _logging
 import threading as _threading
 
+# pylint: disable = W0622
+try:
+    basestring
+except NameError:
+    # Python 3
+    basestring = str
+# pylint: enable = W0622
+
 _logger = _logging.getLogger('pykka')
 
 
