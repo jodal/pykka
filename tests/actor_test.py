@@ -37,6 +37,11 @@ class AnActor(object):
             super(AnActor, self).on_receive(message)
 
 
+class EarlyStoppingActor(AnActor):
+    def on_start(self):
+        self.stop()
+
+
 class ActorTest(object):
     def setUp(self):
         self.on_start_was_called = self.event_class()
@@ -89,6 +94,24 @@ class ActorTest(object):
         self.assertTrue(
             self.actor_was_registered_before_on_start_was_called.is_set())
 
+    def test_on_start_can_stop_actor_before_receive_loop_is_started(self):
+        # NOTE: This test will pass even if the actor is allowed to start the
+        # receive loop, but it will cause the test suite to hang, as the actor
+        # thread is blocking on receiving messages to the actor inbox forever.
+        # If one made this test specifically for ThreadingActor, one could add
+        # an assertFalse(actor_thread.is_alive()), which would cause the test to
+        # fail properly.
+        start_event = self.event_class()
+        stop_event = self.event_class()
+        fail_event = self.event_class()
+        registered_event = self.event_class()
+        another_actor = self.EarlyStoppingActor.start(start_event, stop_event,
+            fail_event, registered_event)
+
+        stop_event.wait()
+        self.assertTrue(stop_event.is_set())
+        self.assertFalse(another_actor.is_alive())
+
     def test_on_stop_is_called_when_actor_is_stopped(self):
         self.assertFalse(self.on_stop_was_called.is_set())
         self.actor_ref.stop()
@@ -131,6 +154,9 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
     class AnActor(AnActor, ThreadingActor):
         pass
 
+    class EarlyStoppingActor(EarlyStoppingActor, ThreadingActor):
+        pass
+
 
 if sys.version_info < (3,):
     import gevent.event
@@ -141,4 +167,7 @@ if sys.version_info < (3,):
         event_class = gevent.event.Event
 
         class AnActor(AnActor, GeventActor):
+            pass
+
+        class EarlyStoppingActor(EarlyStoppingActor, GeventActor):
             pass

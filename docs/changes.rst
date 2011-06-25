@@ -3,6 +3,17 @@ Changes
 =======
 
 
+v0.12.3 (in development)
+========================
+
+- If an actor that was stopped from :meth:`pykka.actor.Actor.on_start`, it
+  would unregister properly, but start the receive loop and forever block on
+  receiving incoming messages that would never arrive. This left the thread
+  alive and isolated, ultimately blocking clean shutdown of the program. The
+  fix ensures that the receive loop is never executed if the actor is stopped
+  before the receive loop is started.
+
+
 v0.12.2 (2011-05-05)
 ====================
 

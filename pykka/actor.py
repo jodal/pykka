@@ -160,7 +160,6 @@ class Actor(object):
         :class:`ThreadingActor` expects this method to be named :meth:`run`.
         """
         self.on_start()
-        self._actor_runnable = True
         while self._actor_runnable:
             message = self.actor_inbox.get()
             try:
