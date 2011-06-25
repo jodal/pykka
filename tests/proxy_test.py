@@ -4,6 +4,7 @@ import unittest
 from pykka import ActorDeadError
 from pykka.actor import ThreadingActor
 from pykka.proxy import ActorProxy
+from pykka.registry import ActorRegistry
 
 
 class SomeObject(object):
@@ -28,7 +29,7 @@ class ProxyTest(object):
         self.proxy = ActorProxy(self.AnActor.start())
 
     def tearDown(self):
-        self.proxy.stop()
+        ActorRegistry.stop_all()
 
     def test_repr_is_wrapped_in_lt_and_gt(self):
         result = repr(self.proxy)
@@ -42,7 +43,7 @@ class ProxyTest(object):
         self.assert_('AnActor' in repr(self.proxy))
 
     def test_repr_contains_actor_urn(self):
-        self.assert_(self.proxy._actor_ref.actor_urn in repr(self.proxy))
+        self.assert_(self.proxy.actor_ref.actor_urn in repr(self.proxy))
 
     def test_repr_contains_attr_path(self):
         self.assert_('bar' in repr(self.proxy.bar))
@@ -51,7 +52,7 @@ class ProxyTest(object):
         self.assert_('AnActor' in str(self.proxy))
 
     def test_str_contains_actor_urn(self):
-        self.assert_(self.proxy._actor_ref.actor_urn in str(self.proxy))
+        self.assert_(self.proxy.actor_ref.actor_urn in str(self.proxy))
 
     def test_dir_on_proxy_lists_attributes_of_the_actor(self):
         result = dir(self.proxy)
@@ -79,6 +80,10 @@ class ProxyTest(object):
             self.fail('Should raise ActorDeadError')
         except ActorDeadError as exception:
             self.assertEqual('%s not found' % actor_ref, str(exception))
+
+    def test_actor_ref_may_be_retrieved_from_proxy_if_actor_is_dead(self):
+        self.proxy.actor_ref.stop()
+        self.assertFalse(self.proxy.actor_ref.is_alive())
 
 
 class ThreadingProxyTest(ProxyTest, unittest.TestCase):

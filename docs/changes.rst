@@ -26,6 +26,14 @@ v0.12.3 (in development)
   with the same :class:`pykka.actor.ActorRef` as argument without throwing a
   :exc:`ValueError`. (Fixes: :issue:`5`)
 
+- Make the :class:`pykka.proxy.ActorProxy`'s reference to its
+  :class:`pykka.actor.ActorRef` public as
+  :attr:`pykka.proxy.ActorProxy.actor_ref`. The ``ActorRef`` instance was
+  already exposed as a public field by the actor itself using the same name,
+  but making it public directly on the proxy makes it possible to do e.g.
+  ``proxy.actor_ref.is_alive()`` without waiting for a potentially dead actor
+  to return an ``ActorRef`` instance you can use. (Fixes: :issue:`3`)
+
 
 v0.12.2 (2011-05-05)
 ====================

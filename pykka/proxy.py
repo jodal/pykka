@@ -49,19 +49,22 @@ class ActorProxy(object):
     :raise: :exc:`pykka.ActorDeadError` if actor is not available
     """
 
+    #: The actor's :class:`pykka.actor.ActorRef` instance.
+    actor_ref = None
+
     def __init__(self, actor_ref, attr_path=None):
         if not actor_ref.is_alive():
             raise _ActorDeadError('%s not found' % actor_ref)
-        self._actor_ref = actor_ref
+        self.actor_ref = actor_ref
         self._attr_path = attr_path or tuple()
         self._known_attrs = None
 
     def _update_attrs(self):
-        self._known_attrs = self._actor_ref.send_request_reply(
+        self._known_attrs = self.actor_ref.send_request_reply(
             {'command': 'pykka_get_attributes'})
 
     def __repr__(self):
-        return '<ActorProxy for %s, attr_path=%s>' % (self._actor_ref,
+        return '<ActorProxy for %s, attr_path=%s>' % (self.actor_ref,
             self._attr_path)
 
     def __dir__(self):
@@ -83,15 +86,15 @@ class ActorProxy(object):
         if attr_info is None:
             raise AttributeError('%s has no attribute "%s"' % (self, name))
         if attr_info['callable']:
-            return _CallableProxy(self._actor_ref, attr_path)
+            return _CallableProxy(self.actor_ref, attr_path)
         elif attr_info['traversable']:
-            return ActorProxy(self._actor_ref, attr_path)
+            return ActorProxy(self.actor_ref, attr_path)
         else:
             message = {
                 'command': 'pykka_getattr',
                 'attr_path': attr_path,
             }
-            return self._actor_ref.send_request_reply(message, block=False)
+            return self.actor_ref.send_request_reply(message, block=False)
 
     def __setattr__(self, name, value):
         """
@@ -99,7 +102,7 @@ class ActorProxy(object):
 
         Blocks until the field is set to check if any exceptions was raised.
         """
-        if name.startswith('_'):
+        if name == 'actor_ref' or name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
         attr_path = self._attr_path + (name,)
         message = {
@@ -107,13 +110,13 @@ class ActorProxy(object):
             'attr_path': attr_path,
             'value': value,
         }
-        return self._actor_ref.send_request_reply(message)
+        return self.actor_ref.send_request_reply(message)
 
 
 class _CallableProxy(object):
     """Internal helper class for proxying callables."""
     def __init__(self, ref, attr_path):
-        self._actor_ref = ref
+        self.actor_ref = ref
         self._attr_path = attr_path
 
     def __call__(self, *args, **kwargs):
@@ -123,4 +126,4 @@ class _CallableProxy(object):
             'args': args,
             'kwargs': kwargs,
         }
-        return self._actor_ref.send_request_reply(message, block=False)
+        return self.actor_ref.send_request_reply(message, block=False)
