@@ -3,8 +3,8 @@ Changes
 =======
 
 
-v0.12.3 (in development)
-========================
+v0.12.3 (2011-06-25)
+====================
 
 - If an actor that was stopped from :meth:`pykka.actor.Actor.on_start`, it
   would unregister properly, but start the receive loop and forever block on
