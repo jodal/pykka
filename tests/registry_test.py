@@ -75,13 +75,13 @@ class ActorRegistryTest(object):
         ActorRegistry.broadcast({'command': 'foo'})
         for actor_ref in ActorRegistry.get_all():
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assertIn({'command': 'foo'}, received_messages)
+            self.assert_({'command': 'foo'} in received_messages)
 
     def test_broadcast_sends_message_to_all_actors_of_given_class(self):
         ActorRegistry.broadcast({'command': 'foo'}, target_class=self.AnActor)
         for actor_ref in ActorRegistry.get_by_class(self.AnActor):
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assertIn({'command': 'foo'}, received_messages)
+            self.assert_({'command': 'foo'} in received_messages)
         for actor_ref in ActorRegistry.get_by_class(self.BeeActor):
             received_messages = actor_ref.proxy().received_messages.get()
             self.assertNotIn({'command': 'foo'}, received_messages)
@@ -90,7 +90,7 @@ class ActorRegistryTest(object):
         ActorRegistry.broadcast({'command': 'foo'}, target_class='AnActor')
         for actor_ref in ActorRegistry.get_by_class(self.AnActor):
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assertIn({'command': 'foo'}, received_messages)
+            self.assert_({'command': 'foo'} in received_messages)
         for actor_ref in ActorRegistry.get_by_class(self.BeeActor):
             received_messages = actor_ref.proxy().received_messages.get()
             self.assertNotIn({'command': 'foo'}, received_messages)
