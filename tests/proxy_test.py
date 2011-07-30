@@ -70,7 +70,7 @@ class ProxyTest(object):
     def test_refs_proxy_method_returns_a_proxy(self):
         proxy_from_ref_proxy = self.AnActor.start().proxy()
         self.assert_(isinstance(proxy_from_ref_proxy, ActorProxy))
-        proxy_from_ref_proxy.stop()
+        proxy_from_ref_proxy.stop().get()
 
     def test_proxy_constructor_raises_exception_if_actor_is_dead(self):
         actor_ref = self.AnActor.start()

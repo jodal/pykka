@@ -3,6 +3,17 @@ Changes
 =======
 
 
+v0.12.4 (in development)
+========================
+
+- Change and document order in which
+  :meth:`pykka.registry.ActorRegistry.stop_all` stops actors. The new order is
+  the reverse of the order the actors were started in. This should make
+  ``stop_all`` work for programs with simple dependency graphs in between the
+  actors. For applications with more complex dependency graphs, the developer
+  still needs to pay attention to the shutdown sequence. (Fixes: :issue:`8`)
+
+
 v0.12.3 (2011-06-25)
 ====================
 

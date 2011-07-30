@@ -124,11 +124,22 @@ class ActorRegistry(object):
         ``block`` and ``timeout`` works as for
         :meth:`pykka.actor.ActorRef.stop`.
 
+        If ``block`` is :class:`True`, the actors are guaranteed to be stopped
+        in the reverse of the order they were started in. This is helpful if
+        you have simple dependencies in between your actors, where it is
+        sufficient to shut down actors in a LIFO manner: last started, first
+        stopped.
+
+        If you have more complex dependencies in between your actors, you
+        should take care to shut them down in the required order yourself, e.g.
+        by stopping dependees from a dependency's
+        :meth:`pykka.actor.Actor.on_stop` method.
+
         :returns: If not blocking, a list with a future for each stop action.
             If blocking, a list of return values from
             :meth:`pykka.actor.ActorRef.stop`.
         """
-        return [ref.stop(block, timeout) for ref in cls.get_all()]
+        return [ref.stop(block, timeout) for ref in reversed(cls.get_all())]
 
     @classmethod
     def unregister(cls, actor_ref):

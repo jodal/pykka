@@ -1,3 +1,4 @@
+import mock
 import sys
 import unittest
 
@@ -41,6 +42,25 @@ class ActorRegistryTest(object):
         self.assertEquals(9, len(ActorRegistry.get_all()))
         ActorRegistry.stop_all(block=True)
         self.assertEquals(0, len(ActorRegistry.get_all()))
+
+    @mock.patch.object(ActorRegistry, 'get_all')
+    def test_stop_all_stops_last_started_actor_first_if_blocking(self,
+            mock_method):
+        stopped_actors = []
+        started_actors = [mock.Mock(name=i) for i in range(3)]
+        started_actors[0].stop.side_effect = lambda *a, **kw: \
+            stopped_actors.append(started_actors[0])
+        started_actors[1].stop.side_effect = lambda *a, **kw: \
+            stopped_actors.append(started_actors[1])
+        started_actors[2].stop.side_effect = lambda *a, **kw: \
+            stopped_actors.append(started_actors[2])
+        ActorRegistry.get_all.return_value = started_actors
+
+        ActorRegistry.stop_all(block=True)
+
+        self.assertEqual(stopped_actors[0], started_actors[2])
+        self.assertEqual(stopped_actors[1], started_actors[1])
+        self.assertEqual(stopped_actors[2], started_actors[0])
 
     def test_actors_may_be_looked_up_by_class(self):
         result = ActorRegistry.get_by_class(self.AnActor)
