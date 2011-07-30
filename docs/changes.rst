@@ -3,8 +3,8 @@ Changes
 =======
 
 
-v0.12.4 (in development)
-========================
+v0.12.4 (2011-07-30)
+====================
 
 - Change and document order in which
   :meth:`pykka.registry.ActorRegistry.stop_all` stops actors. The new order is
