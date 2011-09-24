@@ -3,10 +3,11 @@ Changes
 =======
 
 
-v0.12.5 (in development)
-========================
+v0.13 (2011-09-24)
+==================
 
 - 10x speedup of traversible attribute access by reusing proxies.
+
 - 1.1x speedup of callable attribute access by reusing proxies.
 
 
