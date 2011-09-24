@@ -7,6 +7,7 @@ v0.12.5 (in development)
 ========================
 
 - 10x speedup of traversible attribute access by reusing proxies.
+- 1.1x speedup of callable attribute access by reusing proxies.
 
 
 v0.12.4 (2011-07-30)

@@ -59,6 +59,7 @@ class ActorProxy(object):
         self._attr_path = attr_path or tuple()
         self._known_attrs = None
         self._actor_proxies = {}
+        self._callable_proxies = {}
 
     def _update_attrs(self):
         self._known_attrs = self.actor_ref.send_request_reply(
@@ -87,7 +88,10 @@ class ActorProxy(object):
         if attr_info is None:
             raise AttributeError('%s has no attribute "%s"' % (self, name))
         if attr_info['callable']:
-            return _CallableProxy(self.actor_ref, attr_path)
+            if attr_path not in self._callable_proxies:
+                self._callable_proxies[attr_path] = _CallableProxy(
+                    self.actor_ref, attr_path)
+            return self._callable_proxies[attr_path]
         elif attr_info['traversable']:
             if attr_path not in self._actor_proxies:
                 self._actor_proxies[attr_path] = ActorProxy(
