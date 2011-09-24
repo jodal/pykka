@@ -2,7 +2,21 @@ import sys
 import unittest
 
 from pykka import Timeout
-from pykka.future import ThreadingFuture, get_all
+from pykka.future import Future, ThreadingFuture, get_all
+
+
+class FutureBaseTest(unittest.TestCase):
+    def setUp(self):
+        self.future = Future()
+
+    def test_future_get_is_not_implemented(self):
+        self.assertRaises(NotImplementedError, self.future.get)
+
+    def test_future_set_is_not_implemented(self):
+        self.assertRaises(NotImplementedError, self.future.set, None)
+
+    def test_future_set_exception_is_not_implemented(self):
+        self.assertRaises(NotImplementedError, self.future.set_exception, None)
 
 
 class FutureTest(object):
@@ -46,7 +60,13 @@ class ThreadingFutureTest(FutureTest, unittest.TestCase):
 
 
 if sys.version_info < (3,):
+    from gevent.event import AsyncResult
     from pykka.gevent import GeventFuture
 
     class GeventFutureTest(FutureTest, unittest.TestCase):
         future_class = GeventFuture
+
+        def test_can_wrap_existing_async_result(self):
+            async_result = AsyncResult()
+            future = GeventFuture(async_result)
+            self.assertEquals(async_result, future.async_result)
