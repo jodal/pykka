@@ -222,3 +222,23 @@ man_pages = [
 autodoc_member_order = 'bysource'
 
 extlinks = {'issue': ('http://github.com/jodal/pykka/issues/%s', 'GH-')}
+
+
+# Let autodoc generate docs for modules with external dependencies without #
+# installing those dependencies. Trick from
+# http://read-the-docs.readthedocs.org/en/latest/faq.html
+
+class Mock(object):
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def __call__(self, *args, **kwargs):
+        return Mock()
+
+    @classmethod
+    def __getattr__(self, name):
+        return Mock() if name not in ('__file__', '__path__') else '/dev/null'
+
+MOCK_MODULES = ['gevent']
+for mod_name in MOCK_MODULES:
+    sys.modules[mod_name] = Mock()
