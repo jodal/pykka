@@ -8,7 +8,7 @@ setup(
     author='Stein Magnus Jodal',
     author_email='stein.magnus@jodal.no',
     packages=['pykka'],
-    url='http://jodal.github.com/pykka/',
+    url='http://pykka.readthedocs.org/',
     license='Apache License, Version 2.0',
     description='Pykka is easy to use concurrency using the actor model',
     long_description=open('README.rst').read(),

@@ -24,7 +24,7 @@ Python port of Akka.
 Project resources
 =================
 
-- `Documentation <http://jodal.github.com/pykka/>`_
+- `Documentation <http://pykka.readthedocs.org/>`_
 - `Source code <http://github.com/jodal/pykka>`_
 - `Issue tracker <http://github.com/jodal/pykka/issues>`_
 - `Download development snapshot <http://github.com/jodal/pykka/tarball/master#egg=pykka-dev>`_
