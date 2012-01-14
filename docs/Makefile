@@ -128,13 +128,3 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
-
-github: clean dirhtml
-	rm -rf /tmp/pykka-html && cp -r _build/dirhtml /tmp/pykka-html
-	git stash save
-	cd .. && \
-	    git checkout gh-pages && \
-	    git pull && \
-	    rm -r * && \
-	    cp -r /tmp/pykka-html/* . && \
-	    git add *
