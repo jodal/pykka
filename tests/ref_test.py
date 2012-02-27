@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import unittest
@@ -109,7 +110,7 @@ class ThreadingRefTest(RefTest, unittest.TestCase):
             time.sleep(seconds)
 
 
-if sys.version_info < (3,):
+if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
     import gevent
     from pykka.gevent import GeventActor, GeventFuture
 

@@ -1,3 +1,4 @@
+import os
 import sys
 import logging
 import threading
@@ -105,7 +106,7 @@ class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
         pass
 
 
-if sys.version_info < (3,):
+if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
     import gevent.event
 
     from pykka.gevent import GeventActor
