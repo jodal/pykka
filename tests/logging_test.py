@@ -57,7 +57,7 @@ class ActorLoggingTest(object):
     def test_exception_is_logged_when_not_reply_requested(self):
         self.on_failure_was_called.clear()
         self.actor_ref.send_one_way({'command': 'raise exception'})
-        self.on_failure_was_called.wait()
+        self.assertTrue(self.on_failure_was_called.wait(5))
         self.assertEqual(1, len(self.log_handler.messages['error']))
         log_record = self.log_handler.messages['error'][0]
         self.assertEqual('Unhandled exception in %s:' % self.actor_ref,
@@ -69,7 +69,7 @@ class ActorLoggingTest(object):
         self.log_handler.reset()
         self.on_stop_was_called.clear()
         self.actor_ref.send_one_way({'command': 'raise base exception'})
-        self.on_stop_was_called.wait()
+        self.assertTrue(self.on_stop_was_called.wait(5))
         self.assertEqual(3, len(self.log_handler.messages['debug']))
         log_record = self.log_handler.messages['debug'][0]
         self.assertEqual('BaseException() in %s. Stopping all actors.'
