@@ -11,7 +11,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import os
+import re
+import sys
 
 class Mock(object):
     def __init__(self, *args, **kwargs):
@@ -37,12 +39,15 @@ MOCK_MODULES = [
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = Mock()
 
+def get_version():
+    init_py = open('../pykka/__init__.py').read()
+    metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", init_py))
+    return metadata['version']
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-
-import pykka
 
 # -- General configuration -----------------------------------------------------
 
@@ -75,7 +80,7 @@ copyright = u'2010-2012, Stein Magnus Jodal'
 # built documents.
 #
 # The short X.Y version.
-version = pykka.get_version()
+version = get_version()
 # The full version, including alpha/beta/rc tags.
 release = version
 

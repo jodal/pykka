@@ -1,10 +1,14 @@
 from distutils.core import setup
+import re
 
-import pykka
+def get_version():
+    init_py = open('pykka/__init__.py').read()
+    metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", init_py))
+    return metadata['version']
 
 setup(
     name='Pykka',
-    version=pykka.get_version(),
+    version=get_version(),
     author='Stein Magnus Jodal',
     author_email='stein.magnus@jodal.no',
     packages=['pykka'],

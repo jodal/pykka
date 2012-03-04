@@ -3,6 +3,13 @@ Changes
 =======
 
 
+v0.14 (in development)
+======================
+
+- Add :attr:`pykka.__version__` to conform with :pep:`396`. This deprecates
+  :attr:`pykka.VERSION` and :meth:`pykka.get_version`.
+
+
 v0.13 (2011-09-24)
 ==================
 

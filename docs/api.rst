@@ -6,6 +6,10 @@ Pykka API
 pykka
 =====
 
+.. attribute:: pykka.__version__
+
+   Pykka's :pep:`386` and :pep:`396` compatible version number
+
 .. automodule:: pykka
     :members:
 

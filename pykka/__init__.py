@@ -1,10 +1,22 @@
-#: Pykka's version as a tuple that can be used for comparison
-VERSION = (0, 13, 0)
+#: Pykka's :pep:`386` and :pep:`396` compatible version number
+__version__ = '0.14'
 
+#: Pykka's version as a tuple that can be used for comparison
+#:
+#: .. deprecated:: 0.14
+#:    Use :attr:`__version__` instead. This will be removed in a future
+#:    release.
+VERSION = tuple(map(int, __version__.split('.')))
 
 def get_version():
-    """Returns Pykka's version as a formatted string"""
-    return '.'.join(map(str, VERSION))
+    """
+    Returns Pykka's version as a formatted string
+
+    .. deprecated:: 0.14
+       Use :attr:`__version__` instead. This will be removed in a future
+       release.
+    """
+    return __version__
 
 
 # pylint: disable = W0404
