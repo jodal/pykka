@@ -85,7 +85,7 @@ class ActorTest(object):
         self.assert_(unstarted_actor.actor_urn in str(unstarted_actor))
 
     def test_on_start_is_called_before_first_message_is_processed(self):
-        self.assertTrue(self.on_start_was_called.wait(5))
+        self.on_start_was_called.wait(5)
         self.assertTrue(self.on_start_was_called.is_set())
 
     def test_on_start_is_called_after_the_actor_is_registered(self):
@@ -93,7 +93,8 @@ class ActorTest(object):
         # test may still occasionally pass, as it is dependant on the exact
         # timing of events. When the actor is first registered and then
         # started, this test should always pass.
-        self.assertTrue(self.on_start_was_called.wait(5))
+        self.on_start_was_called.wait(5)
+        self.assertTrue(self.on_start_was_called.is_set())
         self.actor_was_registered_before_on_start_was_called.wait(0.1)
         self.assertTrue(
             self.actor_was_registered_before_on_start_was_called.is_set())
@@ -112,24 +113,28 @@ class ActorTest(object):
         another_actor = self.EarlyStoppingActor.start(start_event, stop_event,
             fail_event, registered_event)
 
-        self.assertTrue(stop_event.wait(5))
+        stop_event.wait(5)
+        self.assertTrue(stop_event.is_set())
         self.assertFalse(another_actor.is_alive())
 
     def test_on_stop_is_called_when_actor_is_stopped(self):
         self.assertFalse(self.on_stop_was_called.is_set())
         self.actor_ref.stop()
-        self.assertTrue(self.on_stop_was_called.wait(5))
+        self.on_stop_was_called.wait(5)
+        self.assertTrue(self.on_stop_was_called.is_set())
 
     def test_on_failure_is_called_when_exception_cannot_be_returned(self):
         self.assertFalse(self.on_failure_was_called.is_set())
         self.actor_ref.tell({'command': 'raise exception'})
-        self.assertTrue(self.on_failure_was_called.wait(5))
+        self.on_failure_was_called.wait(5)
+        self.assertTrue(self.on_failure_was_called.is_set())
         self.assertFalse(self.on_stop_was_called.is_set())
 
     def test_actor_is_stopped_when_unhandled_exceptions_are_raised(self):
         self.assertFalse(self.on_failure_was_called.is_set())
         self.actor_ref.tell({'command': 'raise exception'})
-        self.assertTrue(self.on_failure_was_called.wait(5))
+        self.on_failure_was_called.wait(5)
+        self.assertTrue(self.on_failure_was_called.is_set())
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
     def test_all_actors_are_stopped_on_base_exception(self):
@@ -143,9 +148,11 @@ class ActorTest(object):
         self.assertEqual(2, len(ActorRegistry.get_all()))
         self.assertFalse(self.on_stop_was_called.is_set())
         self.actor_ref.tell({'command': 'raise base exception'})
-        self.assertTrue(self.on_stop_was_called.wait(5))
+        self.on_stop_was_called.wait(5)
+        self.assertTrue(self.on_stop_was_called.is_set())
         self.assert_(1 >= len(ActorRegistry.get_all()))
-        self.assertTrue(stop_event.wait(5))
+        stop_event.wait(5)
+        self.assertTrue(stop_event.is_set())
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
     def test_actor_can_call_stop_on_self_multiple_times(self):
