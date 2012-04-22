@@ -3,8 +3,8 @@ from pykka import ActorDeadError as _ActorDeadError
 
 class ActorProxy(object):
     """
-    An :class:`ActorProxy` wraps an :class:`<ActorRef> pykka.actor.ActorRef`
-    instance.  The proxy allows the referenced actor to be used through
+    An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.actor.ActorRef>`
+    instance. The proxy allows the referenced actor to be used through
     regular method calls and field access.
 
     You can create an :class:`ActorProxy` from any
