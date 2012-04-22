@@ -1,4 +1,3 @@
-import os
 import sys
 import threading
 import unittest
@@ -176,7 +175,7 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
         self.assert_(any(named_correctly))
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
+if sys.version_info < (3,):
     import gevent.event
 
     from pykka.gevent import GeventActor

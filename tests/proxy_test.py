@@ -1,4 +1,3 @@
-import os
 import sys
 import unittest
 
@@ -92,7 +91,7 @@ class ThreadingProxyTest(ProxyTest, unittest.TestCase):
         pass
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
+if sys.version_info < (3,):
     from pykka.gevent import GeventActor
 
     class GeventProxyTest(ProxyTest, unittest.TestCase):
