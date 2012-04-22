@@ -35,7 +35,7 @@ class ActorLoggingTest(object):
         ActorRegistry.stop_all()
 
     def test_unexpected_messages_are_logged(self):
-        self.actor_ref.tell({'unhandled': 'message'})
+        self.actor_ref.ask({'unhandled': 'message'})
         self.assertEqual(1, len(self.log_handler.messages['warning']))
         log_record = self.log_handler.messages['warning'][0]
         self.assertEqual('Unexpected message received by %s' % self.actor_ref,

@@ -149,7 +149,7 @@ class ActorTest(object):
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
     def test_actor_can_call_stop_on_self_multiple_times(self):
-        self.actor_ref.tell({'command': 'stop twice'})
+        self.actor_ref.ask({'command': 'stop twice'})
 
 
 class ThreadingActorTest(ActorTest, unittest.TestCase):
