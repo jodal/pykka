@@ -48,7 +48,7 @@ class ActorRegistry(object):
     @classmethod
     def get_all(cls):
         """
-        Get :class:`pykka.actor.ActorRef` for all running actors.
+        Get :class:`ActorRef <pykka.actor.ActorRef>` for all running actors.
 
         :returns: list of :class:`pykka.actor.ActorRef`
         """
@@ -107,7 +107,7 @@ class ActorRegistry(object):
         Register an :class:`ActorRef` in the registry.
 
         This is done automatically when an actor is started, e.g. by calling
-        :meth:`pykka.actor.Actor.start`.
+        :meth:`Actor.start() <pykka.actor.Actor.start>`.
 
         :param actor_ref: reference to the actor to register
         :type actor_ref: :class:`pykka.actor.ActorRef`
@@ -122,7 +122,7 @@ class ActorRegistry(object):
         Stop all running actors.
 
         ``block`` and ``timeout`` works as for
-        :meth:`pykka.actor.ActorRef.stop`.
+        :meth:`ActorRef.stop() <pykka.actor.ActorRef.stop>`.
 
         If ``block`` is :class:`True`, the actors are guaranteed to be stopped
         in the reverse of the order they were started in. This is helpful if
@@ -133,7 +133,7 @@ class ActorRegistry(object):
         If you have more complex dependencies in between your actors, you
         should take care to shut them down in the required order yourself, e.g.
         by stopping dependees from a dependency's
-        :meth:`pykka.actor.Actor.on_stop` method.
+        :meth:`on_stop() <pykka.actor.Actor.on_stop>` method.
 
         :returns: If not blocking, a list with a future for each stop action.
             If blocking, a list of return values from
@@ -144,10 +144,10 @@ class ActorRegistry(object):
     @classmethod
     def unregister(cls, actor_ref):
         """
-        Remove an :class:`pykka.actor.ActorRef` from the registry.
+        Remove an :class:`ActorRef <pykka.actor.ActorRef>` from the registry.
 
         This is done automatically when an actor is stopped, e.g. by calling
-        :meth:`pykka.actor.Actor.stop`.
+        :meth:`Actor.stop() <pykka.actor.Actor.stop>`.
 
         :param actor_ref: reference to the actor to unregister
         :type actor_ref: :class:`pykka.actor.ActorRef`

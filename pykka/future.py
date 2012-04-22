@@ -64,7 +64,7 @@ class Future(object):
 class ThreadingFuture(Future):
     """
     :class:`ThreadingFuture` implements :class:`Future` for use with
-    :class:`pykka.actor.ThreadingActor`.
+    :class:`ThreadingActor <pykka.actor.ThreadingActor>`.
 
     The future is implemented using a :class:`Queue.Queue`.
 
