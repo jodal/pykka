@@ -1,4 +1,5 @@
 import mock
+import os
 import sys
 import unittest
 
@@ -148,7 +149,7 @@ class ThreadingActorRegistryTest(ActorRegistryTest, unittest.TestCase):
         pass
 
 
-if sys.version_info < (3,):
+if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
     from pykka.gevent import GeventActor
 
     class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):

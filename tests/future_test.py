@@ -1,3 +1,4 @@
+import os
 import sys
 import unittest
 
@@ -59,7 +60,7 @@ class ThreadingFutureTest(FutureTest, unittest.TestCase):
     future_class = ThreadingFuture
 
 
-if sys.version_info < (3,):
+if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
     from gevent.event import AsyncResult
     from pykka.gevent import GeventFuture
 
