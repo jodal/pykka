@@ -95,8 +95,8 @@ class Actor(object):
     #: :meth:`pykka.registry.ActorRegistry.get_by_urn`.
     actor_urn = None
 
-    #: The actor's inbox. Use :meth:`ActorRef.send_one_way` and friends to put
-    #: messages in the inbox.
+    #: The actor's inbox. Use :meth:`ActorRef.tell`, :meth:`ActorRef.ask`, and
+    #: friends to put messages in the inbox.
     actor_inbox = None
 
     #: The actor's :class:`ActorRef` instance.
@@ -381,7 +381,7 @@ class ActorRef(object):
         """
         return _ActorRegistry.get_by_urn(self.actor_urn) is not None
 
-    def send_one_way(self, message):
+    def tell(self, message):
         """
         Send message to actor without waiting for any response.
 
@@ -398,7 +398,16 @@ class ActorRef(object):
             raise _ActorDeadError('%s not found' % self)
         self.actor_inbox.put(message)
 
-    def send_request_reply(self, message, block=True, timeout=None):
+    def send_one_way(self, message):
+        """
+        Send message to actor without waiting for any response.
+
+        .. deprecated:: 0.14
+           Use :meth:`tell` instead. This will be removed in a future release.
+        """
+        return self.tell(message)
+
+    def ask(self, message, block=True, timeout=None):
         """
         Send message to actor and wait for the reply.
 
@@ -427,11 +436,20 @@ class ActorRef(object):
         """
         future = self._future_class()
         message['reply_to'] = future
-        self.send_one_way(message)
+        self.tell(message)
         if block:
             return future.get(timeout=timeout)
         else:
             return future
+
+    def send_request_reply(self, message, block=True, timeout=None):
+        """
+        Send message to actor and wait for the reply.
+
+        .. deprecated:: 0.14
+           Use :meth:`ask` instead. This will be removed in a future release.
+        """
+        return self.ask(message, block, timeout)
 
     def stop(self, block=True, timeout=None):
         """
@@ -440,13 +458,13 @@ class ActorRef(object):
         The actor will finish processing any messages already in its queue
         before stopping. It may not be restarted.
 
-        ``block`` and ``timeout`` works as for :meth:`send_request_reply`.
+        ``block`` and ``timeout`` works as for :meth:`ask`.
 
         :return: :class:`True` if actor is stopped. :class:`False` if actor was
             already dead.
         """
         if self.is_alive():
-            self.send_request_reply({'command': 'pykka_stop'}, block, timeout)
+            self.ask({'command': 'pykka_stop'}, block, timeout)
             return True
         else:
             return False

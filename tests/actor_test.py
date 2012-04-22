@@ -122,13 +122,13 @@ class ActorTest(object):
 
     def test_on_failure_is_called_when_exception_cannot_be_returned(self):
         self.assertFalse(self.on_failure_was_called.is_set())
-        self.actor_ref.send_one_way({'command': 'raise exception'})
+        self.actor_ref.tell({'command': 'raise exception'})
         self.assertTrue(self.on_failure_was_called.wait(5))
         self.assertFalse(self.on_stop_was_called.is_set())
 
     def test_actor_is_stopped_when_unhandled_exceptions_are_raised(self):
         self.assertFalse(self.on_failure_was_called.is_set())
-        self.actor_ref.send_one_way({'command': 'raise exception'})
+        self.actor_ref.tell({'command': 'raise exception'})
         self.assertTrue(self.on_failure_was_called.wait(5))
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
@@ -142,14 +142,14 @@ class ActorTest(object):
 
         self.assertEqual(2, len(ActorRegistry.get_all()))
         self.assertFalse(self.on_stop_was_called.is_set())
-        self.actor_ref.send_one_way({'command': 'raise base exception'})
+        self.actor_ref.tell({'command': 'raise base exception'})
         self.assertTrue(self.on_stop_was_called.wait(5))
         self.assert_(1 >= len(ActorRegistry.get_all()))
         self.assertTrue(stop_event.wait(5))
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
     def test_actor_can_call_stop_on_self_multiple_times(self):
-        self.actor_ref.send_request_reply({'command': 'stop twice'})
+        self.actor_ref.tell({'command': 'stop twice'})
 
 
 class ThreadingActorTest(ActorTest, unittest.TestCase):

@@ -9,6 +9,13 @@ v0.14 (in development)
 - Add :attr:`pykka.__version__` to conform with :pep:`396`. This deprecates
   :attr:`pykka.VERSION` and :meth:`pykka.get_version`.
 
+- Add :meth:`ActorRef.tell() <pykka.actor.ActorRef.tell>` method in favor of now
+  deprecated :meth:`ActorRef.send_one_way() <pykka.actor.ActorRef.send_one_way>`.
+
+- Add :meth:`ActorRef.ask() <pykka.actor.ActorRef.ask>` method in favor of now
+  deprecated :meth:`ActorRef.send_request_reply()
+  <pykka.actor.ActorRef.send_request_reply>`.
+
 
 v0.13 (2011-09-24)
 ==================

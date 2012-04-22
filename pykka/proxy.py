@@ -62,7 +62,7 @@ class ActorProxy(object):
         self._callable_proxies = {}
 
     def _update_attrs(self):
-        self._known_attrs = self.actor_ref.send_request_reply(
+        self._known_attrs = self.actor_ref.ask(
             {'command': 'pykka_get_attributes'})
 
     def __repr__(self):
@@ -102,7 +102,7 @@ class ActorProxy(object):
                 'command': 'pykka_getattr',
                 'attr_path': attr_path,
             }
-            return self.actor_ref.send_request_reply(message, block=False)
+            return self.actor_ref.ask(message, block=False)
 
     def __setattr__(self, name, value):
         """
@@ -118,7 +118,7 @@ class ActorProxy(object):
             'attr_path': attr_path,
             'value': value,
         }
-        return self.actor_ref.send_request_reply(message)
+        return self.actor_ref.ask(message)
 
 
 class _CallableProxy(object):
@@ -134,4 +134,4 @@ class _CallableProxy(object):
             'args': args,
             'kwargs': kwargs,
         }
-        return self.actor_ref.send_request_reply(message, block=False)
+        return self.actor_ref.ask(message, block=False)

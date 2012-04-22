@@ -14,7 +14,7 @@ class PlainActor(ThreadingActor):
 
 if __name__ == '__main__':
     actor = PlainActor.start()
-    actor.send_one_way({'no': 'Norway', 'se': 'Sweden'})
-    actor.send_one_way({'a': 3, 'b': 4, 'c': 5})
-    print actor.send_request_reply({'command': 'get_messages'})
+    actor.tell({'no': 'Norway', 'se': 'Sweden'})
+    actor.tell({'a': 3, 'b': 4, 'c': 5})
+    print actor.ask({'command': 'get_messages'})
     actor.stop()

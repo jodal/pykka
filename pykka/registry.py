@@ -43,7 +43,7 @@ class ActorRegistry(object):
         else:
             targets = cls.get_all()
         for ref in targets:
-            ref.send_one_way(message)
+            ref.tell(message)
 
     @classmethod
     def get_all(cls):
