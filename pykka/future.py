@@ -1,5 +1,3 @@
-import copy as _copy
-
 try:
     # Python 2.x
     import Queue as _queue
@@ -70,9 +68,14 @@ class ThreadingFuture(Future):
 
     The future is implemented using a :class:`Queue.Queue`.
 
-    The encapsulated value is a copy made with :func:`copy.deepcopy`, unless
-    the encapsulated value is another :class:`ThreadingFuture`, in which case
-    the original future is encapsulated.
+    The future does *not* make a copy of the object which is :meth:`set` on it.
+    It is the setters responsibility to only pass immutable objects or make a
+    copy of the object before setting it on the future.
+
+    .. versionchanged:: 0.14
+        Previously, the encapsulated value was a copy made with
+        :func:`copy.deepcopy`, unless the encapsulated value was a future, in
+        which case the original future was encapsulated.
     """
 
     def __init__(self):
@@ -94,10 +97,6 @@ class ThreadingFuture(Future):
             raise _Timeout('%s seconds' % timeout)
 
     def set(self, value=None):
-        if isinstance(value, ThreadingFuture):
-            value = value
-        else:
-            value = _copy.deepcopy(value)
         self._queue.put(value)
 
     def set_exception(self, exception):

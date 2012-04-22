@@ -16,6 +16,15 @@ v0.14 (in development)
   deprecated :meth:`ActorRef.send_request_reply()
   <pykka.actor.ActorRef.send_request_reply>`.
 
+- :class:`ThreadingFuture.set() <pykka.future.ThreadingFuture>` no longer makes
+  a copy of the object set on the future. The setter is urged to either only
+  pass immutable objects through futures or copy the object himself before
+  setting it on the future. This is a less safe default, but it removes
+  unecessary overhead in speed and memory usage for users of immutable data
+  structures. For example, the `Mopidy <http://www.mopidy.com>`_ test suite of
+  about 1000 tests, many which are using Pykka, is still passing after this
+  change, but the test suite runs approximately 20% faster.
+
 
 v0.13 (2011-09-24)
 ==================
