@@ -56,7 +56,6 @@ class MethodCallTest(object):
         self.assertEqual('returned by foo', self.proxy_extendable.foo().get())
 
 
-
 class ThreadingMethodCallTest(MethodCallTest, unittest.TestCase):
     class ActorWithMethods(ActorWithMethods, ThreadingActor):
         pass

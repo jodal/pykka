@@ -103,8 +103,8 @@ class ActorTest(object):
         # receive loop, but it will cause the test suite to hang, as the actor
         # thread is blocking on receiving messages to the actor inbox forever.
         # If one made this test specifically for ThreadingActor, one could add
-        # an assertFalse(actor_thread.is_alive()), which would cause the test to
-        # fail properly.
+        # an assertFalse(actor_thread.is_alive()), which would cause the test
+        # to fail properly.
         start_event = self.event_class()
         stop_event = self.event_class()
         fail_event = self.event_class()
@@ -141,7 +141,7 @@ class ActorTest(object):
         stop_event = self.event_class()
         fail_event = self.event_class()
         registered_event = self.event_class()
-        another_actor = self.AnActor.start(start_event, stop_event, fail_event,
+        self.AnActor.start(start_event, stop_event, fail_event,
             registered_event)
 
         self.assertEqual(2, len(ActorRegistry.get_all()))

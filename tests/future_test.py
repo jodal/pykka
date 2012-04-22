@@ -34,7 +34,7 @@ class FutureTest(object):
         try:
             self.results[0].set(0)
             self.results[2].set(2)
-            result = get_all(self.results, timeout=0)
+            get_all(self.results, timeout=0)
             self.fail('Should timeout')
         except Timeout:
             pass
