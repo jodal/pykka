@@ -3,5 +3,6 @@ python:
   - 2.6
   - 2.7
   - 3.2
-  - pypy
+#  - pypy  # PyPy builds seem broken on Travis CI
+install: pip install -r requirements-dev.txt --use-mirrors
 script: nosetests -v tests/
