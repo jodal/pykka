@@ -2,6 +2,8 @@
 Pykka
 =====
 
+.. image:: https://secure.travis-ci.org/jodal/pykka.png?branch=master
+
 The goal of Pykka is to provide easy to use concurrency abstractions for Python
 by using the `actor model <http://en.wikipedia.org/wiki/Actor_model>`_.
 
@@ -27,4 +29,5 @@ Project resources
 - `Documentation <http://pykka.readthedocs.org/>`_
 - `Source code <http://github.com/jodal/pykka>`_
 - `Issue tracker <http://github.com/jodal/pykka/issues>`_
+- `CI server <http://travis-ci.org/#!/jodal/pykka>`_
 - `Download development snapshot <http://github.com/jodal/pykka/tarball/master#egg=pykka-dev>`_
