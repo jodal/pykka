@@ -3,8 +3,8 @@ Changes
 =======
 
 
-v0.15 (in development)
-======================
+v0.15 (2012-08-11)
+==================
 
 - Change the argument of :meth:`Future.set_exception()
   <pykka.future.Future.set_exception>` from an exception instance to a
