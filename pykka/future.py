@@ -1,3 +1,5 @@
+import sys as _sys
+
 try:
     # Python 2.x
     import Queue as _queue
@@ -51,12 +53,25 @@ class Future(object):
         """
         raise NotImplementedError
 
-    def set_exception(self, exception):
+    def set_exception(self, exc_info=None):
         """
         Set an exception as the encapsulated value.
 
-        :param exception: the encapsulated exception
-        :type exception: exception
+        You can pass an ``exc_info`` three-tuple, as returned by
+        :func:`sys.exc_info`. If you don't pass ``exc_info``,
+        ``sys.exc_info()`` will be called and the value returned by it used.
+
+        In other words, if you're calling :meth:`set_exception`, without any
+        arguments, from an except block, the exception you're currently
+        handling will automatically be set on the future.
+
+        .. versionchanged:: 0.15
+            Previously, :meth:`set_exception` accepted an exception
+            instance as its only argument. This still works, but it is
+            deprecated and will be removed in a future release.
+
+        :param exc_info: the encapsulated exception
+        :type exc_info: three-tuple of (exc_class, exc_instance, traceback)
         """
         raise NotImplementedError
 
@@ -81,26 +96,27 @@ class ThreadingFuture(Future):
     def __init__(self):
         super(ThreadingFuture, self).__init__()
         self._queue = _queue.Queue()
-        self._value_received = False
-        self._value = None
+        self._data = None
 
     def get(self, timeout=None):
         try:
-            if not self._value_received:
-                self._value = self._queue.get(True, timeout)
-                self._value_received = True
-            if isinstance(self._value, BaseException):
-                raise self._value  # pylint: disable = E0702
+            if self._data is None:
+                self._data = self._queue.get(True, timeout)
+            if 'exc_info' in self._data:
+                exc_info = self._data['exc_info']
+                raise exc_info[0], exc_info[1], exc_info[2]
             else:
-                return self._value
+                return self._data['value']
         except _queue.Empty:
             raise _Timeout('%s seconds' % timeout)
 
     def set(self, value=None):
-        self._queue.put(value)
+        self._queue.put({'value': value})
 
-    def set_exception(self, exception):
-        self.set(exception)
+    def set_exception(self, exc_info=None):
+        if isinstance(exc_info, BaseException):
+            exc_info = (exc_info.__class__, exc_info, None)
+        self._queue.put({'exc_info': exc_info or _sys.exc_info()})
 
 
 def get_all(futures, timeout=None):

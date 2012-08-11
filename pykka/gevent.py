@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import sys as _sys
+
 # pylint: disable = E0611, W0406
 import gevent as _gevent
 import gevent.event as _gevent_event
@@ -39,7 +41,12 @@ class GeventFuture(_Future):
     def set(self, value=None):
         self.async_result.set(value)
 
-    def set_exception(self, exception):
+    def set_exception(self, exc_info=None):
+        if isinstance(exc_info, BaseException):
+            exception = exc_info
+        else:
+            exc_info = exc_info or _sys.exc_info()
+            exception = exc_info[1]
         self.async_result.set_exception(exception)
 
 

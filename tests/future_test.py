@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 import unittest
 
 from pykka import Timeout
@@ -55,6 +56,36 @@ class FutureTest(object):
         outer_future.set(inner_future)
         self.assertEqual(outer_future.get().get(), 'foo')
 
+    def test_get_raises_exception_with_full_traceback(self):
+        future = self.future_class()
+
+        try:
+            raise NameError('foo')
+        except NameError as error:
+            exc_class_set, exc_instance_set, exc_traceback_set = sys.exc_info()
+            future.set_exception()
+
+        # We could move to another thread at this point
+
+        try:
+            future.get()
+        except NameError:
+            exc_class_get, exc_instance_get, exc_traceback_get = sys.exc_info()
+
+        self.assertEqual(exc_class_set, exc_class_get)
+        self.assertEqual(exc_instance_set, exc_instance_get)
+
+        exc_traceback_list_set = list(reversed(
+            traceback.extract_tb(exc_traceback_set)))
+        exc_traceback_list_get = list(reversed(
+            traceback.extract_tb(exc_traceback_get)))
+
+        # All frames from the first traceback should be included in the
+        # traceback from the future.get() reraise
+        self.assert_(len(exc_traceback_list_set) < len(exc_traceback_list_get))
+        for i, frame in enumerate(exc_traceback_list_set):
+            self.assertEquals(frame, exc_traceback_list_get[i])
+
 
 class ThreadingFutureTest(FutureTest, unittest.TestCase):
     future_class = ThreadingFuture
@@ -71,3 +102,8 @@ if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
             async_result = AsyncResult()
             future = GeventFuture(async_result)
             self.assertEquals(async_result, future.async_result)
+
+        def test_get_raises_exception_with_full_traceback(self):
+            # gevent prints the first half of the traceback instead of
+            # passing it through to the other side of the AsyncResult
+            pass

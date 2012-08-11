@@ -3,6 +3,20 @@ Changes
 =======
 
 
+v0.15 (in development)
+======================
+
+- Change the argument of :meth:`Future.set_exception()
+  <pykka.future.Future.set_exception>` from an exception instance to a
+  ``exc_info`` three-tuple. Passing just an exception instance to the method
+  still works, but it is deprecated and may be unsupported in a future release.
+
+- Due to the above change, :meth:`Future.get() <pykka.future.Future.get>` will
+  now reraise exceptions with complete traceback from the point when the
+  exception was first raised, and not just a traceback from when it was
+  reraised by :meth:`get`. (Fixes: :issue:`10`)
+
+
 v0.14 (2012-04-22)
 ==================
 

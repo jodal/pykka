@@ -172,7 +172,7 @@ class Actor(object):
                 if 'reply_to' in message:
                     _logger.debug('Exception returned from %s to caller:' %
                         self, exc_info=_sys.exc_info())
-                    message['reply_to'].set_exception(exception)
+                    message['reply_to'].set_exception()
                 else:
                     self._handle_failure(*_sys.exc_info())
             except BaseException as exception:
