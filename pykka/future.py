@@ -3,9 +3,11 @@ import sys as _sys
 try:
     # Python 2.x
     import Queue as _queue
+    PY3 = False
 except ImportError:
     # Python 3.x
     import queue as _queue  # pylint: disable = F0401
+    PY3 = True
 
 from pykka import Timeout as _Timeout
 
@@ -104,7 +106,10 @@ class ThreadingFuture(Future):
                 self._data = self._queue.get(True, timeout)
             if 'exc_info' in self._data:
                 exc_info = self._data['exc_info']
-                raise exc_info[0], exc_info[1], exc_info[2]
+                if PY3:
+                    raise exc_info[1].with_traceback(exc_info[2])
+                else:
+                    exec('raise exc_info[0], exc_info[1], exc_info[2]')
             else:
                 return self._data['value']
         except _queue.Empty:
