@@ -49,7 +49,7 @@ class FieldAccessTest(object):
         self.assertEqual('bar.baz', self.proxy.bar.baz.get())
 
     def test_actor_get_attributes_contains_traversable_attributes(self):
-        attr_paths = list(self.actor._get_attributes().keys())
+        attr_paths = list(self.proxy._get_attributes().keys())
         self.assert_(('foo',) in attr_paths)
         self.assert_(('bar',) in attr_paths)
         self.assert_(('bar', 'baz') in attr_paths)
