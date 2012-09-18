@@ -145,6 +145,12 @@ class Actor(object):
         The actor will finish processing any messages already in its queue
         before stopping. It may not be restarted.
         """
+        self.actor_ref.tell({'command': 'pykka_stop'})
+
+    def _stop(self):
+        """
+        Stops the actor immediately without processing the rest of the inbox.
+        """
         _ActorRegistry.unregister(self.actor_ref)
         self._actor_runnable = False
         _logger.debug('Stopped %s', self)
@@ -178,7 +184,7 @@ class Actor(object):
                 exception_value = _sys.exc_info()[1]
                 _logger.debug('%s in %s. Stopping all actors.' %
                     (repr(exception_value), self))
-                self.stop()
+                self._stop()
                 _ActorRegistry.stop_all()
     # pylint: enable = W0703
 
@@ -230,7 +236,7 @@ class Actor(object):
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
         if message.get('command') == 'pykka_stop':
-            return self.stop()
+            return self._stop()
         if message.get('command') == 'pykka_call':
             callee = self._get_attribute_from_path(message['attr_path'])
             return callee(*message['args'], **message['kwargs'])

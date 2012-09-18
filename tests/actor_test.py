@@ -16,12 +16,14 @@ except ImportError:
 class AnActor(object):
     def __init__(self, on_start_was_called, on_stop_was_called,
             on_failure_was_called,
-            actor_was_registered_before_on_start_was_called):
+            actor_was_registered_before_on_start_was_called,
+            greetings_was_received):
         self.on_start_was_called = on_start_was_called
         self.on_stop_was_called = on_stop_was_called
         self.on_failure_was_called = on_failure_was_called
         self.actor_was_registered_before_on_start_was_called = \
             actor_was_registered_before_on_start_was_called
+        self.greetings_was_received = greetings_was_received
 
     def on_start(self):
         self.on_start_was_called.set()
@@ -42,6 +44,11 @@ class AnActor(object):
         elif message.get('command') == 'stop twice':
             self.stop()
             self.stop()
+        elif message.get('command') == 'message self then stop':
+            self.actor_ref.tell({'command': 'greetings'})
+            self.stop()
+        elif message.get('command') == 'greetings':
+            self.greetings_was_received.set()
         else:
             super(AnActor, self).on_receive(message)
 
@@ -58,10 +65,12 @@ class ActorTest(object):
         self.on_failure_was_called = self.event_class()
         self.actor_was_registered_before_on_start_was_called = \
             self.event_class()
+        self.greetings_was_received = self.event_class()
 
         self.actor_ref = self.AnActor.start(self.on_start_was_called,
             self.on_stop_was_called, self.on_failure_was_called,
-            self.actor_was_registered_before_on_start_was_called)
+            self.actor_was_registered_before_on_start_was_called,
+            self.greetings_was_received)
         self.actor_proxy = self.actor_ref.proxy()
 
     def tearDown(self):
@@ -72,7 +81,7 @@ class ActorTest(object):
 
     def test_actor_has_unique_uuid(self):
         event = self.event_class()
-        actors = [self.AnActor.start(event, event, event, event)
+        actors = [self.AnActor.start(event, event, event, event, event)
             for _ in range(3)]
 
         self.assertNotEqual(actors[0].actor_urn, actors[1].actor_urn)
@@ -81,12 +90,12 @@ class ActorTest(object):
 
     def test_str_on_raw_actor_contains_actor_class_name(self):
         event = self.event_class()
-        unstarted_actor = self.AnActor(event, event, event, event)
+        unstarted_actor = self.AnActor(event, event, event, event, event)
         self.assert_('AnActor' in str(unstarted_actor))
 
     def test_str_on_raw_actor_contains_actor_urn(self):
         event = self.event_class()
-        unstarted_actor = self.AnActor(event, event, event, event)
+        unstarted_actor = self.AnActor(event, event, event, event, event)
         self.assert_(unstarted_actor.actor_urn in str(unstarted_actor))
 
     def test_on_start_is_called_before_first_message_is_processed(self):
@@ -115,8 +124,9 @@ class ActorTest(object):
         stop_event = self.event_class()
         fail_event = self.event_class()
         registered_event = self.event_class()
+        greetings_event = self.event_class()
         another_actor = self.EarlyStoppingActor.start(start_event, stop_event,
-            fail_event, registered_event)
+            fail_event, registered_event, greetings_event)
 
         stop_event.wait(5)
         self.assertTrue(stop_event.is_set())
@@ -147,8 +157,9 @@ class ActorTest(object):
         stop_event = self.event_class()
         fail_event = self.event_class()
         registered_event = self.event_class()
+        greetings_event = self.event_class()
         self.AnActor.start(start_event, stop_event, fail_event,
-            registered_event)
+            registered_event, greetings_event)
 
         self.assertEqual(2, len(ActorRegistry.get_all()))
         self.assertFalse(self.on_stop_was_called.is_set())
@@ -162,6 +173,16 @@ class ActorTest(object):
 
     def test_actor_can_call_stop_on_self_multiple_times(self):
         self.actor_ref.ask({'command': 'stop twice'})
+
+    def test_actor_processes_all_messages_before_stop_on_self_stops_it(self):
+        self.actor_ref.ask({'command': 'message self then stop'})
+
+        self.greetings_was_received.wait(5)
+        self.assertTrue(self.greetings_was_received.is_set())
+
+        self.on_stop_was_called.wait(5)
+
+        self.assertEqual(0, len(ActorRegistry.get_all()))
 
 
 class ThreadingActorTest(ActorTest, unittest.TestCase):
