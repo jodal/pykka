@@ -168,14 +168,14 @@ class Actor(object):
                 response = self._handle_receive(message)
                 if 'reply_to' in message:
                     message['reply_to'].set(response)
-            except Exception as exception:
+            except Exception:
                 if 'reply_to' in message:
                     _logger.debug('Exception returned from %s to caller:' %
                         self, exc_info=_sys.exc_info())
                     message['reply_to'].set_exception()
                 else:
                     self._handle_failure(*_sys.exc_info())
-            except BaseException as exception:
+            except BaseException:
                 exception_value = _sys.exc_info()[1]
                 _logger.debug('%s in %s. Stopping all actors.' %
                     (repr(exception_value), self))

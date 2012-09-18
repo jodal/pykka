@@ -8,6 +8,7 @@ __version__ = '0.15'
 #:    release.
 VERSION = tuple(map(int, __version__.split('.')))
 
+
 def get_version():
     """
     Returns Pykka's version as a formatted string

@@ -109,7 +109,8 @@ class ThreadingFuture(Future):
                 if PY3:
                     raise exc_info[1].with_traceback(exc_info[2])
                 else:
-                    exec('raise exc_info[0], exc_info[1], exc_info[2]')
+                    exec( # pylint: disable = W0122
+                        'raise exc_info[0], exc_info[1], exc_info[2]')
             else:
                 return self._data['value']
         except _queue.Empty:
