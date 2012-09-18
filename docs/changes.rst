@@ -3,6 +3,14 @@ Changes
 =======
 
 
+v0.16 (in development)
+======================
+
+- Let actors access themselves through a proxy. See the :class:`ActorProxy
+  <pykka.proxy.ActorProxy>` documentation for use cases and usage examples.
+  (Fixes: :issue:`9`)
+
+
 v0.15 (2012-08-11)
 ==================
 

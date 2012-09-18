@@ -42,6 +42,39 @@ class ActorProxy(object):
 
         actor_proxy.method_with_side_effect().get()
 
+    An actor can use a proxy to itself to schedule work for itself. The
+    scheduled work will only be done after the current message and all messages
+    already in the inbox are processed.
+
+    For example, if an actor can split a time consuming task into multiple
+    parts, and after completing each part can ask itself to start on the next
+    part using proxied calls or messages to itself, it can react faster to
+    other incoming messages as they will be interleaved with the parts of the
+    time consuming task. This is especially useful for being able to stop the
+    actor in the middle of a time consuming task.
+
+    To create a proxy to yourself, use the actor's :attr:`actor_ref
+    <pykka.actor.Actor.actor_ref>` attribute::
+
+        proxy_to_myself_in_the_future = self.actor_ref.proxy()
+
+    If you create a proxy in your actor's constructor or :meth:`on_start
+    <pykka.actor.Actor.on_start>` method, you can create a nice API for
+    deferring work to yourself in the future::
+
+        def __init__(self):
+            ...
+            self.in_future = self.actor_ref.proxy()
+            ...
+
+        def do_work(self):
+            ...
+            self.in_future.do_more_work()
+            ...
+
+        def do_more_work(self):
+            ...
+
     An example of :class:`ActorProxy` usage:
 
     .. literalinclude:: ../examples/counter.py
