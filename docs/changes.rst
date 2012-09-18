@@ -10,6 +10,14 @@ v0.16 (in development)
   <pykka.proxy.ActorProxy>` documentation for use cases and usage examples.
   (Fixes: :issue:`9`)
 
+- Give proxies direct access to the actor instances for inspecting available
+  attributes. This access is only used for reading, and works since both
+  threading and gevent based actors share memory with other actors. This
+  reduces the creation cost for proxies, which is mostly visible in test suites
+  that are starting and stopping lots of actors. For the Mopidy test suite the
+  run time was reduced by about 33%. This change also makes self-proxying
+  possible.
+
 
 v0.15 (2012-08-11)
 ==================
