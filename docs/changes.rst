@@ -18,7 +18,7 @@ v0.16 (in development)
   run time was reduced by about 33%. This change also makes self-proxying
   possible.
 
-- Fix bug where :meth:`Actor.stop() <pykka.actor.Actor.stop()` called by an
+- Fix bug where :meth:`Actor.stop() <pykka.actor.Actor.stop>` called by an
   actor on itself did not process the remaining messages in the inbox before
   the actor stopped. The behavior now matches the documentation.
 
