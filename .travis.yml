@@ -7,8 +7,6 @@ python:
   - pypy
 
 install:
-  - pip install --use-mirrors -r requirements-dev.txt
-
   # Install gevent 1.0 on Python 2.6, 2.7, but not 3.2 and PyPy
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.6" || "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then sudo apt-get install libev-dev; pip install --use-mirrors -r requirements-gevent.txt; fi
 
