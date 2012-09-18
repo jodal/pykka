@@ -1,11 +1,16 @@
-import os
-import sys
 import threading
 import unittest
 import uuid
 
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
+
+try:
+    import gevent.event
+    from pykka.gevent import GeventActor
+    HAS_GEVENT = True
+except ImportError:
+    HAS_GEVENT = False
 
 
 class AnActor(object):
@@ -176,11 +181,7 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
         self.assert_(any(named_correctly))
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
-    import gevent.event
-
-    from pykka.gevent import GeventActor
-
+if HAS_GEVENT:
     class GeventActorTest(ActorTest, unittest.TestCase):
         event_class = gevent.event.Event
 

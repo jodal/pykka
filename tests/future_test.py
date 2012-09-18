@@ -1,10 +1,16 @@
-import os
 import sys
 import traceback
 import unittest
 
 from pykka import Timeout
 from pykka.future import Future, ThreadingFuture, get_all
+
+try:
+    from gevent.event import AsyncResult
+    from pykka.gevent import GeventFuture
+    HAS_GEVENT = True
+except ImportError:
+    HAS_GEVENT = False
 
 
 class FutureBaseTest(unittest.TestCase):
@@ -97,10 +103,7 @@ class ThreadingFutureTest(FutureTest, unittest.TestCase):
     future_class = ThreadingFuture
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
-    from gevent.event import AsyncResult
-    from pykka.gevent import GeventFuture
-
+if HAS_GEVENT:
     class GeventFutureTest(FutureTest, unittest.TestCase):
         future_class = GeventFuture
 

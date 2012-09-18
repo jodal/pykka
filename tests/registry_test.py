@@ -1,10 +1,14 @@
 import mock
-import os
-import sys
 import unittest
 
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
+
+try:
+    from pykka.gevent import GeventActor
+    HAS_GEVENT = True
+except ImportError:
+    HAS_GEVENT = False
 
 
 class ActorRegistryTest(object):
@@ -149,9 +153,7 @@ class ThreadingActorRegistryTest(ActorRegistryTest, unittest.TestCase):
         pass
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
-    from pykka.gevent import GeventActor
-
+if HAS_GEVENT:
     class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):
         class AnActor(AnActor, GeventActor):
             pass

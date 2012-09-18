@@ -1,8 +1,12 @@
-import os
-import sys
 import unittest
 
 from pykka.actor import ThreadingActor
+
+try:
+    from pykka.gevent import GeventActor
+    HAS_GEVENT = True
+except ImportError:
+    HAS_GEVENT = False
 
 
 class ActorWithMethods(object):
@@ -98,9 +102,7 @@ class ThreadingDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
         pass
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
-    from pykka.gevent import GeventActor
-
+if HAS_GEVENT:
     class GeventStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
         class ActorWithMethods(ActorWithMethods, GeventActor):
             pass

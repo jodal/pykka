@@ -1,11 +1,14 @@
-import os
-import sys
 import unittest
 
 from pykka import ActorDeadError
 from pykka.actor import ThreadingActor
 from pykka.proxy import ActorProxy
-from pykka.registry import ActorRegistry
+
+try:
+    from pykka.gevent import GeventActor
+    HAS_GEVENT = True
+except ImportError:
+    HAS_GEVENT = False
 
 
 class SomeObject(object):
@@ -95,9 +98,7 @@ class ThreadingProxyTest(ProxyTest, unittest.TestCase):
         pass
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
-    from pykka.gevent import GeventActor
-
+if HAS_GEVENT:
     class GeventProxyTest(ProxyTest, unittest.TestCase):
         class AnActor(AnActor, GeventActor):
             pass

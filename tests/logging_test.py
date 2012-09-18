@@ -1,11 +1,16 @@
-import os
-import sys
 import logging
 import threading
 import unittest
 
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
+
+try:
+    import gevent.event
+    from pykka.gevent import GeventActor
+    HAS_GEVENT = True
+except ImportError:
+    HAS_GEVENT = False
 
 from tests import TestLogHandler
 
@@ -108,11 +113,7 @@ class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
         pass
 
 
-if sys.version_info < (3,) and 'TRAVIS' not in os.environ:
-    import gevent.event
-
-    from pykka.gevent import GeventActor
-
+if HAS_GEVENT:
     class GeventActorLoggingTest(ActorLoggingTest, unittest.TestCase):
         event_class = gevent.event.Event
 
