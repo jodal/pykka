@@ -30,7 +30,10 @@ class ProxyTest(object):
         self.proxy = ActorProxy(self.AnActor.start())
 
     def tearDown(self):
-        ActorRegistry.stop_all()
+        try:
+            self.proxy.stop()
+        except ActorDeadError:
+            pass
 
     def test_repr_is_wrapped_in_lt_and_gt(self):
         result = repr(self.proxy)
