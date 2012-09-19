@@ -1,5 +1,5 @@
 #: Pykka's :pep:`386` and :pep:`396` compatible version number
-__version__ = '0.15'
+__version__ = '0.16'
 
 #: Pykka's version as a tuple that can be used for comparison
 #:
