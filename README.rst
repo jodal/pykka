@@ -29,5 +29,5 @@ Project resources
 - `Documentation <http://pykka.readthedocs.org/>`_
 - `Source code <http://github.com/jodal/pykka>`_
 - `Issue tracker <http://github.com/jodal/pykka/issues>`_
-- `CI server <http://travis-ci.org/#!/jodal/pykka>`_
+- `CI server <http://travis-ci.org/jodal/pykka>`_
 - `Download development snapshot <http://github.com/jodal/pykka/tarball/master#egg=pykka-dev>`_
