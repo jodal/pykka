@@ -118,7 +118,7 @@ class Actor(object):
         return obj
 
     # pylint: disable = W0231
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """
         Your are free to override :meth:`__init__` and do any setup you need to
         do. You should not call ``super(YourClass, self).__init__(...)``, as

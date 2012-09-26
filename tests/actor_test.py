@@ -98,6 +98,9 @@ class ActorTest(object):
         unstarted_actor = self.AnActor(event, event, event, event, event)
         self.assert_(unstarted_actor.actor_urn in str(unstarted_actor))
 
+    def test_init_can_be_called_with_arbitrary_arguments(self):
+        actor = self.SuperInitActor(1, 2, 3, foo='bar')
+
     def test_on_start_is_called_before_first_message_is_processed(self):
         self.on_start_was_called.wait(5)
         self.assertTrue(self.on_start_was_called.is_set())
@@ -194,6 +197,10 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
     class EarlyStoppingActor(EarlyStoppingActor, ThreadingActor):
         pass
 
+    class SuperInitActor(ThreadingActor):
+        def __init__(self, *args, **kwargs):
+            super(ThreadingActorTest.SuperInitActor, self).__init__(*args, **kwargs)
+
     def test_actor_thread_is_named_as_a_pykka_actor(self):
         alive_threads = threading.enumerate()
         alive_thread_names = [t.name for t in alive_threads]
@@ -211,3 +218,7 @@ if HAS_GEVENT:
 
         class EarlyStoppingActor(EarlyStoppingActor, GeventActor):
             pass
+
+        class SuperInitActor(GeventActor):
+            def __init__(self, *args, **kwargs):
+                super(GeventActorTest.SuperInitActor, self).__init__(*args, **kwargs)

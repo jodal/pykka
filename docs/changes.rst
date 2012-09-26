@@ -3,6 +3,20 @@ Changes
 =======
 
 
+v0.17 (in development)
+======================
+
+- Make :meth:`Actor.__init__ <pykka.actor.Actor.__init__>` accept any arguments
+  and keyword arguments by default. This allows you to use :func:`super` in
+  :meth:`__init__` like this::
+
+      super(MyActorSubclass, self).__init__(1, 2, 3, foo='bar')
+
+  Without this fix, the above use of :func:`super` would cause an exception
+  because the default implementation of :meth:`__init__` in
+  :class:`Actor <pykka.actor.Actor>` would not accept the arguments.
+
+
 v0.16 (2012-09-19)
 ==================
 
