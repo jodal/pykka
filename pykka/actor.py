@@ -313,13 +313,19 @@ class ActorRef(object):
     :type actor: :class:`Actor`
     """
 
-    #: See :attr:`Actor.actor_urn`
+    #: The class of the referenced actor.
+    actor_class = None
+
+    #: See :attr:`Actor.actor_urn`.
     actor_urn = None
+
+    #: See :attr:`Actor.actor_inbox`.
+    actor_inbox = None
 
     def __init__(self, actor):
         self._actor = actor
-        self.actor_urn = actor.actor_urn
         self.actor_class = actor.__class__
+        self.actor_urn = actor.actor_urn
         self.actor_inbox = actor.actor_inbox
         # pylint: disable = W0212
         self._future_class = actor._future_class
