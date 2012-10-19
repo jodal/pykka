@@ -10,13 +10,13 @@ except ImportError:
 
 
 class ActorWithMethods(object):
-    foo = 'bar'
+    cat = 'dog'
 
     def functional_hello(self, s):
         return 'Hello, %s!' % s
 
-    def set_foo(self, s):
-        self.foo = s
+    def set_cat(self, s):
+        self.cat = s
 
     def raise_keyboard_interrupt(self):
         raise KeyboardInterrupt
@@ -41,15 +41,17 @@ class StaticMethodCallTest(object):
         self.proxy.stop()
 
     def test_functional_method_call_returns_correct_value(self):
-        self.assertEqual('Hello, world!',
+        self.assertEqual(
+            'Hello, world!',
             self.proxy.functional_hello('world').get())
-        self.assertEqual('Hello, moon!',
+        self.assertEqual(
+            'Hello, moon!',
             self.proxy.functional_hello('moon').get())
 
     def test_side_effect_of_method_is_observable(self):
-        self.assertEqual('bar', self.proxy.foo.get())
-        self.proxy.set_foo('baz')
-        self.assertEqual('baz', self.proxy.foo.get())
+        self.assertEqual('dog', self.proxy.cat.get())
+        self.proxy.set_cat('eagle')
+        self.assertEqual('eagle', self.proxy.cat.get())
 
     def test_calling_unknown_method_raises_attribute_error(self):
         try:
@@ -107,7 +109,7 @@ if HAS_GEVENT:
         class ActorWithMethods(ActorWithMethods, GeventActor):
             pass
 
-    class GeventDynamicMethodCallTest(DynamicMethodCallTest,
-            unittest.TestCase):
+    class GeventDynamicMethodCallTest(
+            DynamicMethodCallTest, unittest.TestCase):
         class ActorExtendableAtRuntime(ActorExtendableAtRuntime, GeventActor):
             pass

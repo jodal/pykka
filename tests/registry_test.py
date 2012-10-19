@@ -14,8 +14,8 @@ except ImportError:
 class ActorRegistryTest(object):
     def setUp(self):
         self.ref = self.AnActor.start()
-        self.a_actors = [self.AnActor.start() for i in range(3)]
-        self.b_actors = [self.BeeActor.start() for i in range(5)]
+        self.a_actors = [self.AnActor.start() for _ in range(3)]
+        self.b_actors = [self.BeeActor.start() for _ in range(5)]
         self.a_actor_0_urn = self.a_actors[0].actor_urn
 
     def tearDown(self):
@@ -49,8 +49,8 @@ class ActorRegistryTest(object):
         self.assertEquals(0, len(ActorRegistry.get_all()))
 
     @mock.patch.object(ActorRegistry, 'get_all')
-    def test_stop_all_stops_last_started_actor_first_if_blocking(self,
-            mock_method):
+    def test_stop_all_stops_last_started_actor_first_if_blocking(
+            self, mock_method):
         stopped_actors = []
         started_actors = [mock.Mock(name=i) for i in range(3)]
         started_actors[0].stop.side_effect = lambda *a, **kw: \
@@ -75,7 +75,7 @@ class ActorRegistryTest(object):
             self.assert_(b_actor not in result)
 
     def test_actors_may_be_looked_up_by_superclass(self):
-        result = ActorRegistry.get_by_class(AnActorSuperclass)
+        result = ActorRegistry.get_by_class(AnActor)
         for a_actor in self.a_actors:
             self.assert_(a_actor in result)
         for b_actor in self.b_actors:
@@ -121,11 +121,7 @@ class ActorRegistryTest(object):
             self.assert_({'command': 'foo'} not in received_messages)
 
 
-class AnActorSuperclass(object):
-    pass
-
-
-class AnActor(AnActorSuperclass):
+class AnActor(object):
     received_messages = None
 
     def __init__(self):

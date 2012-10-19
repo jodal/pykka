@@ -12,7 +12,8 @@ except ImportError:
 
 
 class SomeObject(object):
-    baz = 'bar.baz'
+    cat = 'bar.cat'
+    pykka_traversable = False
 
 
 class AnActor(object):
@@ -22,7 +23,7 @@ class AnActor(object):
     foo = 'foo'
 
     def __init__(self):
-        self.baz = 'quox'
+        self.cat = 'quox'
 
     def func(self):
         pass
@@ -64,7 +65,7 @@ class ProxyTest(object):
     def test_dir_on_proxy_lists_attributes_of_the_actor(self):
         result = dir(self.proxy)
         self.assert_('foo' in result)
-        self.assert_('baz' in result)
+        self.assert_('cat' in result)
         self.assert_('func' in result)
 
     def test_dir_on_proxy_lists_private_attributes_of_the_proxy(self):

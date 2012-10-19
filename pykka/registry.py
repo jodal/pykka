@@ -67,7 +67,8 @@ class ActorRegistry(object):
         :returns: list of :class:`pykka.actor.ActorRef`
         """
         with cls._actor_refs_lock:
-            return [ref for ref in cls._actor_refs
+            return [
+                ref for ref in cls._actor_refs
                 if issubclass(ref.actor_class, actor_class)]
 
     @classmethod
@@ -82,7 +83,8 @@ class ActorRegistry(object):
         :returns: list of :class:`pykka.actor.ActorRef`
         """
         with cls._actor_refs_lock:
-            return [ref for ref in cls._actor_refs
+            return [
+                ref for ref in cls._actor_refs
                 if ref.actor_class.__name__ == actor_class_name]
 
     @classmethod
@@ -96,7 +98,8 @@ class ActorRegistry(object):
         :returns: :class:`pykka.actor.ActorRef` or :class:`None` if not found
         """
         with cls._actor_refs_lock:
-            refs = [ref for ref in cls._actor_refs
+            refs = [
+                ref for ref in cls._actor_refs
                 if ref.actor_urn == actor_urn]
             if refs:
                 return refs[0]
@@ -160,5 +163,5 @@ class ActorRegistry(object):
         if removed:
             _logger.debug('Unregistered %s', actor_ref)
         else:
-            _logger.debug('Unregistered %s (not found in registry)',
-                actor_ref)
+            _logger.debug(
+                'Unregistered %s (not found in registry)', actor_ref)

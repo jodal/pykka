@@ -11,7 +11,8 @@ def time_it(func):
 
 
 class SomeObject(object):
-    baz = 'bar.baz'
+    pykka_traversable = False
+    cat = 'bar.cat'
 
     def func(self):
         pass
@@ -24,7 +25,8 @@ class AnActor(ThreadingActor):
     foo = 'foo'
 
     def __init__(self):
-        self.baz = 'quox'
+        super(AnActor, self).__init__()
+        self.cat = 'quox'
 
     def func(self):
         pass
@@ -32,25 +34,25 @@ class AnActor(ThreadingActor):
 
 def test_direct_plain_attribute_access():
     actor = AnActor.start().proxy()
-    for i in range(10000):
+    for _ in range(10000):
         actor.foo.get()
 
 
 def test_direct_callable_attribute_access():
     actor = AnActor.start().proxy()
-    for i in range(10000):
+    for _ in range(10000):
         actor.func().get()
 
 
 def test_traversible_plain_attribute_access():
     actor = AnActor.start().proxy()
-    for i in range(10000):
-        actor.bar.baz.get()
+    for _ in range(10000):
+        actor.bar.cat.get()
 
 
 def test_traversible_callable_attribute_access():
     actor = AnActor.start().proxy()
-    for i in range(10000):
+    for _ in range(10000):
         actor.bar.func().get()
 
 

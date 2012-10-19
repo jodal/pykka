@@ -14,16 +14,13 @@ except ImportError:
 
 
 class AnActor(object):
-    def __init__(self, on_start_was_called, on_stop_was_called,
-            on_failure_was_called,
-            actor_was_registered_before_on_start_was_called,
-            greetings_was_received):
-        self.on_start_was_called = on_start_was_called
-        self.on_stop_was_called = on_stop_was_called
-        self.on_failure_was_called = on_failure_was_called
-        self.actor_was_registered_before_on_start_was_called = \
-            actor_was_registered_before_on_start_was_called
-        self.greetings_was_received = greetings_was_received
+    def __init__(self, **events):
+        self.on_start_was_called = events['on_start_was_called']
+        self.on_stop_was_called = events['on_stop_was_called']
+        self.on_failure_was_called = events['on_failure_was_called']
+        self.actor_was_registered_before_on_start_was_called = events[
+            'actor_was_registered_before_on_start_was_called']
+        self.greetings_was_received = events['greetings_was_received']
 
     def on_start(self):
         self.on_start_was_called.set()
@@ -53,9 +50,15 @@ class AnActor(object):
             super(AnActor, self).on_receive(message)
 
 
-class EarlyStoppingActor(AnActor):
+class EarlyStoppingActor(object):
+    def __init__(self, on_stop_was_called):
+        self.on_stop_was_called = on_stop_was_called
+
     def on_start(self):
         self.stop()
+
+    def on_stop(self):
+        self.on_stop_was_called.set()
 
 
 class ActorTest(object):
@@ -67,10 +70,13 @@ class ActorTest(object):
             self.event_class()
         self.greetings_was_received = self.event_class()
 
-        self.actor_ref = self.AnActor.start(self.on_start_was_called,
-            self.on_stop_was_called, self.on_failure_was_called,
-            self.actor_was_registered_before_on_start_was_called,
-            self.greetings_was_received)
+        self.actor_ref = self.AnActor.start(
+            on_start_was_called=self.on_start_was_called,
+            on_stop_was_called=self.on_stop_was_called,
+            on_failure_was_called=self.on_failure_was_called,
+            actor_was_registered_before_on_start_was_called=(
+                self.actor_was_registered_before_on_start_was_called),
+            greetings_was_received=self.greetings_was_received)
         self.actor_proxy = self.actor_ref.proxy()
 
     def tearDown(self):
@@ -81,7 +87,13 @@ class ActorTest(object):
 
     def test_actor_has_unique_uuid(self):
         event = self.event_class()
-        actors = [self.AnActor.start(event, event, event, event, event)
+        actors = [
+            self.AnActor.start(
+                on_start_was_called=event,
+                on_stop_was_called=event,
+                on_failure_was_called=event,
+                actor_was_registered_before_on_start_was_called=event,
+                greetings_was_received=event)
             for _ in range(3)]
 
         self.assertNotEqual(actors[0].actor_urn, actors[1].actor_urn)
@@ -90,16 +102,26 @@ class ActorTest(object):
 
     def test_str_on_raw_actor_contains_actor_class_name(self):
         event = self.event_class()
-        unstarted_actor = self.AnActor(event, event, event, event, event)
+        unstarted_actor = self.AnActor(
+            on_start_was_called=event,
+            on_stop_was_called=event,
+            on_failure_was_called=event,
+            actor_was_registered_before_on_start_was_called=event,
+            greetings_was_received=event)
         self.assert_('AnActor' in str(unstarted_actor))
 
     def test_str_on_raw_actor_contains_actor_urn(self):
         event = self.event_class()
-        unstarted_actor = self.AnActor(event, event, event, event, event)
+        unstarted_actor = self.AnActor(
+            on_start_was_called=event,
+            on_stop_was_called=event,
+            on_failure_was_called=event,
+            actor_was_registered_before_on_start_was_called=event,
+            greetings_was_received=event)
         self.assert_(unstarted_actor.actor_urn in str(unstarted_actor))
 
     def test_init_can_be_called_with_arbitrary_arguments(self):
-        actor = self.SuperInitActor(1, 2, 3, foo='bar')
+        self.SuperInitActor(1, 2, 3, foo='bar')
 
     def test_on_start_is_called_before_first_message_is_processed(self):
         self.on_start_was_called.wait(5)
@@ -123,14 +145,8 @@ class ActorTest(object):
         # If one made this test specifically for ThreadingActor, one could add
         # an assertFalse(actor_thread.is_alive()), which would cause the test
         # to fail properly.
-        start_event = self.event_class()
         stop_event = self.event_class()
-        fail_event = self.event_class()
-        registered_event = self.event_class()
-        greetings_event = self.event_class()
-        another_actor = self.EarlyStoppingActor.start(start_event, stop_event,
-            fail_event, registered_event, greetings_event)
-
+        another_actor = self.EarlyStoppingActor.start(stop_event)
         stop_event.wait(5)
         self.assertTrue(stop_event.is_set())
         self.assertFalse(another_actor.is_alive())
@@ -161,8 +177,12 @@ class ActorTest(object):
         fail_event = self.event_class()
         registered_event = self.event_class()
         greetings_event = self.event_class()
-        self.AnActor.start(start_event, stop_event, fail_event,
-            registered_event, greetings_event)
+        self.AnActor.start(
+            on_start_was_called=start_event,
+            on_stop_was_called=stop_event,
+            on_failure_was_called=fail_event,
+            actor_was_registered_before_on_start_was_called=registered_event,
+            greetings_was_received=greetings_event)
 
         self.assertEqual(2, len(ActorRegistry.get_all()))
         self.assertFalse(self.on_stop_was_called.is_set())
@@ -199,13 +219,14 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
 
     class SuperInitActor(ThreadingActor):
         def __init__(self, *args, **kwargs):
-            super(ThreadingActorTest.SuperInitActor, self).__init__(*args, **kwargs)
+            super(ThreadingActorTest.SuperInitActor, self).__init__(
+                *args, **kwargs)
 
     def test_actor_thread_is_named_as_a_pykka_actor(self):
         alive_threads = threading.enumerate()
         alive_thread_names = [t.name for t in alive_threads]
-        named_correctly = [name.startswith('PykkaActorThread')
-            for name in alive_thread_names]
+        named_correctly = [
+            name.startswith('PykkaActorThread') for name in alive_thread_names]
         self.assert_(any(named_correctly))
 
 
@@ -221,4 +242,5 @@ if HAS_GEVENT:
 
         class SuperInitActor(GeventActor):
             def __init__(self, *args, **kwargs):
-                super(GeventActorTest.SuperInitActor, self).__init__(*args, **kwargs)
+                super(GeventActorTest.SuperInitActor, self).__init__(
+                    *args, **kwargs)

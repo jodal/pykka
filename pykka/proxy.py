@@ -144,15 +144,15 @@ class ActorProxy(object):
         return hasattr(attr, 'pykka_traversable')
 
     def __repr__(self):
-        return '<ActorProxy for %s, attr_path=%s>' % (self.actor_ref,
-            self._attr_path)
+        return '<ActorProxy for %s, attr_path=%s>' % (
+            self.actor_ref, self._attr_path)
 
     def __dir__(self):
         result = ['__class__']
         result += list(self.__class__.__dict__.keys())
         result += list(self.__dict__.keys())
-        result += [attr_path[0]
-            for attr_path in list(self._known_attrs.keys())]
+        result += [
+            attr_path[0] for attr_path in list(self._known_attrs.keys())]
         return sorted(result)
 
     def __getattr__(self, name):

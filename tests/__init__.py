@@ -3,6 +3,7 @@ import logging
 
 class TestLogHandler(logging.Handler):
     def __init__(self, *args, **kwargs):
+        self.messages = {}
         self.reset()
         logging.Handler.__init__(self, *args, **kwargs)
 

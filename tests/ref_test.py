@@ -72,8 +72,8 @@ class RefTest(object):
 
     def test_tell_delivers_message_to_actors_custom_on_receive(self):
         self.ref.tell({'command': 'a custom message'})
-        self.assertEqual({'command': 'a custom message'},
-            self.received_message.get())
+        self.assertEqual(
+            {'command': 'a custom message'}, self.received_message.get())
 
     def test_tell_fails_if_actor_is_stopped(self):
         self.ref.stop()
@@ -85,8 +85,8 @@ class RefTest(object):
 
     def test_send_one_way_delivers_message_to_actors_custom_on_receive(self):
         self.ref.send_one_way({'command': 'a custom message'})
-        self.assertEqual({'command': 'a custom message'},
-            self.received_message.get())
+        self.assertEqual(
+            {'command': 'a custom message'}, self.received_message.get())
 
     def test_send_one_way_fails_if_actor_is_stopped(self):
         self.ref.stop()

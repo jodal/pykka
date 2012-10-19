@@ -10,6 +10,7 @@ except ImportError:
 
 
 class SomeObject(object):
+    pykka_traversable = False
     baz = 'bar.baz'
 
     _private_field = 'secret'
@@ -26,7 +27,6 @@ class ActorWithFields(object):
 
 class FieldAccessTest(object):
     def setUp(self):
-        self.actor = self.ActorWithFields()
         self.proxy = self.ActorWithFields.start().proxy()
 
     def tearDown(self):
@@ -42,7 +42,9 @@ class FieldAccessTest(object):
 
     def test_private_field_access_raises_exception(self):
         try:
+            # pylint: disable = W0212
             self.proxy._private_field.get()
+            # pylint: enable = W0212
             self.fail('Should raise AttributeError exception')
         except AttributeError:
             pass
@@ -51,12 +53,6 @@ class FieldAccessTest(object):
 
     def test_attr_of_traversable_attr_can_be_read(self):
         self.assertEqual('bar.baz', self.proxy.bar.baz.get())
-
-    def test_actor_get_attributes_contains_traversable_attributes(self):
-        attr_paths = list(self.proxy._get_attributes().keys())
-        self.assert_(('foo',) in attr_paths)
-        self.assert_(('bar',) in attr_paths)
-        self.assert_(('bar', 'baz') in attr_paths)
 
 
 class ThreadingFieldAccessTest(FieldAccessTest, unittest.TestCase):

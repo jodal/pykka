@@ -27,8 +27,8 @@ class ActorLoggingTest(object):
         self.on_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
 
-        self.actor_ref = self.AnActor.start(self.on_stop_was_called,
-            self.on_failure_was_called)
+        self.actor_ref = self.AnActor.start(
+            self.on_stop_was_called, self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
         self.log_handler = TestLogHandler(logging.DEBUG)
@@ -43,19 +43,23 @@ class ActorLoggingTest(object):
         self.actor_ref.ask({'unhandled': 'message'})
         self.assertEqual(1, len(self.log_handler.messages['warning']))
         log_record = self.log_handler.messages['warning'][0]
-        self.assertEqual('Unexpected message received by %s' % self.actor_ref,
+        self.assertEqual(
+            'Unexpected message received by %s' % self.actor_ref,
             log_record.getMessage().split(': ')[0])
 
     def test_exception_is_logged_when_returned_to_caller(self):
+        # pylint: disable = W0703
         try:
             self.actor_proxy.raise_exception().get()
             self.fail('Should raise exception')
         except Exception:
             pass
+        # pylint: enable = W0703
         self.assertEqual(1, len(self.log_handler.messages['debug']))
         log_record = self.log_handler.messages['debug'][0]
-        self.assertEqual('Exception returned from %s to caller:' %
-            self.actor_ref, log_record.getMessage())
+        self.assertEqual(
+            'Exception returned from %s to caller:' % self.actor_ref,
+            log_record.getMessage())
         self.assertEqual(Exception, log_record.exc_info[0])
         self.assertEqual('foo', str(log_record.exc_info[1]))
 
@@ -66,7 +70,8 @@ class ActorLoggingTest(object):
         self.assertTrue(self.on_failure_was_called.is_set())
         self.assertEqual(1, len(self.log_handler.messages['error']))
         log_record = self.log_handler.messages['error'][0]
-        self.assertEqual('Unhandled exception in %s:' % self.actor_ref,
+        self.assertEqual(
+            'Unhandled exception in %s:' % self.actor_ref,
             log_record.getMessage())
         self.assertEqual(Exception, log_record.exc_info[0])
         self.assertEqual('foo', str(log_record.exc_info[1]))
@@ -79,8 +84,9 @@ class ActorLoggingTest(object):
         self.assertTrue(self.on_stop_was_called.is_set())
         self.assertEqual(3, len(self.log_handler.messages['debug']))
         log_record = self.log_handler.messages['debug'][0]
-        self.assertEqual('BaseException() in %s. Stopping all actors.'
-            % self.actor_ref, log_record.getMessage())
+        self.assertEqual(
+            'BaseException() in %s. Stopping all actors.' % self.actor_ref,
+            log_record.getMessage())
 
 
 class AnActor(object):

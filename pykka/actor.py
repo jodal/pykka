@@ -8,7 +8,9 @@ try:
     import Queue as _queue
 except ImportError:
     # Python 3.x
-    import queue as _queue  # pylint: disable = F0401
+    # pylint: disable = F0401
+    import queue as _queue  # noqa
+    # pylint: enable = F0401
 
 from pykka import ActorDeadError as _ActorDeadError
 from pykka.future import ThreadingFuture as _ThreadingFuture
@@ -175,14 +177,16 @@ class Actor(object):
                     message['reply_to'].set(response)
             except Exception:
                 if 'reply_to' in message:
-                    _logger.debug('Exception returned from %s to caller:' %
-                        self, exc_info=_sys.exc_info())
+                    _logger.debug(
+                        'Exception returned from %s to caller:' % self,
+                        exc_info=_sys.exc_info())
                     message['reply_to'].set_exception()
                 else:
                     self._handle_failure(*_sys.exc_info())
             except BaseException:
                 exception_value = _sys.exc_info()[1]
-                _logger.debug('%s in %s. Stopping all actors.' %
+                _logger.debug(
+                    '%s in %s. Stopping all actors.' %
                     (repr(exception_value), self))
                 self._stop()
                 _ActorRegistry.stop_all()
@@ -214,7 +218,8 @@ class Actor(object):
 
     def _handle_failure(self, exception_type, exception_value, traceback):
         """Logs unexpected failures, unregisters and stops the actor."""
-        _logger.error('Unhandled exception in %s:' % self,
+        _logger.error(
+            'Unhandled exception in %s:' % self,
             exc_info=(exception_type, exception_value, traceback))
         _ActorRegistry.unregister(self.actor_ref)
         self._actor_runnable = False
