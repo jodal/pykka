@@ -66,8 +66,8 @@ class ActorTest(object):
         self.on_start_was_called = self.event_class()
         self.on_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
-        self.actor_was_registered_before_on_start_was_called = \
-            self.event_class()
+        self.actor_was_registered_before_on_start_was_called = (
+            self.event_class())
         self.greetings_was_received = self.event_class()
 
         self.actor_ref = self.AnActor.start(
