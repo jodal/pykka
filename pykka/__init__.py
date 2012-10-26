@@ -6,25 +6,6 @@ from pykka.exceptions import ActorDeadError, Timeout
 __version__ = '0.16'
 
 
-#: Pykka's version as a tuple that can be used for comparison
-#:
-#: .. deprecated:: 0.14
-#:    Use :attr:`__version__` instead. This will be removed in a future
-#:    release.
-VERSION = tuple(map(int, __version__.split('.')))
-
-
-def get_version():
-    """
-    Returns Pykka's version as a formatted string
-
-    .. deprecated:: 0.14
-       Use :attr:`__version__` instead. This will be removed in a future
-       release.
-    """
-    return __version__
-
-
 def _add_null_handler_for_logging():
     import logging
     try:

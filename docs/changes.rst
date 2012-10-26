@@ -20,6 +20,9 @@ v0.17 (in development)
   :class:`ThreadingActor <pykka.actor.ThreadingActor>` would accidentally
   override the method :meth:`threading.Thread._stop`.
 
+- Removed :attr:`pykka.VERSION` and :func:`pykka.get_version`, which have been
+  deprecated since v0.14. Use :attr:`pykka.__version__` instead.
+
 
 v0.16 (2012-09-19)
 ==================
