@@ -125,6 +125,7 @@ class AnActor(object):
     received_messages = None
 
     def __init__(self):
+        super(AnActor, self).__init__()
         self.received_messages = []
 
     def on_receive(self, message):
@@ -135,6 +136,7 @@ class BeeActor(object):
     received_messages = None
 
     def __init__(self):
+        super(BeeActor, self).__init__()
         self.received_messages = []
 
     def on_receive(self, message):

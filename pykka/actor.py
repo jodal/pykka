@@ -85,6 +85,9 @@ class Actor(object):
                 Start thread/greenlet/etc
         """
         obj = cls(*args, **kwargs)
+        assert obj.actor_ref is not None, (
+            'Actor.__init__() have not been called. '
+            'Did you forget to call super() in your override?')
         _ActorRegistry.register(obj.actor_ref)
         # pylint: disable = W0212
         obj._start_actor_loop()
@@ -123,26 +126,28 @@ class Actor(object):
     #: :meth:`stop` to change it.
     _actor_runnable = True
 
-    def __new__(cls, *args, **kwargs):
-        obj = object.__new__(cls, *args, **kwargs)
-        obj.actor_urn = _uuid.uuid4().urn
-        # pylint: disable = W0212
-        obj.actor_inbox = cls._create_actor_inbox()
-        # pylint: enable = W0212
-        obj.actor_ref = ActorRef(obj)
-        return obj
-
     def __init__(self, *args, **kwargs):
         """
-        Your are free to override :meth:`__init__` and do any setup you need to
-        do.
+        Your are free to override :meth:`__init__`, but you must call your
+        superclass' :meth:`__init__` to ensure that fields :attr:`actor_urn`,
+        :attr:`actor_inbox`, and :attr:`actor_ref` are initialized.
 
-        When :meth:`__init__` is called, the internal fields
-        :attr:`actor_urn`, :attr:`actor_inbox`, and :attr:`actor_ref` are
-        already set, but the actor is not started or registered in
-        :class:`ActorRegistry <pykka.ActorRegistry>`.
+        You can use :func:`super`::
+
+            super(MyActor, self).__init__()
+
+        Or call you superclass directly::
+
+            pykka.ThreadingActor.__init__()
+            # or
+            pykka.gevent.GeventActor.__init__()
+
+        :meth:`__init__` is called before the actor is started and registered
+        in :class:`ActorRegistry <pykka.ActorRegistry>`.
         """
-        pass
+        self.actor_urn = _uuid.uuid4().urn
+        self.actor_inbox = self._create_actor_inbox()
+        self.actor_ref = ActorRef(self)
 
     def __str__(self):
         return '%(class)s (%(urn)s)' % {

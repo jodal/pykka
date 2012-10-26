@@ -91,6 +91,7 @@ class ActorLoggingTest(object):
 
 class AnActor(object):
     def __init__(self, on_stop_was_called, on_failure_was_called):
+        super(AnActor, self).__init__()
         self.on_stop_was_called = on_stop_was_called
         self.on_failure_was_called = on_failure_was_called
 

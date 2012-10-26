@@ -15,6 +15,7 @@ except ImportError:
 
 class AnActor(object):
     def __init__(self, received_message):
+        super(AnActor, self).__init__()
         self.received_message = received_message
 
     def on_receive(self, message):

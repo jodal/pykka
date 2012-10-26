@@ -15,6 +15,7 @@ except ImportError:
 
 class AnActor(object):
     def __init__(self, **events):
+        super(AnActor, self).__init__()
         self.on_start_was_called = events['on_start_was_called']
         self.on_stop_was_called = events['on_stop_was_called']
         self.on_failure_was_called = events['on_failure_was_called']
@@ -52,6 +53,7 @@ class AnActor(object):
 
 class EarlyStoppingActor(object):
     def __init__(self, on_stop_was_called):
+        super(EarlyStoppingActor, self).__init__()
         self.on_stop_was_called = on_stop_was_called
 
     def on_start(self):

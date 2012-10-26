@@ -23,6 +23,7 @@ class AnActor(object):
     foo = 'foo'
 
     def __init__(self):
+        super(AnActor, self).__init__()
         self.cat = 'quox'
 
     def func(self):

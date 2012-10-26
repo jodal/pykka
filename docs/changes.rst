@@ -6,13 +6,13 @@ Changes
 v0.17 (in development)
 ======================
 
-- *Backwards incompatible:* Removed :attr:`pykka.VERSION` and
+- **Backwards incompatible:** Removed :attr:`pykka.VERSION` and
   :func:`pykka.get_version`, which have been deprecated since v0.14. Use
   :attr:`pykka.__version__` instead.
 
-- *Backwards incompatible:* Actors no longer subclass :class:`threading.Thread`
-  or :class:`gevent.Greenlet`. Instead they _have_ a thread or greenlet that
-  executes the actor's main loop.
+- **Backwards incompatible:** Actors no longer subclass
+  :class:`threading.Thread` or :class:`gevent.Greenlet`. Instead they *have* a
+  thread or greenlet that executes the actor's main loop.
 
   This is backwards incompatible because you no longer have access to
   fields/methods of the thread/greenlet that runs the actor through
@@ -22,6 +22,17 @@ v0.17 (in development)
   As a positive side effect, this fixes an issue on Python 3.x, that was
   introduced in Pykka 0.16, where :class:`pykka.ThreadingActor` would
   accidentally override the method :meth:`threading.Thread._stop`.
+
+- **Backwards incompatible:** Actors that override :meth:`__init__()
+  <pykka.Actor.__init__>` *must* call the method they override. If not, the
+  actor will no longer be properly initialized. Valid ways to call the
+  overridden :meth:`__init__` method include::
+
+      super(MyActorSubclass, self).__init__()
+      # or
+      pykka.ThreadingActor.__init__()
+      # or
+      pykka.gevent.GeventActor.__init__()
 
 - Make :meth:`pykka.Actor.__init__` accept any arguments and
   keyword arguments by default. This allows you to use :func:`super` in
