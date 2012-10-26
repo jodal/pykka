@@ -16,6 +16,10 @@ v0.17 (in development)
   because the default implementation of :meth:`__init__` in
   :class:`Actor <pykka.actor.Actor>` would not accept the arguments.
 
+- Fix an issue on Python 3.x, that was introduced in Pykka 0.16, where the
+  :class:`ThreadingActor <pykka.actor.ThreadingActor>` would accidentally
+  override the method :meth:`threading.Thread._stop`.
+
 
 v0.16 (2012-09-19)
 ==================
