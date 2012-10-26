@@ -1,5 +1,9 @@
 # flake8: noqa
+from pykka.actor import Actor, ActorRef, ThreadingActor
 from pykka.exceptions import ActorDeadError, Timeout
+from pykka.future import Future, get_all, ThreadingFuture
+from pykka.proxy import ActorProxy
+from pykka.registry import ActorRegistry
 
 
 #: Pykka's :pep:`386` and :pep:`396` compatible version number

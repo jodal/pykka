@@ -23,6 +23,12 @@ v0.17 (in development)
 - Removed :attr:`pykka.VERSION` and :func:`pykka.get_version`, which have been
   deprecated since v0.14. Use :attr:`pykka.__version__` instead.
 
+- Allow all public classes and functions to be imported directly from the
+  :mod:`pykka` module. E.g. ``from pykka.actor import ThreadingActor`` can now
+  be written as ``from pykka import ThreadingActor``. The exception is
+  :mod:`pykka.gevent`, which still needs to be imported from its own package
+  due to its additional dependency on gevent.
+
 
 v0.16 (2012-09-19)
 ==================
