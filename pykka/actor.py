@@ -92,6 +92,20 @@ class Actor(object):
         _logger.debug('Started %s', obj)
         return obj.actor_ref
 
+    @staticmethod
+    def _create_actor_inbox():
+        """Internal method for implementors of new actor types."""
+        raise NotImplementedError('Use a subclass of Actor')
+
+    @staticmethod
+    def _create_future():
+        """Internal method for implementors of new actor types."""
+        raise NotImplementedError('Use a subclass of Actor')
+
+    def _start_actor_loop(self):
+        """Internal method for implementors of new actor types."""
+        raise NotImplementedError('Use a subclass of Actor')
+
     #: The actor URN string is a universally unique identifier for the actor.
     #: It may be used for looking up a specific actor using
     #: :meth:`ActorRegistry.get_by_urn
