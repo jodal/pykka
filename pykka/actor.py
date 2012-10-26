@@ -145,7 +145,7 @@ class Actor(object):
         """
         self.actor_ref.tell({'command': 'pykka_stop'})
 
-    def _stop_now(self):
+    def _stop(self):
         """
         Stops the actor immediately without processing the rest of the inbox.
         """
@@ -180,7 +180,7 @@ class Actor(object):
                 _logger.debug(
                     '%s in %s. Stopping all actors.' %
                     (repr(exception_value), self))
-                self._stop_now()
+                self._stop()
                 _ActorRegistry.stop_all()
 
     def on_start(self):
@@ -232,7 +232,7 @@ class Actor(object):
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
         if message.get('command') == 'pykka_stop':
-            return self._stop_now()
+            return self._stop()
         if message.get('command') == 'pykka_call':
             callee = self._get_attribute_from_path(message['attr_path'])
             return callee(*message['args'], **message['kwargs'])
