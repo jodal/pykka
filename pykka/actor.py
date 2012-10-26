@@ -75,14 +75,14 @@ class Actor(object):
 
         1. The actor is created:
 
-            1. :attr:`actor_urn` is initialized with the assigned URN.
+           1. :attr:`actor_urn` is initialized with the assigned URN.
 
-            2. :attr:`actor_inbox` is initialized with a new actor inbox.
+           2. :attr:`actor_inbox` is initialized with a new actor inbox.
 
-            3. :attr:`actor_ref` is initialized with a :class:`pykka.ActorRef`
-               object for safely communicating with the actor.
+           3. :attr:`actor_ref` is initialized with a :class:`pykka.ActorRef`
+              object for safely communicating with the actor.
 
-            4. At this point, your :meth:`__init__()` code can run.
+           4. At this point, your :meth:`__init__()` code can run.
 
         2. The actor is registered in :class:`pykka.ActorRegistry`.
 
