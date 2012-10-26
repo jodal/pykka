@@ -3,8 +3,8 @@ Changes
 =======
 
 
-v0.17 (in development)
-======================
+v1.0.0 (2012-10-26)
+===================
 
 - **Backwards incompatible:** Removed :attr:`pykka.VERSION` and
   :func:`pykka.get_version`, which have been deprecated since v0.14. Use
