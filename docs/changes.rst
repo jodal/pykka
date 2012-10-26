@@ -10,6 +10,11 @@ v0.17 (in development)
   :func:`pykka.get_version`, which have been deprecated since v0.14. Use
   :attr:`pykka.__version__` instead.
 
+- **Backwards incompatible:** Removed :meth:`pykka.ActorRef.send_one_way` and
+  :meth:`pykka.ActorRef.send_request_reply`, which have been deprecated since
+  v0.14. Use :meth:`pykka.ActorRef.tell` and :meth:`pykka.ActorRef.ask`
+  instead.
+
 - **Backwards incompatible:** Actors no longer subclass
   :class:`threading.Thread` or :class:`gevent.Greenlet`. Instead they *have* a
   thread or greenlet that executes the actor's main loop.

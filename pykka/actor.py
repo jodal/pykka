@@ -379,15 +379,6 @@ class ActorRef(object):
             raise _ActorDeadError('%s not found' % self)
         self.actor_inbox.put(message)
 
-    def send_one_way(self, message):
-        """
-        Send message to actor without waiting for any response.
-
-        .. deprecated:: 0.14
-           Use :meth:`tell` instead. This will be removed in a future release.
-        """
-        return self.tell(message)
-
     def ask(self, message, block=True, timeout=None):
         """
         Send message to actor and wait for the reply.
@@ -424,15 +415,6 @@ class ActorRef(object):
             return future.get(timeout=timeout)
         else:
             return future
-
-    def send_request_reply(self, message, block=True, timeout=None):
-        """
-        Send message to actor and wait for the reply.
-
-        .. deprecated:: 0.14
-           Use :meth:`ask` instead. This will be removed in a future release.
-        """
-        return self.ask(message, block, timeout)
 
     def stop(self, block=True, timeout=None):
         """
