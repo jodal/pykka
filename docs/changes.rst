@@ -6,6 +6,23 @@ Changes
 v0.17 (in development)
 ======================
 
+- *Backwards incompatible:* Removed :attr:`pykka.VERSION` and
+  :func:`pykka.get_version`, which have been deprecated since v0.14. Use
+  :attr:`pykka.__version__` instead.
+
+- *Backwards incompatible:* Actors no longer subclass :class:`threading.Thread`
+  or :class:`gevent.Greenlet`. Instead they _have_ a thread or greenlet that
+  executes the actor's main loop.
+
+  This is backwards incompatible because you no longer have access to
+  fields/methods of the thread/greenlet that runs the actor through
+  fields/methods on the actor itself. This was never advertised in Pykka's docs
+  or examples, but the fields/methods have always been available.
+
+  As a positive side effect, this fixes an issue on Python 3.x, that was
+  introduced in Pykka 0.16, where :class:`pykka.ThreadingActor` would
+  accidentally override the method :meth:`threading.Thread._stop`.
+
 - Make :meth:`pykka.Actor.__init__` accept any arguments and
   keyword arguments by default. This allows you to use :func:`super` in
   :meth:`__init__` like this::
@@ -15,13 +32,6 @@ v0.17 (in development)
   Without this fix, the above use of :func:`super` would cause an exception
   because the default implementation of :meth:`__init__` in
   :class:`pykka.Actor` would not accept the arguments.
-
-- Fix an issue on Python 3.x, that was introduced in Pykka 0.16, where
-  :class:`pykka.ThreadingActor` would accidentally override the method
-  :meth:`threading.Thread._stop`.
-
-- Removed :attr:`pykka.VERSION` and :func:`pykka.get_version`, which have been
-  deprecated since v0.14. Use :attr:`pykka.__version__` instead.
 
 - Allow all public classes and functions to be imported directly from the
   :mod:`pykka` module. E.g. ``from pykka.actor import ThreadingActor`` can now
