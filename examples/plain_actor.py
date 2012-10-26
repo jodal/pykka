@@ -5,6 +5,7 @@ import pykka
 
 class PlainActor(pykka.ThreadingActor):
     def __init__(self):
+        super(PlainActor, self).__init__()
         self.stored_messages = []
 
     def on_receive(self, message):

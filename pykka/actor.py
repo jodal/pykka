@@ -39,6 +39,7 @@ class Actor(object):
 
         class MyActor(pykka.ThreadingActor):
             def __init__(self, my_arg=None):
+                super(MyActor, self).__init__()
                 ... # My optional init code with access to start() arguments
 
             def on_start(self):
