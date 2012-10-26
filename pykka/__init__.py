@@ -1,5 +1,10 @@
+# flake8: noqa
+from pykka.exceptions import ActorDeadError, Timeout
+
+
 #: Pykka's :pep:`386` and :pep:`396` compatible version number
 __version__ = '0.16'
+
 
 #: Pykka's version as a tuple that can be used for comparison
 #:
@@ -33,13 +38,3 @@ def _add_null_handler_for_logging():
 
 _add_null_handler_for_logging()
 # pylint: enable = W0404
-
-
-class ActorDeadError(Exception):
-    """Exception raised when trying to use a dead or unavailable actor."""
-    pass
-
-
-class Timeout(Exception):
-    """Exception raised at future timeout."""
-    pass

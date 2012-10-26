@@ -12,7 +12,7 @@ except ImportError:
     import queue as _queue  # noqa
     # pylint: enable = F0401
 
-from pykka import ActorDeadError as _ActorDeadError
+from pykka.exceptions import ActorDeadError as _ActorDeadError
 from pykka.future import ThreadingFuture as _ThreadingFuture
 from pykka.proxy import ActorProxy as _ActorProxy
 from pykka.registry import ActorRegistry as _ActorRegistry

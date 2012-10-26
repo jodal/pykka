@@ -11,7 +11,7 @@ except ImportError:
     # pylint: enable = F0401
     PY3 = True
 
-from pykka import Timeout as _Timeout
+from pykka.exceptions import Timeout as _Timeout
 
 
 class Future(object):

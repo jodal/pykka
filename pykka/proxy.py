@@ -1,7 +1,7 @@
 import collections as _collections
 import sys as _sys
 
-from pykka import ActorDeadError as _ActorDeadError
+from pykka.exceptions import ActorDeadError as _ActorDeadError
 
 
 class ActorProxy(object):
