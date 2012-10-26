@@ -70,20 +70,27 @@ class Actor(object):
         Any arguments passed to :meth:`start` will be passed on to the class
         constructor.
 
-        Returns a :class:`ActorRef` which can be used to access the actor in a
-        safe manner.
-
         Behind the scenes, the following is happening when you call
-        :meth:`start`::
+        :meth:`start`:
 
-            Actor.start()
-                Actor.__new__()
-                    URN assignment
-                    Inbox creation
-                    ActorRef creation
-                Actor.__init__()        # Your code can run here
-                ActorRegistry.register()
-                Start thread/greenlet/etc
+        1. The actor is created:
+
+            1. :attr:`actor_urn` is initialized with the assigned URN.
+
+            2. :attr:`actor_inbox` is initialized with a new actor inbox.
+
+            3. :attr:`actor_ref` is initialized with a :class:`pykka.ActorRef`
+               object for safely communicating with the actor.
+
+            4. At this point, your :meth:`__init__()` code can run.
+
+        2. The actor is registered in :class:`pykka.ActorRegistry`.
+
+        3. The actor receive loop is started by the actor's associated
+           thread/greenlet.
+
+        :returns: a :class:`ActorRef` which can be used to access the actor in
+            a safe manner
         """
         obj = cls(*args, **kwargs)
         assert obj.actor_ref is not None, (
