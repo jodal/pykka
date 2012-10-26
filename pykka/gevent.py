@@ -2,11 +2,11 @@ from __future__ import absolute_import
 
 import sys as _sys
 
-# pylint: disable = E0611, W0406
+# pylint: disable = E0611
 import gevent as _gevent
 import gevent.event as _gevent_event
 import gevent.queue as _gevent_queue
-# pylint: enable = E0611, W0406
+# pylint: enable = E0611
 
 from pykka import Timeout as _Timeout
 from pykka.actor import Actor as _Actor

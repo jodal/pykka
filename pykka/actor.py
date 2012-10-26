@@ -119,7 +119,6 @@ class Actor(object):
         obj.actor_ref = ActorRef(obj)
         return obj
 
-    # pylint: disable = W0231
     def __init__(self, *args, **kwargs):
         """
         Your are free to override :meth:`__init__` and do any setup you need to
@@ -132,7 +131,6 @@ class Actor(object):
         :class:`ActorRegistry <pykka.registry.ActorRegistry>`.
         """
         pass
-    # pylint: enable = W0231
 
     def __str__(self):
         return '%(class)s (%(urn)s)' % {
@@ -158,7 +156,6 @@ class Actor(object):
         _logger.debug('Stopped %s', self)
         self.on_stop()
 
-    # pylint: disable = W0703
     def _run(self):
         """
         The actor's main method.
@@ -190,7 +187,6 @@ class Actor(object):
                     (repr(exception_value), self))
                 self._stop_now()
                 _ActorRegistry.stop_all()
-    # pylint: enable = W0703
 
     def on_start(self):
         """
@@ -279,7 +275,6 @@ class Actor(object):
         return attr
 
 
-# pylint: disable = R0901
 class ThreadingActor(Actor, _threading.Thread):
     """
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
@@ -303,7 +298,6 @@ class ThreadingActor(Actor, _threading.Thread):
 
     def run(self):
         return Actor._run(self)
-# pylint: enable = R0901
 
 
 class ActorRef(object):

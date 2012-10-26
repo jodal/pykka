@@ -1,13 +1,11 @@
 import logging as _logging
 import threading as _threading
 
-# pylint: disable = W0622
 try:
-    basestring
+    _basestring = basestring
 except NameError:
     # Python 3
-    basestring = str
-# pylint: enable = W0622
+    _basestring = str
 
 _logger = _logging.getLogger('pykka')
 
@@ -36,7 +34,7 @@ class ActorRegistry(object):
         :param target_class: optional actor class to broadcast the message to
         :type target_class: class or class name
         """
-        if isinstance(target_class, basestring):
+        if isinstance(target_class, _basestring):
             targets = cls.get_by_class_name(target_class)
         elif target_class is not None:
             targets = cls.get_by_class(target_class)

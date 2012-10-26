@@ -25,7 +25,6 @@ def get_version():
     return __version__
 
 
-# pylint: disable = W0404
 def _add_null_handler_for_logging():
     import logging
     try:
@@ -37,4 +36,3 @@ def _add_null_handler_for_logging():
     logging.getLogger('pykka').addHandler(NullHandler())
 
 _add_null_handler_for_logging()
-# pylint: enable = W0404
