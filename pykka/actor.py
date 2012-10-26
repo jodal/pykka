@@ -77,18 +77,18 @@ class Actor(object):
 
             Actor.start()
                 Actor.__new__()
-                    superclass.__new__()
-                    superclass.__init__()
                     URN assignment
                     Inbox creation
                     ActorRef creation
                 Actor.__init__()        # Your code can run here
                 ActorRegistry.register()
-                superclass.start()
+                Start thread/greenlet/etc
         """
         obj = cls(*args, **kwargs)
         _ActorRegistry.register(obj.actor_ref)
-        cls._superclass.start(obj)
+        # pylint: disable = W0212
+        obj._start_actor_loop()
+        # pylint: enable = W0212
         _logger.debug('Started %s', obj)
         return obj.actor_ref
 
@@ -110,11 +110,10 @@ class Actor(object):
     _actor_runnable = True
 
     def __new__(cls, *args, **kwargs):
-        obj = cls._superclass.__new__(cls)
-        cls._superclass.__init__(obj)
+        obj = object.__new__(cls, *args, **kwargs)
         obj.actor_urn = _uuid.uuid4().urn
         # pylint: disable = W0212
-        obj.actor_inbox = obj._new_actor_inbox()
+        obj.actor_inbox = cls._create_actor_inbox()
         # pylint: enable = W0212
         obj.actor_ref = ActorRef(obj)
         return obj
@@ -122,8 +121,7 @@ class Actor(object):
     def __init__(self, *args, **kwargs):
         """
         Your are free to override :meth:`__init__` and do any setup you need to
-        do. You should not call ``super(YourClass, self).__init__(...)``, as
-        that has already been done when your constructor is called.
+        do.
 
         When :meth:`__init__` is called, the internal fields
         :attr:`actor_urn`, :attr:`actor_inbox`, and :attr:`actor_ref` are
@@ -156,14 +154,11 @@ class Actor(object):
         _logger.debug('Stopped %s', self)
         self.on_stop()
 
-    def _run(self):
+    def _actor_loop(self):
         """
-        The actor's main method.
+        The actor's event loop.
 
-        :class:`GeventActor <pykka.gevent.GeventActor>` expects this method to
-        be named :meth:`_run`.
-
-        :class:`ThreadingActor` expects this method to be named :meth:`run`.
+        This is the method that will be executed by the thread or greenlet.
         """
         self.on_start()
         while self._actor_runnable:
@@ -275,7 +270,7 @@ class Actor(object):
         return attr
 
 
-class ThreadingActor(Actor, _threading.Thread):
+class ThreadingActor(Actor):
     """
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
     threads.
@@ -285,19 +280,18 @@ class ThreadingActor(Actor, _threading.Thread):
     threads that are not Pykka actors.
     """
 
-    _superclass = _threading.Thread
-    _future_class = _ThreadingFuture
-
-    def __new__(cls, *args, **kwargs):
-        obj = Actor.__new__(cls, *args, **kwargs)
-        obj.name = obj.name.replace('Thread', 'PykkaActorThread')
-        return obj
-
-    def _new_actor_inbox(self):
+    @staticmethod
+    def _create_actor_inbox():
         return _queue.Queue()
 
-    def run(self):
-        return Actor._run(self)
+    @staticmethod
+    def _create_future():
+        return _ThreadingFuture()
+
+    def _start_actor_loop(self):
+        thread = _threading.Thread(target=self._actor_loop)
+        thread.name = thread.name.replace('Thread', 'PykkaActorThread')
+        thread.start()
 
 
 class ActorRef(object):
@@ -326,9 +320,6 @@ class ActorRef(object):
         self.actor_class = actor.__class__
         self.actor_urn = actor.actor_urn
         self.actor_inbox = actor.actor_inbox
-        # pylint: disable = W0212
-        self._future_class = actor._future_class
-        # pylint: enable = W0212
 
     def __repr__(self):
         return '<ActorRef for %s>' % str(self)
@@ -405,7 +396,9 @@ class ActorRef(object):
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.Future` or response
         """
-        future = self._future_class()
+        # pylint: disable = W0212
+        future = self.actor_class._create_future()
+        # pylint: enable = W0212
         message['reply_to'] = future
         self.tell(message)
         if block:

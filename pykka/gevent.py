@@ -50,7 +50,7 @@ class GeventFuture(_Future):
         self.async_result.set_exception(exception)
 
 
-class GeventActor(_Actor, _gevent.Greenlet):
+class GeventActor(_Actor):
     """
     :class:`GeventActor` implements :class:`pykka.Actor` using the `gevent
     <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
@@ -61,8 +61,13 @@ class GeventActor(_Actor, _gevent.Greenlet):
     work in combination with other threads.
     """
 
-    _superclass = _gevent.Greenlet
-    _future_class = GeventFuture
-
-    def _new_actor_inbox(self):
+    @staticmethod
+    def _create_actor_inbox():
         return _gevent_queue.Queue()
+
+    @staticmethod
+    def _create_future():
+        return GeventFuture()
+
+    def _start_actor_loop(self):
+        _gevent.Greenlet.spawn(self._actor_loop)
