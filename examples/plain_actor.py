@@ -1,8 +1,9 @@
 #! /usr/bin/env python
 
-from pykka.actor import ThreadingActor
+import pykka
 
-class PlainActor(ThreadingActor):
+
+class PlainActor(pykka.ThreadingActor):
     def __init__(self):
         self.stored_messages = []
 
@@ -11,6 +12,7 @@ class PlainActor(ThreadingActor):
             return self.stored_messages
         else:
             self.stored_messages.append(message)
+
 
 if __name__ == '__main__':
     actor = PlainActor.start()

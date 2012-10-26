@@ -14,16 +14,14 @@ Or specify pool size and IPs to resolve:
     ./resolver.py 3 129.240.2.{1,2,3,4,5,6,7,8,9}
 """
 
-from pykka.actor import ThreadingActor
-from pykka.future import get_all
-from pykka.registry import ActorRegistry
-
-from pprint import pprint
-import random
+import pprint
 import socket
 import sys
 
-class Resolver(ThreadingActor):
+import pykka
+
+
+class Resolver(pykka.ThreadingActor):
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)
@@ -32,6 +30,7 @@ class Resolver(ThreadingActor):
         except:
             print "Failed resolving %s" % ip
             return None
+
 
 def run(pool_size, *ips):
     # Start resolvers
@@ -43,11 +42,12 @@ def run(pool_size, *ips):
         hosts.append(resolvers[i % len(resolvers)].resolve(ip))
 
     # Gather results (blocking)
-    ip_to_host = zip(ips, get_all(hosts))
-    pprint(ip_to_host)
+    ip_to_host = zip(ips, pykka.get_all(hosts))
+    pprint.pprint(ip_to_host)
 
     # Clean up
-    ActorRegistry.stop_all()
+    pykka.ActorRegistry.stop_all()
+
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) >= 2:

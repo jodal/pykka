@@ -15,7 +15,7 @@ from pykka.future import Future as _Future
 
 class GeventFuture(_Future):
     """
-    :class:`GeventFuture` implements :class:`pykka.future.Future` for use with
+    :class:`GeventFuture` implements :class:`pykka.Future` for use with
     :class:`GeventActor`.
 
     It encapsulates a :class:`gevent.event.AsyncResult` object which may be
@@ -52,13 +52,13 @@ class GeventFuture(_Future):
 
 class GeventActor(_Actor, _gevent.Greenlet):
     """
-    :class:`GeventActor` implements :class:`pykka.actor.Actor` using the
-    `gevent <http://www.gevent.org/>`_ library. gevent is a coroutine-based
-    Python networking library that uses greenlet to provide a high-level
-    synchronous API on top of libevent event loop.
+    :class:`GeventActor` implements :class:`pykka.Actor` using the `gevent
+    <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
+    networking library that uses greenlet to provide a high-level synchronous
+    API on top of libevent event loop.
 
-    This is a very fast implementation, but it does not work in combination
-    with other threads.
+    This is a very fast implementation, but as of gevent 0.13.x it does not
+    work in combination with other threads.
     """
 
     _superclass = _gevent.Greenlet

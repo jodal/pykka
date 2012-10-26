@@ -35,9 +35,9 @@ class Actor(object):
 
     For example::
 
-        from pykka.actor import ThreadingActor
+        import pykka
 
-        class MyActor(ThreadingActor):
+        class MyActor(pykka.ThreadingActor):
             def __init__(self, my_arg=None):
                 ... # My optional init code with access to start() arguments
 
@@ -64,7 +64,7 @@ class Actor(object):
     def start(cls, *args, **kwargs):
         """
         Start an actor and register it in the
-        :class:`ActorRegistry <pykka.registry.ActorRegistry>`.
+        :class:`ActorRegistry <pykka.ActorRegistry>`.
 
         Any arguments passed to :meth:`start` will be passed on to the class
         constructor.
@@ -95,7 +95,7 @@ class Actor(object):
     #: The actor URN string is a universally unique identifier for the actor.
     #: It may be used for looking up a specific actor using
     #: :meth:`ActorRegistry.get_by_urn
-    #: <pykka.registry.ActorRegistry.get_by_urn>`.
+    #: <pykka.ActorRegistry.get_by_urn>`.
     actor_urn = None
 
     #: The actor's inbox. Use :meth:`ActorRef.tell`, :meth:`ActorRef.ask`, and
@@ -128,7 +128,7 @@ class Actor(object):
         When :meth:`__init__` is called, the internal fields
         :attr:`actor_urn`, :attr:`actor_inbox`, and :attr:`actor_ref` are
         already set, but the actor is not started or registered in
-        :class:`ActorRegistry <pykka.registry.ActorRegistry>`.
+        :class:`ActorRegistry <pykka.ActorRegistry>`.
         """
         pass
 
@@ -305,8 +305,8 @@ class ActorRef(object):
     Reference to a running actor which may safely be passed around.
 
     :class:`ActorRef` instances are returned by :meth:`Actor.start` and the
-    lookup methods in :class:`ActorRegistry <pykka.registry.ActorRegistry>`.
-    You should never need to create :class:`ActorRef` instances yourself.
+    lookup methods in :class:`ActorRegistry <pykka.ActorRegistry>`. You should
+    never need to create :class:`ActorRef` instances yourself.
 
     :param actor: the actor to wrap
     :type actor: :class:`Actor`
@@ -384,7 +384,7 @@ class ActorRef(object):
 
         The message must be a picklable dict.
         If ``block`` is :class:`False`, it will immediately return a
-        :class:`Future <pykka.future.Future>` instead of blocking.
+        :class:`Future <pykka.Future>` instead of blocking.
 
         If ``block`` is :class:`True`, and ``timeout`` is :class:`None`, as
         default, the method will block until it gets a reply, potentially
@@ -403,7 +403,7 @@ class ActorRef(object):
 
         :raise: :exc:`pykka.Timeout` if timeout is reached
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
-        :return: :class:`pykka.future.Future` or response
+        :return: :class:`pykka.Future` or response
         """
         future = self._future_class()
         message['reply_to'] = future
@@ -443,7 +443,7 @@ class ActorRef(object):
     def proxy(self):
         """
         Wraps the :class:`ActorRef` in an :class:`ActorProxy
-        <pykka.proxy.ActorProxy>`.
+        <pykka.ActorProxy>`.
 
         Using this method like this::
 
@@ -454,6 +454,6 @@ class ActorRef(object):
             proxy = ActorProxy(AnActor.start())
 
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
-        :return: :class:`pykka.proxy.ActorProxy`
+        :return: :class:`pykka.ActorProxy`
         """
         return _ActorProxy(self)

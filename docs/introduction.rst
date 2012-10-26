@@ -38,9 +38,9 @@ Plain actors
 ============
 
 Pykka's plain actors get all incoming messages delivered to the
-:meth:`on_receive` method. This method can decide what action is needed in
-response to the message. The messages are expected to be Python dictionaries,
-containing anything that can be serialized.
+:meth:`on_receive <pykka.Actor.on_receive>` method. This method can decide what
+action is needed in response to the message. The messages are expected to be
+Python dictionaries, containing anything that can be serialized.
 
 .. literalinclude:: ../examples/plain_actor.py
 
@@ -53,21 +53,20 @@ We get the following output::
 Typed actors
 ============
 
-If you wrap a plain actor in a :class:`pykka.proxy.ActorProxy`, Pykka let you
-call methods on the actor like you would on a regular object, but it runs the
-code in the actor. Similarly, when you access the actor's fields, they are read
-in the actor, serialized and copied to the reader.
+If you wrap a plain actor in a :class:`pykka.ActorProxy`, Pykka let you call
+methods on the actor like you would on a regular object, but it runs the code
+in the actor. Similarly, when you access the actor's fields, they are read in
+the actor, serialized and copied to the reader.
 
 Both method calling and attribute reads immediately returns future objects.
 This means that your code can continue while the result is calculated in some
 other actor, and that you're code will not block until you actually use the
 returned value.
 
-Here is a small example of two actors wrapped in
-:class:`pykka.proxy.ActorProxy` objects. It may look like they communicate with
-each other by calling regular methods, but--under the hood--the calls are
-serialized and sent to the other actor. Meanwhile, the first actor can continue
-executing its own code.
+Here is a small example of two actors wrapped in :class:`pykka.ActorProxy`
+objects. It may look like they communicate with each other by calling regular
+methods, but--under the hood--the calls are serialized and sent to the other
+actor. Meanwhile, the first actor can continue executing its own code.
 
 .. literalinclude:: ../examples/counter.py
 
@@ -106,15 +105,15 @@ Sometimes you don't care about the attribute of an actor, but you want to
 access the attributes of the attribute itself, or call methods on the
 attribute. For this case, Pykka supports traversable attributes. By marking an
 actor attribute as traversable, Pykka will not return the attribute when
-accessed, but wrap it in a new :class:`pykka.proxy.ActorProxy`. When the
-wrapped attribute is used, Pykka will get/set attributes or call methods on the
-actor attribute, just as it normally would on the actor, if wrapped in an actor
+accessed, but wrap it in a new :class:`pykka.ActorProxy`. When the wrapped
+attribute is used, Pykka will get/set attributes or call methods on the actor
+attribute, just as it normally would on the actor, if wrapped in an actor
 proxy.
 
 To mark an attribute as traversable, simply set the :attr:`pykka_traversable`
 attribute to something, like e.g. :class:`True`::
 
-    class AnActor(GeventActor):
+    class AnActor(pykka.gevent.GeventActor):
         an_attribute = SomeOtherObject()
         an_attribute.pykka_traversable = True
 

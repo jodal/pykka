@@ -6,39 +6,39 @@ from pykka.exceptions import ActorDeadError as _ActorDeadError
 
 class ActorProxy(object):
     """
-    An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.actor.ActorRef>`
-    instance. The proxy allows the referenced actor to be used through
-    regular method calls and field access.
+    An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>`
+    instance. The proxy allows the referenced actor to be used through regular
+    method calls and field access.
 
-    You can create an :class:`ActorProxy` from any
-    :class:`ActorRef <pykka.actor.ActorRef>`::
+    You can create an :class:`ActorProxy` from any :class:`ActorRef
+    <pykka.ActorRef>`::
 
         actor_ref = MyActor.start()
         actor_proxy = ActorProxy(actor_ref)
 
-    You can also get an :class:`ActorProxy` by using
-    :meth:`proxy() <pykka.actor.ActorRef.proxy>`::
+    You can also get an :class:`ActorProxy` by using :meth:`proxy()
+    <pykka.ActorRef.proxy>`::
 
         actor_proxy = MyActor.start().proxy()
 
     When reading an attribute or getting a return value from a method, you get
-    a :class:`Future <pykka.future.Future>` object back. To get the enclosed
-    value from the future, you must call :meth:`get()
-    <pykka.future.Future.get>` on the returned future::
+    a :class:`Future <pykka.Future>` object back. To get the enclosed value
+    from the future, you must call :meth:`get() <pykka.Future.get>` on the
+    returned future::
 
         print actor_proxy.string_attribute.get()
         print actor_proxy.count().get() + 1
 
     If you call a method just for it's side effects and do not care about the
     return value, you do not need to accept the returned future or call
-    :meth:`get() <pykka.future.Future.get>` on the future. Simply call the
-    method, and it will be executed concurrently with your own code::
+    :meth:`get() <pykka.Future.get>` on the future. Simply call the method, and
+    it will be executed concurrently with your own code::
 
         actor_proxy.method_with_side_effect()
 
     If you want to block your own code from continuing while the other method
-    is processing, you can use :meth:`get() <pykka.future.Future.get>` to block
-    until it completes::
+    is processing, you can use :meth:`get() <pykka.Future.get>` to block until
+    it completes::
 
         actor_proxy.method_with_side_effect().get()
 
@@ -54,13 +54,13 @@ class ActorProxy(object):
     actor in the middle of a time consuming task.
 
     To create a proxy to yourself, use the actor's :attr:`actor_ref
-    <pykka.actor.Actor.actor_ref>` attribute::
+    <pykka.Actor.actor_ref>` attribute::
 
         proxy_to_myself_in_the_future = self.actor_ref.proxy()
 
     If you create a proxy in your actor's constructor or :meth:`on_start
-    <pykka.actor.Actor.on_start>` method, you can create a nice API for
-    deferring work to yourself in the future::
+    <pykka.Actor.on_start>` method, you can create a nice API for deferring
+    work to yourself in the future::
 
         def __init__(self):
             ...
@@ -80,12 +80,12 @@ class ActorProxy(object):
     .. literalinclude:: ../examples/counter.py
 
     :param actor_ref: reference to the actor to proxy
-    :type actor_ref: :class:`pykka.actor.ActorRef`
+    :type actor_ref: :class:`pykka.ActorRef`
 
     :raise: :exc:`pykka.ActorDeadError` if actor is not available
     """
 
-    #: The actor's :class:`pykka.actor.ActorRef` instance.
+    #: The actor's :class:`pykka.ActorRef` instance.
     actor_ref = None
 
     def __init__(self, actor_ref, attr_path=None):

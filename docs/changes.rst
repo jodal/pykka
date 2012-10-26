@@ -6,19 +6,19 @@ Changes
 v0.17 (in development)
 ======================
 
-- Make :meth:`Actor.__init__ <pykka.actor.Actor.__init__>` accept any arguments
-  and keyword arguments by default. This allows you to use :func:`super` in
+- Make :meth:`pykka.Actor.__init__` accept any arguments and
+  keyword arguments by default. This allows you to use :func:`super` in
   :meth:`__init__` like this::
 
       super(MyActorSubclass, self).__init__(1, 2, 3, foo='bar')
 
   Without this fix, the above use of :func:`super` would cause an exception
   because the default implementation of :meth:`__init__` in
-  :class:`Actor <pykka.actor.Actor>` would not accept the arguments.
+  :class:`pykka.Actor` would not accept the arguments.
 
-- Fix an issue on Python 3.x, that was introduced in Pykka 0.16, where the
-  :class:`ThreadingActor <pykka.actor.ThreadingActor>` would accidentally
-  override the method :meth:`threading.Thread._stop`.
+- Fix an issue on Python 3.x, that was introduced in Pykka 0.16, where
+  :class:`pykka.ThreadingActor` would accidentally override the method
+  :meth:`threading.Thread._stop`.
 
 - Removed :attr:`pykka.VERSION` and :func:`pykka.get_version`, which have been
   deprecated since v0.14. Use :attr:`pykka.__version__` instead.
@@ -33,8 +33,8 @@ v0.17 (in development)
 v0.16 (2012-09-19)
 ==================
 
-- Let actors access themselves through a proxy. See the :class:`ActorProxy
-  <pykka.proxy.ActorProxy>` documentation for use cases and usage examples.
+- Let actors access themselves through a proxy. See the
+  :class:`pykka.ActorProxy` documentation for use cases and usage examples.
   (Fixes: :issue:`9`)
 
 - Give proxies direct access to the actor instances for inspecting available
@@ -45,23 +45,23 @@ v0.16 (2012-09-19)
   run time was reduced by about 33%. This change also makes self-proxying
   possible.
 
-- Fix bug where :meth:`Actor.stop() <pykka.actor.Actor.stop>` called by an
-  actor on itself did not process the remaining messages in the inbox before
-  the actor stopped. The behavior now matches the documentation.
+- Fix bug where :meth:`pykka.Actor.stop` called by an actor on itself did not
+  process the remaining messages in the inbox before the actor stopped. The
+  behavior now matches the documentation.
 
 
 v0.15 (2012-08-11)
 ==================
 
-- Change the argument of :meth:`Future.set_exception()
-  <pykka.future.Future.set_exception>` from an exception instance to a
-  ``exc_info`` three-tuple. Passing just an exception instance to the method
-  still works, but it is deprecated and may be unsupported in a future release.
+- Change the argument of :meth:`pykka.Future.set_exception` from an exception
+  instance to a ``exc_info`` three-tuple. Passing just an exception instance to
+  the method still works, but it is deprecated and may be unsupported in a
+  future release.
 
-- Due to the above change, :meth:`Future.get() <pykka.future.Future.get>` will
-  now reraise exceptions with complete traceback from the point when the
-  exception was first raised, and not just a traceback from when it was
-  reraised by :meth:`get`. (Fixes: :issue:`10`)
+- Due to the above change, :meth:`pykka.Future.get` will now reraise exceptions
+  with complete traceback from the point when the exception was first raised,
+  and not just a traceback from when it was reraised by :meth:`get`. (Fixes:
+  :issue:`10`)
 
 
 v0.14 (2012-04-22)
@@ -70,14 +70,13 @@ v0.14 (2012-04-22)
 - Add :attr:`pykka.__version__` to conform with :pep:`396`. This deprecates
   :attr:`pykka.VERSION` and :meth:`pykka.get_version`.
 
-- Add :meth:`ActorRef.tell() <pykka.actor.ActorRef.tell>` method in favor of now
-  deprecated :meth:`ActorRef.send_one_way() <pykka.actor.ActorRef.send_one_way>`.
+- Add :meth:`pykka.ActorRef.tell` method in favor of now deprecated
+  :meth:`pykka.ActorRef.send_one_way`.
 
-- Add :meth:`ActorRef.ask() <pykka.actor.ActorRef.ask>` method in favor of now
-  deprecated :meth:`ActorRef.send_request_reply()
-  <pykka.actor.ActorRef.send_request_reply>`.
+- Add :meth:`pykka.ActorRef.ask` method in favor of now deprecated
+  :meth:`pykka.ActorRef.send_request_reply`.
 
-- :class:`ThreadingFuture.set() <pykka.future.ThreadingFuture>` no longer makes
+- :class:`ThreadingFuture.set() <pykka.ThreadingFuture>` no longer makes
   a copy of the object set on the future. The setter is urged to either only
   pass immutable objects through futures or copy the object himself before
   setting it on the future. This is a less safe default, but it removes
@@ -98,40 +97,39 @@ v0.13 (2011-09-24)
 v0.12.4 (2011-07-30)
 ====================
 
-- Change and document order in which
-  :meth:`pykka.registry.ActorRegistry.stop_all` stops actors. The new order is
-  the reverse of the order the actors were started in. This should make
-  ``stop_all`` work for programs with simple dependency graphs in between the
-  actors. For applications with more complex dependency graphs, the developer
-  still needs to pay attention to the shutdown sequence. (Fixes: :issue:`8`)
+- Change and document order in which :meth:`pykka.ActorRegistry.stop_all` stops
+  actors. The new order is the reverse of the order the actors were started in.
+  This should make ``stop_all`` work for programs with simple dependency graphs
+  in between the actors. For applications with more complex dependency graphs,
+  the developer still needs to pay attention to the shutdown sequence. (Fixes:
+  :issue:`8`)
 
 
 v0.12.3 (2011-06-25)
 ====================
 
-- If an actor that was stopped from :meth:`pykka.actor.Actor.on_start`, it
-  would unregister properly, but start the receive loop and forever block on
+- If an actor that was stopped from :meth:`pykka.Actor.on_start`, it would
+  unregister properly, but start the receive loop and forever block on
   receiving incoming messages that would never arrive. This left the thread
   alive and isolated, ultimately blocking clean shutdown of the program. The
   fix ensures that the receive loop is never executed if the actor is stopped
   before the receive loop is started.
 
-- Set the thread name of any :class:`pykka.actor.ThreadingActor` to
+- Set the thread name of any :class:`pykka.ThreadingActor` to
   ``PykkaActorThread-N`` instead of the default ``Thread-N``. This eases
   debugging by clearly labeling actor threads in e.g. the output of
   :func:`threading.enumerate`.
 
-- Add utility method :meth:`pykka.registry.ActorRegistry.broadcast` which
-  broadcasts a message to all registered actors or to a given class of
-  registred actors. (Fixes: :issue:`7`)
+- Add utility method :meth:`pykka.ActorRegistry.broadcast` which broadcasts a
+  message to all registered actors or to a given class of registred actors.
+  (Fixes: :issue:`7`)
 
-- Allow multiple calls to :meth:`pykka.registry.ActorRegistry.unregister`
-  with the same :class:`pykka.actor.ActorRef` as argument without throwing a
+- Allow multiple calls to :meth:`pykka.ActorRegistry.unregister` with the same
+  :class:`pykka.actor.ActorRef` as argument without throwing a
   :exc:`ValueError`. (Fixes: :issue:`5`)
 
-- Make the :class:`pykka.proxy.ActorProxy`'s reference to its
-  :class:`pykka.actor.ActorRef` public as
-  :attr:`pykka.proxy.ActorProxy.actor_ref`. The ``ActorRef`` instance was
+- Make the :class:`pykka.ActorProxy`'s reference to its :class:`pykka.ActorRef`
+  public as :attr:`pykka.ActorProxy.actor_ref`. The ``ActorRef`` instance was
   already exposed as a public field by the actor itself using the same name,
   but making it public directly on the proxy makes it possible to do e.g.
   ``proxy.actor_ref.is_alive()`` without waiting for a potentially dead actor

@@ -2,48 +2,58 @@
 Pykka API
 =========
 
+.. module:: pykka
 
-pykka
-=====
-
-.. attribute:: pykka.__version__
+.. attribute:: __version__
 
    Pykka's :pep:`386` and :pep:`396` compatible version number
 
-.. automodule:: pykka
+
+Actors
+======
+
+.. autoexception:: pykka.ActorDeadError
+
+.. autoclass:: pykka.Actor
+    :members:
+
+.. autoclass:: pykka.ThreadingActor
+    :members:
+
+.. autoclass:: pykka.ActorRef
     :members:
 
 
-pykka.actor
-===========
-
-.. automodule:: pykka.actor
-    :members:
-
-
-pykka.future
+Typed actors
 ============
 
-.. automodule:: pykka.future
+.. autoclass:: pykka.ActorProxy
     :members:
 
 
-pykka.gevent
-============
+Futures
+=======
 
-.. automodule:: pykka.gevent
+.. autoexception:: pykka.Timeout
+
+.. autoclass:: pykka.Future
+    :members:
+
+.. autoclass:: pykka.ThreadingFuture
+    :members:
+
+.. autofunction:: pykka.get_all
+
+
+Registry
+========
+
+.. autoclass:: pykka.ActorRegistry
     :members:
 
 
-pykka.proxy
-===========
-
-.. automodule:: pykka.proxy
-    :members:
-
-
-pykka.registry
+Gevent support
 ==============
 
-.. automodule:: pykka.registry
+.. automodule:: pykka.gevent
     :members:
