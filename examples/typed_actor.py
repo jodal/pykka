@@ -18,7 +18,7 @@ class AnActor(pykka.ThreadingActor):
 
 
 def log(s):
-    print "%s: %s" % (threading.current_thread().name, s)
+    print('{}: {}'.format(threading.current_thread().name, s))
 
 
 if __name__ == '__main__':

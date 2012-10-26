@@ -18,5 +18,5 @@ if __name__ == '__main__':
     actor = PlainActor.start()
     actor.tell({'no': 'Norway', 'se': 'Sweden'})
     actor.tell({'a': 3, 'b': 4, 'c': 5})
-    print actor.ask({'command': 'get_messages'})
+    print(actor.ask({'command': 'get_messages'}))
     actor.stop()

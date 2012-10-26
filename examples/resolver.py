@@ -25,10 +25,10 @@ class Resolver(pykka.ThreadingActor):
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)
-            print "Finished resolving %s" % ip
+            print('Finished resolving {}'.format(ip))
             return info[0]
         except:
-            print "Failed resolving %s" % ip
+            print('Failed resolving {}'.format(ip))
             return None
 
 
@@ -43,7 +43,7 @@ def run(pool_size, *ips):
 
     # Gather results (blocking)
     ip_to_host = zip(ips, pykka.get_all(hosts))
-    pprint.pprint(ip_to_host)
+    pprint.pprint(list(ip_to_host))
 
     # Clean up
     pykka.ActorRegistry.stop_all()

@@ -5,7 +5,7 @@ import pykka
 
 class Adder(pykka.ThreadingActor):
     def add_one(self, i):
-        print '%s is increasing %d' % (self, i)
+        print('{} is increasing {}'.format(self, i))
         return i + 1
 
 
@@ -17,7 +17,7 @@ class Bookkeeper(pykka.ThreadingActor):
         i = 0
         while i < target:
             i = self.adder.add_one(i).get()
-            print '%s got %d back' % (self, i)
+            print('{} got {} back'.format(self, i))
 
 
 if __name__ == '__main__':
