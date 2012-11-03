@@ -220,9 +220,7 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
         pass
 
     class SuperInitActor(ThreadingActor):
-        def __init__(self, *args, **kwargs):
-            super(ThreadingActorTest.SuperInitActor, self).__init__(
-                *args, **kwargs)
+        pass
 
     def test_actor_thread_is_named_as_a_pykka_actor(self):
         alive_threads = threading.enumerate()
@@ -243,6 +241,4 @@ if HAS_GEVENT:
             pass
 
         class SuperInitActor(GeventActor):
-            def __init__(self, *args, **kwargs):
-                super(GeventActorTest.SuperInitActor, self).__init__(
-                    *args, **kwargs)
+            pass
