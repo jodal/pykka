@@ -2,8 +2,8 @@
 Changes
 =======
 
-v1.0.1 (in development)
-=======================
+v1.0.1 (2012-12-12)
+===================
 
 - Name the threads of :class:`pykka.ThreadingActor` after the actor class name
   instead of "PykkaThreadingActor-N" to ease debugging. (Fixes: :issue:`12`)
