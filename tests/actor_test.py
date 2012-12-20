@@ -63,6 +63,16 @@ class EarlyStoppingActor(object):
         self.on_stop_was_called.set()
 
 
+class EarlyFailingActor(object):
+    def __init__(self, on_start_was_called):
+        super(EarlyFailingActor, self).__init__()
+        self.on_start_was_called = on_start_was_called
+
+    def on_start(self):
+        self.on_start_was_called.set()
+        raise RuntimeError('on_start failure')
+
+
 class ActorTest(object):
     def setUp(self):
         self.on_start_was_called = self.event_class()
@@ -153,6 +163,13 @@ class ActorTest(object):
         self.assertTrue(stop_event.is_set())
         self.assertFalse(another_actor.is_alive())
 
+    def test_on_start_failure_causes_actor_to_stop(self):
+        # Actor should not be alive if on_start fails.
+        start_event = self.event_class()
+        actor = self.EarlyFailingActor.start(start_event)
+        start_event.wait(5)
+        self.assertFalse(actor.is_alive())
+
     def test_on_stop_is_called_when_actor_is_stopped(self):
         self.assertFalse(self.on_stop_was_called.is_set())
         self.actor_ref.stop()
@@ -219,6 +236,9 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
     class EarlyStoppingActor(EarlyStoppingActor, ThreadingActor):
         pass
 
+    class EarlyFailingActor(EarlyFailingActor, ThreadingActor):
+        pass
+
     class SuperInitActor(ThreadingActor):
         pass
 
@@ -238,6 +258,9 @@ if HAS_GEVENT:
             pass
 
         class EarlyStoppingActor(EarlyStoppingActor, GeventActor):
+            pass
+
+        class EarlyFailingActor(EarlyFailingActor, GeventActor):
             pass
 
         class SuperInitActor(GeventActor):

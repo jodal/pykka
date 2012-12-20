@@ -187,7 +187,12 @@ class Actor(object):
 
         This is the method that will be executed by the thread or greenlet.
         """
-        self.on_start()
+        try:
+            self.on_start()
+        except Exception:
+            # Only stop the actor but on_failure won't be called.
+            self._handle_failure(*_sys.exc_info())
+
         while self._actor_runnable:
             message = self.actor_inbox.get()
             try:
@@ -202,6 +207,7 @@ class Actor(object):
                     message['reply_to'].set_exception()
                 else:
                     self._handle_failure(*_sys.exc_info())
+                    self.on_failure(*_sys.exc_info())
             except BaseException:
                 exception_value = _sys.exc_info()[1]
                 _logger.debug(
@@ -241,7 +247,6 @@ class Actor(object):
             exc_info=(exception_type, exception_value, traceback))
         _ActorRegistry.unregister(self.actor_ref)
         self._actor_runnable = False
-        self.on_failure(exception_type, exception_value, traceback)
 
     def on_failure(self, exception_type, exception_value, traceback):
         """
