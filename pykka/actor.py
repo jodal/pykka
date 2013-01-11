@@ -179,7 +179,10 @@ class Actor(object):
         _ActorRegistry.unregister(self.actor_ref)
         self._actor_runnable = False
         _logger.debug('Stopped %s', self)
-        self.on_stop()
+        try:
+            self.on_stop()
+        except Exception:
+            self._handle_failure(*_sys.exc_info())
 
     def _actor_loop(self):
         """
@@ -239,6 +242,9 @@ class Actor(object):
 
         For :class:`ThreadingActor` this method is executed in the actor's own
         thread, immediately before the thread exits.
+
+        If an exception is raised by this method the stack trace will be
+        logged, and the actor will stop.
         """
         pass
 

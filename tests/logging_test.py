@@ -14,7 +14,7 @@ except ImportError:
     HAS_GEVENT = False
 
 from tests import TestLogHandler
-from tests.actor_test import EarlyFailingActor
+from tests.actor_test import EarlyFailingActor, LateFailingActor
 
 
 class LoggingNullHandlerTest(unittest.TestCase):
@@ -102,6 +102,18 @@ class ActorLoggingTest(object):
             'Unhandled exception in %s:' % actor_ref,
             log_record.getMessage())
 
+    def test_exception_in_on_stop_is_logged(self):
+        self.log_handler.reset()
+        stop_event = self.event_class()
+        actor_ref = self.LateFailingActor.start(stop_event)
+        stop_event.wait(5)
+        time.sleep(0.01)  # Too ensure that the log handler is updated
+        self.assertEqual(1, len(self.log_handler.messages['error']))
+        log_record = self.log_handler.messages['error'][0]
+        self.assertEqual(
+            'Unhandled exception in %s:' % actor_ref,
+            log_record.getMessage())
+
 
 class AnActor(object):
     def __init__(self, on_stop_was_called, on_failure_was_called):
@@ -136,6 +148,9 @@ class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
     class EarlyFailingActor(EarlyFailingActor, ThreadingActor):
         pass
 
+    class LateFailingActor(LateFailingActor, ThreadingActor):
+        pass
+
 
 if HAS_GEVENT:
     class GeventActorLoggingTest(ActorLoggingTest, unittest.TestCase):
@@ -145,4 +160,7 @@ if HAS_GEVENT:
             pass
 
         class EarlyFailingActor(EarlyFailingActor, GeventActor):
+            pass
+
+        class LateFailingActor(LateFailingActor, GeventActor):
             pass
