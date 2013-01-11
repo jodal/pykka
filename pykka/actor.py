@@ -97,10 +97,10 @@ class Actor(object):
             'Actor.__init__() have not been called. '
             'Did you forget to call super() in your override?')
         _ActorRegistry.register(obj.actor_ref)
+        _logger.debug('Starting %s', obj)
         # pylint: disable = W0212
         obj._start_actor_loop()
         # pylint: enable = W0212
-        _logger.debug('Started %s', obj)
         return obj.actor_ref
 
     @staticmethod
