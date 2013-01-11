@@ -2,6 +2,14 @@
 Changes
 =======
 
+
+v1.0.2 (in development)
+=======================
+
+- An exception raised in :meth:`pykka.Actor.on_start` didn't stop the actor
+  properly. Thanks to Jay Camp for finding and fixing the bug.
+
+
 v1.0.1 (2012-12-12)
 ===================
 
