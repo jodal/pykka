@@ -224,6 +224,9 @@ class Actor(object):
         For :class:`ThreadingActor`, this method is executed in the actor's own
         thread, while :meth:`__init__` is executed in the thread that created
         the actor.
+
+        If an exception is raised by this method the stack trace will be
+        logged, and the actor will stop.
         """
         pass
 
