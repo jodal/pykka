@@ -1,5 +1,6 @@
 import logging
 import threading
+import time
 import unittest
 
 from pykka.actor import ThreadingActor
@@ -13,6 +14,7 @@ except ImportError:
     HAS_GEVENT = False
 
 from tests import TestLogHandler
+from tests.actor_test import EarlyFailingActor
 
 
 class LoggingNullHandlerTest(unittest.TestCase):
@@ -88,6 +90,18 @@ class ActorLoggingTest(object):
             'BaseException() in %s. Stopping all actors.' % self.actor_ref,
             log_record.getMessage())
 
+    def test_exception_in_on_start_is_logged(self):
+        self.log_handler.reset()
+        start_event = self.event_class()
+        actor_ref = self.EarlyFailingActor.start(start_event)
+        start_event.wait(5)
+        time.sleep(0.01)  # Too ensure that the log handler is updated
+        self.assertEqual(1, len(self.log_handler.messages['error']))
+        log_record = self.log_handler.messages['error'][0]
+        self.assertEqual(
+            'Unhandled exception in %s:' % actor_ref,
+            log_record.getMessage())
+
 
 class AnActor(object):
     def __init__(self, on_stop_was_called, on_failure_was_called):
@@ -119,10 +133,16 @@ class ThreadingActorLoggingTest(ActorLoggingTest, unittest.TestCase):
     class AnActor(AnActor, ThreadingActor):
         pass
 
+    class EarlyFailingActor(EarlyFailingActor, ThreadingActor):
+        pass
+
 
 if HAS_GEVENT:
     class GeventActorLoggingTest(ActorLoggingTest, unittest.TestCase):
         event_class = gevent.event.Event
 
         class AnActor(AnActor, GeventActor):
+            pass
+
+        class EarlyFailingActor(EarlyFailingActor, GeventActor):
             pass

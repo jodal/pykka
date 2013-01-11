@@ -1,6 +1,7 @@
 import threading
 import unittest
 import uuid
+import time
 
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
@@ -69,8 +70,10 @@ class EarlyFailingActor(object):
         self.on_start_was_called = on_start_was_called
 
     def on_start(self):
-        self.on_start_was_called.set()
-        raise RuntimeError('on_start failure')
+        try:
+            raise RuntimeError('on_start failure')
+        finally:
+            self.on_start_was_called.set()
 
 
 class ActorTest(object):
@@ -168,6 +171,7 @@ class ActorTest(object):
         start_event = self.event_class()
         actor = self.EarlyFailingActor.start(start_event)
         start_event.wait(5)
+        time.sleep(0.01)
         self.assertFalse(actor.is_alive())
 
     def test_on_stop_is_called_when_actor_is_stopped(self):

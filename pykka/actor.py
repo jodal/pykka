@@ -190,7 +190,6 @@ class Actor(object):
         try:
             self.on_start()
         except Exception:
-            # Only stop the actor but on_failure won't be called.
             self._handle_failure(*_sys.exc_info())
 
         while self._actor_runnable:
