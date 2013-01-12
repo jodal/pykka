@@ -9,7 +9,8 @@ v1.0.2 (in development)
 - An exception raised in :meth:`pykka.Actor.on_start` didn't stop the actor
   properly. Thanks to Jay Camp for finding and fixing the bug.
 
-- Make sure exceptions in :meth:`pykka.Actor.on_stop` is logged.
+- Make sure exceptions in :meth:`pykka.Actor.on_stop` and
+  :meth:`pykka.Actor.on_failure` is logged.
 
 
 v1.0.1 (2012-12-12)

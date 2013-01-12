@@ -91,6 +91,24 @@ class LateFailingActor(object):
             self.on_stop_was_called.set()
 
 
+class FailingOnFailureActor(object):
+    def __init__(self, on_failure_was_called):
+        super(FailingOnFailureActor, self).__init__()
+        self.on_failure_was_called = on_failure_was_called
+
+    def on_receive(self, message):
+        if message.get('command') == 'raise exception':
+            raise Exception('on_receive failure')
+        else:
+            super(FailingOnFailureActor, self).on_receive(message)
+
+    def on_failure(self, *args):
+        try:
+            raise RuntimeError('on_failure failure')
+        finally:
+            self.on_failure_was_called.set()
+
+
 class ActorTest(object):
     def setUp(self):
         self.on_start_was_called = self.event_class()
@@ -208,6 +226,13 @@ class ActorTest(object):
         self.assertTrue(self.on_failure_was_called.is_set())
         self.assertFalse(self.on_stop_was_called.is_set())
 
+    def test_on_failure_failure_causes_actor_to_stop(self):
+        failure_event = self.event_class()
+        actor = self.FailingOnFailureActor.start(failure_event)
+        actor.tell({'command': 'raise exception'})
+        failure_event.wait(5)
+        self.assertFalse(actor.is_alive())
+
     def test_actor_is_stopped_when_unhandled_exceptions_are_raised(self):
         self.assertFalse(self.on_failure_was_called.is_set())
         self.actor_ref.tell({'command': 'raise exception'})
@@ -267,6 +292,9 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
     class LateFailingActor(LateFailingActor, ThreadingActor):
         pass
 
+    class FailingOnFailureActor(FailingOnFailureActor, ThreadingActor):
+        pass
+
     class SuperInitActor(ThreadingActor):
         pass
 
@@ -292,6 +320,9 @@ if HAS_GEVENT:
             pass
 
         class LateFailingActor(LateFailingActor, GeventActor):
+            pass
+
+        class FailingOnFailureActor(FailingOnFailureActor, GeventActor):
             pass
 
         class SuperInitActor(GeventActor):

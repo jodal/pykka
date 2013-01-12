@@ -209,7 +209,10 @@ class Actor(object):
                     message['reply_to'].set_exception()
                 else:
                     self._handle_failure(*_sys.exc_info())
-                    self.on_failure(*_sys.exc_info())
+                    try:
+                        self.on_failure(*_sys.exc_info())
+                    except Exception:
+                        self._handle_failure(*_sys.exc_info())
             except BaseException:
                 exception_value = _sys.exc_info()[1]
                 _logger.debug(
@@ -266,6 +269,9 @@ class Actor(object):
 
         The method's arguments are the relevant information from
         :func:`sys.exc_info`.
+
+        If an exception is raised by this method the stack trace will be
+        logged, and the actor will stop.
         """
         pass
 
