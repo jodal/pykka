@@ -298,12 +298,31 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
     class SuperInitActor(ThreadingActor):
         pass
 
+    class DaemonActor(ThreadingActor):
+        use_daemon_thread = True
+
     def test_actor_thread_is_named_after_pykka_actor_class(self):
         alive_threads = threading.enumerate()
         alive_thread_names = [t.name for t in alive_threads]
         named_correctly = [
             name.startswith(AnActor.__name__) for name in alive_thread_names]
         self.assert_(any(named_correctly))
+
+    def test_actor_thread_is_not_daemonic_by_default(self):
+        alive_threads = threading.enumerate()
+        actor_threads = [
+            t for t in alive_threads if t.name.startswith('AnActor')]
+        self.assertEqual(1, len(actor_threads))
+        self.assertFalse(actor_threads[0].daemon)
+
+    def test_actor_thread_is_daemonic_if_use_daemon_thread_flag_is_set(self):
+        actor_ref = self.DaemonActor.start()
+        alive_threads = threading.enumerate()
+        actor_threads = [
+            t for t in alive_threads if t.name.startswith('DaemonActor')]
+        self.assertEqual(1, len(actor_threads))
+        self.assertTrue(actor_threads[0].daemon)
+        actor_ref.stop()
 
 
 if HAS_GEVENT:

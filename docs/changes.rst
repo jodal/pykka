@@ -3,7 +3,7 @@ Changes
 =======
 
 
-v1.0.2 (in development)
+v1.1.0 (in development)
 =======================
 
 - An exception raised in :meth:`pykka.Actor.on_start` didn't stop the actor
@@ -11,6 +11,10 @@ v1.0.2 (in development)
 
 - Make sure exceptions in :meth:`pykka.Actor.on_stop` and
   :meth:`pykka.Actor.on_failure` is logged.
+
+- Add :attr:`pykka.ThreadingActor.use_daemon_thread` flag for optionally
+  running an actor on a daemon thread, so that it doesn't block the Python
+  program from exiting. (Fixes: :issue:`14`)
 
 
 v1.0.1 (2012-12-12)

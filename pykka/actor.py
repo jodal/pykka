@@ -326,6 +326,22 @@ class ThreadingActor(Actor):
     threads that are not Pykka actors.
     """
 
+    use_daemon_thread = False
+    """
+    A boolean value indicating whether this actor is executed on a thread that
+    is a daemon thread (:class:`True`) or not (:class:`False`). This must be
+    set before :meth:`pykka.Actor.start` is called, otherwise
+    :exc:`RuntimeError` is raised.
+
+    The entire Python program exits when no alive non-daemon threads are left.
+    This means that an actor running on a daemon thread may be interrupted at
+    any time, and there is no guarantee that cleanup will be done or that
+    :meth:`pykka.Actor.on_stop` will be called.
+
+    Actors do not inherit the daemon flag from the actor that made it. It
+    always has to be set explicitly for the actor to run on a daemonic thread.
+    """
+
     @staticmethod
     def _create_actor_inbox():
         return _queue.Queue()
@@ -337,6 +353,7 @@ class ThreadingActor(Actor):
     def _start_actor_loop(self):
         thread = _threading.Thread(target=self._actor_loop)
         thread.name = thread.name.replace('Thread', self.__class__.__name__)
+        thread.daemon = self.use_daemon_thread
         thread.start()
 
 
