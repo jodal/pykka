@@ -82,7 +82,7 @@ method::
     import pykka
 
     class Greeter(pykka.ThreadingActor):
-        def __init__(self, greeting='Hi there!')
+        def __init__(self, greeting='Hi there!'):
             super(Greeter, self).__init__()
             self.greeting = greeting
 
