@@ -1,2 +1,2 @@
 cython
-https://github.com/SiteSupport/gevent/tarball/1.0b4
+https://github.com/SiteSupport/gevent/tarball/1.0rc2
