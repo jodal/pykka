@@ -16,7 +16,7 @@ setup(
     packages=['pykka'],
     url='http://pykka.readthedocs.org/',
     license='Apache License, Version 2.0',
-    description='Pykka is easy to use concurrency using the actor model',
+    description='Pykka is a Python implementation of the actor model',
     long_description=open('README.rst').read(),
     classifiers=[
         'Development Status :: 4 - Beta',
