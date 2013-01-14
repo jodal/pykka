@@ -24,8 +24,8 @@ Actors
     :members:
 
 
-Typed actors
-============
+Proxies
+=======
 
 .. autoclass:: pykka.ActorProxy
     :members:
