@@ -334,7 +334,7 @@ Pykka is licensed under the `Apache License, Version 2.0
 Project resources
 =================
 
-- `Documentation <https://pykka.readthedocs.org/>`_
+- `Documentation <http://www.pykka.org/>`_
 - `Source code <https://github.com/jodal/pykka>`_
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
 - `CI server <https://travis-ci.org/jodal/pykka>`_
