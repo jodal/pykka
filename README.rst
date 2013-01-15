@@ -70,8 +70,8 @@ In its most basic form, a Pykka actor is a class with an
             print('Hi there!')
 
 To start an actor, you call the class' method ``start()``, which starts the
-actor and returns a an actor reference which can be used to communicate with
-the running actor::
+actor and returns an actor reference which can be used to communicate with the
+running actor::
 
     actor_ref = Greeter.start()
 
