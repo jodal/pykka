@@ -16,6 +16,9 @@ v1.1.0 (in development)
   running an actor on a daemon thread, so that it doesn't block the Python
   program from exiting. (Fixes: :issue:`14`)
 
+- Add :func:`pykka.debug.log_thread_tracebacks` debugging helper. (Fixes:
+  :issue:`17`)
+
 
 v1.0.1 (2012-12-12)
 ===================

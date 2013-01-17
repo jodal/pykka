@@ -90,3 +90,10 @@ level or higher::
 
 For more details on how to use :mod:`logging`, please refer to the Python
 standard library documentation.
+
+
+Debug helpers
+=============
+
+.. automodule:: pykka.debug
+    :members:
