@@ -77,7 +77,7 @@ logger named "pykka" to get any log output from Pykka. The defaults provided by
 Pykka::
 
     import logging
-    logging.basicConfig()
+    logging.basicConfig(level=logging.DEBUG)
 
 If your application is already using :mod:`logging`, and you want debug log
 output from your own application, but not from Pykka, you can ignore debug log
@@ -85,6 +85,7 @@ messages from Pykka by increasing the threshold on the Pykka logger to "info"
 level or higher::
 
     import logging
+    logging.basicConfig(level=logging.DEBUG)
     logging.getLogger('pykka').setLevel(logging.INFO)
 
 For more details on how to use :mod:`logging`, please refer to the Python
