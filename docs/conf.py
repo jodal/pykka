@@ -264,4 +264,4 @@ man_pages = [
 
 autodoc_member_order = 'bysource'
 
-extlinks = {'issue': ('http://github.com/jodal/pykka/issues/%s', 'GH-')}
+extlinks = {'issue': ('http://github.com/jodal/pykka/issues/%s', '#')}
