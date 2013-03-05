@@ -2,6 +2,11 @@
 Changes
 =======
 
+v1.2.0 (UNRELEASED)
+===================
+
+- Add ``callback`` argument to :meth:`pykka.Future.set`.
+
 
 v1.1.0 (2013-01-19)
 ===================

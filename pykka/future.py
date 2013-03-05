@@ -24,6 +24,10 @@ class Future(object):
     To get hold of the encapsulated value, call :meth:`Future.get`.
     """
 
+    def __init__(self):
+        super(Future, self).__init__()
+        self._callback = None
+
     def get(self, timeout=None):
         """
         Get the value encapsulated by the future.
@@ -46,16 +50,31 @@ class Future(object):
         :raise: encapsulated value if it is an exception
         :return: encapsulated value if it is not an exception
         """
+        if self._callback is not None:
+            return self._callback(timeout)
         raise NotImplementedError
 
-    def set(self, value=None):
+    def set(self, value=None, callback=None):
         """
         Set the encapsulated value.
 
+        Accepts either a value or a callback, not both. If a callback function
+        is provided, it will be called when :meth:`get` is called, with the
+        ``timeout`` value as the only argument. The callback's return value
+        will be returned from :meth:`get`.
+
+        .. versionchanged:: 1.2
+            The ``callback`` argument was added.
+
         :param value: the encapsulated value or nothing
         :type value: any picklable object or :class:`None`
+        :param callback: called to produce return value of :meth:`get`
+        :type callback: function accepting a timeout value
         """
-        raise NotImplementedError
+        if callback is not None:
+            self._callback = callback
+        else:
+            raise NotImplementedError
 
     def set_exception(self, exc_info=None):
         """
@@ -105,6 +124,11 @@ class ThreadingFuture(Future):
 
     def get(self, timeout=None):
         try:
+            return super(ThreadingFuture, self).get(timeout=timeout)
+        except NotImplementedError:
+            pass
+
+        try:
             if self._data is None:
                 self._data = self._queue.get(True, timeout)
             if 'exc_info' in self._data:
@@ -119,8 +143,11 @@ class ThreadingFuture(Future):
         except _queue.Empty:
             raise _Timeout('%s seconds' % timeout)
 
-    def set(self, value=None):
-        self._queue.put({'value': value})
+    def set(self, value=None, callback=None):
+        if callback is not None:
+            super(ThreadingFuture, self).set(self, callback=callback)
+        else:
+            self._queue.put({'value': value})
 
     def set_exception(self, exc_info=None):
         if isinstance(exc_info, BaseException):
