@@ -7,7 +7,7 @@ from pykka.registry import ActorRegistry
 
 
 #: Pykka's :pep:`386` and :pep:`396` compatible version number
-__version__ = '1.1.0'
+__version__ = '1.2.0a1'
 
 
 def _add_null_handler_for_logging():
