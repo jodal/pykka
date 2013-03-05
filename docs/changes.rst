@@ -7,6 +7,10 @@ v1.2.0 (UNRELEASED)
 
 - Add ``callback`` argument to :meth:`pykka.Future.set`.
 
+- Add :meth:`pykka.Future.filter`, :meth:`pykka.Future.join`,
+  :meth:`pykka.Future.map`, and :meth:`pykka.Future.reduce` as convenience
+  methods using the new ``callback`` argument to :meth:`pykka.Future.set`.
+
 
 v1.1.0 (2013-01-19)
 ===================

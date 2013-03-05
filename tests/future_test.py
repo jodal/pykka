@@ -95,6 +95,78 @@ class FutureTest(object):
         for i, frame in enumerate(exc_traceback_list_set):
             self.assertEquals(frame, exc_traceback_list_get[i])
 
+    def test_filter_excludes_items_not_matching_predicate(self):
+        future = self.results[0].filter(lambda x: x > 10)
+        self.results[0].set([1, 3, 5, 7, 9, 11, 13, 15, 17, 19])
+
+        self.assertEqual(future.get(timeout=0), [11, 13, 15, 17, 19])
+
+    def test_filter_on_noniterable(self):
+        future = self.results[0].filter(lambda x: x > 10)
+        self.results[0].set(1)
+
+        self.assertRaises(TypeError, future.get, timeout=0)
+
+    def test_filter_preserves_the_timeout_kwarg(self):
+        future = self.results[0].filter(lambda x: x > 10)
+
+        self.assertRaises(Timeout, future.get, timeout=0)
+
+    def test_join_combines_multiple_futures_into_one(self):
+        future = self.results[0].join(self.results[1], self.results[2])
+        self.results[0].set(0)
+        self.results[1].set(1)
+        self.results[2].set(2)
+
+        self.assertEqual(future.get(timeout=0), [0, 1, 2])
+
+    def test_join_preserves_timeout_kwarg(self):
+        future = self.results[0].join(self.results[1], self.results[2])
+        self.results[0].set(0)
+        self.results[1].set(1)
+
+        self.assertRaises(Timeout, future.get, timeout=0)
+
+    def test_map_returns_future_which_passes_noniterable_through_func(self):
+        future = self.results[0].map(lambda x: x + 10)
+        self.results[0].set(30)
+
+        self.assertEqual(future.get(timeout=0), 40)
+
+    def test_map_returns_future_which_maps_iterable_through_func(self):
+        future = self.results[0].map(lambda x: x + 10)
+        self.results[0].set([10, 20, 30])
+
+        self.assertEqual(future.get(timeout=0), [20, 30, 40])
+
+    def test_map_preserves_timeout_kwarg(self):
+        future = self.results[0].map(lambda x: x + 10)
+
+        self.assertRaises(Timeout, future.get, timeout=0)
+
+    def test_reduce_applies_function_cumulatively_from_the_left(self):
+        future = self.results[0].reduce(lambda x, y: x + y)
+        self.results[0].set([1, 2, 3, 4])
+
+        self.assertEqual(future.get(timeout=0), 10)
+
+    def test_reduce_accepts_an_initial_value(self):
+        future = self.results[0].reduce(lambda x, y: x + y, 5)
+        self.results[0].set([1, 2, 3, 4])
+
+        self.assertEqual(future.get(timeout=0), 15)
+
+    def test_reduce_on_noniterable(self):
+        future = self.results[0].reduce(lambda x, y: x + y)
+        self.results[0].set(1)
+
+        self.assertRaises(TypeError, future.get, timeout=0)
+
+    def test_reduce_preserves_the_timeout_kwarg(self):
+        future = self.results[0].reduce(lambda x, y: x + y)
+
+        self.assertRaises(Timeout, future.get, timeout=0)
+
 
 class ThreadingFutureTest(FutureTest, unittest.TestCase):
     future_class = ThreadingFuture
