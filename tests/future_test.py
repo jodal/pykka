@@ -39,13 +39,10 @@ class FutureTest(object):
         self.assertEqual(result, [0, 1, 2])
 
     def test_get_all_raises_timeout_if_not_all_futures_are_available(self):
-        try:
-            self.results[0].set(0)
-            self.results[2].set(2)
-            get_all(self.results, timeout=0)
-            self.fail('Should timeout')
-        except Timeout:
-            pass
+        self.results[0].set(0)
+        self.results[1].set(1)
+
+        self.assertRaises(Timeout, get_all, self.results, timeout=0)
 
     def test_get_all_can_be_called_multiple_times(self):
         self.results[0].set(0)
