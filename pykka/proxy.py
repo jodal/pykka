@@ -92,9 +92,7 @@ class ActorProxy(object):
         if not actor_ref.is_alive():
             raise _ActorDeadError('%s not found' % actor_ref)
         self.actor_ref = actor_ref
-        # pylint: disable = W0212
         self._actor = actor_ref._actor
-        # pylint: enable = W0212
         self._attr_path = attr_path or tuple()
         self._known_attrs = self._get_attributes()
         self._actor_proxies = {}
@@ -107,9 +105,7 @@ class ActorProxy(object):
         while attr_paths_to_visit:
             attr_path = attr_paths_to_visit.pop(0)
             if self._is_exposable_attribute(attr_path[-1]):
-                # pylint: disable = W0212
                 attr = self._actor._get_attribute_from_path(attr_path)
-                # pylint: enable = W0212
                 result[tuple(attr_path)] = {
                     'callable': self._is_callable_attribute(attr),
                     'traversable': self._is_traversable_attribute(attr),

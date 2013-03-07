@@ -51,13 +51,11 @@ class ActorLoggingTest(object):
             log_record.getMessage().split(': ')[0])
 
     def test_exception_is_logged_when_returned_to_caller(self):
-        # pylint: disable = W0703
         try:
             self.actor_proxy.raise_exception().get()
             self.fail('Should raise exception')
         except Exception:
             pass
-        # pylint: enable = W0703
         self.assertEqual(1, len(self.log_handler.messages['debug']))
         log_record = self.log_handler.messages['debug'][0]
         self.assertEqual(

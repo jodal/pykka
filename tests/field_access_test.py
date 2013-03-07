@@ -42,9 +42,7 @@ class FieldAccessTest(object):
 
     def test_private_field_access_raises_exception(self):
         try:
-            # pylint: disable = W0212
             self.proxy._private_field.get()
-            # pylint: enable = W0212
             self.fail('Should raise AttributeError exception')
         except AttributeError:
             pass

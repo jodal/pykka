@@ -8,9 +8,7 @@ try:
     import Queue as _queue
 except ImportError:
     # Python 3.x
-    # pylint: disable = F0401
     import queue as _queue  # noqa
-    # pylint: enable = F0401
 
 from pykka.exceptions import ActorDeadError as _ActorDeadError
 from pykka.future import ThreadingFuture as _ThreadingFuture
@@ -98,9 +96,7 @@ class Actor(object):
             'Did you forget to call super() in your override?')
         _ActorRegistry.register(obj.actor_ref)
         _logger.debug('Starting %s', obj)
-        # pylint: disable = W0212
         obj._start_actor_loop()
-        # pylint: enable = W0212
         return obj.actor_ref
 
     @staticmethod
@@ -450,9 +446,7 @@ class ActorRef(object):
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.Future` or response
         """
-        # pylint: disable = W0212
         future = self.actor_class._create_future()
-        # pylint: enable = W0212
         message['reply_to'] = future
         self.tell(message)
         if block:
