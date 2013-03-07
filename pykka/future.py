@@ -71,27 +71,29 @@ class Future(object):
             return self._callback(timeout)
         raise NotImplementedError
 
-    def set(self, value=None, callback=None):
+    def set(self, value=None):
         """
         Set the encapsulated value.
 
-        Accepts either a value or a callback, not both. If a callback function
-        is provided, it will be called when :meth:`get` is called, with the
+        :param value: the encapsulated value or nothing
+        :type value: any picklable object or :class:`None`
+        """
+        raise NotImplementedError
+
+    def set_callback(self, callback):
+        """
+        Set a callback to be executed when :meth:`get` is called.
+
+        The callback will be called when :meth:`get` is called, with the
         ``timeout`` value as the only argument. The callback's return value
         will be returned from :meth:`get`.
 
-        .. versionchanged:: 1.2
-            The ``callback`` argument was added.
+        .. versionadded:: 1.2
 
-        :param value: the encapsulated value or nothing
-        :type value: any picklable object or :class:`None`
         :param callback: called to produce return value of :meth:`get`
         :type callback: function accepting a timeout value
         """
-        if callback is not None:
-            self._callback = callback
-        else:
-            raise NotImplementedError
+        self._callback = callback
 
     def set_exception(self, exc_info=None):
         """
@@ -141,7 +143,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set(callback=lambda timeout: list(filter(
+        future.set_callback(lambda timeout: list(filter(
             func, self.get(timeout))))
         return future
 
@@ -168,7 +170,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set(callback=lambda timeout: [
+        future.set_callback(lambda timeout: [
             f.get(timeout) for f in [self] + list(futures)])
         return future
 
@@ -199,7 +201,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set(callback=lambda timeout: _map(func, self.get(timeout)))
+        future.set_callback(lambda timeout: _map(func, self.get(timeout)))
         return future
 
     def reduce(self, func, *args):
@@ -253,7 +255,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set(callback=lambda timeout: _functools.reduce(
+        future.set_callback(lambda timeout: _functools.reduce(
             func, self.get(timeout), *args))
         return future
 
@@ -302,11 +304,8 @@ class ThreadingFuture(Future):
         except _queue.Empty:
             raise _Timeout('%s seconds' % timeout)
 
-    def set(self, value=None, callback=None):
-        if callback is not None:
-            super(ThreadingFuture, self).set(self, callback=callback)
-        else:
-            self._queue.put({'value': value})
+    def set(self, value=None):
+        self._queue.put({'value': value})
 
     def set_exception(self, exc_info=None):
         if isinstance(exc_info, BaseException):

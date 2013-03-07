@@ -43,11 +43,8 @@ class GeventFuture(_Future):
         except _gevent.Timeout as e:
             raise _Timeout(e)
 
-    def set(self, value=None, callback=None):
-        if callback is not None:
-            super(GeventFuture, self).set(callback=callback)
-        else:
-            self.async_result.set(value)
+    def set(self, value=None):
+        self.async_result.set(value)
 
     def set_exception(self, exc_info=None):
         if isinstance(exc_info, BaseException):
