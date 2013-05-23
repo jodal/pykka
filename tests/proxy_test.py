@@ -4,12 +4,6 @@ from pykka import ActorDeadError
 from pykka.actor import ThreadingActor
 from pykka.proxy import ActorProxy
 
-try:
-    from pykka.gevent import GeventActor
-    HAS_GEVENT = True
-except ImportError:
-    HAS_GEVENT = False
-
 
 class SomeObject(object):
     cat = 'bar.cat'
@@ -99,8 +93,11 @@ class ThreadingProxyTest(ProxyTest, unittest.TestCase):
     class AnActor(AnActor, ThreadingActor):
         pass
 
+try:
+    from pykka.gevent import GeventActor
 
-if HAS_GEVENT:
     class GeventProxyTest(ProxyTest, unittest.TestCase):
         class AnActor(AnActor, GeventActor):
             pass
+except ImportError:
+    pass

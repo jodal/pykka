@@ -5,12 +5,6 @@ from pykka import ActorDeadError, Timeout
 from pykka.actor import ThreadingActor
 from pykka.future import ThreadingFuture
 
-try:
-    import gevent
-    from pykka.gevent import GeventActor, GeventFuture
-    HAS_GEVENT = True
-except ImportError:
-    HAS_GEVENT = False
 
 
 class AnActor(object):
@@ -116,10 +110,15 @@ class ThreadingRefTest(RefTest, unittest.TestCase):
             time.sleep(seconds)
 
 
-if HAS_GEVENT:
+try:
+    import gevent
+    from pykka.gevent import GeventActor, GeventFuture
+
     class GeventRefTest(RefTest, unittest.TestCase):
         future_class = GeventFuture
 
         class AnActor(AnActor, GeventActor):
             def sleep(self, seconds):
                 gevent.sleep(seconds)
+except ImportError:
+    pass

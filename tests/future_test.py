@@ -5,13 +5,6 @@ import unittest
 from pykka import Timeout
 from pykka.future import Future, ThreadingFuture, get_all
 
-try:
-    from gevent.event import AsyncResult
-    from pykka.gevent import GeventFuture
-    HAS_GEVENT = True
-except ImportError:
-    HAS_GEVENT = False
-
 
 class FutureBaseTest(unittest.TestCase):
     def setUp(self):
@@ -103,7 +96,10 @@ class ThreadingFutureTest(FutureTest, unittest.TestCase):
     future_class = ThreadingFuture
 
 
-if HAS_GEVENT:
+try:
+    from gevent.event import AsyncResult
+    from pykka.gevent import GeventFuture
+
     class GeventFutureTest(FutureTest, unittest.TestCase):
         future_class = GeventFuture
 
@@ -116,3 +112,6 @@ if HAS_GEVENT:
             # gevent prints the first half of the traceback instead of
             # passing it through to the other side of the AsyncResult
             pass
+
+except ImportError:
+    pass

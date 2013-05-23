@@ -4,13 +4,6 @@ import unittest
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
 
-try:
-    from pykka.gevent import GeventActor
-    HAS_GEVENT = True
-except ImportError:
-    HAS_GEVENT = False
-
-
 class ActorRegistryTest(object):
     def setUp(self):
         self.ref = self.AnActor.start()
@@ -143,18 +136,23 @@ class BeeActor(object):
         self.received_messages.append(message)
 
 
-class ThreadingActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-    class AnActor(AnActor, ThreadingActor):
-        pass
-
-    class BeeActor(BeeActor, ThreadingActor):
-        pass
-
-
-if HAS_GEVENT:
-    class GeventActorRegistryTest(ActorRegistryTest, unittest.TestCase):
-        class AnActor(AnActor, GeventActor):
+def ConcreteRegistryTest(actor_class):
+    class C(ActorRegistryTest, unittest.TestCase):
+        class AnActor(AnActor, actor_class):
             pass
 
-        class BeeActor(BeeActor, GeventActor):
+        class BeeActor(BeeActor, actor_class):
             pass
+
+    C.__name__ = '%sRegistryTest' % (actor_class.__name__,)
+    return C
+
+ThreadingActorRegistryTest = ConcreteRegistryTest(ThreadingActor)
+
+
+try:
+    from pykka.gevent import GeventActor
+
+    GeventActorRegistryTest = ConcreteRegistryTest(GeventActor)
+except ImportError:
+    pass
