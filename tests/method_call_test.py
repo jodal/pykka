@@ -99,12 +99,27 @@ class ThreadingDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
 
 try:
     from pygga.gevent import GeventActor
+
     class GeventStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
         class ActorWithMethods(ActorWithMethods, GeventActor):
             pass
 
     class GeventDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
         class ActorExtendableAtRuntime(ActorExtendableAtRuntime, GeventActor):
+            pass
+except ImportError:
+    pass
+
+
+try:
+    from pygga.eventlet import EventletActor
+
+    class EventletStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
+        class ActorWithMethods(ActorWithMethods, EventletActor):
+            pass
+
+    class EventletDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
+        class ActorExtendableAtRuntime(ActorExtendableAtRuntime, EventletActor):
             pass
 except ImportError:
     pass

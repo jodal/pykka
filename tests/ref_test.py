@@ -102,23 +102,30 @@ class RefTest(object):
             self.assertEqual('%s not found' % self.ref, str(exception))
 
 
-class ThreadingRefTest(RefTest, unittest.TestCase):
-    future_class = ThreadingFuture
+def ConcreteRefTest(actor_class, future_class, sleep_function):
+    class C(RefTest, unittest.TestCase):
+        class AnActor(AnActor, actor_class):
+            def sleep(self, seconds):
+                sleep_function(seconds)
 
-    class AnActor(AnActor, ThreadingActor):
-        def sleep(self, seconds):
-            time.sleep(seconds)
+    C.__name__ = '%sRefTest' % (actor_class.__name__,)
+    C.future_class = future_class
+    return C
 
+ThreadingActorRefTest = ConcreteRefTest(ThreadingActor, ThreadingFuture, time.sleep)
 
 try:
     import gevent
     from pykka.gevent import GeventActor, GeventFuture
 
-    class GeventRefTest(RefTest, unittest.TestCase):
-        future_class = GeventFuture
+    GeventActorRefTest = ConcreteRefTest(GeventActor, GeventFuture, gevent.sleep)
+except ImportError:
+    pass
 
-        class AnActor(AnActor, GeventActor):
-            def sleep(self, seconds):
-                gevent.sleep(seconds)
+try:
+    import eventlet
+    from pykka.eventlet import EventletActor, EventletFuture
+
+    EventletActorRefTest = ConcreteRefTest(EventletActor, EventletFuture, eventlet.sleep)
 except ImportError:
     pass

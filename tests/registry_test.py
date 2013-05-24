@@ -156,3 +156,10 @@ try:
     GeventActorRegistryTest = ConcreteRegistryTest(GeventActor)
 except ImportError:
     pass
+
+try:
+    from pykka.eventlet import EventletActor
+
+    EventletActorRegistryTest = ConcreteRegistryTest(EventletActor)
+except ImportError:
+    pass

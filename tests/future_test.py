@@ -115,3 +115,11 @@ try:
 
 except ImportError:
     pass
+
+try:
+    from pykka.eventlet import EventletFuture
+
+    class EventletFutureTest(FutureTest, unittest.TestCase):
+        future_class = EventletFuture
+except ImportError:
+    pass

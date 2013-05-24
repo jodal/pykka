@@ -62,3 +62,9 @@ try:
     GeventFieldAccessTest = ConcreteFieldAccessTest(GeventActor)
 except ImportError:
     pass
+
+try:
+    from pykka.eventlet import EventletActor
+    EventletFieldAccessTest = ConcreteFieldAccessTest(EventletActor)
+except ImportError:
+    pass

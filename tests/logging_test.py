@@ -174,3 +174,11 @@ try:
     GeventActorLoggingTest = ConcreteActorLoggingTest(GeventActor, gevent.event.Event)
 except ImportError:
     pass
+
+
+try:
+    from pykka.eventlet import EventletActor, EventletEvent
+
+    EventletActorLoggingTest = ConcreteActorLoggingTest(EventletActor, EventletEvent)
+except ImportError:
+    pass

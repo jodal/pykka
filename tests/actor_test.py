@@ -290,6 +290,7 @@ def ConcreteActorTest(actor_class, event_class):
         class SuperInitActor(actor_class):
             pass
 
+    C.__name__ = '%sTest' % (actor_class.__name__,)
     C.event_class = event_class
     return C
 
@@ -321,10 +322,16 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
         self.assertTrue(actor_threads[0].daemon)
         actor_ref.stop()
 
-
 try:
     import gevent.event
     from pykka.gevent import GeventActor
     GeventActorTest = ConcreteActorTest(GeventActor, gevent.event.Event)
+except ImportError:
+    pass
+
+try:
+    import eventlet
+    from pykka.eventlet import EventletActor, EventletEvent
+    EventletActorTest = ConcreteActorTest(EventletActor, EventletEvent)
 except ImportError:
     pass

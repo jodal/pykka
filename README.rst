@@ -33,16 +33,22 @@ Rules of the actor model
   internally to protect its own state.
 
 
-Two implementations
-===================
+The actor implementations
+=========================
 
-Pykka's actor API comes with to two different implementations:
+Pykka's actor API comes with the following implementations:
 
 - Threads: Each ``ThreadingActor`` is executed by a regular thread, i.e.
   ``threading.Thread``. As handles for future results, it uses
   ``ThreadingFuture`` which is a thin wrapper around a ``Queue.Queue``. It has
   no dependencies outside Python itself. ``ThreadingActor`` plays well
   together with non-actor threads.
+
+  .. note::
+
+    If you monkey patch the standard library with ``gevent`` or ``eventlet``
+    you can use ``ThreadingActor`` and ``ThreadingFuture`` - it will transparently
+    use the underlying implementation.
 
 - gevent: Each ``GeventActor`` is executed by a gevent greenlet. `gevent
   <http://www.gevent.org/>`_ is a coroutine-based Python networking library
@@ -53,8 +59,12 @@ Pykka's actor API comes with to two different implementations:
   candidate, this is no longer an issue. Pykka works with both gevent 0.13 and
   1.0.
 
+- eventlet: Each ``EventletActor`` is executed by a eventlet greenlet. Pykka is
+  tested with eventlet 0.12.1
+
 Pykka has an extensive test suite, and is tested on CPython 2.6, 2.7, and 3.2+,
-as well as PyPy. gevent is currently not available for CPython 3 or PyPy.
+as well as PyPy. gevent and eventlet are currently not available for CPython 3
+or PyPy.
 
 
 A basic actor
@@ -306,10 +316,15 @@ Installation
 
 Install Pykka's dependencies:
 
-- Python 2.6, 2.7, or 3.2+. Note that gevent is not available on Python 3.
+- Python 2.6, 2.7, or 3.2+
 
-- Optionally, `gevent <http://www.gevent.org/>`_, if you want to use gevent
-  based actors from ``pykka.gevent``.
+- Optionally, Python 2.6/2.7 only (eventlet is known to work with PyPy 2.0 as well
+  but Pykka is not tested with it yet):
+
+  - `gevent <http://www.gevent.org/>`_, if you want to use gevent based actors
+    from ``pykka.gevent``.
+  - `eventlet <http://eventlet.net/>`_, if you want to use eventlet based actors
+    from ``pykka.eventlet``.
 
 To install Pykka you can use pip::
 
