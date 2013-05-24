@@ -59,6 +59,13 @@ Gevent support
     :members:
 
 
+Eventlet support
+================
+
+.. automodule:: pykka.eventlet
+    :members:
+
+
 Logging
 =======
 

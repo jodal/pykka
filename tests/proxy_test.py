@@ -4,12 +4,6 @@ from pykka import ActorDeadError
 from pykka.actor import ThreadingActor
 from pykka.proxy import ActorProxy
 
-try:
-    from pykka.gevent import GeventActor
-    HAS_GEVENT = True
-except ImportError:
-    HAS_GEVENT = False
-
 
 class SomeObject(object):
     cat = 'bar.cat'
@@ -95,12 +89,23 @@ class ProxyTest(object):
         self.assertFalse(self.proxy.actor_ref.is_alive())
 
 
-class ThreadingProxyTest(ProxyTest, unittest.TestCase):
-    class AnActor(AnActor, ThreadingActor):
-        pass
-
-
-if HAS_GEVENT:
-    class GeventProxyTest(ProxyTest, unittest.TestCase):
-        class AnActor(AnActor, GeventActor):
+def ConcreteProxyTest(actor_class):
+    class C(ProxyTest, unittest.TestCase):
+        class AnActor(AnActor, actor_class):
             pass
+    C.__name__ = '%sProxyTest' % (actor_class.__name__,)
+    return C
+
+ThreadingActorProxyTest = ConcreteProxyTest(ThreadingActor)
+
+try:
+    from pykka.gevent import GeventActor
+    GeventActorProxyTest = ConcreteProxyTest(GeventActor)
+except ImportError:
+    pass
+
+try:
+    from pykka.eventlet import EventletActor
+    EventletActorProxyTest = ConcreteProxyTest(EventletActor)
+except ImportError:
+    pass

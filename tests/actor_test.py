@@ -6,13 +6,6 @@ import time
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
 
-try:
-    import gevent.event
-    from pykka.gevent import GeventActor
-    HAS_GEVENT = True
-except ImportError:
-    HAS_GEVENT = False
-
 
 class AnActor(object):
     def __init__(self, **events):
@@ -277,27 +270,32 @@ class ActorTest(object):
         self.assertEqual(0, len(ActorRegistry.get_all()))
 
 
-class ThreadingActorTest(ActorTest, unittest.TestCase):
-    event_class = threading.Event
+def ConcreteActorTest(actor_class, event_class):
+    class C(ActorTest, unittest.TestCase):
+        class AnActor(AnActor, actor_class):
+            pass
 
-    class AnActor(AnActor, ThreadingActor):
-        pass
+        class EarlyStoppingActor(EarlyStoppingActor, actor_class):
+            pass
 
-    class EarlyStoppingActor(EarlyStoppingActor, ThreadingActor):
-        pass
+        class EarlyFailingActor(EarlyFailingActor, actor_class):
+            pass
 
-    class EarlyFailingActor(EarlyFailingActor, ThreadingActor):
-        pass
+        class LateFailingActor(LateFailingActor, actor_class):
+            pass
 
-    class LateFailingActor(LateFailingActor, ThreadingActor):
-        pass
+        class FailingOnFailureActor(FailingOnFailureActor, actor_class):
+            pass
 
-    class FailingOnFailureActor(FailingOnFailureActor, ThreadingActor):
-        pass
+        class SuperInitActor(actor_class):
+            pass
 
-    class SuperInitActor(ThreadingActor):
-        pass
+    C.__name__ = '%sTest' % (actor_class.__name__,)
+    C.event_class = event_class
+    return C
 
+
+class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
     class DaemonActor(ThreadingActor):
         use_daemon_thread = True
 
@@ -324,25 +322,16 @@ class ThreadingActorTest(ActorTest, unittest.TestCase):
         self.assertTrue(actor_threads[0].daemon)
         actor_ref.stop()
 
+try:
+    import gevent.event
+    from pykka.gevent import GeventActor
+    GeventActorTest = ConcreteActorTest(GeventActor, gevent.event.Event)
+except ImportError:
+    pass
 
-if HAS_GEVENT:
-    class GeventActorTest(ActorTest, unittest.TestCase):
-        event_class = gevent.event.Event
-
-        class AnActor(AnActor, GeventActor):
-            pass
-
-        class EarlyStoppingActor(EarlyStoppingActor, GeventActor):
-            pass
-
-        class EarlyFailingActor(EarlyFailingActor, GeventActor):
-            pass
-
-        class LateFailingActor(LateFailingActor, GeventActor):
-            pass
-
-        class FailingOnFailureActor(FailingOnFailureActor, GeventActor):
-            pass
-
-        class SuperInitActor(GeventActor):
-            pass
+try:
+    import eventlet
+    from pykka.eventlet import EventletActor, EventletEvent
+    EventletActorTest = ConcreteActorTest(EventletActor, EventletEvent)
+except ImportError:
+    pass
