@@ -47,8 +47,8 @@ Pykka's actor API comes with the following implementations:
   .. note::
 
     If you monkey patch the standard library with ``gevent`` or ``eventlet``
-    you can use ``ThreadingActor`` and ``ThreadingFuture`` - it will transparently
-    use the underlying implementation.
+    you can use ``ThreadingActor`` and ``ThreadingFuture``. It will
+    transparently use the underlying implementation.
 
 - gevent: Each ``GeventActor`` is executed by a gevent greenlet. `gevent
   <http://www.gevent.org/>`_ is a coroutine-based Python networking library
@@ -60,11 +60,11 @@ Pykka's actor API comes with the following implementations:
   1.0.
 
 - eventlet: Each ``EventletActor`` is executed by a eventlet greenlet. Pykka is
-  tested with eventlet 0.12.1
+  tested with eventlet 0.12.1.
 
 Pykka has an extensive test suite, and is tested on CPython 2.6, 2.7, and 3.2+,
-as well as PyPy. gevent and eventlet are currently not available for CPython 3
-or PyPy.
+as well as PyPy. gevent and eventlet are currently not available for CPython
+3.x or PyPy.
 
 
 A basic actor
@@ -318,13 +318,14 @@ Install Pykka's dependencies:
 
 - Python 2.6, 2.7, or 3.2+
 
-- Optionally, Python 2.6/2.7 only (eventlet is known to work with PyPy 2.0 as well
-  but Pykka is not tested with it yet):
+- Optionally, Python 2.6/2.7 only:
 
   - `gevent <http://www.gevent.org/>`_, if you want to use gevent based actors
     from ``pykka.gevent``.
+
   - `eventlet <http://eventlet.net/>`_, if you want to use eventlet based actors
-    from ``pykka.eventlet``.
+    from ``pykka.eventlet``. Eventlet is known to work with PyPy 2.0 as well
+    but Pykka is not tested with it yet.
 
 To install Pykka you can use pip::
 
@@ -353,6 +354,8 @@ Project resources
 - `Source code <https://github.com/jodal/pykka>`_
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
 - `CI server <https://travis-ci.org/jodal/pykka>`_
-- `Download development snapshot <https://github.com/jodal/pykka/tarball/master#egg=pykka-dev>`_
+- `Download development snapshot
+  <https://github.com/jodal/pykka/tarball/master#egg=pykka-dev>`_
 
-.. image:: https://secure.travis-ci.org/jodal/pykka.png?branch=master
+.. image:: https://travis-ci.org/jodal/pykka.png?branch=master
+    :target: https://travis-ci.org/jodal/pykka
