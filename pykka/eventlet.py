@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import sys as _sys
 
@@ -12,11 +12,13 @@ from pykka import Timeout as _Timeout
 from pykka.actor import Actor as _Actor
 from pykka.future import Future as _Future
 
+
 class EventletEvent(_eventlet_event.Event):
     """
     :class:`EventletEvent` adapts :class:`eventlet.event.Event` to
     :class:`threading.Event` interface.
     """
+
     def set(self):
         if self.ready():
             self.reset()

@@ -93,16 +93,19 @@ def ConcreteProxyTest(actor_class):
     class C(ProxyTest, unittest.TestCase):
         class AnActor(AnActor, actor_class):
             pass
-    C.__name__ = '%sProxyTest' % (actor_class.__name__,)
+    C.__name__ = '%sProxyTest' % actor_class.__name__
     return C
 
+
 ThreadingActorProxyTest = ConcreteProxyTest(ThreadingActor)
+
 
 try:
     from pykka.gevent import GeventActor
     GeventActorProxyTest = ConcreteProxyTest(GeventActor)
 except ImportError:
     pass
+
 
 try:
     from pykka.eventlet import EventletActor

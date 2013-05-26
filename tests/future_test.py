@@ -181,9 +181,9 @@ try:
             # gevent prints the first half of the traceback instead of
             # passing it through to the other side of the AsyncResult
             pass
-
 except ImportError:
     pass
+
 
 try:
     from pykka.eventlet import EventletFuture

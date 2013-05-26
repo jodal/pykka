@@ -6,7 +6,6 @@ import unittest
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
 
-
 from tests import TestLogHandler
 from tests.actor_test import (
     EarlyFailingActor, LateFailingActor, FailingOnFailureActor)
@@ -144,6 +143,7 @@ class AnActor(object):
     def raise_exception(self):
         raise Exception('foo')
 
+
 def ConcreteActorLoggingTest(actor_class, event_class):
     class C(ActorLoggingTest, unittest.TestCase):
         class AnActor(AnActor, actor_class):
@@ -159,17 +159,20 @@ def ConcreteActorLoggingTest(actor_class, event_class):
             pass
 
     C.event_class = event_class
-    C.__name__ = '%sLoggingTest' % (actor_class.__name__,)
+    C.__name__ = '%sLoggingTest' % actor_class.__name__
     return C
 
 
-ThreadingActorLoggingTest = ConcreteActorLoggingTest(ThreadingActor, threading.Event)
+ThreadingActorLoggingTest = ConcreteActorLoggingTest(
+    ThreadingActor, threading.Event)
+
 
 try:
     import gevent.event
     from pykka.gevent import GeventActor
 
-    GeventActorLoggingTest = ConcreteActorLoggingTest(GeventActor, gevent.event.Event)
+    GeventActorLoggingTest = ConcreteActorLoggingTest(
+        GeventActor, gevent.event.Event)
 except ImportError:
     pass
 
@@ -177,6 +180,7 @@ except ImportError:
 try:
     from pykka.eventlet import EventletActor, EventletEvent
 
-    EventletActorLoggingTest = ConcreteActorLoggingTest(EventletActor, EventletEvent)
+    EventletActorLoggingTest = ConcreteActorLoggingTest(
+        EventletActor, EventletEvent)
 except ImportError:
     pass

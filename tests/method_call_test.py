@@ -2,6 +2,7 @@ import unittest
 
 from pykka.actor import ThreadingActor
 
+
 class ActorWithMethods(object):
     cat = 'dog'
 
@@ -104,7 +105,8 @@ try:
         class ActorWithMethods(ActorWithMethods, GeventActor):
             pass
 
-    class GeventDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
+    class GeventDynamicMethodCallTest(
+            DynamicMethodCallTest, unittest.TestCase):
         class ActorExtendableAtRuntime(ActorExtendableAtRuntime, GeventActor):
             pass
 except ImportError:
@@ -114,12 +116,15 @@ except ImportError:
 try:
     from pygga.eventlet import EventletActor
 
-    class EventletStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
+    class EventletStaticMethodCallTest(
+            StaticMethodCallTest, unittest.TestCase):
         class ActorWithMethods(ActorWithMethods, EventletActor):
             pass
 
-    class EventletDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
-        class ActorExtendableAtRuntime(ActorExtendableAtRuntime, EventletActor):
+    class EventletDynamicMethodCallTest(
+            DynamicMethodCallTest, unittest.TestCase):
+        class ActorExtendableAtRuntime(
+                ActorExtendableAtRuntime, EventletActor):
             pass
 except ImportError:
     pass

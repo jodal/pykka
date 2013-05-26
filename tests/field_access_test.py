@@ -2,6 +2,7 @@ import unittest
 
 from pykka.actor import ThreadingActor
 
+
 class SomeObject(object):
     pykka_traversable = False
     baz = 'bar.baz'
@@ -50,16 +51,19 @@ def ConcreteFieldAccessTest(actor_class):
     class C(FieldAccessTest, unittest.TestCase):
         class ActorWithFields(ActorWithFields, actor_class):
             pass
-    C.__name__ = '%sFieldAccessTest' % (actor_class.__name__,)
+    C.__name__ = '%sFieldAccessTest' % actor_class.__name__
     return C
 
+
 ThreadingFieldAccessTest = ConcreteFieldAccessTest(ThreadingActor)
+
 
 try:
     from pykka.gevent import GeventActor
     GeventFieldAccessTest = ConcreteFieldAccessTest(GeventActor)
 except ImportError:
     pass
+
 
 try:
     from pykka.eventlet import EventletActor
