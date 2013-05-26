@@ -63,6 +63,11 @@ class EventletFuture(_Future):
         self.event = _eventlet_event.Event()
 
     def get(self, timeout=None):
+        try:
+            return super(EventletFuture, self).get(timeout=timeout)
+        except NotImplementedError:
+            pass
+
         if timeout is not None:
             wait_timeout = _eventlet.Timeout(timeout)
             try:
