@@ -142,9 +142,9 @@ class Actor(object):
 
         Or call you superclass directly::
 
-            pykka.ThreadingActor.__init__()
+            pykka.ThreadingActor.__init__(self)
             # or
-            pykka.gevent.GeventActor.__init__()
+            pykka.gevent.GeventActor.__init__(self)
 
         :meth:`__init__` is called before the actor is started and registered
         in :class:`ActorRegistry <pykka.ActorRegistry>`.

@@ -5,12 +5,6 @@ from pykka import ActorDeadError, Timeout
 from pykka.actor import ThreadingActor
 from pykka.future import ThreadingFuture
 
-try:
-    import gevent
-    from pykka.gevent import GeventActor, GeventFuture
-    HAS_GEVENT = True
-except ImportError:
-    HAS_GEVENT = False
 
 
 class AnActor(object):
@@ -108,18 +102,30 @@ class RefTest(object):
             self.assertEqual('%s not found' % self.ref, str(exception))
 
 
-class ThreadingRefTest(RefTest, unittest.TestCase):
-    future_class = ThreadingFuture
-
-    class AnActor(AnActor, ThreadingActor):
-        def sleep(self, seconds):
-            time.sleep(seconds)
-
-
-if HAS_GEVENT:
-    class GeventRefTest(RefTest, unittest.TestCase):
-        future_class = GeventFuture
-
-        class AnActor(AnActor, GeventActor):
+def ConcreteRefTest(actor_class, future_class, sleep_function):
+    class C(RefTest, unittest.TestCase):
+        class AnActor(AnActor, actor_class):
             def sleep(self, seconds):
-                gevent.sleep(seconds)
+                sleep_function(seconds)
+
+    C.__name__ = '%sRefTest' % (actor_class.__name__,)
+    C.future_class = future_class
+    return C
+
+ThreadingActorRefTest = ConcreteRefTest(ThreadingActor, ThreadingFuture, time.sleep)
+
+try:
+    import gevent
+    from pykka.gevent import GeventActor, GeventFuture
+
+    GeventActorRefTest = ConcreteRefTest(GeventActor, GeventFuture, gevent.sleep)
+except ImportError:
+    pass
+
+try:
+    import eventlet
+    from pykka.eventlet import EventletActor, EventletFuture
+
+    EventletActorRefTest = ConcreteRefTest(EventletActor, EventletFuture, eventlet.sleep)
+except ImportError:
+    pass

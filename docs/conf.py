@@ -38,6 +38,9 @@ MOCK_MODULES = [
     'gevent',
     'gevent.event',
     'gevent.queue',
+    'eventlet',
+    'eventlet.event',
+    'eventlet.queue',
 ]
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = Mock()
