@@ -11,6 +11,10 @@ v1.2.0 (UNRELEASED)
   :meth:`pykka.Future.map`, and :meth:`pykka.Future.reduce` as convenience
   methods using the new ``callback`` argument to :meth:`pykka.Future.set`.
 
+- Add support for running actors based on eventlet greenetls. See
+  :mod:`pykka.eventlet` for details. Thanks to Jakub Stasiak for the
+  implementation.
+
 
 v1.1.0 (2013-01-19)
 ===================
