@@ -159,22 +159,48 @@ to other actors.
 Replying to messages
 --------------------
 
-If a message is sent using ``actor_ref.ask()`` an extra field, ``reply_to`` is
-added to the message dict, containing an unresolved future. To reply to the
-sender of the message, simply ``set()`` the answer on the ``reply_to`` future::
+If a message is sent using ``actor_ref.ask()`` you can reply to the sender of
+the message by simply returning a value from ``on_receive`` method::
 
     import pykka
 
     class Greeter(pykka.ThreadingActor):
         def on_receive(self, message):
-            if 'reply_to' in message:
-                message['reply_to'].set('Hi there!')
+            return 'Hi there!'
 
     actor_ref = Greeter.start()
 
     answer = actor_ref.ask('Hi?')
     print(answer)
     # => 'Hi there!'
+
+.. note::
+
+    None is a valid response so if you return None explicitly or don't return
+    at all a response containing None will be returned to the sender.
+
+    Also, whether the message was sent using ``actor_ref.tell()`` or ``actor_ref.ask()``
+    is not important from the point of view of the actor - when the sender doesn't
+    expect a response the ``on_receive`` return value will be ignored.
+
+
+The situation is similar in regard to exceptions - if the ``actor_ref.ask`` is used
+and you raise an exception from within ``on_receive`` method it will propagate
+to the sender::
+
+    import pykka
+
+    class Raiser(pykka.ThreadingActor):
+        def on_receive(self, message):
+            raise Exception('Oops')
+
+    actor_ref = Raiser.start()
+
+    try:
+        actor_ref.ask('How are you?')
+    except Exception as e:
+        print(repr(e))
+        # => Exception('Oops')
 
 
 Actor proxies

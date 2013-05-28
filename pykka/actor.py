@@ -193,16 +193,18 @@ class Actor(object):
 
         while self._actor_runnable:
             message = self.actor_inbox.get()
+            reply_to = None
             try:
+                reply_to = message.pop('pykka_reply_to', None)
                 response = self._handle_receive(message)
-                if 'reply_to' in message:
-                    message['reply_to'].set(response)
+                if reply_to:
+                    reply_to.set(response)
             except Exception:
-                if 'reply_to' in message:
+                if reply_to:
                     _logger.debug(
                         'Exception returned from %s to caller:' % self,
                         exc_info=_sys.exc_info())
-                    message['reply_to'].set_exception()
+                    reply_to.set_exception()
                 else:
                     self._handle_failure(*_sys.exc_info())
                     try:
@@ -447,7 +449,7 @@ class ActorRef(object):
         :return: :class:`pykka.Future` or response
         """
         future = self.actor_class._create_future()
-        message['reply_to'] = future
+        message['pykka_reply_to'] = future
         self.tell(message)
         if block:
             return future.get(timeout=timeout)
