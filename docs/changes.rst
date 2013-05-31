@@ -5,15 +5,22 @@ Changes
 v1.2.0 (UNRELEASED)
 ===================
 
-- Add ``callback`` argument to :meth:`pykka.Future.set`.
+- Add :meth:`pykka.Future.set_callback`.
 
-- Add :meth:`pykka.Future.filter`, :meth:`pykka.Future.join`,
-  :meth:`pykka.Future.map`, and :meth:`pykka.Future.reduce` as convenience
-  methods using the new ``callback`` argument to :meth:`pykka.Future.set`.
+- Add :meth:`~Pykka.Future.filter`, :meth:`~pykka.Future.join`,
+  :meth:`~pykka.Future.map`, and :meth:`~pykka.Future.reduce` as convenience
+  methods using the new :meth:`~pykka.Future.set_callback` method.
 
 - Add support for running actors based on eventlet greenetls. See
   :mod:`pykka.eventlet` for details. Thanks to Jakub Stasiak for the
   implementation.
+
+- Update documentation to reflect that the ``reply_to`` field on the message is
+  private to Pykka. Actors should reply to messages simply by returning the
+  response from :meth:`~pykka.Actor.on_receive`. The internal field is renamed
+  to ``pykka_reply_to`` a to avoid collisions with other message fields. It is
+  also removed from the message before the message is passed to
+  :meth:`~pykka.Actor.on_receive`. Thanks to Jakub Stasiak.
 
 
 v1.1.0 (2013-01-19)
