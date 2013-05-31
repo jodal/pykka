@@ -4,6 +4,7 @@ import uuid
 import time
 
 from pykka.actor import ThreadingActor
+from pykka.exceptions import ActorDeadError
 from pykka.registry import ActorRegistry
 
 
@@ -41,6 +42,8 @@ class AnActor(object):
             self.stop()
         elif message.get('command') == 'greetings':
             self.greetings_was_received.set()
+        elif message.get('command') == 'callback':
+            message['callback']()
         else:
             super(AnActor, self).on_receive(message)
 
@@ -122,6 +125,24 @@ class ActorTest(object):
 
     def tearDown(self):
         ActorRegistry.stop_all()
+
+    def test_messages_left_in_queue_after_actor_stops_receive_an_error(self):
+        event = self.event_class()
+        self.actor_ref.tell({'command': 'callback', 'callback': event.wait})
+        self.actor_ref.stop(block=False)
+        response = self.actor_ref.ask({'command': 'irrelevant'}, block=False)
+        event.set()
+
+        self.assertRaises(ActorDeadError, response.get, timeout=0.5)
+
+    def test_stop_requests_left_in_queue_after_actor_stops_are_handled(self):
+        event = self.event_class()
+        self.actor_ref.tell({'command': 'callback', 'callback': event.wait})
+        self.actor_ref.stop(block=False)
+        response = self.actor_ref.ask({'command': 'pykka_stop'}, block=False)
+        event.set()
+
+        response.get(timeout=0.5)
 
     def test_actor_has_an_uuid4_based_urn(self):
         self.assertEqual(4, uuid.UUID(self.actor_ref.actor_urn).version)
@@ -329,7 +350,6 @@ try:
     GeventActorTest = ConcreteActorTest(GeventActor, gevent.event.Event)
 except ImportError:
     pass
-
 
 try:
     import eventlet  # noqa

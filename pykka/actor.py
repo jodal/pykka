@@ -163,8 +163,7 @@ class Actor(object):
         """
         Stop the actor.
 
-        The actor will finish processing any messages already in its queue
-        before stopping. It may not be restarted.
+        It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
         self.actor_ref.tell({'command': 'pykka_stop'})
 
@@ -218,6 +217,16 @@ class Actor(object):
                     (repr(exception_value), self))
                 self._stop()
                 _ActorRegistry.stop_all()
+
+        while not self.actor_inbox.empty():
+            msg = self.actor_inbox.get()
+            reply_to = msg.pop('pykka_reply_to', None)
+            if reply_to:
+                if msg.get('command') == 'pykka_stop':
+                    reply_to.set(None)
+                else:
+                    reply_to.set_exception(_ActorDeadError(
+                        '%s stopped before handling the message' % self.actor_ref))
 
     def on_start(self):
         """
@@ -460,13 +469,18 @@ class ActorRef(object):
         """
         Send a message to the actor, asking it to stop.
 
-        The actor will finish processing any messages already in its queue
-        before stopping. It may not be restarted.
+        Messages sent to the actor before the actor is asked to stop will
+        be processed normally before it stops.
+
+        Messages sent to the actor after the actor is asked to stop will
+        be replied to with :exc:`pykka.ActorDeadError` after it stops.
+
+        The actor may not be restarted.
 
         ``block`` and ``timeout`` works as for :meth:`ask`.
 
-        :return: :class:`True` if actor is stopped. :class:`False` if actor was
-            already dead.
+        :return: :class:`True` if actor is stopped or was being stopped at
+            the time of the call. :class:`False` if actor was already dead.
         """
         if self.is_alive():
             self.ask({'command': 'pykka_stop'}, block, timeout)
