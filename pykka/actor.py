@@ -226,7 +226,8 @@ class Actor(object):
                     reply_to.set(None)
                 else:
                     reply_to.set_exception(_ActorDeadError(
-                        '%s stopped before handling the message' % self.actor_ref))
+                        '%s stopped before handling the message' %
+                        self.actor_ref))
 
     def on_start(self):
         """

@@ -4,6 +4,7 @@ import unittest
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry
 
+
 class ActorRegistryTest(object):
     def setUp(self):
         self.ref = self.AnActor.start()

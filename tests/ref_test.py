@@ -6,7 +6,6 @@ from pykka.actor import ThreadingActor
 from pykka.future import ThreadingFuture
 
 
-
 class AnActor(object):
     def __init__(self, received_message):
         super(AnActor, self).__init__()
@@ -112,13 +111,15 @@ def ConcreteRefTest(actor_class, future_class, sleep_function):
     C.future_class = future_class
     return C
 
-ThreadingActorRefTest = ConcreteRefTest(ThreadingActor, ThreadingFuture, time.sleep)
+ThreadingActorRefTest = ConcreteRefTest(
+    ThreadingActor, ThreadingFuture, time.sleep)
 
 try:
     import gevent
     from pykka.gevent import GeventActor, GeventFuture
 
-    GeventActorRefTest = ConcreteRefTest(GeventActor, GeventFuture, gevent.sleep)
+    GeventActorRefTest = ConcreteRefTest(
+        GeventActor, GeventFuture, gevent.sleep)
 except ImportError:
     pass
 
@@ -126,6 +127,7 @@ try:
     import eventlet
     from pykka.eventlet import EventletActor, EventletFuture
 
-    EventletActorRefTest = ConcreteRefTest(EventletActor, EventletFuture, eventlet.sleep)
+    EventletActorRefTest = ConcreteRefTest(
+        EventletActor, EventletFuture, eventlet.sleep)
 except ImportError:
     pass
