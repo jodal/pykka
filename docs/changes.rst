@@ -22,6 +22,26 @@ v1.2.0 (UNRELEASED)
   also removed from the message before the message is passed to
   :meth:`~pykka.Actor.on_receive`. Thanks to Jakub Stasiak.
 
+- When messages are left in the actor inbox after the actor is stopped, those
+  messages that are expecting a reply is now rejected by replying with an
+  :exc:`~pykka.ActorDeadError` exception.  This causes other actors blocking on
+  the returned :class:`~pykka.Future` without a timeout to raise the exception
+  instead of waiting forever. Thanks to Jakub Stasiak.
+
+  This makes the behavior of messaging an actor around the time it is stopped
+  more consistent:
+
+  - Messaging an already dead actor immediately raises
+    :exc:`~pykka.ActorDeadError`.
+
+  - Messaging an alive actor that is stopped before it processes the message
+    will cause the reply future to raise :exc:`~pykka.ActorDeadError`.
+
+  Similarly, if you ask an actor to stop multiple times, and block on the
+  responses, all the messages will now get an reply. Previously only the first
+  message got a reply, potentially making the application wait forever on
+  replies to the subsequent stop messages.
+
 
 v1.1.0 (2013-01-19)
 ===================
