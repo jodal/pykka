@@ -44,11 +44,10 @@ Pykka's actor API comes with the following implementations:
   no dependencies outside Python itself. ``ThreadingActor`` plays well
   together with non-actor threads.
 
-  .. note::
-
-    If you monkey patch the standard library with ``gevent`` or ``eventlet``
-    you can use ``ThreadingActor`` and ``ThreadingFuture``. It will
-    transparently use the underlying implementation.
+  Note: If you monkey patch the standard library with ``gevent`` or
+  ``eventlet`` you can still use ``ThreadingActor`` and ``ThreadingFuture``.
+  Python's threads will transparently use the underlying implementation
+  provided by gevent or Eventlet.
 
 - gevent: Each ``GeventActor`` is executed by a gevent greenlet. `gevent
   <http://www.gevent.org/>`_ is a coroutine-based Python networking library
@@ -59,8 +58,8 @@ Pykka's actor API comes with the following implementations:
   candidate, this is no longer an issue. Pykka works with both gevent 0.13 and
   1.0.
 
-- eventlet: Each ``EventletActor`` is executed by a eventlet greenlet. Pykka is
-  tested with eventlet 0.12.1.
+- Eventlet: Each ``EventletActor`` is executed by a Eventlet greenlet. Pykka is
+  tested with Eventlet 0.12.1.
 
 Pykka has an extensive test suite, and is tested on CPython 2.6, 2.7, and 3.2+,
 as well as PyPy. gevent and eventlet are currently not available for CPython
@@ -174,19 +173,16 @@ the message by simply returning a value from ``on_receive`` method::
     print(answer)
     # => 'Hi there!'
 
-.. note::
+``None`` is a valid response so if you return ``None`` explicitly, or don't
+return at all, a response containing ``None`` will be returned to the sender.
 
-    None is a valid response so if you return None explicitly or don't return
-    at all a response containing None will be returned to the sender.
+From the point of view of the actor it doesn't matter whether the message was
+sent using ``actor_ref.tell()`` or ``actor_ref.ask()`` . When the sender
+doesn't expect a response the ``on_receive`` return value will be ignored.
 
-    Also, whether the message was sent using ``actor_ref.tell()`` or ``actor_ref.ask()``
-    is not important from the point of view of the actor - when the sender doesn't
-    expect a response the ``on_receive`` return value will be ignored.
-
-
-The situation is similar in regard to exceptions - if the ``actor_ref.ask`` is used
-and you raise an exception from within ``on_receive`` method it will propagate
-to the sender::
+The situation is similar in regard to exceptions: when ``actor_ref.ask()`` is
+used and you raise an exception from within ``on_receive`` method it will
+propagate to the sender::
 
     import pykka
 
