@@ -36,8 +36,10 @@ class ActorLoggingTest(object):
 
     def test_unexpected_messages_are_logged(self):
         self.actor_ref.ask({'unhandled': 'message'})
-        self.assertEqual(1, len(self.log_handler.messages['warning']))
-        log_record = self.log_handler.messages['warning'][0]
+        self.log_handler.wait_for_message()
+        with self.log_handler.lock:
+            self.assertEqual(1, len(self.log_handler.messages['warning']))
+            log_record = self.log_handler.messages['warning'][0]
         self.assertEqual(
             'Unexpected message received by %s' % self.actor_ref,
             log_record.getMessage().split(': ')[0])
@@ -48,8 +50,10 @@ class ActorLoggingTest(object):
             self.fail('Should raise exception')
         except Exception:
             pass
-        self.assertEqual(1, len(self.log_handler.messages['debug']))
-        log_record = self.log_handler.messages['debug'][0]
+        self.log_handler.wait_for_message()
+        with self.log_handler.lock:
+            self.assertEqual(1, len(self.log_handler.messages['debug']))
+            log_record = self.log_handler.messages['debug'][0]
         self.assertEqual(
             'Exception returned from %s to caller:' % self.actor_ref,
             log_record.getMessage())
@@ -61,8 +65,10 @@ class ActorLoggingTest(object):
         self.actor_ref.tell({'command': 'raise exception'})
         self.on_failure_was_called.wait(5)
         self.assertTrue(self.on_failure_was_called.is_set())
-        self.assertEqual(1, len(self.log_handler.messages['error']))
-        log_record = self.log_handler.messages['error'][0]
+        self.log_handler.wait_for_message()
+        with self.log_handler.lock:
+            self.assertEqual(1, len(self.log_handler.messages['error']))
+            log_record = self.log_handler.messages['error'][0]
         self.assertEqual(
             'Unhandled exception in %s:' % self.actor_ref,
             log_record.getMessage())
@@ -75,8 +81,10 @@ class ActorLoggingTest(object):
         self.actor_ref.tell({'command': 'raise base exception'})
         self.on_stop_was_called.wait(5)
         self.assertTrue(self.on_stop_was_called.is_set())
-        self.assertEqual(3, len(self.log_handler.messages['debug']))
-        log_record = self.log_handler.messages['debug'][0]
+        self.log_handler.wait_for_message()
+        with self.log_handler.lock:
+            self.assertEqual(3, len(self.log_handler.messages['debug']))
+            log_record = self.log_handler.messages['debug'][0]
         self.assertEqual(
             'BaseException() in %s. Stopping all actors.' % self.actor_ref,
             log_record.getMessage())
@@ -87,8 +95,9 @@ class ActorLoggingTest(object):
         actor_ref = self.EarlyFailingActor.start(start_event)
         start_event.wait(5)
         self.log_handler.wait_for_message()
-        self.assertEqual(1, len(self.log_handler.messages['error']))
-        log_record = self.log_handler.messages['error'][0]
+        with self.log_handler.lock:
+            self.assertEqual(1, len(self.log_handler.messages['error']))
+            log_record = self.log_handler.messages['error'][0]
         self.assertEqual(
             'Unhandled exception in %s:' % actor_ref,
             log_record.getMessage())
@@ -99,8 +108,9 @@ class ActorLoggingTest(object):
         actor_ref = self.LateFailingActor.start(stop_event)
         stop_event.wait(5)
         self.log_handler.wait_for_message()
-        self.assertEqual(1, len(self.log_handler.messages['error']))
-        log_record = self.log_handler.messages['error'][0]
+        with self.log_handler.lock:
+            self.assertEqual(1, len(self.log_handler.messages['error']))
+            log_record = self.log_handler.messages['error'][0]
         self.assertEqual(
             'Unhandled exception in %s:' % actor_ref,
             log_record.getMessage())
@@ -112,8 +122,9 @@ class ActorLoggingTest(object):
         actor_ref.tell({'command': 'raise exception'})
         failure_event.wait(5)
         self.log_handler.wait_for_message()
-        self.assertEqual(2, len(self.log_handler.messages['error']))
-        log_record = self.log_handler.messages['error'][0]
+        with self.log_handler.lock:
+            self.assertEqual(2, len(self.log_handler.messages['error']))
+            log_record = self.log_handler.messages['error'][0]
         self.assertEqual(
             'Unhandled exception in %s:' % actor_ref,
             log_record.getMessage())
