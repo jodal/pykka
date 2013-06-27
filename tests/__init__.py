@@ -31,4 +31,4 @@ class TestLogHandler(logging.Handler):
     def wait_for_message(self):
         """Wait until at least one log message has been emitted."""
         time.sleep(0.001)  # Yield to other threads
-        self.event.wait(0.1)
+        self.event.wait(5)
