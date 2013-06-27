@@ -50,6 +50,8 @@ def log_thread_tracebacks(*args, **kwargs):
 
     For a complete example of how to use this, see
     ``examples/deadlock_debugging.py`` in Pykka's source code.
+
+    .. versionadded:: 1.1
     """
 
     thread_names = dict((t.ident, t.name) for t in _threading.enumerate())
