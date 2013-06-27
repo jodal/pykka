@@ -1,6 +1,5 @@
 import logging
 import threading
-import time
 import unittest
 
 from pykka.actor import ThreadingActor
@@ -87,7 +86,7 @@ class ActorLoggingTest(object):
         start_event = self.event_class()
         actor_ref = self.EarlyFailingActor.start(start_event)
         start_event.wait(5)
-        time.sleep(0.01)  # Too ensure that the log handler is updated
+        self.log_handler.wait_for_message()
         self.assertEqual(1, len(self.log_handler.messages['error']))
         log_record = self.log_handler.messages['error'][0]
         self.assertEqual(
@@ -99,7 +98,7 @@ class ActorLoggingTest(object):
         stop_event = self.event_class()
         actor_ref = self.LateFailingActor.start(stop_event)
         stop_event.wait(5)
-        time.sleep(0.01)  # Too ensure that the log handler is updated
+        self.log_handler.wait_for_message()
         self.assertEqual(1, len(self.log_handler.messages['error']))
         log_record = self.log_handler.messages['error'][0]
         self.assertEqual(
@@ -112,7 +111,7 @@ class ActorLoggingTest(object):
         actor_ref = self.FailingOnFailureActor.start(failure_event)
         actor_ref.tell({'command': 'raise exception'})
         failure_event.wait(5)
-        time.sleep(0.01)  # Too ensure that the log handler is updated
+        self.log_handler.wait_for_message()
         self.assertEqual(2, len(self.log_handler.messages['error']))
         log_record = self.log_handler.messages['error'][0]
         self.assertEqual(
