@@ -2,11 +2,9 @@ from __future__ import absolute_import, unicode_literals
 
 import sys as _sys
 
-# pylint: disable = E0611
 import eventlet as _eventlet
 import eventlet.event as _eventlet_event
 import eventlet.queue as _eventlet_queue
-# pylint: enable = E0611
 
 from pykka import Timeout as _Timeout
 from pykka.actor import Actor as _Actor
