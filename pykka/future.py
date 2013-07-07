@@ -41,7 +41,7 @@ class Future(object):
 
     def __init__(self):
         super(Future, self).__init__()
-        self._callback = None
+        self._get_hook = None
 
     def get(self, timeout=None):
         """
@@ -65,8 +65,8 @@ class Future(object):
         :raise: encapsulated value if it is an exception
         :return: encapsulated value if it is not an exception
         """
-        if self._callback is not None:
-            return self._callback(timeout)
+        if self._get_hook is not None:
+            return self._get_hook(timeout)
         raise NotImplementedError
 
     def set(self, value=None):
@@ -77,21 +77,6 @@ class Future(object):
         :type value: any picklable object or :class:`None`
         """
         raise NotImplementedError
-
-    def set_callback(self, callback):
-        """
-        Set a callback to be executed when :meth:`get` is called.
-
-        The callback will be called when :meth:`get` is called, with the
-        ``timeout`` value as the only argument. The callback's return value
-        will be returned from :meth:`get`.
-
-        .. versionadded:: 1.2
-
-        :param callback: called to produce return value of :meth:`get`
-        :type callback: function accepting a timeout value
-        """
-        self._callback = callback
 
     def set_exception(self, exc_info=None):
         """
@@ -114,6 +99,21 @@ class Future(object):
         :type exc_info: three-tuple of (exc_class, exc_instance, traceback)
         """
         raise NotImplementedError
+
+    def set_get_hook(self, func):
+        """
+        Set a function to be executed when :meth:`get` is called.
+
+        The function will be called when :meth:`get` is called, with the
+        ``timeout`` value as the only argument. The function's return value
+        will be returned from :meth:`get`.
+
+        .. versionadded:: 1.2
+
+        :param callback: called to produce return value of :meth:`get`
+        :type callback: function accepting a timeout value
+        """
+        self._get_hook = func
 
     def filter(self, func):
         """
@@ -141,7 +141,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_callback(lambda timeout: list(filter(
+        future.set_get_hook(lambda timeout: list(filter(
             func, self.get(timeout))))
         return future
 
@@ -168,7 +168,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_callback(lambda timeout: [
+        future.set_get_hook(lambda timeout: [
             f.get(timeout) for f in [self] + list(futures)])
         return future
 
@@ -199,7 +199,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_callback(lambda timeout: _map(func, self.get(timeout)))
+        future.set_get_hook(lambda timeout: _map(func, self.get(timeout)))
         return future
 
     def reduce(self, func, *args):
@@ -253,7 +253,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_callback(lambda timeout: _functools.reduce(
+        future.set_get_hook(lambda timeout: _functools.reduce(
             func, self.get(timeout), *args))
         return future
 

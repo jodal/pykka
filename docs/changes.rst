@@ -5,7 +5,7 @@ Changes
 v1.2.0 (UNRELEASED)
 ===================
 
-- Add :meth:`pykka.Future.set_callback`.
+- Add :meth:`pykka.Future.set_get_hook(func)`.
 
 - Add :meth:`~Pykka.Future.filter`, :meth:`~pykka.Future.join`,
   :meth:`~pykka.Future.map`, and :meth:`~pykka.Future.reduce` as convenience
