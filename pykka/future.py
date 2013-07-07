@@ -110,8 +110,8 @@ class Future(object):
 
         .. versionadded:: 1.2
 
-        :param callback: called to produce return value of :meth:`get`
-        :type callback: function accepting a timeout value
+        :param func: called to produce return value of :meth:`get`
+        :type func: function accepting a timeout value
         """
         self._get_hook = func
 
