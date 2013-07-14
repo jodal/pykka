@@ -100,6 +100,15 @@ class RefTest(object):
         except ActorDeadError as exception:
             self.assertEqual('%s not found' % self.ref, str(exception))
 
+    def test_ask_nonblocking_fails_future_if_actor_is_stopped(self):
+        self.ref.stop()
+        future = self.ref.ask({'command': 'ping'}, block=False)
+        try:
+            future.get()
+            self.fail('Should raise ActorDeadError')
+        except ActorDeadError as exception:
+            self.assertEqual('%s not found' % self.ref, str(exception))
+
 
 def ConcreteRefTest(actor_class, future_class, sleep_function):
     class C(RefTest, unittest.TestCase):

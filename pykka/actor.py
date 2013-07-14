@@ -454,13 +454,16 @@ class ActorRef(object):
         :param timeout: seconds to wait before timeout if blocking
         :type timeout: float or :class:`None`
 
-        :raise: :exc:`pykka.Timeout` if timeout is reached
-        :raise: :exc:`pykka.ActorDeadError` if actor is not available
-        :return: :class:`pykka.Future` or response
+        :raise: :exc:`pykka.Timeout` if timeout is reached if blocking
+        :raise: any exception returned by the receiving actor if blocking
+        :return: :class:`pykka.Future`, or response if blocking
         """
         future = self.actor_class._create_future()
         message['pykka_reply_to'] = future
-        self.tell(message)
+        try:
+            self.tell(message)
+        except _ActorDeadError:
+            future.set_exception()
         if block:
             return future.get(timeout=timeout)
         else:
