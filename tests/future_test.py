@@ -24,6 +24,10 @@ class FutureTest(object):
     def setUp(self):
         self.results = [self.future_class() for _ in range(3)]
 
+    def test_set_multiple_times_fails(self):
+        self.results[0].set(0)
+        self.assertRaises(Exception, self.results[0].set, 0)
+
     def test_get_all_blocks_until_all_futures_are_available(self):
         self.results[0].set(0)
         self.results[1].set(1)

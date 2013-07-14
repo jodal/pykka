@@ -42,6 +42,7 @@ class GeventFuture(_Future):
             raise _Timeout(e)
 
     def set(self, value=None):
+        assert not self.async_result.ready(), 'value has already been set'
         self.async_result.set(value)
 
     def set_exception(self, exc_info=None):

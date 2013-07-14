@@ -75,6 +75,7 @@ class Future(object):
 
         :param value: the encapsulated value or nothing
         :type value: any picklable object or :class:`None`
+        :raise: an exception if set is called multiple times
         """
         raise NotImplementedError
 
@@ -278,7 +279,7 @@ class ThreadingFuture(Future):
 
     def __init__(self):
         super(ThreadingFuture, self).__init__()
-        self._queue = _queue.Queue()
+        self._queue = _queue.Queue(maxsize=1)
         self._data = None
 
     def get(self, timeout=None):
@@ -302,7 +303,7 @@ class ThreadingFuture(Future):
             raise _Timeout('%s seconds' % timeout)
 
     def set(self, value=None):
-        self._queue.put({'value': value})
+        self._queue.put({'value': value}, block=False)
 
     def set_exception(self, exc_info=None):
         if isinstance(exc_info, BaseException):

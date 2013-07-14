@@ -5,6 +5,10 @@ Changes
 v1.2.0 (UNRELEASED)
 ===================
 
+- Enforce that multiple calls to :meth:`pykka.Future.set` raises an exception.
+  This was already the case for some implementations. The exception raises is
+  not specified.
+
 - Add :meth:`pykka.Future.set_get_hook(func)`.
 
 - Add :meth:`~Pykka.Future.filter`, :meth:`~pykka.Future.join`,
