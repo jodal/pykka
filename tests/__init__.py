@@ -1,3 +1,4 @@
+import collections
 import logging
 import threading
 import time
@@ -5,30 +6,27 @@ import time
 
 class TestLogHandler(logging.Handler):
     def __init__(self, *args, **kwargs):
-        self.event = threading.Event()
         self.lock = threading.RLock()
         with self.lock:
+            self.events = collections.defaultdict(threading.Event)
             self.messages = {}
             self.reset()
         logging.Handler.__init__(self, *args, **kwargs)
 
     def emit(self, record):
         with self.lock:
-            self.messages[record.levelname.lower()].append(record)
-            self.event.set()
+            level = record.levelname.lower()
+            self.messages[level].append(record)
+            self.events[level].set()
 
     def reset(self):
         with self.lock:
-            self.messages = {
-                'debug': [],
-                'info': [],
-                'warning': [],
-                'error': [],
-                'critical': [],
-            }
-            self.event.clear()
+            for level in ('debug', 'info', 'warning', 'error', 'critical'):
+                self.events[level].clear()
+                self.messages[level] = []
 
-    def wait_for_message(self):
-        """Wait until at least one log message has been emitted."""
+    def wait_for_message(self, level):
+        """Wait until at least one log message has been emitted to the given
+        log level."""
         time.sleep(0.001)  # Yield to other threads
-        self.event.wait(5)
+        self.events[level].wait(5)
