@@ -473,6 +473,10 @@ class ActorRef(object):
         """
         Send a message to the actor, asking it to stop.
 
+        Returns :class:`True` if actor is stopped or was being stopped at the
+        time of the call. :class:`False` if actor was already dead. If
+        ``block`` is :class:`False`, it returns a future wrapping the result.
+
         Messages sent to the actor before the actor is asked to stop will
         be processed normally before it stops.
 
@@ -483,14 +487,24 @@ class ActorRef(object):
 
         ``block`` and ``timeout`` works as for :meth:`ask`.
 
-        :return: :class:`True` if actor is stopped or was being stopped at
-            the time of the call. :class:`False` if actor was already dead.
+        :return: :class:`pykka.Future`, or a boolean result if blocking
         """
-        if self.is_alive():
-            self.ask({'command': 'pykka_stop'}, block, timeout)
-            return True
+        ask_future = self.ask({'command': 'pykka_stop'}, block=False)
+
+        def _stop_result_converter(timeout):
+            try:
+                ask_future.get(timeout=timeout)
+                return True
+            except _ActorDeadError:
+                return False
+
+        converted_future = ask_future.__class__()
+        converted_future.set_get_hook(_stop_result_converter)
+
+        if block:
+            return converted_future.get(timeout=timeout)
         else:
-            return False
+            return converted_future
 
     def proxy(self):
         """

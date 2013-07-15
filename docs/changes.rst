@@ -55,6 +55,12 @@ v1.2.0 (UNRELEASED)
   is called synchronously (e.g. ``block`` set to :class:`True`), the behavior
   is unchanged.
 
+- A change to :meth:`~pykka.ActorRef.stop` reduces the likelyhood of a race
+  condition when asking an actor to stop multiple times by not checking if the
+  actor is dead before asking it to stop, but instead just go ahead and leave
+  it to :meth:`~pykka.ActorRef.tell` to do the alive-or-dead check a single
+  time, and as late as possible.
+
 
 v1.1.0 (2013-01-19)
 ===================
