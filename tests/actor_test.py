@@ -216,10 +216,10 @@ class ActorTest(object):
     def test_on_start_failure_causes_actor_to_stop(self):
         # Actor should not be alive if on_start fails.
         start_event = self.event_class()
-        actor = self.EarlyFailingActor.start(start_event)
+        actor_ref = self.EarlyFailingActor.start(start_event)
         start_event.wait(5)
-        time.sleep(0.01)
-        self.assertFalse(actor.is_alive())
+        actor_ref.actor_stopped.wait(5)
+        self.assertFalse(actor_ref.is_alive())
 
     def test_on_stop_is_called_when_actor_is_stopped(self):
         self.assertFalse(self.on_stop_was_called.is_set())
