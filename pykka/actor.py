@@ -389,11 +389,15 @@ class ActorRef(object):
     #: See :attr:`Actor.actor_inbox`.
     actor_inbox = None
 
+    #: See :attr:`Actor.actor_running`.
+    actor_running = None
+
     def __init__(self, actor):
         self._actor = actor
         self.actor_class = actor.__class__
         self.actor_urn = actor.actor_urn
         self.actor_inbox = actor.actor_inbox
+        self.actor_running = actor.actor_running
 
     def __repr__(self):
         return '<ActorRef for %s>' % str(self)
@@ -408,14 +412,14 @@ class ActorRef(object):
         """
         Check if actor is alive.
 
-        This is based on whether the actor is registered in the actor registry
-        or not. The actor is not guaranteed to be alive and responding even
-        though :meth:`is_alive` returns :class:`True`.
+        This is based on the actor's running flag. The actor is not guaranteed
+        to be alive and responding even though :meth:`is_alive` returns
+        :class:`True`.
 
         :return:
             Returns :class:`True` if actor is alive, :class:`False` otherwise.
         """
-        return _ActorRegistry.get_by_urn(self.actor_urn) is not None
+        return self.actor_running.is_set()
 
     def tell(self, message):
         """

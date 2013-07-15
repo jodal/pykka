@@ -61,6 +61,9 @@ v1.2.0 (UNRELEASED)
   it to :meth:`~pykka.ActorRef.tell` to do the alive-or-dead check a single
   time, and as late as possible.
 
+- Change :meth:`~pykka.ActorRef.is_alive` to check the actor's runnable flag
+  instead of checking if the actor is registrered in the actor registry. 
+
 
 v1.1.0 (2013-01-19)
 ===================
