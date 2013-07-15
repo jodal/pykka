@@ -1,7 +1,6 @@
 import collections
 import logging
 import threading
-import time
 
 
 class TestLogHandler(logging.Handler):
@@ -25,8 +24,12 @@ class TestLogHandler(logging.Handler):
                 self.events[level].clear()
                 self.messages[level] = []
 
-    def wait_for_message(self, level):
-        """Wait until at least one log message has been emitted to the given
-        log level."""
-        time.sleep(0.001)  # Yield to other threads
-        self.events[level].wait(5)
+    def wait_for_message(self, level, num_messages=1):
+        """Wait until at least ``num_messages`` log messages have been emitted
+        to the given log level."""
+        while True:
+            with self.lock:
+                if len(self.messages[level]) >= num_messages:
+                    return
+                self.events[level].clear()
+            self.events[level].wait(5)

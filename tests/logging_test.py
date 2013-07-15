@@ -81,7 +81,7 @@ class ActorLoggingTest(object):
         self.actor_ref.tell({'command': 'raise base exception'})
         self.on_stop_was_called.wait(5)
         self.assertTrue(self.on_stop_was_called.is_set())
-        self.log_handler.wait_for_message('debug')
+        self.log_handler.wait_for_message('debug', num_messages=3)
         with self.log_handler.lock:
             self.assertEqual(3, len(self.log_handler.messages['debug']))
             log_record = self.log_handler.messages['debug'][0]
@@ -121,7 +121,7 @@ class ActorLoggingTest(object):
         actor_ref = self.FailingOnFailureActor.start(failure_event)
         actor_ref.tell({'command': 'raise exception'})
         failure_event.wait(5)
-        self.log_handler.wait_for_message('error')
+        self.log_handler.wait_for_message('error', num_messages=2)
         with self.log_handler.lock:
             self.assertEqual(2, len(self.log_handler.messages['error']))
             log_record = self.log_handler.messages['error'][0]
