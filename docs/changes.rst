@@ -2,7 +2,7 @@
 Changes
 =======
 
-v1.2.0 (UNRELEASED)
+v1.2.0 (2013-07-15)
 ===================
 
 - Enforce that multiple calls to :meth:`pykka.Future.set` raises an exception.
@@ -62,7 +62,7 @@ v1.2.0 (UNRELEASED)
   time, and as late as possible.
 
 - Change :meth:`~pykka.ActorRef.is_alive` to check the actor's runnable flag
-  instead of checking if the actor is registrered in the actor registry. 
+  instead of checking if the actor is registrered in the actor registry.
 
 
 v1.1.0 (2013-01-19)
