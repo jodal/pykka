@@ -50,10 +50,10 @@ v1.2.0 (UNRELEASED)
   actor (e.g. ``block`` set to :class:`False`), it will no longer immediately
   raise :exc:`~pykka.ActorDeadError`. Instead, it will return a future and
   fail the future with the :exc:`~pykka.ActorDeadError` exception. This makes
-  the interace more consistent, as you'll have one instead of two ways the call
-  can raise exceptions under normal conditions. If :meth:`~pykka.ActorRef.ask`
-  is called synchronously (e.g. ``block`` set to :class:`True`), the behavior
-  is unchanged.
+  the interface more consistent, as you'll have one instead of two ways the
+  call can raise exceptions under normal conditions. If
+  :meth:`~pykka.ActorRef.ask` is called synchronously (e.g. ``block`` set to
+  :class:`True`), the behavior is unchanged.
 
 - A change to :meth:`~pykka.ActorRef.stop` reduces the likelyhood of a race
   condition when asking an actor to stop multiple times by not checking if the
