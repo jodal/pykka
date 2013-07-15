@@ -96,7 +96,6 @@ class Actor(object):
             'Did you forget to call super() in your override?')
         _ActorRegistry.register(obj.actor_ref)
         _logger.debug('Starting %s', obj)
-        obj.actor_running.set()
         obj._start_actor_loop()
         return obj.actor_ref
 
@@ -129,7 +128,7 @@ class Actor(object):
 
     #: A :class:`threading.Event` representing whether or not the actor should
     #: continue processing messages. Use :meth:`stop` to change it.
-    actor_running = None
+    actor_stopped = None
 
     def __init__(self, *args, **kwargs):
         """
@@ -152,7 +151,7 @@ class Actor(object):
         """
         self.actor_urn = _uuid.uuid4().urn
         self.actor_inbox = self._create_actor_inbox()
-        self.actor_running = _threading.Event()
+        self.actor_stopped = _threading.Event()
 
         self.actor_ref = ActorRef(self)
 
@@ -175,7 +174,7 @@ class Actor(object):
         Stops the actor immediately without processing the rest of the inbox.
         """
         _ActorRegistry.unregister(self.actor_ref)
-        self.actor_running.clear()
+        self.actor_stopped.set()
         _logger.debug('Stopped %s', self)
         try:
             self.on_stop()
@@ -193,7 +192,7 @@ class Actor(object):
         except Exception:
             self._handle_failure(*_sys.exc_info())
 
-        while self.actor_running.is_set():
+        while not self.actor_stopped.is_set():
             message = self.actor_inbox.get()
             reply_to = None
             try:
@@ -268,7 +267,7 @@ class Actor(object):
             'Unhandled exception in %s:' % self,
             exc_info=(exception_type, exception_value, traceback))
         _ActorRegistry.unregister(self.actor_ref)
-        self.actor_running.clear()
+        self.actor_stopped.set()
 
     def on_failure(self, exception_type, exception_value, traceback):
         """
@@ -389,15 +388,15 @@ class ActorRef(object):
     #: See :attr:`Actor.actor_inbox`.
     actor_inbox = None
 
-    #: See :attr:`Actor.actor_running`.
-    actor_running = None
+    #: See :attr:`Actor.actor_stopped`.
+    actor_stopped = None
 
     def __init__(self, actor):
         self._actor = actor
         self.actor_class = actor.__class__
         self.actor_urn = actor.actor_urn
         self.actor_inbox = actor.actor_inbox
-        self.actor_running = actor.actor_running
+        self.actor_stopped = actor.actor_stopped
 
     def __repr__(self):
         return '<ActorRef for %s>' % str(self)
@@ -412,14 +411,14 @@ class ActorRef(object):
         """
         Check if actor is alive.
 
-        This is based on the actor's running flag. The actor is not guaranteed
+        This is based on the actor's stopped flag. The actor is not guaranteed
         to be alive and responding even though :meth:`is_alive` returns
         :class:`True`.
 
         :return:
             Returns :class:`True` if actor is alive, :class:`False` otherwise.
         """
-        return self.actor_running.is_set()
+        return not self.actor_stopped.is_set()
 
     def tell(self, message):
         """
