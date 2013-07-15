@@ -9,11 +9,11 @@ v1.2.0 (UNRELEASED)
   This was already the case for some implementations. The exception raises is
   not specified.
 
-- Add :meth:`pykka.Future.set_get_hook(func)`.
+- Add :meth:`pykka.Future.set_get_hook`.
 
 - Add :meth:`~Pykka.Future.filter`, :meth:`~pykka.Future.join`,
   :meth:`~pykka.Future.map`, and :meth:`~pykka.Future.reduce` as convenience
-  methods using the new :meth:`~pykka.Future.set_callback` method.
+  methods using the new :meth:`~pykka.Future.set_get_hook` method.
 
 - Add support for running actors based on eventlet greenlets. See
   :mod:`pykka.eventlet` for details. Thanks to Jakub Stasiak for the
