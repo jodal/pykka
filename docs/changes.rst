@@ -6,7 +6,7 @@ v1.2.0 (2013-07-15)
 ===================
 
 - Enforce that multiple calls to :meth:`pykka.Future.set` raises an exception.
-  This was already the case for some implementations. The exception raises is
+  This was already the case for some implementations. The exception raised is
   not specified.
 
 - Add :meth:`pykka.Future.set_get_hook`.
