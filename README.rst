@@ -377,7 +377,7 @@ Project resources
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
 - `CI server <https://travis-ci.org/jodal/pykka>`_
 - `Download development snapshot
-  <https://github.com/jodal/pykka/tarball/master#egg=pykka-dev>`_
+  <https://github.com/jodal/pykka/tarball/develop#egg=pykka-dev>`_
 
 .. image:: https://travis-ci.org/jodal/pykka.png?branch=master
     :target: https://travis-ci.org/jodal/pykka
