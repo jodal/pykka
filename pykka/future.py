@@ -247,7 +247,7 @@ class Future(object):
 
             >>> f = pykka.ThreadingFuture()
             >>> g = f.reduce(lambda x, y: x + y, 5)
-            >>> f.set([], 5)
+            >>> f.set([])
             >>> g.get()
             5
 
