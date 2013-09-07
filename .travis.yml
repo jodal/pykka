@@ -8,8 +8,9 @@ env:
   - TOX_ENV=pypy
 
 install:
-  - "sudo apt-get install -qq libev-dev"
-  - "pip install tox"
+  - "sudo apt-get install libev-dev"
+  - "pip install flake8 tox"
 
 script:
+  - "flake8 $(find . -iname '*.py')"
   - "tox -e $TOX_ENV"
