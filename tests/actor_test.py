@@ -1,7 +1,6 @@
 import threading
 import unittest
 import uuid
-import time
 
 from pykka.actor import ThreadingActor
 from pykka.exceptions import ActorDeadError
