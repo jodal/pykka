@@ -169,7 +169,7 @@ the message by simply returning a value from ``on_receive`` method::
 
     actor_ref = Greeter.start()
 
-    answer = actor_ref.ask('Hi?')
+    answer = actor_ref.ask({'msg': 'Hi?'})
     print(answer)
     # => 'Hi there!'
 
