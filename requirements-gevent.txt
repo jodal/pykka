@@ -1,2 +1,2 @@
 cython
-https://github.com/surfly/gevent/archive/1.0rc2.tar.gz
+https://github.com/surfly/gevent/archive/1.0rc3.tar.gz
