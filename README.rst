@@ -98,7 +98,7 @@ method::
         def on_receive(self, message):
             print(self.greeting)
 
-    actor_ref = Greeter.start(greeting='Hi you!')
+    actor_ref = Greeter.start(greeting={'message':'Hi you!'})
 
 It can be useful to know that the init method is run in the execution context
 that starts the actor. There are also hooks for running code in the actor's own
@@ -169,7 +169,7 @@ the message by simply returning a value from ``on_receive`` method::
 
     actor_ref = Greeter.start()
 
-    answer = actor_ref.ask('Hi?')
+    answer = actor_ref.ask({'message':'Hi?'})
     print(answer)
     # => 'Hi there!'
 
