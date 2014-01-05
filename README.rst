@@ -382,3 +382,7 @@ Project resources
 
 .. image:: https://travis-ci.org/jodal/pykka.png?branch=master
     :target: https://travis-ci.org/jodal/pykka
+
+.. image:: https://coveralls.io/repos/jodal/pykka/badge.png?branch=develop
+    :target: https://coveralls.io/r/jodal/pykka?branch=develop
+    :alt: Test coverage
