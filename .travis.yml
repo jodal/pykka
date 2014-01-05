@@ -14,3 +14,6 @@ install:
 script:
   - "flake8 $(find . -iname '*.py')"
   - "tox -e $TOX_ENV"
+
+after_success:
+  - "if [ $TOX_ENV == 'py27' ]; then pip install coveralls; coveralls; fi"
