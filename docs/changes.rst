@@ -2,6 +2,12 @@
 Changes
 =======
 
+v1.2.1 (UNRELEASED)
+===================
+
+- Increase log level of :func:`pykka.debug.log_thread_tracebacks` debugging
+  helper from :attr:`logging.INFO` to :attr:`logging.CRITICAL`.
+
 v1.2.0 (2013-07-15)
 ===================
 
