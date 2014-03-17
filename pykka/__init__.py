@@ -1,5 +1,6 @@
 # flake8: noqa
 from pykka.actor import Actor, ActorRef, ThreadingActor
+from pykka.gevent import GeventActor, GeventFuture
 from pykka.exceptions import ActorDeadError, Timeout
 from pykka.future import Future, get_all, ThreadingFuture
 from pykka.proxy import ActorProxy

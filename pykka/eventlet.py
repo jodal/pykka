@@ -6,7 +6,7 @@ import eventlet as _eventlet
 import eventlet.event as _eventlet_event
 import eventlet.queue as _eventlet_queue
 
-from pykka import Timeout as _Timeout
+from pykka.exceptions import Timeout as _Timeout
 from pykka.actor import Actor as _Actor
 from pykka.future import Future as _Future
 
