@@ -6,7 +6,7 @@ import gevent as _gevent
 import gevent.event as _gevent_event
 import gevent.queue as _gevent_queue
 
-from pykka import Timeout as _Timeout
+from pykka.exceptions import Timeout as _Timeout
 from pykka.actor import Actor as _Actor
 from pykka.future import Future as _Future
 
