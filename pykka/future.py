@@ -5,7 +5,7 @@ import sys as _sys
 try:
     # Python 2.x
     import Queue as _queue
-    _basestring = basestring
+    _basestring = basestring  # noqa
     PY3 = False
 except ImportError:
     # Python 3.x
