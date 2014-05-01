@@ -380,9 +380,18 @@ Project resources
 - `Download development snapshot
   <https://github.com/jodal/pykka/tarball/develop#egg=pykka-dev>`_
 
-.. image:: https://travis-ci.org/jodal/pykka.png?branch=master
-    :target: https://travis-ci.org/jodal/pykka
+.. image:: https://img.shields.io/pypi/v/pykka.svg?style=flat
+    :target: https://pypi.python.org/pypi/pykka/
+    :alt: Latest PyPI version
 
-.. image:: https://coveralls.io/repos/jodal/pykka/badge.png?branch=develop
-    :target: https://coveralls.io/r/jodal/pykka?branch=develop
-    :alt: Test coverage
+.. image:: https://img.shields.io/pypi/dm/pykka.svg?style=flat
+    :target: https://pypi.python.org/pypi/pykka/
+    :alt: Number of PyPI downloads
+
+.. image:: https://img.shields.io/travis/jodal/pykka/develop.svg?style=flat
+    :target: https://travis-ci.org/jodal/pykka
+    :alt: Travis CI build status
+
+.. image:: https://img.shields.io/coveralls/jodal/pykka/develop.svg?style=flat
+   :target: https://coveralls.io/r/jodal/pykka?branch=develop
+   :alt: Test coverage
