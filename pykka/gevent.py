@@ -11,6 +11,12 @@ from pykka.actor import Actor as _Actor
 from pykka.future import Future as _Future
 
 
+__all__ = [
+    'GeventActor',
+    'GeventFuture',
+]
+
+
 class GeventFuture(_Future):
     """
     :class:`GeventFuture` implements :class:`pykka.Future` for use with

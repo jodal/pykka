@@ -15,6 +15,13 @@ from pykka.future import ThreadingFuture as _ThreadingFuture
 from pykka.proxy import ActorProxy as _ActorProxy
 from pykka.registry import ActorRegistry as _ActorRegistry
 
+
+__all__ = [
+    'Actor',
+    'ActorRef',
+    'ThreadingActor',
+]
+
 _logger = _logging.getLogger('pykka')
 
 

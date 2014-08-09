@@ -10,6 +10,11 @@ except NameError:
 _logger = _logging.getLogger('pykka')
 
 
+__all__ = [
+    'ActorRegistry',
+]
+
+
 class ActorRegistry(object):
     """
     Registry which provides easy access to all running actors.

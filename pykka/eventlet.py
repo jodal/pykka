@@ -11,6 +11,13 @@ from pykka.actor import Actor as _Actor
 from pykka.future import Future as _Future
 
 
+__all__ = [
+    'EventletActor',
+    'EventletEvent',
+    'EventletFuture',
+]
+
+
 class EventletEvent(_eventlet_event.Event):
     """
     :class:`EventletEvent` adapts :class:`eventlet.event.Event` to

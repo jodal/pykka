@@ -4,6 +4,11 @@ import sys as _sys
 from pykka.exceptions import ActorDeadError as _ActorDeadError
 
 
+__all__ = [
+    'ActorProxy',
+]
+
+
 class ActorProxy(object):
     """
     An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>`

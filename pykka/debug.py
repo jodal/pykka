@@ -7,6 +7,11 @@ import traceback as _traceback
 _logger = _logging.getLogger('pykka')
 
 
+__all__ = [
+    'log_thread_tracebacks',
+]
+
+
 def log_thread_tracebacks(*args, **kwargs):
     """Logs at ``CRITICAL`` level a traceback for each running thread.
 

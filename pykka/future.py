@@ -16,6 +16,13 @@ except ImportError:
 from pykka.exceptions import Timeout as _Timeout
 
 
+__all_ = [
+    'Future',
+    'ThradingFuture',
+    'get_all',
+]
+
+
 def _is_iterable(x):
     return (
         isinstance(x, _collections.Iterable) and
