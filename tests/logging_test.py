@@ -7,7 +7,7 @@ from pykka.registry import ActorRegistry
 
 from tests import TestLogHandler
 from tests.actor_test import (
-    EarlyFailingActor, LateFailingActor, FailingOnFailureActor)
+    EarlyFailingActor, FailingOnFailureActor, LateFailingActor)
 
 
 class LoggingNullHandlerTest(unittest.TestCase):

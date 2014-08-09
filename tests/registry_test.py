@@ -1,5 +1,6 @@
-import mock
 import unittest
+
+import mock
 
 from pykka.actor import ThreadingActor
 from pykka.registry import ActorRegistry

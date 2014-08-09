@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 
-import pykka
-
 import threading
 import time
+
+import pykka
 
 
 class AnActor(pykka.ThreadingActor):
