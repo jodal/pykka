@@ -1,14 +1,11 @@
 import collections
 import functools
-import sys
 
 from pykka import compat
-from pykka.exceptions import Timeout
 
 
 __all_ = [
     'Future',
-    'ThradingFuture',
     'get_all',
 ]
 
@@ -254,54 +251,6 @@ class Future(object):
         future.set_get_hook(lambda timeout: functools.reduce(
             func, self.get(timeout), *args))
         return future
-
-
-class ThreadingFuture(Future):
-    """
-    :class:`ThreadingFuture` implements :class:`Future` for use with
-    :class:`ThreadingActor <pykka.ThreadingActor>`.
-
-    The future is implemented using a :class:`Queue.Queue`.
-
-    The future does *not* make a copy of the object which is :meth:`set()
-    <pykka.Future.set>` on it. It is the setters responsibility to only pass
-    immutable objects or make a copy of the object before setting it on the
-    future.
-
-    .. versionchanged:: 0.14
-        Previously, the encapsulated value was a copy made with
-        :func:`copy.deepcopy`, unless the encapsulated value was a future, in
-        which case the original future was encapsulated.
-    """
-
-    def __init__(self):
-        super(ThreadingFuture, self).__init__()
-        self._queue = compat.queue.Queue(maxsize=1)
-        self._data = None
-
-    def get(self, timeout=None):
-        try:
-            return super(ThreadingFuture, self).get(timeout=timeout)
-        except NotImplementedError:
-            pass
-
-        try:
-            if self._data is None:
-                self._data = self._queue.get(True, timeout)
-            if 'exc_info' in self._data:
-                compat.reraise(*self._data['exc_info'])
-            else:
-                return self._data['value']
-        except compat.queue.Empty:
-            raise Timeout('%s seconds' % timeout)
-
-    def set(self, value=None):
-        self._queue.put({'value': value}, block=False)
-
-    def set_exception(self, exc_info=None):
-        if isinstance(exc_info, BaseException):
-            exc_info = (exc_info.__class__, exc_info, None)
-        self._queue.put({'exc_info': exc_info or sys.exc_info()})
 
 
 def get_all(futures, timeout=None):
