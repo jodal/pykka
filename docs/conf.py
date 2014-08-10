@@ -50,6 +50,7 @@ needs_sphinx = '1.0'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.extlinks',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
 ]
 
@@ -117,4 +118,11 @@ autodoc_member_order = 'bysource'
 
 extlinks = {
     'issue': ('https://github.com/jodal/pykka/issues/%s', '#'),
+}
+
+
+# -- Options for intersphinx extension ----------------------------------------
+
+intersphinx_mapping = {
+    'python': ('http://docs.python.org/2', None),
 }
