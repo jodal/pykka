@@ -1,19 +1,19 @@
-import logging as _logging
-import sys as _sys
-import threading as _threading
-import uuid as _uuid
+import logging
+import sys
+import threading
+import uuid
 
 try:
-    # Python 2.x
-    import Queue as _queue
-except ImportError:
     # Python 3.x
-    import queue as _queue  # noqa
+    import queue
+except ImportError:
+    # Python 2.x
+    import Queue as queue  # noqa
 
-from pykka.exceptions import ActorDeadError as _ActorDeadError
-from pykka.future import ThreadingFuture as _ThreadingFuture
-from pykka.proxy import ActorProxy as _ActorProxy
-from pykka.registry import ActorRegistry as _ActorRegistry
+from pykka.exceptions import ActorDeadError
+from pykka.future import ThreadingFuture
+from pykka.proxy import ActorProxy
+from pykka.registry import ActorRegistry
 
 
 __all__ = [
@@ -22,7 +22,7 @@ __all__ = [
     'ThreadingActor',
 ]
 
-_logger = _logging.getLogger('pykka')
+logger = logging.getLogger('pykka')
 
 
 class Actor(object):
@@ -101,8 +101,8 @@ class Actor(object):
         assert obj.actor_ref is not None, (
             'Actor.__init__() have not been called. '
             'Did you forget to call super() in your override?')
-        _ActorRegistry.register(obj.actor_ref)
-        _logger.debug('Starting %s', obj)
+        ActorRegistry.register(obj.actor_ref)
+        logger.debug('Starting %s', obj)
         obj._start_actor_loop()
         return obj.actor_ref
 
@@ -156,9 +156,9 @@ class Actor(object):
         :meth:`__init__` is called before the actor is started and registered
         in :class:`ActorRegistry <pykka.ActorRegistry>`.
         """
-        self.actor_urn = _uuid.uuid4().urn
+        self.actor_urn = uuid.uuid4().urn
         self.actor_inbox = self._create_actor_inbox()
-        self.actor_stopped = _threading.Event()
+        self.actor_stopped = threading.Event()
 
         self.actor_ref = ActorRef(self)
 
@@ -180,13 +180,13 @@ class Actor(object):
         """
         Stops the actor immediately without processing the rest of the inbox.
         """
-        _ActorRegistry.unregister(self.actor_ref)
+        ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
-        _logger.debug('Stopped %s', self)
+        logger.debug('Stopped %s', self)
         try:
             self.on_stop()
         except Exception:
-            self._handle_failure(*_sys.exc_info())
+            self._handle_failure(*sys.exc_info())
 
     def _actor_loop(self):
         """
@@ -197,7 +197,7 @@ class Actor(object):
         try:
             self.on_start()
         except Exception:
-            self._handle_failure(*_sys.exc_info())
+            self._handle_failure(*sys.exc_info())
 
         while not self.actor_stopped.is_set():
             message = self.actor_inbox.get()
@@ -209,23 +209,23 @@ class Actor(object):
                     reply_to.set(response)
             except Exception:
                 if reply_to:
-                    _logger.debug(
+                    logger.debug(
                         'Exception returned from %s to caller:' % self,
-                        exc_info=_sys.exc_info())
+                        exc_info=sys.exc_info())
                     reply_to.set_exception()
                 else:
-                    self._handle_failure(*_sys.exc_info())
+                    self._handle_failure(*sys.exc_info())
                     try:
-                        self.on_failure(*_sys.exc_info())
+                        self.on_failure(*sys.exc_info())
                     except Exception:
-                        self._handle_failure(*_sys.exc_info())
+                        self._handle_failure(*sys.exc_info())
             except BaseException:
-                exception_value = _sys.exc_info()[1]
-                _logger.debug(
+                exception_value = sys.exc_info()[1]
+                logger.debug(
                     '%s in %s. Stopping all actors.' %
                     (repr(exception_value), self))
                 self._stop()
-                _ActorRegistry.stop_all()
+                ActorRegistry.stop_all()
 
         while not self.actor_inbox.empty():
             msg = self.actor_inbox.get()
@@ -234,7 +234,7 @@ class Actor(object):
                 if msg.get('command') == 'pykka_stop':
                     reply_to.set(None)
                 else:
-                    reply_to.set_exception(_ActorDeadError(
+                    reply_to.set_exception(ActorDeadError(
                         '%s stopped before handling the message' %
                         self.actor_ref))
 
@@ -270,10 +270,10 @@ class Actor(object):
 
     def _handle_failure(self, exception_type, exception_value, traceback):
         """Logs unexpected failures, unregisters and stops the actor."""
-        _logger.error(
+        logger.error(
             'Unhandled exception in %s:' % self,
             exc_info=(exception_type, exception_value, traceback))
-        _ActorRegistry.unregister(self.actor_ref)
+        ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
 
     def on_failure(self, exception_type, exception_value, traceback):
@@ -321,7 +321,7 @@ class Actor(object):
 
         :returns: anything that should be sent as a reply to the sender
         """
-        _logger.warning('Unexpected message received by %s: %s', self, message)
+        logger.warning('Unexpected message received by %s: %s', self, message)
 
     def _get_attribute_from_path(self, attr_path):
         """
@@ -361,14 +361,14 @@ class ThreadingActor(Actor):
 
     @staticmethod
     def _create_actor_inbox():
-        return _queue.Queue()
+        return queue.Queue()
 
     @staticmethod
     def _create_future():
-        return _ThreadingFuture()
+        return ThreadingFuture()
 
     def _start_actor_loop(self):
-        thread = _threading.Thread(target=self._actor_loop)
+        thread = threading.Thread(target=self._actor_loop)
         thread.name = thread.name.replace('Thread', self.__class__.__name__)
         thread.daemon = self.use_daemon_thread
         thread.start()
@@ -441,7 +441,7 @@ class ActorRef(object):
         :return: nothing
         """
         if not self.is_alive():
-            raise _ActorDeadError('%s not found' % self)
+            raise ActorDeadError('%s not found' % self)
         self.actor_inbox.put(message)
 
     def ask(self, message, block=True, timeout=None):
@@ -475,7 +475,7 @@ class ActorRef(object):
         message['pykka_reply_to'] = future
         try:
             self.tell(message)
-        except _ActorDeadError:
+        except ActorDeadError:
             future.set_exception()
         if block:
             return future.get(timeout=timeout)
@@ -508,7 +508,7 @@ class ActorRef(object):
             try:
                 ask_future.get(timeout=timeout)
                 return True
-            except _ActorDeadError:
+            except ActorDeadError:
                 return False
 
         converted_future = ask_future.__class__()
@@ -535,4 +535,4 @@ class ActorRef(object):
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.ActorProxy`
         """
-        return _ActorProxy(self)
+        return ActorProxy(self)

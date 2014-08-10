@@ -1,19 +1,19 @@
-import collections as _collections
-import functools as _functools
-import sys as _sys
+import collections
+import functools
+import sys
 
 try:
-    # Python 2.x
-    import Queue as _queue
-    _basestring = basestring  # noqa
-    PY3 = False
-except ImportError:
     # Python 3.x
-    import queue as _queue  # noqa
+    import queue  # noqa
     _basestring = str
     PY3 = True
+except ImportError:
+    # Python 2.x
+    import Queue as queue
+    _basestring = basestring
+    PY3 = False
 
-from pykka.exceptions import Timeout as _Timeout
+from pykka.exceptions import Timeout
 
 
 __all_ = [
@@ -25,7 +25,7 @@ __all_ = [
 
 def _is_iterable(x):
     return (
-        isinstance(x, _collections.Iterable) and
+        isinstance(x, collections.Iterable) and
         not isinstance(x, _basestring))
 
 
@@ -261,7 +261,7 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(lambda timeout: _functools.reduce(
+        future.set_get_hook(lambda timeout: functools.reduce(
             func, self.get(timeout), *args))
         return future
 
@@ -286,7 +286,7 @@ class ThreadingFuture(Future):
 
     def __init__(self):
         super(ThreadingFuture, self).__init__()
-        self._queue = _queue.Queue(maxsize=1)
+        self._queue = queue.Queue(maxsize=1)
         self._data = None
 
     def get(self, timeout=None):
@@ -306,8 +306,8 @@ class ThreadingFuture(Future):
                     exec('raise exc_info[0], exc_info[1], exc_info[2]')
             else:
                 return self._data['value']
-        except _queue.Empty:
-            raise _Timeout('%s seconds' % timeout)
+        except queue.Empty:
+            raise Timeout('%s seconds' % timeout)
 
     def set(self, value=None):
         self._queue.put({'value': value}, block=False)
@@ -315,7 +315,7 @@ class ThreadingFuture(Future):
     def set_exception(self, exc_info=None):
         if isinstance(exc_info, BaseException):
             exc_info = (exc_info.__class__, exc_info, None)
-        self._queue.put({'exc_info': exc_info or _sys.exc_info()})
+        self._queue.put({'exc_info': exc_info or sys.exc_info()})
 
 
 def get_all(futures, timeout=None):

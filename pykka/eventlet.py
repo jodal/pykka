@@ -1,14 +1,14 @@
 from __future__ import absolute_import
 
-import sys as _sys
+import sys
 
-import eventlet as _eventlet
-import eventlet.event as _eventlet_event
-import eventlet.queue as _eventlet_queue
+import eventlet
+import eventlet.event
+import eventlet.queue
 
-from pykka import Timeout as _Timeout
-from pykka.actor import Actor as _Actor
-from pykka.future import Future as _Future
+from pykka import Timeout
+from pykka.actor import Actor
+from pykka.future import Future
 
 
 __all__ = [
@@ -18,7 +18,7 @@ __all__ = [
 ]
 
 
-class EventletEvent(_eventlet_event.Event):
+class EventletEvent(eventlet.event.Event):
     """
     :class:`EventletEvent` adapts :class:`eventlet.event.Event` to
     :class:`threading.Event` interface.
@@ -40,12 +40,12 @@ class EventletEvent(_eventlet_event.Event):
 
     def wait(self, timeout):
         if timeout is not None:
-            wait_timeout = _eventlet.Timeout(timeout)
+            wait_timeout = eventlet.Timeout(timeout)
 
             try:
                 with wait_timeout:
                     super(EventletEvent, self).wait()
-            except _eventlet.Timeout as t:
+            except eventlet.Timeout as t:
                 if t is not wait_timeout:
                     raise
                 return False
@@ -55,7 +55,7 @@ class EventletEvent(_eventlet_event.Event):
         return True
 
 
-class EventletFuture(_Future):
+class EventletFuture(Future):
     """
     :class:`EventletFuture` implements :class:`pykka.Future` for use with
     :class:`EventletActor`.
@@ -65,7 +65,7 @@ class EventletFuture(_Future):
 
     def __init__(self):
         super(EventletFuture, self).__init__()
-        self.event = _eventlet_event.Event()
+        self.event = eventlet.event.Event()
 
     def get(self, timeout=None):
         try:
@@ -74,14 +74,14 @@ class EventletFuture(_Future):
             pass
 
         if timeout is not None:
-            wait_timeout = _eventlet.Timeout(timeout)
+            wait_timeout = eventlet.Timeout(timeout)
             try:
                 with wait_timeout:
                     return self.event.wait()
-            except _eventlet.Timeout as t:
+            except eventlet.Timeout as t:
                 if t is not wait_timeout:
                     raise
-                raise _Timeout(t)
+                raise Timeout(t)
         else:
             return self.event.wait()
 
@@ -91,10 +91,10 @@ class EventletFuture(_Future):
     def set_exception(self, exc_info=None):
         if isinstance(exc_info, BaseException):
             exc_info = (exc_info,)
-        self.event.send_exception(*(exc_info or _sys.exc_info()))
+        self.event.send_exception(*(exc_info or sys.exc_info()))
 
 
-class EventletActor(_Actor):
+class EventletActor(Actor):
     """
     :class:`EventletActor` implements :class:`pykka.Actor` using the `eventlet
     <http://eventlet.net/>`_ library.
@@ -104,11 +104,11 @@ class EventletActor(_Actor):
 
     @staticmethod
     def _create_actor_inbox():
-        return _eventlet_queue.Queue()
+        return eventlet.queue.Queue()
 
     @staticmethod
     def _create_future():
         return EventletFuture()
 
     def _start_actor_loop(self):
-        _eventlet.greenthread.spawn(self._actor_loop)
+        eventlet.greenthread.spawn(self._actor_loop)
