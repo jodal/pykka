@@ -2,8 +2,7 @@ import unittest
 
 import mock
 
-from pykka.actor import ThreadingActor
-from pykka.registry import ActorRegistry
+from pykka import ActorRegistry, ThreadingActor
 
 
 class ActorRegistryTest(object):

@@ -1,9 +1,7 @@
 import time
 import unittest
 
-from pykka import ActorDeadError, Timeout
-from pykka.actor import ThreadingActor
-from pykka.future import ThreadingFuture
+from pykka import ActorDeadError, ThreadingActor, ThreadingFuture, Timeout
 
 
 class AnActor(object):

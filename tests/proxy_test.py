@@ -1,8 +1,6 @@
 import unittest
 
-from pykka import ActorDeadError
-from pykka.actor import ThreadingActor
-from pykka.proxy import ActorProxy
+from pykka import ActorDeadError, ActorProxy, ThreadingActor
 
 
 class SomeObject(object):

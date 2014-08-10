@@ -1,6 +1,6 @@
 import unittest
 
-from pykka.actor import ThreadingActor
+from pykka import ThreadingActor
 
 
 class ActorWithMethods(object):

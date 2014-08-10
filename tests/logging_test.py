@@ -2,8 +2,7 @@ import logging
 import threading
 import unittest
 
-from pykka.actor import ThreadingActor
-from pykka.registry import ActorRegistry
+from pykka import ActorRegistry, ThreadingActor
 
 from tests import TestLogHandler
 from tests.actor_test import (

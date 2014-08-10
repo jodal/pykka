@@ -2,9 +2,7 @@ import threading
 import unittest
 import uuid
 
-from pykka.actor import ThreadingActor
-from pykka.exceptions import ActorDeadError
-from pykka.registry import ActorRegistry
+from pykka import ActorDeadError, ActorRegistry, ThreadingActor
 
 
 class AnActor(object):
