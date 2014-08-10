@@ -3,13 +3,7 @@ import sys
 import threading
 import uuid
 
-try:
-    # Python 3.x
-    import queue
-except ImportError:
-    # Python 2.x
-    import Queue as queue  # noqa
-
+from pykka import compat
 from pykka.exceptions import ActorDeadError
 from pykka.future import ThreadingFuture
 from pykka.proxy import ActorProxy
@@ -361,7 +355,7 @@ class ThreadingActor(Actor):
 
     @staticmethod
     def _create_actor_inbox():
-        return queue.Queue()
+        return compat.queue.Queue()
 
     @staticmethod
     def _create_future():

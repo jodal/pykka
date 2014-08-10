@@ -2,17 +2,7 @@ import collections
 import functools
 import sys
 
-try:
-    # Python 3.x
-    import queue  # noqa
-    _basestring = str
-    PY3 = True
-except ImportError:
-    # Python 2.x
-    import Queue as queue
-    _basestring = basestring
-    PY3 = False
-
+from pykka import compat
 from pykka.exceptions import Timeout
 
 
@@ -26,7 +16,7 @@ __all_ = [
 def _is_iterable(x):
     return (
         isinstance(x, collections.Iterable) and
-        not isinstance(x, _basestring))
+        not isinstance(x, compat.string_types))
 
 
 def _map(func, *iterables):
@@ -286,7 +276,7 @@ class ThreadingFuture(Future):
 
     def __init__(self):
         super(ThreadingFuture, self).__init__()
-        self._queue = queue.Queue(maxsize=1)
+        self._queue = compat.queue.Queue(maxsize=1)
         self._data = None
 
     def get(self, timeout=None):
@@ -299,14 +289,10 @@ class ThreadingFuture(Future):
             if self._data is None:
                 self._data = self._queue.get(True, timeout)
             if 'exc_info' in self._data:
-                exc_info = self._data['exc_info']
-                if PY3:
-                    raise exc_info[1].with_traceback(exc_info[2])
-                else:
-                    exec('raise exc_info[0], exc_info[1], exc_info[2]')
+                compat.reraise(*self._data['exc_info'])
             else:
                 return self._data['value']
-        except queue.Empty:
+        except compat.queue.Empty:
             raise Timeout('%s seconds' % timeout)
 
     def set(self, value=None):
