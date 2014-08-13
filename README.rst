@@ -193,7 +193,7 @@ propagate to the sender::
     actor_ref = Raiser.start()
 
     try:
-        actor_ref.ask('How are you?')
+        actor_ref.ask({'msg': 'How are you?'})
     except Exception as e:
         print(repr(e))
         # => Exception('Oops')
