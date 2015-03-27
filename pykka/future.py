@@ -4,7 +4,7 @@ import functools
 from pykka import compat
 
 
-__all_ = [
+__all__ = [
     'Future',
     'get_all',
 ]
