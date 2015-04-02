@@ -23,6 +23,7 @@ class AnActor(object):
 
 
 class ProxyTest(object):
+
     def setUp(self):
         self.proxy = ActorProxy(self.AnActor.start())
 
@@ -89,6 +90,7 @@ class ProxyTest(object):
 
 def ConcreteProxyTest(actor_class):
     class C(ProxyTest, unittest.TestCase):
+
         class AnActor(AnActor, actor_class):
             pass
     C.__name__ = '%sProxyTest' % actor_class.__name__

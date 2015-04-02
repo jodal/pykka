@@ -4,12 +4,14 @@ import pykka
 
 
 class Adder(pykka.ThreadingActor):
+
     def add_one(self, i):
         print('{} is increasing {}'.format(self, i))
         return i + 1
 
 
 class Bookkeeper(pykka.ThreadingActor):
+
     def __init__(self, adder):
         super(Bookkeeper, self).__init__()
         self.adder = adder

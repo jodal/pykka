@@ -6,6 +6,7 @@ from pykka import ActorRegistry, ThreadingActor
 
 
 class ActorRegistryTest(object):
+
     def setUp(self):
         self.ref = self.AnActor.start()
         self.a_actors = [self.AnActor.start() for _ in range(3)]
@@ -139,6 +140,7 @@ class BeeActor(object):
 
 def ConcreteRegistryTest(actor_class):
     class C(ActorRegistryTest, unittest.TestCase):
+
         class AnActor(AnActor, actor_class):
             pass
 

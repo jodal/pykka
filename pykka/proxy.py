@@ -10,6 +10,7 @@ __all__ = [
 
 
 class ActorProxy(object):
+
     """
     An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>`
     instance. The proxy allows the referenced actor to be used through regular
@@ -199,7 +200,9 @@ class ActorProxy(object):
 
 
 class _CallableProxy(object):
+
     """Internal helper class for proxying callables."""
+
     def __init__(self, ref, attr_path):
         self.actor_ref = ref
         self._attr_path = attr_path

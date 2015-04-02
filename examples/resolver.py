@@ -22,6 +22,7 @@ import pykka
 
 
 class Resolver(pykka.ThreadingActor):
+
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)

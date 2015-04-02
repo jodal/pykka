@@ -2,6 +2,7 @@ import unittest
 
 
 class NamespaceTest(unittest.TestCase):
+
     def test_actor_dead_error_import(self):
         from pykka import ActorDeadError as ActorDeadError1
         from pykka.exceptions import ActorDeadError as ActorDeadError2

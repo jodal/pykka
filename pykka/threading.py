@@ -16,6 +16,7 @@ __all__ = [
 
 
 class ThreadingFuture(Future):
+
     """
     :class:`ThreadingFuture` implements :class:`Future` for use with
     :class:`ThreadingActor <pykka.ThreadingActor>`.
@@ -64,6 +65,7 @@ class ThreadingFuture(Future):
 
 
 class ThreadingActor(Actor):
+
     """
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
     threads.

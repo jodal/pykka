@@ -19,6 +19,7 @@ logger = logging.getLogger('pykka')
 
 
 class Actor(object):
+
     """
     To create an actor:
 
@@ -327,6 +328,7 @@ class Actor(object):
 
 
 class ActorRef(object):
+
     """
     Reference to a running actor which may safely be passed around.
 

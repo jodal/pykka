@@ -24,6 +24,7 @@ def _map(func, *iterables):
 
 
 class Future(object):
+
     """
     A :class:`Future` is a handle to a value which are available or will be
     available in the future.

@@ -20,6 +20,7 @@ class ActorWithFields(object):
 
 
 class FieldAccessTest(object):
+
     def setUp(self):
         self.proxy = self.ActorWithFields.start().proxy()
 
@@ -49,6 +50,7 @@ class FieldAccessTest(object):
 
 def ConcreteFieldAccessTest(actor_class):
     class C(FieldAccessTest, unittest.TestCase):
+
         class ActorWithFields(ActorWithFields, actor_class):
             pass
     C.__name__ = '%sFieldAccessTest' % actor_class.__name__
