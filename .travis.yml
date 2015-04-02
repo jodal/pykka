@@ -1,4 +1,11 @@
+sudo: false
+
 language: python
+
+addons:
+  apt:
+    packages:
+      - libev-dev
 
 env:
   - TOX_ENV=py26
@@ -12,7 +19,6 @@ env:
   - TOX_ENV=flake8
 
 install:
-  - "sudo apt-get install libev-dev"
   - "pip install tox"
 
 script:
