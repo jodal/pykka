@@ -202,10 +202,9 @@ class Actor(object):
 
         while not self.actor_stopped.is_set():
             envelope = self.actor_inbox.get()
-            reply_to = None
+            reply_to = getattr(envelope, 'pykka_reply_to', None)
             self.sender = envelope.sender
             try:
-                reply_to = envelope.message.pop('pykka_reply_to', None)
                 response = self._handle_receive(envelope.message)
                 if reply_to:
                     reply_to.set(response)
@@ -232,10 +231,10 @@ class Actor(object):
                 self.sender = None
 
         while not self.actor_inbox.empty():
-            msg = self.actor_inbox.get().message
-            reply_to = msg.pop('pykka_reply_to', None)
+            envelope = self.actor_inbox.get()
+            reply_to = getattr(envelope, 'pykka_reply_to', None)
             if reply_to:
-                if msg.get('command') == 'pykka_stop':
+                if envelope.message.get('command') == 'pykka_stop':
                     reply_to.set(None)
                 else:
                     reply_to.set_exception(ActorDeadError(
@@ -441,11 +440,12 @@ class ActorRef(object):
         :return: :class:`pykka.Future`, or response if blocking
         """
         future = self.actor_class._create_future()
-        message['pykka_reply_to'] = future
-        try:
-            self.tell(message)
-        except ActorDeadError:
-            future.set_exception()
+        if not self.is_alive():
+            future.set_exception(ActorDeadError('%s not found' % self))
+        else:
+            envelope = Envelope(message, Actor.no_sender)
+            envelope.pykka_reply_to = future
+            self.actor_inbox.put(envelope)
         if block:
             return future.get(timeout=timeout)
         else:
