@@ -5,6 +5,7 @@ import sys
 import threading
 import uuid
 
+from pykka.envelope import Envelope
 from pykka.exceptions import ActorDeadError
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
@@ -131,6 +132,12 @@ class Actor(object):
     #: continue processing messages. Use :meth:`stop` to change it.
     actor_stopped = None
 
+    #: Placeholder that represents no sender.
+    no_sender = None
+
+    #: :class:`ActorRef` to the sender of the current message.
+    sender = no_sender
+
     def __init__(self, *args, **kwargs):
         """
         Your are free to override :meth:`__init__`, but you must call your
@@ -194,11 +201,12 @@ class Actor(object):
             self._handle_failure(*sys.exc_info())
 
         while not self.actor_stopped.is_set():
-            message = self.actor_inbox.get()
+            envelope = self.actor_inbox.get()
             reply_to = None
+            self.sender = envelope.sender
             try:
-                reply_to = message.pop('pykka_reply_to', None)
-                response = self._handle_receive(message)
+                reply_to = envelope.message.pop('pykka_reply_to', None)
+                response = self._handle_receive(envelope.message)
                 if reply_to:
                     reply_to.set(response)
             except Exception:
@@ -220,9 +228,11 @@ class Actor(object):
                     (repr(exception_value), self))
                 self._stop()
                 ActorRegistry.stop_all()
+            finally:
+                self.sender = None
 
         while not self.actor_inbox.empty():
-            msg = self.actor_inbox.get()
+            msg = self.actor_inbox.get().message
             reply_to = msg.pop('pykka_reply_to', None)
             if reply_to:
                 if msg.get('command') == 'pykka_stop':
@@ -381,7 +391,7 @@ class ActorRef(object):
         """
         return not self.actor_stopped.is_set()
 
-    def tell(self, message):
+    def tell(self, message, sender=Actor.no_sender):
         """
         Send message to actor without waiting for any response.
 
@@ -391,12 +401,17 @@ class ActorRef(object):
         :param message: message to send
         :type message: picklable dict
 
+        :param sender: sender of the message
+        :type sender: :class:`ActorRef`
+
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: nothing
         """
         if not self.is_alive():
             raise ActorDeadError('%s not found' % self)
-        self.actor_inbox.put(message)
+        if sender is not Actor.no_sender and not isinstance(sender, ActorRef):
+            raise ValueError("Sender must be actor reference")
+        self.actor_inbox.put(Envelope(message, sender))
 
     def ask(self, message, block=True, timeout=None):
         """
