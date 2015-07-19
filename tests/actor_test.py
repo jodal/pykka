@@ -3,6 +3,7 @@ import unittest
 import uuid
 
 from pykka import ActorDeadError, ActorRegistry, ThreadingActor
+from pykka.messages import PykkaStop
 
 
 class AnActor(object):
@@ -142,7 +143,7 @@ class ActorTest(object):
         event = self.event_class()
         self.actor_ref.tell({'command': 'callback', 'callback': event.wait})
         self.actor_ref.stop(block=False)
-        response = self.actor_ref.ask({'command': 'pykka_stop'}, block=False)
+        response = self.actor_ref.ask(PykkaStop, block=False)
         event.set()
 
         response.get(timeout=0.5)

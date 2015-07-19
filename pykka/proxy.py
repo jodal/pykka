@@ -2,6 +2,7 @@ import collections
 import sys
 
 from pykka.exceptions import ActorDeadError
+from pykka.messages import PykkaCall, PykkaGetattr, PykkaSetattr
 
 
 __all__ = [
@@ -176,11 +177,7 @@ class ActorProxy(object):
                     self.actor_ref, attr_path)
             return self._actor_proxies[attr_path]
         else:
-            message = {
-                'command': 'pykka_getattr',
-                'attr_path': attr_path,
-            }
-            return self.actor_ref.ask(message, block=False)
+            return self.actor_ref.ask(PykkaGetattr(attr_path), block=False)
 
     def __setattr__(self, name, value):
         """
@@ -191,11 +188,7 @@ class ActorProxy(object):
         if name == 'actor_ref' or name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
         attr_path = self._attr_path + (name,)
-        message = {
-            'command': 'pykka_setattr',
-            'attr_path': attr_path,
-            'value': value,
-        }
+        message = PykkaSetattr(attr_path, value)
         return self.actor_ref.ask(message)
 
 
@@ -208,10 +201,5 @@ class _CallableProxy(object):
         self._attr_path = attr_path
 
     def __call__(self, *args, **kwargs):
-        message = {
-            'command': 'pykka_call',
-            'attr_path': self._attr_path,
-            'args': args,
-            'kwargs': kwargs,
-        }
+        message = PykkaCall(self._attr_path, args, kwargs)
         return self.actor_ref.ask(message, block=False)
