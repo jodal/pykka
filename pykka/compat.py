@@ -6,7 +6,7 @@ PY3 = sys.version_info[0] == 3
 if PY2:
     import Queue as queue  # noqa
 
-    string_types = basestring
+    string_types = basestring  # noqa
 
     def reraise(tp, value, tb=None):
         exec('raise tp, value, tb')
