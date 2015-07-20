@@ -60,7 +60,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 project = u'Pykka'
-copyright = u'2010-2014, Stein Magnus Jodal'
+copyright = u'2010-2015, Stein Magnus Jodal'
 
 
 def get_version():

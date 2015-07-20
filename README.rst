@@ -365,7 +365,7 @@ To install the latest development snapshot::
 License
 =======
 
-Pykka is copyright 2010-2014 Stein Magnus Jodal and contributors.
+Pykka is copyright 2010-2015 Stein Magnus Jodal and contributors.
 Pykka is licensed under the `Apache License, Version 2.0
 <http://www.apache.org/licenses/LICENSE-2.0>`_.
 
