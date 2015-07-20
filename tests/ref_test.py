@@ -1,12 +1,11 @@
 import time
 import unittest
 
-from pykka import ActorDeadError, Timeout
-from pykka.actor import ThreadingActor
-from pykka.future import ThreadingFuture
+from pykka import ActorDeadError, ThreadingActor, ThreadingFuture, Timeout
 
 
 class AnActor(object):
+
     def __init__(self, received_message):
         super(AnActor, self).__init__()
         self.received_message = received_message
@@ -20,6 +19,7 @@ class AnActor(object):
 
 
 class RefTest(object):
+
     def setUp(self):
         self.received_message = self.future_class()
         self.ref = self.AnActor.start(self.received_message)
@@ -112,7 +112,9 @@ class RefTest(object):
 
 def ConcreteRefTest(actor_class, future_class, sleep_function):
     class C(RefTest, unittest.TestCase):
+
         class AnActor(AnActor, actor_class):
+
             def sleep(self, seconds):
                 sleep_function(seconds)
 

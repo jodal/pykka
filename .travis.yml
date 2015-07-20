@@ -1,15 +1,28 @@
+sudo: false
+
 language: python
+
+addons:
+  apt:
+    packages:
+      - libev-dev
 
 env:
   - TOX_ENV=py26
   - TOX_ENV=py27
   - TOX_ENV=py32
   - TOX_ENV=py33
+  - TOX_ENV=py34
   - TOX_ENV=pypy
+  - TOX_ENV=pypy3
+  - TOX_ENV=docs
+  - TOX_ENV=flake8
 
 install:
-  - "sudo apt-get install -qq libev-dev"
   - "pip install tox"
 
 script:
   - "tox -e $TOX_ENV"
+
+after_success:
+  - "if [ $TOX_ENV == 'py27' ]; then pip install coveralls; coveralls; fi"

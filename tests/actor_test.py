@@ -1,14 +1,12 @@
 import threading
 import unittest
 import uuid
-import time
 
-from pykka.actor import ThreadingActor
-from pykka.exceptions import ActorDeadError
-from pykka.registry import ActorRegistry
+from pykka import ActorDeadError, ActorRegistry, ThreadingActor
 
 
 class AnActor(object):
+
     def __init__(self, **events):
         super(AnActor, self).__init__()
         self.on_start_was_called = events['on_start_was_called']
@@ -49,6 +47,7 @@ class AnActor(object):
 
 
 class EarlyStoppingActor(object):
+
     def __init__(self, on_stop_was_called):
         super(EarlyStoppingActor, self).__init__()
         self.on_stop_was_called = on_stop_was_called
@@ -61,6 +60,7 @@ class EarlyStoppingActor(object):
 
 
 class EarlyFailingActor(object):
+
     def __init__(self, on_start_was_called):
         super(EarlyFailingActor, self).__init__()
         self.on_start_was_called = on_start_was_called
@@ -73,6 +73,7 @@ class EarlyFailingActor(object):
 
 
 class LateFailingActor(object):
+
     def __init__(self, on_stop_was_called):
         super(LateFailingActor, self).__init__()
         self.on_stop_was_called = on_stop_was_called
@@ -88,6 +89,7 @@ class LateFailingActor(object):
 
 
 class FailingOnFailureActor(object):
+
     def __init__(self, on_failure_was_called):
         super(FailingOnFailureActor, self).__init__()
         self.on_failure_was_called = on_failure_was_called
@@ -106,6 +108,7 @@ class FailingOnFailureActor(object):
 
 
 class ActorTest(object):
+
     def setUp(self):
         self.on_start_was_called = self.event_class()
         self.on_stop_was_called = self.event_class()
@@ -293,6 +296,7 @@ class ActorTest(object):
 
 def ConcreteActorTest(actor_class, event_class):
     class C(ActorTest, unittest.TestCase):
+
         class AnActor(AnActor, actor_class):
             pass
 
@@ -317,6 +321,7 @@ def ConcreteActorTest(actor_class, event_class):
 
 
 class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
+
     class DaemonActor(ThreadingActor):
         use_daemon_thread = True
 

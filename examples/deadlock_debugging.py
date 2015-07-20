@@ -10,12 +10,14 @@ import pykka.debug
 
 
 class DeadlockActorA(pykka.ThreadingActor):
+
     def foo(self, b):
         logging.debug('This is foo calling bar')
         return b.bar().get()
 
 
 class DeadlockActorB(pykka.ThreadingActor):
+
     def __init__(self, a):
         super(DeadlockActorB, self).__init__()
         self.a = a

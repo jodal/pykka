@@ -1,16 +1,20 @@
-import logging as _logging
-import threading as _threading
+from __future__ import absolute_import
 
-try:
-    _basestring = basestring
-except NameError:
-    # Python 3
-    _basestring = str
+import logging
+import threading
 
-_logger = _logging.getLogger('pykka')
+from pykka import compat
+
+logger = logging.getLogger('pykka')
+
+
+__all__ = [
+    'ActorRegistry',
+]
 
 
 class ActorRegistry(object):
+
     """
     Registry which provides easy access to all running actors.
 
@@ -18,7 +22,7 @@ class ActorRegistry(object):
     """
 
     _actor_refs = []
-    _actor_refs_lock = _threading.RLock()
+    _actor_refs_lock = threading.RLock()
 
     @classmethod
     def broadcast(cls, message, target_class=None):
@@ -34,7 +38,7 @@ class ActorRegistry(object):
         :param target_class: optional actor class to broadcast the message to
         :type target_class: class or class name
         """
-        if isinstance(target_class, _basestring):
+        if isinstance(target_class, compat.string_types):
             targets = cls.get_by_class_name(target_class)
         elif target_class is not None:
             targets = cls.get_by_class(target_class)
@@ -115,7 +119,7 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             cls._actor_refs.append(actor_ref)
-        _logger.debug('Registered %s', actor_ref)
+        logger.debug('Registered %s', actor_ref)
 
     @classmethod
     def stop_all(cls, block=True, timeout=None):
@@ -159,7 +163,7 @@ class ActorRegistry(object):
                 cls._actor_refs.remove(actor_ref)
                 removed = True
         if removed:
-            _logger.debug('Unregistered %s', actor_ref)
+            logger.debug('Unregistered %s', actor_ref)
         else:
-            _logger.debug(
+            logger.debug(
                 'Unregistered %s (not found in registry)', actor_ref)

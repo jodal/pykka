@@ -1,14 +1,21 @@
-import logging as _logging
-import sys as _sys
-import threading as _threading
-import traceback as _traceback
+from __future__ import absolute_import
+
+import logging
+import sys
+import threading
+import traceback
 
 
-_logger = _logging.getLogger('pykka')
+logger = logging.getLogger('pykka')
+
+
+__all__ = [
+    'log_thread_tracebacks',
+]
 
 
 def log_thread_tracebacks(*args, **kwargs):
-    """Logs at ``INFO`` level a traceback for each running thread.
+    """Logs at ``CRITICAL`` level a traceback for each running thread.
 
     This can be a convenient tool for debugging deadlocks.
 
@@ -16,8 +23,8 @@ def log_thread_tracebacks(*args, **kwargs):
     signal handler, but it does not use the arguments for anything.
 
     To use this function as a signal handler, setup logging with a
-    :attr:`logging.INFO` threshold or lower and make your main thread register
-    this with the :mod:`signal` module::
+    :attr:`logging.CRITICAL` threshold or lower and make your main thread
+    register this with the :mod:`signal` module::
 
         import logging
         import signal
@@ -40,7 +47,7 @@ def log_thread_tracebacks(*args, **kwargs):
       will only be handled, and the tracebacks logged, if your main thread is
       available to do some work. Making your main thread idle using
       :func:`time.sleep` is OK. The signal will awaken your main thread.
-      Blocking your main thread on e.g.  :func:`Queue.Queue.get` or
+      Blocking your main thread on e.g. :func:`Queue.Queue.get` or
       :meth:`pykka.Future.get` will break signal handling, and thus you won't
       be able to signal your process to print the thread tracebacks.
 
@@ -54,10 +61,10 @@ def log_thread_tracebacks(*args, **kwargs):
     .. versionadded:: 1.1
     """
 
-    thread_names = dict((t.ident, t.name) for t in _threading.enumerate())
+    thread_names = dict((t.ident, t.name) for t in threading.enumerate())
 
-    for ident, frame in _sys._current_frames().items():
+    for ident, frame in sys._current_frames().items():
         name = thread_names.get(ident, '?')
-        stack = ''.join(_traceback.format_stack(frame))
-        _logger.info(
+        stack = ''.join(traceback.format_stack(frame))
+        logger.critical(
             'Current state of %s (ident: %s):\n%s', name, ident, stack)

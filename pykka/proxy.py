@@ -1,10 +1,16 @@
-import collections as _collections
-import sys as _sys
+import collections
+import sys
 
-from pykka.exceptions import ActorDeadError as _ActorDeadError
+from pykka.exceptions import ActorDeadError
+
+
+__all__ = [
+    'ActorProxy',
+]
 
 
 class ActorProxy(object):
+
     """
     An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>`
     instance. The proxy allows the referenced actor to be used through regular
@@ -90,7 +96,7 @@ class ActorProxy(object):
 
     def __init__(self, actor_ref, attr_path=None):
         if not actor_ref.is_alive():
-            raise _ActorDeadError('%s not found' % actor_ref)
+            raise ActorDeadError('%s not found' % actor_ref)
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor
         self._attr_path = attr_path or tuple()
@@ -127,10 +133,10 @@ class ActorProxy(object):
         # isinstance(attr, collections.Callable), as recommended by 2to3, does
         # not work on CPython 2.6.4 if the attribute is an Queue.Queue, but
         # works on 2.6.6.
-        if _sys.version_info < (3,):
+        if sys.version_info < (3,):
             return callable(attr)
         else:
-            return isinstance(attr, _collections.Callable)
+            return isinstance(attr, collections.Callable)
 
     def _is_traversable_attribute(self, attr):
         """
@@ -194,7 +200,9 @@ class ActorProxy(object):
 
 
 class _CallableProxy(object):
+
     """Internal helper class for proxying callables."""
+
     def __init__(self, ref, attr_path):
         self.actor_ref = ref
         self._attr_path = attr_path

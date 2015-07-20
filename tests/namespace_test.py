@@ -2,6 +2,7 @@ import unittest
 
 
 class NamespaceTest(unittest.TestCase):
+
     def test_actor_dead_error_import(self):
         from pykka import ActorDeadError as ActorDeadError1
         from pykka.exceptions import ActorDeadError as ActorDeadError2
@@ -24,7 +25,7 @@ class NamespaceTest(unittest.TestCase):
 
     def test_threading_actor_import(self):
         from pykka import ThreadingActor as ThreadingActor1
-        from pykka.actor import ThreadingActor as ThreadingActor2
+        from pykka.threading import ThreadingActor as ThreadingActor2
         self.assertEqual(ThreadingActor1, ThreadingActor2)
 
     def test_future_import(self):
@@ -39,7 +40,7 @@ class NamespaceTest(unittest.TestCase):
 
     def test_threading_future_import(self):
         from pykka import ThreadingFuture as ThreadingFuture1
-        from pykka.future import ThreadingFuture as ThreadingFuture2
+        from pykka.threading import ThreadingFuture as ThreadingFuture2
         self.assertEqual(ThreadingFuture1, ThreadingFuture2)
 
     def test_actor_proxy_import(self):

@@ -2,11 +2,11 @@ import sys
 import traceback
 import unittest
 
-from pykka import Timeout
-from pykka.future import Future, ThreadingFuture, get_all
+from pykka import Future, ThreadingFuture, Timeout, get_all
 
 
 class FutureBaseTest(unittest.TestCase):
+
     def setUp(self):
         self.future = Future()
 
@@ -21,6 +21,7 @@ class FutureBaseTest(unittest.TestCase):
 
 
 class FutureTest(object):
+
     def setUp(self):
         self.results = [self.future_class() for _ in range(3)]
 

@@ -1,5 +1,14 @@
-include LICENSE *.rst pylintrc setup.cfg tox.ini
+include *.rst
+include .coveragerc
+include .travis.yml
+include LICENSE
+include pylintrc
+include setup.cfg
+include tox.ini
+
 recursive-include docs *
 prune docs/_build
+
 recursive-include examples *.py
+
 recursive-include tests *.py

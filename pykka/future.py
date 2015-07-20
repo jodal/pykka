@@ -1,25 +1,19 @@
-import collections as _collections
-import functools as _functools
-import sys as _sys
+import collections
+import functools
 
-try:
-    # Python 2.x
-    import Queue as _queue
-    _basestring = basestring
-    PY3 = False
-except ImportError:
-    # Python 3.x
-    import queue as _queue  # noqa
-    _basestring = str
-    PY3 = True
+from pykka import compat
 
-from pykka.exceptions import Timeout as _Timeout
+
+__all__ = [
+    'Future',
+    'get_all',
+]
 
 
 def _is_iterable(x):
     return (
-        isinstance(x, _collections.Iterable) and
-        not isinstance(x, _basestring))
+        isinstance(x, collections.Iterable) and
+        not isinstance(x, compat.string_types))
 
 
 def _map(func, *iterables):
@@ -30,6 +24,7 @@ def _map(func, *iterables):
 
 
 class Future(object):
+
     """
     A :class:`Future` is a handle to a value which are available or will be
     available in the future.
@@ -254,61 +249,9 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(lambda timeout: _functools.reduce(
+        future.set_get_hook(lambda timeout: functools.reduce(
             func, self.get(timeout), *args))
         return future
-
-
-class ThreadingFuture(Future):
-    """
-    :class:`ThreadingFuture` implements :class:`Future` for use with
-    :class:`ThreadingActor <pykka.ThreadingActor>`.
-
-    The future is implemented using a :class:`Queue.Queue`.
-
-    The future does *not* make a copy of the object which is :meth:`set()
-    <pykka.Future.set>` on it. It is the setters responsibility to only pass
-    immutable objects or make a copy of the object before setting it on the
-    future.
-
-    .. versionchanged:: 0.14
-        Previously, the encapsulated value was a copy made with
-        :func:`copy.deepcopy`, unless the encapsulated value was a future, in
-        which case the original future was encapsulated.
-    """
-
-    def __init__(self):
-        super(ThreadingFuture, self).__init__()
-        self._queue = _queue.Queue(maxsize=1)
-        self._data = None
-
-    def get(self, timeout=None):
-        try:
-            return super(ThreadingFuture, self).get(timeout=timeout)
-        except NotImplementedError:
-            pass
-
-        try:
-            if self._data is None:
-                self._data = self._queue.get(True, timeout)
-            if 'exc_info' in self._data:
-                exc_info = self._data['exc_info']
-                if PY3:
-                    raise exc_info[1].with_traceback(exc_info[2])
-                else:
-                    exec('raise exc_info[0], exc_info[1], exc_info[2]')
-            else:
-                return self._data['value']
-        except _queue.Empty:
-            raise _Timeout('%s seconds' % timeout)
-
-    def set(self, value=None):
-        self._queue.put({'value': value}, block=False)
-
-    def set_exception(self, exc_info=None):
-        if isinstance(exc_info, BaseException):
-            exc_info = (exc_info.__class__, exc_info, None)
-        self._queue.put({'exc_info': exc_info or _sys.exc_info()})
 
 
 def get_all(futures, timeout=None):

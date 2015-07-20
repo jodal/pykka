@@ -2,15 +2,15 @@ import logging
 import threading
 import unittest
 
-from pykka.actor import ThreadingActor
-from pykka.registry import ActorRegistry
+from pykka import ActorRegistry, ThreadingActor
 
 from tests import TestLogHandler
 from tests.actor_test import (
-    EarlyFailingActor, LateFailingActor, FailingOnFailureActor)
+    EarlyFailingActor, FailingOnFailureActor, LateFailingActor)
 
 
 class LoggingNullHandlerTest(unittest.TestCase):
+
     def test_null_handler_is_added_to_avoid_warnings(self):
         logger = logging.getLogger('pykka')
         handler_names = [h.__class__.__name__ for h in logger.handlers]
@@ -18,6 +18,7 @@ class LoggingNullHandlerTest(unittest.TestCase):
 
 
 class ActorLoggingTest(object):
+
     def setUp(self):
         self.on_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
@@ -131,6 +132,7 @@ class ActorLoggingTest(object):
 
 
 class AnActor(object):
+
     def __init__(self, on_stop_was_called, on_failure_was_called):
         super(AnActor, self).__init__()
         self.on_stop_was_called = on_stop_was_called
@@ -156,6 +158,7 @@ class AnActor(object):
 
 def ConcreteActorLoggingTest(actor_class, event_class):
     class C(ActorLoggingTest, unittest.TestCase):
+
         class AnActor(AnActor, actor_class):
             pass
 

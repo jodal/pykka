@@ -1,2 +1,0 @@
-cython
-https://github.com/surfly/gevent/archive/1.0rc2.tar.gz

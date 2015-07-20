@@ -1,7 +1,6 @@
 import time
 
-from pykka.actor import ThreadingActor
-from pykka.registry import ActorRegistry
+from pykka import ActorRegistry, ThreadingActor
 
 
 def time_it(func):

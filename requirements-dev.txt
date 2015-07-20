@@ -1,6 +1,0 @@
-# To run tests
-mock
-nose
-
-# Optional addon for collecting test coverage data
-coverage

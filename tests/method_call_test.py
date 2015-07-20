@@ -1,6 +1,6 @@
 import unittest
 
-from pykka.actor import ThreadingActor
+from pykka import ThreadingActor
 
 
 class ActorWithMethods(object):
@@ -20,6 +20,7 @@ class ActorWithMethods(object):
 
 
 class ActorExtendableAtRuntime(object):
+
     def add_method(self, name):
         setattr(self, name, lambda: 'returned by ' + name)
 
@@ -28,6 +29,7 @@ class ActorExtendableAtRuntime(object):
 
 
 class StaticMethodCallTest(object):
+
     def setUp(self):
         self.proxy = self.ActorWithMethods.start().proxy()
 
@@ -64,6 +66,7 @@ class StaticMethodCallTest(object):
 
 
 class DynamicMethodCallTest(object):
+
     def setUp(self):
         self.proxy = self.ActorExtendableAtRuntime.start().proxy()
 
@@ -89,11 +92,13 @@ class DynamicMethodCallTest(object):
 
 
 class ThreadingStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
+
     class ActorWithMethods(ActorWithMethods, ThreadingActor):
         pass
 
 
 class ThreadingDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
+
     class ActorExtendableAtRuntime(ActorExtendableAtRuntime, ThreadingActor):
         pass
 
@@ -102,11 +107,13 @@ try:
     from pygga.gevent import GeventActor
 
     class GeventStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
+
         class ActorWithMethods(ActorWithMethods, GeventActor):
             pass
 
     class GeventDynamicMethodCallTest(
             DynamicMethodCallTest, unittest.TestCase):
+
         class ActorExtendableAtRuntime(ActorExtendableAtRuntime, GeventActor):
             pass
 except ImportError:
@@ -118,11 +125,13 @@ try:
 
     class EventletStaticMethodCallTest(
             StaticMethodCallTest, unittest.TestCase):
+
         class ActorWithMethods(ActorWithMethods, EventletActor):
             pass
 
     class EventletDynamicMethodCallTest(
             DynamicMethodCallTest, unittest.TestCase):
+
         class ActorExtendableAtRuntime(
                 ActorExtendableAtRuntime, EventletActor):
             pass

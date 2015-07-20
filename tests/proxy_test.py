@@ -1,8 +1,6 @@
 import unittest
 
-from pykka import ActorDeadError
-from pykka.actor import ThreadingActor
-from pykka.proxy import ActorProxy
+from pykka import ActorDeadError, ActorProxy, ThreadingActor
 
 
 class SomeObject(object):
@@ -25,6 +23,7 @@ class AnActor(object):
 
 
 class ProxyTest(object):
+
     def setUp(self):
         self.proxy = ActorProxy(self.AnActor.start())
 
@@ -91,6 +90,7 @@ class ProxyTest(object):
 
 def ConcreteProxyTest(actor_class):
     class C(ProxyTest, unittest.TestCase):
+
         class AnActor(AnActor, actor_class):
             pass
     C.__name__ = '%sProxyTest' % actor_class.__name__
