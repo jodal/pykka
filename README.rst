@@ -376,9 +376,6 @@ Project resources
 - `Documentation <http://www.pykka.org/>`_
 - `Source code <https://github.com/jodal/pykka>`_
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
-- `CI server <https://travis-ci.org/jodal/pykka>`_
-- `Download development snapshot
-  <https://github.com/jodal/pykka/tarball/develop#egg=pykka-dev>`_
 
 .. image:: https://img.shields.io/pypi/v/Pykka.svg?style=flat
     :target: https://pypi.python.org/pypi/Pykka/
