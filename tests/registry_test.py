@@ -1,6 +1,9 @@
 import unittest
 
-import mock
+try:
+    import mock
+except ImportError:
+    from unittest import mock
 
 from pykka import ActorRegistry, ThreadingActor
 
