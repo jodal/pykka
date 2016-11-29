@@ -26,7 +26,7 @@ def _map(func, *iterables):
 class Future(object):
 
     """
-    A :class:`Future` is a handle to a value which are available or will be
+    A :class:`Future` is a handle to a value which is available or will be
     available in the future.
 
     Typically returned by calls to actor methods or accesses to actor fields.

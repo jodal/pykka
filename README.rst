@@ -120,7 +120,7 @@ Sending messages
 ----------------
 
 To send a message to the actor, you can either use the ``tell()`` method or the
-``ask()`` method on the ``actor_ref`` object. ``tell()`` will fire of a message
+``ask()`` method on the ``actor_ref`` object. ``tell()`` will fire off a message
 without waiting for an answer. In other words, it will never block. ``ask()``
 will by default block until an answer is returned, potentially forever. If you
 provide a ``timeout`` keyword argument to ``ask()``, you can specify for how
