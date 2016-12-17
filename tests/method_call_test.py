@@ -104,7 +104,7 @@ class ThreadingDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
 
 
 try:
-    from pygga.gevent import GeventActor
+    from pykka.gevent import GeventActor
 
     class GeventStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
 
@@ -121,7 +121,7 @@ except ImportError:
 
 
 try:
-    from pygga.eventlet import EventletActor
+    from pykka.eventlet import EventletActor
 
     class EventletStaticMethodCallTest(
             StaticMethodCallTest, unittest.TestCase):
