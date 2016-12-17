@@ -17,26 +17,26 @@ class ActorRegistryTest(object):
         ActorRegistry.stop_all()
 
     def test_actor_is_registered_when_started(self):
-        self.assert_(self.ref in ActorRegistry.get_all())
+        self.assertTrue(self.ref in ActorRegistry.get_all())
 
     def test_actor_is_unregistered_when_stopped(self):
-        self.assert_(self.ref in ActorRegistry.get_all())
+        self.assertTrue(self.ref in ActorRegistry.get_all())
         self.ref.stop()
-        self.assert_(self.ref not in ActorRegistry.get_all())
+        self.assertTrue(self.ref not in ActorRegistry.get_all())
 
     def test_actor_may_be_registered_manually(self):
         ActorRegistry.unregister(self.ref)
-        self.assert_(self.ref not in ActorRegistry.get_all())
+        self.assertTrue(self.ref not in ActorRegistry.get_all())
         ActorRegistry.register(self.ref)
-        self.assert_(self.ref in ActorRegistry.get_all())
+        self.assertTrue(self.ref in ActorRegistry.get_all())
 
     def test_actor_may_be_unregistered_multiple_times_without_error(self):
         ActorRegistry.unregister(self.ref)
-        self.assert_(self.ref not in ActorRegistry.get_all())
+        self.assertTrue(self.ref not in ActorRegistry.get_all())
         ActorRegistry.unregister(self.ref)
-        self.assert_(self.ref not in ActorRegistry.get_all())
+        self.assertTrue(self.ref not in ActorRegistry.get_all())
         ActorRegistry.register(self.ref)
-        self.assert_(self.ref in ActorRegistry.get_all())
+        self.assertTrue(self.ref in ActorRegistry.get_all())
 
     def test_all_actors_can_be_stopped_through_registry(self):
         self.assertEquals(9, len(ActorRegistry.get_all()))
@@ -65,23 +65,23 @@ class ActorRegistryTest(object):
     def test_actors_may_be_looked_up_by_class(self):
         result = ActorRegistry.get_by_class(self.AnActor)
         for a_actor in self.a_actors:
-            self.assert_(a_actor in result)
+            self.assertTrue(a_actor in result)
         for b_actor in self.b_actors:
-            self.assert_(b_actor not in result)
+            self.assertTrue(b_actor not in result)
 
     def test_actors_may_be_looked_up_by_superclass(self):
         result = ActorRegistry.get_by_class(AnActor)
         for a_actor in self.a_actors:
-            self.assert_(a_actor in result)
+            self.assertTrue(a_actor in result)
         for b_actor in self.b_actors:
-            self.assert_(b_actor not in result)
+            self.assertTrue(b_actor not in result)
 
     def test_actors_may_be_looked_up_by_class_name(self):
         result = ActorRegistry.get_by_class_name('AnActor')
         for a_actor in self.a_actors:
-            self.assert_(a_actor in result)
+            self.assertTrue(a_actor in result)
         for b_actor in self.b_actors:
-            self.assert_(b_actor not in result)
+            self.assertTrue(b_actor not in result)
 
     def test_actors_may_be_looked_up_by_urn(self):
         result = ActorRegistry.get_by_urn(self.a_actor_0_urn)
@@ -95,25 +95,25 @@ class ActorRegistryTest(object):
         ActorRegistry.broadcast({'command': 'foo'})
         for actor_ref in ActorRegistry.get_all():
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assert_({'command': 'foo'} in received_messages)
+            self.assertTrue({'command': 'foo'} in received_messages)
 
     def test_broadcast_sends_message_to_all_actors_of_given_class(self):
         ActorRegistry.broadcast({'command': 'foo'}, target_class=self.AnActor)
         for actor_ref in ActorRegistry.get_by_class(self.AnActor):
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assert_({'command': 'foo'} in received_messages)
+            self.assertTrue({'command': 'foo'} in received_messages)
         for actor_ref in ActorRegistry.get_by_class(self.BeeActor):
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assert_({'command': 'foo'} not in received_messages)
+            self.assertTrue({'command': 'foo'} not in received_messages)
 
     def test_broadcast_sends_message_to_all_actors_of_given_class_name(self):
         ActorRegistry.broadcast({'command': 'foo'}, target_class='AnActor')
         for actor_ref in ActorRegistry.get_by_class(self.AnActor):
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assert_({'command': 'foo'} in received_messages)
+            self.assertTrue({'command': 'foo'} in received_messages)
         for actor_ref in ActorRegistry.get_by_class(self.BeeActor):
             received_messages = actor_ref.proxy().received_messages.get()
-            self.assert_({'command': 'foo'} not in received_messages)
+            self.assertTrue({'command': 'foo'} not in received_messages)
 
 
 class AnActor(object):

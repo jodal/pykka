@@ -173,7 +173,7 @@ class ActorTest(object):
             on_failure_was_called=event,
             actor_was_registered_before_on_start_was_called=event,
             greetings_was_received=event)
-        self.assert_('AnActor' in str(unstarted_actor))
+        self.assertTrue('AnActor' in str(unstarted_actor))
 
     def test_str_on_raw_actor_contains_actor_urn(self):
         event = self.event_class()
@@ -183,7 +183,7 @@ class ActorTest(object):
             on_failure_was_called=event,
             actor_was_registered_before_on_start_was_called=event,
             greetings_was_received=event)
-        self.assert_(unstarted_actor.actor_urn in str(unstarted_actor))
+        self.assertTrue(unstarted_actor.actor_urn in str(unstarted_actor))
 
     def test_init_can_be_called_with_arbitrary_arguments(self):
         self.SuperInitActor(1, 2, 3, foo='bar')
@@ -275,7 +275,7 @@ class ActorTest(object):
         self.actor_ref.tell({'command': 'raise base exception'})
         self.on_stop_was_called.wait(5)
         self.assertTrue(self.on_stop_was_called.is_set())
-        self.assert_(1 >= len(ActorRegistry.get_all()))
+        self.assertTrue(1 >= len(ActorRegistry.get_all()))
         stop_event.wait(5)
         self.assertTrue(stop_event.is_set())
         self.assertEqual(0, len(ActorRegistry.get_all()))
@@ -330,7 +330,7 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
         alive_thread_names = [t.name for t in alive_threads]
         named_correctly = [
             name.startswith(AnActor.__name__) for name in alive_thread_names]
-        self.assert_(any(named_correctly))
+        self.assertTrue(any(named_correctly))
 
     def test_actor_thread_is_not_daemonic_by_default(self):
         alive_threads = threading.enumerate()

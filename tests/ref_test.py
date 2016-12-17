@@ -29,23 +29,23 @@ class RefTest(object):
 
     def test_repr_is_wrapped_in_lt_and_gt(self):
         result = repr(self.ref)
-        self.assert_(result.startswith('<'))
-        self.assert_(result.endswith('>'))
+        self.assertTrue(result.startswith('<'))
+        self.assertTrue(result.endswith('>'))
 
     def test_repr_reveals_that_this_is_a_ref(self):
-        self.assert_('ActorRef' in repr(self.ref))
+        self.assertTrue('ActorRef' in repr(self.ref))
 
     def test_repr_contains_actor_class_name(self):
-        self.assert_('AnActor' in repr(self.ref))
+        self.assertTrue('AnActor' in repr(self.ref))
 
     def test_repr_contains_actor_urn(self):
-        self.assert_(self.ref.actor_urn in repr(self.ref))
+        self.assertTrue(self.ref.actor_urn in repr(self.ref))
 
     def test_str_contains_actor_class_name(self):
-        self.assert_('AnActor' in str(self.ref))
+        self.assertTrue('AnActor' in str(self.ref))
 
     def test_str_contains_actor_urn(self):
-        self.assert_(self.ref.actor_urn in str(self.ref))
+        self.assertTrue(self.ref.actor_urn in str(self.ref))
 
     def test_is_alive_returns_true_for_running_actor(self):
         self.assertTrue(self.ref.is_alive())
