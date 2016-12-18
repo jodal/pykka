@@ -39,9 +39,9 @@ class ActorRegistryTest(object):
         self.assertTrue(self.ref in ActorRegistry.get_all())
 
     def test_all_actors_can_be_stopped_through_registry(self):
-        self.assertEquals(9, len(ActorRegistry.get_all()))
+        self.assertEqual(9, len(ActorRegistry.get_all()))
         ActorRegistry.stop_all(block=True)
-        self.assertEquals(0, len(ActorRegistry.get_all()))
+        self.assertEqual(0, len(ActorRegistry.get_all()))
 
     @mock.patch.object(ActorRegistry, 'get_all')
     def test_stop_all_stops_last_started_actor_first_if_blocking(

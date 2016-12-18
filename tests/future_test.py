@@ -91,7 +91,7 @@ class FutureTest(object):
         # traceback from the future.get() reraise
         self.assertTrue(len(exc_traceback_list_set) < len(exc_traceback_list_get))
         for i, frame in enumerate(exc_traceback_list_set):
-            self.assertEquals(frame, exc_traceback_list_get[i])
+            self.assertEqual(frame, exc_traceback_list_get[i])
 
     def test_filter_excludes_items_not_matching_predicate(self):
         future = self.results[0].filter(lambda x: x > 10)
@@ -180,7 +180,7 @@ try:
         def test_can_wrap_existing_async_result(self):
             async_result = AsyncResult()
             future = GeventFuture(async_result)
-            self.assertEquals(async_result, future.async_result)
+            self.assertEqual(async_result, future.async_result)
 
         def test_get_raises_exception_with_full_traceback(self):
             # gevent prints the first half of the traceback instead of
