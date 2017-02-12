@@ -381,10 +381,6 @@ Project resources
     :target: https://pypi.python.org/pypi/Pykka/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/pypi/dm/Pykka.svg?style=flat
-    :target: https://pypi.python.org/pypi/Pykka/
-    :alt: Number of PyPI downloads
-
 .. image:: https://img.shields.io/travis/jodal/pykka/develop.svg?style=flat
     :target: https://travis-ci.org/jodal/pykka
     :alt: Travis CI build status
