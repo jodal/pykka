@@ -61,7 +61,7 @@ Pykka's actor API comes with the following implementations:
 - Eventlet: Each ``EventletActor`` is executed by a Eventlet greenlet. Pykka is
   tested with Eventlet 0.12.1.
 
-Pykka has an extensive test suite, and is tested on CPython 2.6, 2.7, and 3.2+,
+Pykka has an extensive test suite, and is tested on CPython 2.7, and 3.4+,
 as well as PyPy. gevent and eventlet are currently not available for CPython
 3.x or PyPy.
 

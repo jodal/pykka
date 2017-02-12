@@ -2,6 +2,14 @@
 Changes
 =======
 
+v1.3.0 (UNRELEASED)
+===================
+
+- Drop support for Python 2.6, 3.2, and 3.3.
+
+- Include Python 3.5 and 3.6 in the test matrix.
+
+
 v1.2.1 (2015-07-20)
 ===================
 
