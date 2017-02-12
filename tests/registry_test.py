@@ -150,6 +150,7 @@ def ConcreteRegistryTest(actor_class):
     C.__name__ = '%sRegistryTest' % (actor_class.__name__,)
     return C
 
+
 ThreadingActorRegistryTest = ConcreteRegistryTest(ThreadingActor)
 
 

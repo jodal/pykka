@@ -122,6 +122,7 @@ def ConcreteRefTest(actor_class, future_class, sleep_function):
     C.future_class = future_class
     return C
 
+
 ThreadingActorRefTest = ConcreteRefTest(
     ThreadingActor, ThreadingFuture, time.sleep)
 
