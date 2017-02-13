@@ -89,7 +89,8 @@ class FutureTest(object):
 
         # All frames from the first traceback should be included in the
         # traceback from the future.get() reraise
-        self.assertTrue(len(exc_traceback_list_set) < len(exc_traceback_list_get))
+        self.assertTrue(
+            len(exc_traceback_list_set) < len(exc_traceback_list_get))
         for i, frame in enumerate(exc_traceback_list_set):
             self.assertEqual(frame, exc_traceback_list_get[i])
 

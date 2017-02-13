@@ -55,8 +55,10 @@ class StaticMethodCallTest(object):
             self.fail('Should raise AttributeError')
         except AttributeError as e:
             result = str(e)
-            self.assertTrue(result.startswith('<ActorProxy for ActorWithMethods'))
-            self.assertTrue(result.endswith('has no attribute "unknown_method"'))
+            self.assertTrue(
+                result.startswith('<ActorProxy for ActorWithMethods'))
+            self.assertTrue(
+                result.endswith('has no attribute "unknown_method"'))
 
     def test_can_proxy_itself_for_offloading_work_to_the_future(self):
         outer_future = self.proxy.talk_with_self()
