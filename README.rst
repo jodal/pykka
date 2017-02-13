@@ -338,9 +338,9 @@ Installation
 
 Install Pykka's dependencies:
 
-- Python 2.6, 2.7, or 3.2+
+- Python 2.7 or 3.4+
 
-- Optionally, Python 2.6/2.7 only:
+- Optionally, Python 2.7 only:
 
   - `gevent <http://www.gevent.org/>`_, if you want to use gevent based actors
     from ``pykka.gevent``.
