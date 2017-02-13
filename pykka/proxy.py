@@ -1,5 +1,4 @@
 import collections
-import sys
 
 from pykka.exceptions import ActorDeadError
 
@@ -130,13 +129,7 @@ class ActorProxy(object):
 
     def _is_callable_attribute(self, attr):
         """Returns true for any attribute that is callable."""
-        # isinstance(attr, collections.Callable), as recommended by 2to3, does
-        # not work on CPython 2.6.4 if the attribute is an Queue.Queue, but
-        # works on 2.6.6.
-        if sys.version_info < (3,):
-            return callable(attr)
-        else:
-            return isinstance(attr, collections.Callable)
+        return isinstance(attr, collections.Callable)
 
     def _is_traversable_attribute(self, attr):
         """
