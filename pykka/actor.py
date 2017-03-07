@@ -5,7 +5,9 @@ import sys
 import threading
 import uuid
 
+from pykka.envelope import Envelope
 from pykka.exceptions import ActorDeadError
+from pykka.messages import PykkaCall, PykkaGetattr, PykkaSetattr, PykkaStop
 from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
 
@@ -131,6 +133,12 @@ class Actor(object):
     #: continue processing messages. Use :meth:`stop` to change it.
     actor_stopped = None
 
+    #: Placeholder that represents no sender.
+    no_sender = None
+
+    #: :class:`ActorRef` to the sender of the current message.
+    sender = no_sender
+
     def __init__(self, *args, **kwargs):
         """
         Your are free to override :meth:`__init__`, but you must call your
@@ -168,7 +176,7 @@ class Actor(object):
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
-        self.actor_ref.tell({'command': 'pykka_stop'})
+        self.actor_ref.tell(PykkaStop)
 
     def _stop(self):
         """
@@ -194,11 +202,11 @@ class Actor(object):
             self._handle_failure(*sys.exc_info())
 
         while not self.actor_stopped.is_set():
-            message = self.actor_inbox.get()
-            reply_to = None
+            envelope = self.actor_inbox.get()
+            reply_to = getattr(envelope, 'pykka_reply_to', None)
+            self.sender = envelope.sender
             try:
-                reply_to = message.pop('pykka_reply_to', None)
-                response = self._handle_receive(message)
+                response = self._handle_receive(envelope.message)
                 if reply_to:
                     reply_to.set(response)
             except Exception:
@@ -220,12 +228,14 @@ class Actor(object):
                     (repr(exception_value), self))
                 self._stop()
                 ActorRegistry.stop_all()
+            finally:
+                self.sender = None
 
         while not self.actor_inbox.empty():
-            msg = self.actor_inbox.get()
-            reply_to = msg.pop('pykka_reply_to', None)
+            envelope = self.actor_inbox.get()
+            reply_to = getattr(envelope, 'pykka_reply_to', None)
             if reply_to:
-                if msg.get('command') == 'pykka_stop':
+                if envelope.message is PykkaStop:
                     reply_to.set(None)
                 else:
                     reply_to.set_exception(ActorDeadError(
@@ -288,30 +298,26 @@ class Actor(object):
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        if message.get('command') == 'pykka_stop':
+        if message is PykkaStop:
             return self._stop()
-        if message.get('command') == 'pykka_call':
-            callee = self._get_attribute_from_path(message['attr_path'])
-            return callee(*message['args'], **message['kwargs'])
-        if message.get('command') == 'pykka_getattr':
-            attr = self._get_attribute_from_path(message['attr_path'])
+        if isinstance(message, PykkaCall):
+            callee = self._get_attribute_from_path(message.attr_path)
+            return callee(*message.args, **message.kwargs)
+        if isinstance(message, PykkaGetattr):
+            attr = self._get_attribute_from_path(message.attr_path)
             return attr
-        if message.get('command') == 'pykka_setattr':
-            parent_attr = self._get_attribute_from_path(
-                message['attr_path'][:-1])
-            attr_name = message['attr_path'][-1]
-            return setattr(parent_attr, attr_name, message['value'])
+        if isinstance(message, PykkaSetattr):
+            parent_attr = self._get_attribute_from_path(message.attr_path[:-1])
+            attr_name = message.attr_path[-1]
+            return setattr(parent_attr, attr_name, message.value)
         return self.on_receive(message)
 
     def on_receive(self, message):
         """
         May be implemented for the actor to handle regular non-proxy messages.
 
-        Messages where the value of the "command" key matches "pykka_*" are
-        reserved for internal use in Pykka.
-
         :param message: the message to handle
-        :type message: picklable dict
+        :type message: object
 
         :returns: anything that should be sent as a reply to the sender
         """
@@ -381,7 +387,7 @@ class ActorRef(object):
         """
         return not self.actor_stopped.is_set()
 
-    def tell(self, message):
+    def tell(self, message, sender=Actor.no_sender):
         """
         Send message to actor without waiting for any response.
 
@@ -391,12 +397,17 @@ class ActorRef(object):
         :param message: message to send
         :type message: picklable dict
 
+        :param sender: sender of the message
+        :type sender: :class:`ActorRef`
+
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: nothing
         """
         if not self.is_alive():
             raise ActorDeadError('%s not found' % self)
-        self.actor_inbox.put(message)
+        if sender is not Actor.no_sender and not isinstance(sender, ActorRef):
+            raise ValueError("Sender must be actor reference")
+        self.actor_inbox.put(Envelope(message, sender))
 
     def ask(self, message, block=True, timeout=None):
         """
@@ -426,11 +437,12 @@ class ActorRef(object):
         :return: :class:`pykka.Future`, or response if blocking
         """
         future = self.actor_class._create_future()
-        message['pykka_reply_to'] = future
-        try:
-            self.tell(message)
-        except ActorDeadError:
-            future.set_exception()
+        if not self.is_alive():
+            future.set_exception(ActorDeadError('%s not found' % self))
+        else:
+            envelope = Envelope(message, Actor.no_sender)
+            envelope.pykka_reply_to = future
+            self.actor_inbox.put(envelope)
         if block:
             return future.get(timeout=timeout)
         else:
@@ -456,7 +468,7 @@ class ActorRef(object):
 
         :return: :class:`pykka.Future`, or a boolean result if blocking
         """
-        ask_future = self.ask({'command': 'pykka_stop'}, block=False)
+        ask_future = self.ask(PykkaStop, block=False)
 
         def _stop_result_converter(timeout):
             try:
