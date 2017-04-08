@@ -208,3 +208,12 @@ class _CallableProxy(object):
             'kwargs': kwargs,
         }
         return self.actor_ref.ask(message, block=False)
+
+    def defer(self, *args, **kwargs):
+        message = {
+            'command': 'pykka_call',
+            'attr_path': self._attr_path,
+            'args': args,
+            'kwargs': kwargs,
+        }
+        return self.actor_ref.tell(message)
