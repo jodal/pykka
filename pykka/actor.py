@@ -203,7 +203,7 @@ class Actor(object):
                     reply_to.set(response)
             except Exception:
                 if reply_to:
-                    logger.debug(
+                    logger.info(
                         'Exception returned from %s to caller:' % self,
                         exc_info=sys.exc_info())
                     reply_to.set_exception()
