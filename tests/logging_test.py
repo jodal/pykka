@@ -51,10 +51,10 @@ class ActorLoggingTest(object):
             self.fail('Should raise exception')
         except Exception:
             pass
-        self.log_handler.wait_for_message('debug')
+        self.log_handler.wait_for_message('info')
         with self.log_handler.lock:
-            self.assertEqual(1, len(self.log_handler.messages['debug']))
-            log_record = self.log_handler.messages['debug'][0]
+            self.assertEqual(1, len(self.log_handler.messages['info']))
+            log_record = self.log_handler.messages['info'][0]
         self.assertEqual(
             'Exception returned from %s to caller:' % self.actor_ref,
             log_record.getMessage())
