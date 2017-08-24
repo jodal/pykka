@@ -206,7 +206,7 @@ class Actor(object):
                     logger.debug(
                         'Exception returned from %s to caller:' % self,
                         exc_info=sys.exc_info())
-                    reply_to.set_exception()
+                    reply_to.set_exception(sys.exc_info())
                 else:
                     self._handle_failure(*sys.exc_info())
                     try:
