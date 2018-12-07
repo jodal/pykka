@@ -28,7 +28,7 @@ class Resolver(pykka.ThreadingActor):
             info = socket.gethostbyaddr(ip)
             print('Finished resolving {}'.format(ip))
             return info[0]
-        except:
+        except Exception:
             print('Failed resolving {}'.format(ip))
             return None
 
