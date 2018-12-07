@@ -19,10 +19,10 @@ matrix:
       env: TOX_ENV=py36
     - python: 3.7
       env: TOX_ENV=py37
-    - python: pypy
+    - python: pypy2.7-6.0
       env: TOX_ENV=pypy
-    - python: pypy3.5
-      env: TOX_ENV=pypy35
+    - python: pypy3.5-6.0
+      env: TOX_ENV=pypy3
     - python: 3.7
       env: TOX_ENV=docs
     - python: 3.7
