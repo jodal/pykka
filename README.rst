@@ -3,7 +3,7 @@ Pykka
 =====
 
 Pykka is a Python implementation of the `actor model
-<http://en.wikipedia.org/wiki/Actor_model>`_. The actor model introduces some
+<https://en.wikipedia.org/wiki/Actor_model>`_. The actor model introduces some
 simple rules to control the sharing of state and cooperation between execution
 units, which makes it easier to build concurrent applications.
 
@@ -206,7 +206,7 @@ With the basic building blocks provided by actors and futures, we got
 everything we need to build more advanced abstractions. Pykka provides a single
 abstraction on top of the basic actor model, named "actor proxies". You can use
 Pykka without proxies, but we've found it to be a very convenient abstraction
-when builing `Mopidy <http://www.mopidy.com/>`_.
+when building `Mopidy <https://www.mopidy.com/>`_.
 
 Let's create an actor and start it::
 
@@ -320,7 +320,7 @@ What Pykka is not
 =================
 
 Much of the naming of concepts and methods in Pykka is taken from the `Akka
-<http://akka.io/>`_ project which implements actors on the JVM. Though, Pykka
+<https://akka.io/>`_ project which implements actors on the JVM. Though, Pykka
 does not aim to be a Python port of Akka, and supports far fewer features.
 
 Notably, Pykka **does not** support the following features:
@@ -345,9 +345,9 @@ Install Pykka's dependencies:
   - `gevent <http://www.gevent.org/>`_, if you want to use gevent based actors
     from ``pykka.gevent``.
 
-  - `eventlet <http://eventlet.net/>`_, if you want to use eventlet based actors
-    from ``pykka.eventlet``. Eventlet is known to work with PyPy 2.0 as well
-    but Pykka is not tested with it yet.
+  - `eventlet <https://eventlet.net/>`_, if you want to use eventlet based
+    actors from ``pykka.eventlet``. Eventlet is known to work with PyPy 2.0 as
+    well but Pykka is not tested with it yet.
 
 To install Pykka you can use pip::
 
@@ -367,13 +367,13 @@ License
 
 Pykka is copyright 2010-2018 Stein Magnus Jodal and contributors.
 Pykka is licensed under the `Apache License, Version 2.0
-<http://www.apache.org/licenses/LICENSE-2.0>`_.
+<https://www.apache.org/licenses/LICENSE-2.0>`_.
 
 
 Project resources
 =================
 
-- `Documentation <http://www.pykka.org/>`_
+- `Documentation <https://www.pykka.org/>`_
 - `Source code <https://github.com/jodal/pykka>`_
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
 

@@ -289,5 +289,5 @@ v0.12 (2011-03-30)
 ==================
 
 - First stable release, as Pykka now is used by the `Mopidy
-  <http://www.mopidy.com/>`_ project. From now on, a changelog will be
-  maintained and we will strive for backwards compatability.
+  <https://www.mopidy.com/>`_ project. From now on, a changelog will be
+  maintained and we will strive for backwards compatibility.

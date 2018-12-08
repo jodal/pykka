@@ -15,7 +15,7 @@ setup(
     author='Stein Magnus Jodal',
     author_email='stein.magnus@jodal.no',
     packages=['pykka'],
-    url='http://www.pykka.org/',
+    url='https://www.pykka.org/',
     license='Apache License, Version 2.0',
     description='Pykka is a Python implementation of the actor model',
     long_description=open('README.rst').read(),

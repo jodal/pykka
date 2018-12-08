@@ -125,5 +125,5 @@ extlinks = {
 # -- Options for intersphinx extension ----------------------------------------
 
 intersphinx_mapping = {
-    'python': ('http://docs.python.org/2', None),
+    'python': ('https://docs.python.org/2', None),
 }

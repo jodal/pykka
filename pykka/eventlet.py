@@ -100,7 +100,7 @@ class EventletActor(Actor):
 
     """
     :class:`EventletActor` implements :class:`pykka.Actor` using the `eventlet
-    <http://eventlet.net/>`_ library.
+    <https://eventlet.net/>`_ library.
 
     This implementation uses eventlet green threads.
     """
