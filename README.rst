@@ -70,7 +70,9 @@ A basic actor
 =============
 
 In its most basic form, a Pykka actor is a class with an
-``on_receive(message)`` method::
+``on_receive(message)`` method:
+
+.. code:: python
 
     import pykka
 
@@ -80,13 +82,17 @@ In its most basic form, a Pykka actor is a class with an
 
 To start an actor, you call the class' method ``start()``, which starts the
 actor and returns an actor reference which can be used to communicate with the
-running actor::
+running actor:
+
+.. code:: python
 
     actor_ref = Greeter.start()
 
 If you need to pass arguments to the actor upon creation, you can pass them to
 the ``start()`` method, and receive them using the regular ``__init__()``
-method::
+method:
+
+.. code:: python
 
     import pykka
 
@@ -105,11 +111,15 @@ that starts the actor. There are also hooks for running code in the actor's own
 execution context when the actor starts, when it stops, and when an unhandled
 exception is raised. Check out the full API docs for the details.
 
-To stop an actor, you can either call ``stop()`` on the ``actor_ref``::
+To stop an actor, you can either call ``stop()`` on the ``actor_ref``:
+
+.. code:: python
 
     actor_ref.stop()
 
-Or, if an actor wants to stop itself, it can simply do so::
+Or, if an actor wants to stop itself, it can simply do so:
+
+.. code:: python
 
     self.stop()
 
@@ -131,7 +141,9 @@ right away because you have other stuff you can do first, you can pass
 The message itself must always be a dict, but you're mostly free to use
 whatever dict keys you want to.
 
-Summarized in code::
+Summarized in code:
+
+.. code:: python
 
     actor_ref.tell({'msg': 'Hi!'})
     # => Returns nothing. Will never block.
@@ -159,7 +171,9 @@ Replying to messages
 --------------------
 
 If a message is sent using ``actor_ref.ask()`` you can reply to the sender of
-the message by simply returning a value from ``on_receive`` method::
+the message by simply returning a value from ``on_receive`` method:
+
+.. code:: python
 
     import pykka
 
@@ -182,7 +196,9 @@ doesn't expect a response the ``on_receive`` return value will be ignored.
 
 The situation is similar in regard to exceptions: when ``actor_ref.ask()`` is
 used and you raise an exception from within ``on_receive`` method it will
-propagate to the sender::
+propagate to the sender:
+
+.. code:: python
 
     import pykka
 
@@ -208,7 +224,9 @@ abstraction on top of the basic actor model, named "actor proxies". You can use
 Pykka without proxies, but we've found it to be a very convenient abstraction
 when building `Mopidy <https://www.mopidy.com/>`_.
 
-Let's create an actor and start it::
+Let's create an actor and start it:
+
+.. code:: python
 
     import pykka
 
@@ -233,7 +251,9 @@ Let's create an actor and start it::
 
     actor_ref = Calculator.start()
 
-You can create a proxy from any reference to a running actor::
+You can create a proxy from any reference to a running actor:
+
+.. code:: python
 
     proxy = actor_ref.proxy()
 
@@ -245,7 +265,9 @@ convention for keeping stuff private in Python.
 When we access attributes or call methods on the proxy, it will ask the actor
 to access the given attribute or call the given method, and return the result
 to us. All results are wrapped in "future" objects, so you must use the
-``get()`` method to get the actual data::
+``get()`` method to get the actual data:
+
+.. code:: python
 
     future = proxy.add(1, 3)
     future.get()
@@ -256,7 +278,9 @@ to us. All results are wrapped in "future" objects, so you must use the
 
 Since an actor only processes one message at the time and all messages are kept
 in order, you don't need to add the call to ``get()`` just to block
-processing until the actor has completed processing your last message::
+processing until the actor has completed processing your last message:
+
+.. code:: python
 
     proxy.sub(5)
     proxy.add(3)
@@ -264,7 +288,9 @@ processing until the actor has completed processing your last message::
     # => 2
 
 Since assignment doesn't return anything, it works just like on regular
-objects::
+objects:
+
+.. code:: python
 
     proxy.last_result = 17
     proxy.last_result.get()
@@ -287,7 +313,9 @@ marking an actor attribute as traversable, Pykka will not return the attribute
 when accessed, but wrap it in a new proxy which is returned instead.
 
 To mark an attribute as traversable, simply set the ``pykka_traversable``
-attribute to ``True``::
+attribute to ``True``:
+
+.. code:: python
 
     import pykka
 
