@@ -4,7 +4,7 @@ import unittest
 
 from pykka import ActorRegistry, ThreadingActor
 
-from tests import TestLogHandler
+from tests import PykkaTestLogHandler
 from tests.actor_test import (
     EarlyFailingActor, FailingOnFailureActor, LateFailingActor)
 
@@ -27,7 +27,7 @@ class ActorLoggingTest(object):
             self.on_stop_was_called, self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
-        self.log_handler = TestLogHandler(logging.DEBUG)
+        self.log_handler = PykkaTestLogHandler(logging.DEBUG)
         self.root_logger = logging.getLogger()
         self.root_logger.addHandler(self.log_handler)
 

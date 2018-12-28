@@ -3,7 +3,7 @@ import logging
 import threading
 
 
-class TestLogHandler(logging.Handler):
+class PykkaTestLogHandler(logging.Handler):
 
     def __init__(self, *args, **kwargs):
         self.lock = threading.RLock()
