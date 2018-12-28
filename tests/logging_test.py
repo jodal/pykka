@@ -27,7 +27,7 @@ class ActorLoggingTest(object):
             self.on_stop_was_called, self.on_failure_was_called)
         self.actor_proxy = self.actor_ref.proxy()
 
-        self.log_handler = PykkaTestLogHandler(logging.DEBUG)
+        self.log_handler = PykkaTestLogHandler()
         self.root_logger = logging.getLogger()
         self.root_logger.addHandler(self.log_handler)
 
