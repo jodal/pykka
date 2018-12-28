@@ -1,8 +1,10 @@
 import unittest
 
 try:
+    # Python 3.3+
     import unittest.mock as mock
 except ImportError:
+    # Python 2.7
     import mock
 
 
