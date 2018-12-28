@@ -1,6 +1,7 @@
 import collections
 import logging
 import threading
+import time
 
 
 class PykkaTestLogHandler(logging.Handler):
@@ -25,12 +26,14 @@ class PykkaTestLogHandler(logging.Handler):
                 self.events[level].clear()
                 self.messages[level] = []
 
-    def wait_for_message(self, level, num_messages=1):
+    def wait_for_message(self, level, num_messages=1, timeout=5):
         """Wait until at least ``num_messages`` log messages have been emitted
         to the given log level."""
-        while True:
+        deadline = time.time() + timeout
+        while time.time() < deadline:
             with self.lock:
                 if len(self.messages[level]) >= num_messages:
                     return
                 self.events[level].clear()
-            self.events[level].wait(5)
+            self.events[level].wait(1)
+        raise Exception('Timeout: Waited %ds for log message' % (timeout,))
