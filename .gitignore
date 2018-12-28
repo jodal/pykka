@@ -1,14 +1,9 @@
 *.egg-info
-*.py,cover
 *.pyc
-*.swp
 /.coverage
 /.pytest_cache/
 /.tox
 /MANIFEST
 /build/
-/cover
 /dist/
 /docs/_build/*
-/nosetests.xml
-/xunit-*.xml
