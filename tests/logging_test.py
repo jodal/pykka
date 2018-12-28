@@ -31,6 +31,10 @@ class ActorLoggingTest(object):
         self.root_logger = logging.getLogger()
         self.root_logger.addHandler(self.log_handler)
 
+        # pytest sets the root logger level to WARNING. We reset it to NOTSET
+        # so that all log messages reaches our log handler.
+        self.root_logger.setLevel(logging.NOTSET)
+
     def tearDown(self):
         self.log_handler.close()
         ActorRegistry.stop_all()
