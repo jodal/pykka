@@ -1,22 +1,22 @@
-# Build documentation
-sphinx
+# Check that MANIFEST.in matches Git repo contents before making a release
+check-manifest
 
 # Check code style, error, etc
 flake8
 flake8-import-order
 
-# Mock dependencies in tests
+# unittest.mock for Python 2.7
 mock
 
-# Test runners
-nose
+# Unit testing
+pytest
+pytest-cov
+
+# Build documentation
+sphinx
+
+# Test runner
 tox
-
-# Measure test's code coverage
-coverage
-
-# Check that MANIFEST.in matches Git repo contents before making a release
-check-manifest
 
 # To make wheel packages
 wheel
