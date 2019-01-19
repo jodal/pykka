@@ -1,3 +1,6 @@
+# Code formatting
+black
+
 # Check that MANIFEST.in matches Git repo contents before making a release
 check-manifest
 
