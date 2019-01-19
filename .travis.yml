@@ -29,6 +29,8 @@ matrix:
       env: TOX_ENV=flake8
     - python: 3.7
       env: TOX_ENV=check-manifest
+    - python: 3.7
+      env: TOX_ENV=black
 
 install:
   - "pip install tox"
