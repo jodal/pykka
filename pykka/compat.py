@@ -5,6 +5,7 @@ PY3 = sys.version_info[0] == 3
 
 if PY2:
     import Queue as queue  # noqa
+    from collections import Callable, Iterable  # noqa
 
     string_types = basestring  # noqa
 
@@ -14,6 +15,7 @@ if PY2:
 
 else:
     import queue  # noqa
+    from collections.abc import Callable, Iterable  # noqa
 
     string_types = (str,)
 

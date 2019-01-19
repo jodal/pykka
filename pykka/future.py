@@ -1,4 +1,3 @@
-import collections
 import functools
 
 from pykka import compat
@@ -8,7 +7,7 @@ __all__ = ['Future', 'get_all']
 
 
 def _is_iterable(x):
-    return isinstance(x, collections.Iterable) and not isinstance(
+    return isinstance(x, compat.Iterable) and not isinstance(
         x, compat.string_types
     )
 

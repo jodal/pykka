@@ -1,5 +1,4 @@
-import collections
-
+from pykka import compat
 from pykka.exceptions import ActorDeadError
 
 
@@ -127,7 +126,7 @@ class ActorProxy(object):
 
     def _is_callable_attribute(self, attr):
         """Returns true for any attribute that is callable."""
-        return isinstance(attr, collections.Callable)
+        return isinstance(attr, compat.Callable)
 
     def _is_traversable_attribute(self, attr):
         """

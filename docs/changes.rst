@@ -9,6 +9,10 @@ v1.3.0 (UNRELEASED)
 
 - Include CPython 3.5, 3.6 and 3.7, and PyPy 3.5 in the test matrix.
 
+- On Python 3, import :class:`Callable` and :class:`Iterable` from
+  :mod:`collections.abc` instead of :mod:`collections`. This fixes a
+  deprecation warning on Python 3.7 and prepares for Python 3.8.
+
 - Various project setup and development improvements.
 
 
