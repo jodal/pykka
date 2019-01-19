@@ -9,10 +9,7 @@ from pykka.exceptions import Timeout
 from pykka.future import Future
 
 
-__all__ = [
-    'ThreadingActor',
-    'ThreadingFuture',
-]
+__all__ = ['ThreadingActor', 'ThreadingFuture']
 
 
 class ThreadingFuture(Future):

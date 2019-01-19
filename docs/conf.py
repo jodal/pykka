@@ -15,7 +15,6 @@ sys.path.insert(0, os.path.abspath('..'))
 
 
 class Mock(object):
-
     def __init__(self, *args, **kwargs):
         pass
 
@@ -101,7 +100,7 @@ latex_documents = [
         'Pykka Documentation',
         'Stein Magnus Jodal',
         'manual',
-    ),
+    )
 ]
 
 
@@ -117,13 +116,9 @@ autodoc_member_order = 'bysource'
 
 # -- Options for extlink extension --------------------------------------------
 
-extlinks = {
-    'issue': ('https://github.com/jodal/pykka/issues/%s', '#'),
-}
+extlinks = {'issue': ('https://github.com/jodal/pykka/issues/%s', '#')}
 
 
 # -- Options for intersphinx extension ----------------------------------------
 
-intersphinx_mapping = {
-    'python': ('https://docs.python.org/2', None),
-}
+intersphinx_mapping = {'python': ('https://docs.python.org/2', None)}

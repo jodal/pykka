@@ -9,9 +9,7 @@ import traceback
 logger = logging.getLogger('pykka')
 
 
-__all__ = [
-    'log_thread_tracebacks',
-]
+__all__ = ['log_thread_tracebacks']
 
 
 def log_thread_tracebacks(*args, **kwargs):
@@ -67,4 +65,5 @@ def log_thread_tracebacks(*args, **kwargs):
         name = thread_names.get(ident, '?')
         stack = ''.join(traceback.format_stack(frame))
         logger.critical(
-            'Current state of %s (ident: %s):\n%s', name, ident, stack)
+            'Current state of %s (ident: %s):\n%s', name, ident, stack
+        )

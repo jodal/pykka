@@ -12,7 +12,6 @@ from pykka import ActorRegistry, ThreadingActor
 
 
 class ActorRegistryTest(object):
-
     def setUp(self):
         self.ref = self.AnActor.start()
         self.a_actors = [self.AnActor.start() for _ in range(3)]
@@ -51,15 +50,25 @@ class ActorRegistryTest(object):
 
     @mock.patch.object(ActorRegistry, 'get_all')
     def test_stop_all_stops_last_started_actor_first_if_blocking(
-            self, mock_method):
+        self, mock_method
+    ):
         stopped_actors = []
         started_actors = [mock.Mock(name=i) for i in range(3)]
-        started_actors[0].stop.side_effect = lambda *a, **kw: \
-            stopped_actors.append(started_actors[0])
-        started_actors[1].stop.side_effect = lambda *a, **kw: \
-            stopped_actors.append(started_actors[1])
-        started_actors[2].stop.side_effect = lambda *a, **kw: \
-            stopped_actors.append(started_actors[2])
+        started_actors[
+            0
+        ].stop.side_effect = lambda *a, **kw: stopped_actors.append(
+            started_actors[0]
+        )
+        started_actors[
+            1
+        ].stop.side_effect = lambda *a, **kw: stopped_actors.append(
+            started_actors[1]
+        )
+        started_actors[
+            2
+        ].stop.side_effect = lambda *a, **kw: stopped_actors.append(
+            started_actors[2]
+        )
         ActorRegistry.get_all.return_value = started_actors
 
         ActorRegistry.stop_all(block=True)
@@ -146,7 +155,6 @@ class BeeActor(object):
 
 def ConcreteRegistryTest(actor_class):
     class C(ActorRegistryTest, unittest.TestCase):
-
         class AnActor(AnActor, actor_class):
             pass
 

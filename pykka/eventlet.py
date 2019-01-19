@@ -11,11 +11,7 @@ from pykka.actor import Actor
 from pykka.future import Future
 
 
-__all__ = [
-    'EventletActor',
-    'EventletEvent',
-    'EventletFuture',
-]
+__all__ = ['EventletActor', 'EventletEvent', 'EventletFuture']
 
 
 class EventletEvent(eventlet.event.Event):

@@ -3,9 +3,7 @@ import collections
 from pykka.exceptions import ActorDeadError
 
 
-__all__ = [
-    'ActorProxy',
-]
+__all__ = ['ActorProxy']
 
 
 class ActorProxy(object):
@@ -140,14 +138,15 @@ class ActorProxy(object):
 
     def __repr__(self):
         return '<ActorProxy for %s, attr_path=%s>' % (
-            self.actor_ref, self._attr_path)
+            self.actor_ref,
+            self._attr_path,
+        )
 
     def __dir__(self):
         result = ['__class__']
         result += list(self.__class__.__dict__.keys())
         result += list(self.__dict__.keys())
-        result += [
-            attr_path[0] for attr_path in list(self._known_attrs.keys())]
+        result += [attr_path[0] for attr_path in list(self._known_attrs.keys())]
         return sorted(result)
 
     def __getattr__(self, name):
@@ -161,18 +160,17 @@ class ActorProxy(object):
         if attr_info['callable']:
             if attr_path not in self._callable_proxies:
                 self._callable_proxies[attr_path] = _CallableProxy(
-                    self.actor_ref, attr_path)
+                    self.actor_ref, attr_path
+                )
             return self._callable_proxies[attr_path]
         elif attr_info['traversable']:
             if attr_path not in self._actor_proxies:
                 self._actor_proxies[attr_path] = ActorProxy(
-                    self.actor_ref, attr_path)
+                    self.actor_ref, attr_path
+                )
             return self._actor_proxies[attr_path]
         else:
-            message = {
-                'command': 'pykka_getattr',
-                'attr_path': attr_path,
-            }
+            message = {'command': 'pykka_getattr', 'attr_path': attr_path}
             return self.actor_ref.ask(message, block=False)
 
     def __setattr__(self, name, value):

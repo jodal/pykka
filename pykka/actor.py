@@ -10,10 +10,7 @@ from pykka.proxy import ActorProxy
 from pykka.registry import ActorRegistry
 
 
-__all__ = [
-    'Actor',
-    'ActorRef',
-]
+__all__ = ['Actor', 'ActorRef']
 
 logger = logging.getLogger('pykka')
 
@@ -94,7 +91,8 @@ class Actor(object):
         obj = cls(*args, **kwargs)
         assert obj.actor_ref is not None, (
             'Actor.__init__() have not been called. '
-            'Did you forget to call super() in your override?')
+            'Did you forget to call super() in your override?'
+        )
         ActorRegistry.register(obj.actor_ref)
         logger.debug('Starting %s', obj)
         obj._start_actor_loop()
@@ -205,7 +203,8 @@ class Actor(object):
                 if reply_to:
                     logger.debug(
                         'Exception returned from %s to caller:' % self,
-                        exc_info=sys.exc_info())
+                        exc_info=sys.exc_info(),
+                    )
                     reply_to.set_exception()
                 else:
                     self._handle_failure(*sys.exc_info())
@@ -216,8 +215,9 @@ class Actor(object):
             except BaseException:
                 exception_value = sys.exc_info()[1]
                 logger.debug(
-                    '%s in %s. Stopping all actors.' %
-                    (repr(exception_value), self))
+                    '%s in %s. Stopping all actors.'
+                    % (repr(exception_value), self)
+                )
                 self._stop()
                 ActorRegistry.stop_all()
 
@@ -228,9 +228,12 @@ class Actor(object):
                 if msg.get('command') == 'pykka_stop':
                     reply_to.set(None)
                 else:
-                    reply_to.set_exception(ActorDeadError(
-                        '%s stopped before handling the message' %
-                        self.actor_ref))
+                    reply_to.set_exception(
+                        ActorDeadError(
+                            '%s stopped before handling the message'
+                            % self.actor_ref
+                        )
+                    )
 
     def on_start(self):
         """
@@ -266,7 +269,8 @@ class Actor(object):
         """Logs unexpected failures, unregisters and stops the actor."""
         logger.error(
             'Unhandled exception in %s:' % self,
-            exc_info=(exception_type, exception_value, traceback))
+            exc_info=(exception_type, exception_value, traceback),
+        )
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
 
@@ -298,7 +302,8 @@ class Actor(object):
             return attr
         if message.get('command') == 'pykka_setattr':
             parent_attr = self._get_attribute_from_path(
-                message['attr_path'][:-1])
+                message['attr_path'][:-1]
+            )
             attr_name = message['attr_path'][-1]
             return setattr(parent_attr, attr_name, message['value'])
         return self.on_receive(message)

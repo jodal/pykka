@@ -4,16 +4,13 @@ import functools
 from pykka import compat
 
 
-__all__ = [
-    'Future',
-    'get_all',
-]
+__all__ = ['Future', 'get_all']
 
 
 def _is_iterable(x):
-    return (
-        isinstance(x, collections.Iterable) and
-        not isinstance(x, compat.string_types))
+    return isinstance(x, collections.Iterable) and not isinstance(
+        x, compat.string_types
+    )
 
 
 def _map(func, *iterables):
@@ -137,8 +134,9 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(lambda timeout: list(filter(
-            func, self.get(timeout))))
+        future.set_get_hook(
+            lambda timeout: list(filter(func, self.get(timeout)))
+        )
         return future
 
     def join(self, *futures):
@@ -164,8 +162,9 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(lambda timeout: [
-            f.get(timeout) for f in [self] + list(futures)])
+        future.set_get_hook(
+            lambda timeout: [f.get(timeout) for f in [self] + list(futures)]
+        )
         return future
 
     def map(self, func):
@@ -249,8 +248,9 @@ class Future(object):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(lambda timeout: functools.reduce(
-            func, self.get(timeout), *args))
+        future.set_get_hook(
+            lambda timeout: functools.reduce(func, self.get(timeout), *args)
+        )
         return future
 
 

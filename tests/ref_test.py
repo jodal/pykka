@@ -5,7 +5,6 @@ from pykka import ActorDeadError, ThreadingActor, ThreadingFuture, Timeout
 
 
 class AnActor(object):
-
     def __init__(self, received_message):
         super(AnActor, self).__init__()
         self.received_message = received_message
@@ -19,7 +18,6 @@ class AnActor(object):
 
 
 class RefTest(object):
-
     def setUp(self):
         self.received_message = self.future_class()
         self.ref = self.AnActor.start(self.received_message)
@@ -67,7 +65,8 @@ class RefTest(object):
     def test_tell_delivers_message_to_actors_custom_on_receive(self):
         self.ref.tell({'command': 'a custom message'})
         self.assertEqual(
-            {'command': 'a custom message'}, self.received_message.get())
+            {'command': 'a custom message'}, self.received_message.get()
+        )
 
     def test_tell_fails_if_actor_is_stopped(self):
         self.ref.stop()
@@ -112,9 +111,7 @@ class RefTest(object):
 
 def ConcreteRefTest(actor_class, future_class, sleep_function):
     class C(RefTest, unittest.TestCase):
-
         class AnActor(AnActor, actor_class):
-
             def sleep(self, seconds):
                 sleep_function(seconds)
 
@@ -124,14 +121,16 @@ def ConcreteRefTest(actor_class, future_class, sleep_function):
 
 
 ThreadingActorRefTest = ConcreteRefTest(
-    ThreadingActor, ThreadingFuture, time.sleep)
+    ThreadingActor, ThreadingFuture, time.sleep
+)
 
 try:
     import gevent
     from pykka.gevent import GeventActor, GeventFuture
 
     GeventActorRefTest = ConcreteRefTest(
-        GeventActor, GeventFuture, gevent.sleep)
+        GeventActor, GeventFuture, gevent.sleep
+    )
 except ImportError:
     pass
 
@@ -140,6 +139,7 @@ try:
     from pykka.eventlet import EventletActor, EventletFuture
 
     EventletActorRefTest = ConcreteRefTest(
-        EventletActor, EventletFuture, eventlet.sleep)
+        EventletActor, EventletFuture, eventlet.sleep
+    )
 except ImportError:
     pass

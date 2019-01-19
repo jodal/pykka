@@ -11,10 +11,7 @@ from pykka.actor import Actor
 from pykka.future import Future
 
 
-__all__ = [
-    'GeventActor',
-    'GeventFuture',
-]
+__all__ = ['GeventActor', 'GeventFuture']
 
 
 class GeventFuture(Future):

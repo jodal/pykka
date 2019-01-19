@@ -6,14 +6,14 @@ from pykka import ActorDeadError, ActorRegistry, ThreadingActor
 
 
 class AnActor(object):
-
     def __init__(self, **events):
         super(AnActor, self).__init__()
         self.on_start_was_called = events['on_start_was_called']
         self.on_stop_was_called = events['on_stop_was_called']
         self.on_failure_was_called = events['on_failure_was_called']
         self.actor_was_registered_before_on_start_was_called = events[
-            'actor_was_registered_before_on_start_was_called']
+            'actor_was_registered_before_on_start_was_called'
+        ]
         self.greetings_was_received = events['greetings_was_received']
 
     def on_start(self):
@@ -47,7 +47,6 @@ class AnActor(object):
 
 
 class EarlyStoppingActor(object):
-
     def __init__(self, on_stop_was_called):
         super(EarlyStoppingActor, self).__init__()
         self.on_stop_was_called = on_stop_was_called
@@ -60,7 +59,6 @@ class EarlyStoppingActor(object):
 
 
 class EarlyFailingActor(object):
-
     def __init__(self, on_start_was_called):
         super(EarlyFailingActor, self).__init__()
         self.on_start_was_called = on_start_was_called
@@ -73,7 +71,6 @@ class EarlyFailingActor(object):
 
 
 class LateFailingActor(object):
-
     def __init__(self, on_stop_was_called):
         super(LateFailingActor, self).__init__()
         self.on_stop_was_called = on_stop_was_called
@@ -89,7 +86,6 @@ class LateFailingActor(object):
 
 
 class FailingOnFailureActor(object):
-
     def __init__(self, on_failure_was_called):
         super(FailingOnFailureActor, self).__init__()
         self.on_failure_was_called = on_failure_was_called
@@ -108,13 +104,13 @@ class FailingOnFailureActor(object):
 
 
 class ActorTest(object):
-
     def setUp(self):
         self.on_start_was_called = self.event_class()
         self.on_stop_was_called = self.event_class()
         self.on_failure_was_called = self.event_class()
         self.actor_was_registered_before_on_start_was_called = (
-            self.event_class())
+            self.event_class()
+        )
         self.greetings_was_received = self.event_class()
 
         self.actor_ref = self.AnActor.start(
@@ -122,8 +118,10 @@ class ActorTest(object):
             on_stop_was_called=self.on_stop_was_called,
             on_failure_was_called=self.on_failure_was_called,
             actor_was_registered_before_on_start_was_called=(
-                self.actor_was_registered_before_on_start_was_called),
-            greetings_was_received=self.greetings_was_received)
+                self.actor_was_registered_before_on_start_was_called
+            ),
+            greetings_was_received=self.greetings_was_received,
+        )
         self.actor_proxy = self.actor_ref.proxy()
 
     def tearDown(self):
@@ -158,8 +156,10 @@ class ActorTest(object):
                 on_stop_was_called=event,
                 on_failure_was_called=event,
                 actor_was_registered_before_on_start_was_called=event,
-                greetings_was_received=event)
-            for _ in range(3)]
+                greetings_was_received=event,
+            )
+            for _ in range(3)
+        ]
 
         self.assertNotEqual(actors[0].actor_urn, actors[1].actor_urn)
         self.assertNotEqual(actors[1].actor_urn, actors[2].actor_urn)
@@ -172,7 +172,8 @@ class ActorTest(object):
             on_stop_was_called=event,
             on_failure_was_called=event,
             actor_was_registered_before_on_start_was_called=event,
-            greetings_was_received=event)
+            greetings_was_received=event,
+        )
         self.assertTrue('AnActor' in str(unstarted_actor))
 
     def test_str_on_raw_actor_contains_actor_urn(self):
@@ -182,7 +183,8 @@ class ActorTest(object):
             on_stop_was_called=event,
             on_failure_was_called=event,
             actor_was_registered_before_on_start_was_called=event,
-            greetings_was_received=event)
+            greetings_was_received=event,
+        )
         self.assertTrue(unstarted_actor.actor_urn in str(unstarted_actor))
 
     def test_init_can_be_called_with_arbitrary_arguments(self):
@@ -201,7 +203,8 @@ class ActorTest(object):
         self.assertTrue(self.on_start_was_called.is_set())
         self.actor_was_registered_before_on_start_was_called.wait(0.1)
         self.assertTrue(
-            self.actor_was_registered_before_on_start_was_called.is_set())
+            self.actor_was_registered_before_on_start_was_called.is_set()
+        )
 
     def test_on_start_can_stop_actor_before_receive_loop_is_started(self):
         # NOTE: This test will pass even if the actor is allowed to start the
@@ -268,7 +271,8 @@ class ActorTest(object):
             on_stop_was_called=stop_event,
             on_failure_was_called=fail_event,
             actor_was_registered_before_on_start_was_called=registered_event,
-            greetings_was_received=greetings_event)
+            greetings_was_received=greetings_event,
+        )
 
         self.assertEqual(2, len(ActorRegistry.get_all()))
         self.assertFalse(self.on_stop_was_called.is_set())
@@ -296,7 +300,6 @@ class ActorTest(object):
 
 def ConcreteActorTest(actor_class, event_class):
     class C(ActorTest, unittest.TestCase):
-
         class AnActor(AnActor, actor_class):
             pass
 
@@ -321,7 +324,6 @@ def ConcreteActorTest(actor_class, event_class):
 
 
 class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
-
     class DaemonActor(ThreadingActor):
         use_daemon_thread = True
 
@@ -329,13 +331,15 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
         alive_threads = threading.enumerate()
         alive_thread_names = [t.name for t in alive_threads]
         named_correctly = [
-            name.startswith(AnActor.__name__) for name in alive_thread_names]
+            name.startswith(AnActor.__name__) for name in alive_thread_names
+        ]
         self.assertTrue(any(named_correctly))
 
     def test_actor_thread_is_not_daemonic_by_default(self):
         alive_threads = threading.enumerate()
         actor_threads = [
-            t for t in alive_threads if t.name.startswith('AnActor')]
+            t for t in alive_threads if t.name.startswith('AnActor')
+        ]
         self.assertEqual(1, len(actor_threads))
         self.assertFalse(actor_threads[0].daemon)
 
@@ -343,7 +347,8 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
         actor_ref = self.DaemonActor.start()
         alive_threads = threading.enumerate()
         actor_threads = [
-            t for t in alive_threads if t.name.startswith('DaemonActor')]
+            t for t in alive_threads if t.name.startswith('DaemonActor')
+        ]
         self.assertEqual(1, len(actor_threads))
         self.assertTrue(actor_threads[0].daemon)
         actor_ref.stop()
@@ -352,6 +357,7 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
 try:
     import gevent.event
     from pykka.gevent import GeventActor
+
     GeventActorTest = ConcreteActorTest(GeventActor, gevent.event.Event)
 except ImportError:
     pass
@@ -359,6 +365,7 @@ except ImportError:
 try:
     import eventlet  # noqa
     from pykka.eventlet import EventletActor, EventletEvent
+
     EventletActorTest = ConcreteActorTest(EventletActor, EventletEvent)
 except ImportError:
     pass

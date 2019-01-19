@@ -11,6 +11,7 @@ if PY2:
     def reraise(tp, value, tb=None):
         exec('raise tp, value, tb')
 
+
 else:
     import queue  # noqa
 

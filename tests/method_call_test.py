@@ -20,7 +20,6 @@ class ActorWithMethods(object):
 
 
 class ActorExtendableAtRuntime(object):
-
     def add_method(self, name):
         setattr(self, name, lambda: 'returned by ' + name)
 
@@ -29,7 +28,6 @@ class ActorExtendableAtRuntime(object):
 
 
 class StaticMethodCallTest(object):
-
     def setUp(self):
         self.proxy = self.ActorWithMethods.start().proxy()
 
@@ -38,11 +36,11 @@ class StaticMethodCallTest(object):
 
     def test_functional_method_call_returns_correct_value(self):
         self.assertEqual(
-            'Hello, world!',
-            self.proxy.functional_hello('world').get())
+            'Hello, world!', self.proxy.functional_hello('world').get()
+        )
         self.assertEqual(
-            'Hello, moon!',
-            self.proxy.functional_hello('moon').get())
+            'Hello, moon!', self.proxy.functional_hello('moon').get()
+        )
 
     def test_side_effect_of_method_is_observable(self):
         self.assertEqual('dog', self.proxy.cat.get())
@@ -56,9 +54,11 @@ class StaticMethodCallTest(object):
         except AttributeError as e:
             result = str(e)
             self.assertTrue(
-                result.startswith('<ActorProxy for ActorWithMethods'))
+                result.startswith('<ActorProxy for ActorWithMethods')
+            )
             self.assertTrue(
-                result.endswith('has no attribute "unknown_method"'))
+                result.endswith('has no attribute "unknown_method"')
+            )
 
     def test_can_proxy_itself_for_offloading_work_to_the_future(self):
         outer_future = self.proxy.talk_with_self()
@@ -68,7 +68,6 @@ class StaticMethodCallTest(object):
 
 
 class DynamicMethodCallTest(object):
-
     def setUp(self):
         self.proxy = self.ActorExtendableAtRuntime.start().proxy()
 
@@ -94,13 +93,11 @@ class DynamicMethodCallTest(object):
 
 
 class ThreadingStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
-
     class ActorWithMethods(ActorWithMethods, ThreadingActor):
         pass
 
 
 class ThreadingDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
-
     class ActorExtendableAtRuntime(ActorExtendableAtRuntime, ThreadingActor):
         pass
 
@@ -109,15 +106,14 @@ try:
     from pykka.gevent import GeventActor
 
     class GeventStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
-
         class ActorWithMethods(ActorWithMethods, GeventActor):
             pass
 
-    class GeventDynamicMethodCallTest(
-            DynamicMethodCallTest, unittest.TestCase):
-
+    class GeventDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
         class ActorExtendableAtRuntime(ActorExtendableAtRuntime, GeventActor):
             pass
+
+
 except ImportError:
     pass
 
@@ -125,17 +121,16 @@ except ImportError:
 try:
     from pykka.eventlet import EventletActor
 
-    class EventletStaticMethodCallTest(
-            StaticMethodCallTest, unittest.TestCase):
-
+    class EventletStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
         class ActorWithMethods(ActorWithMethods, EventletActor):
             pass
 
     class EventletDynamicMethodCallTest(
-            DynamicMethodCallTest, unittest.TestCase):
-
-        class ActorExtendableAtRuntime(
-                ActorExtendableAtRuntime, EventletActor):
+        DynamicMethodCallTest, unittest.TestCase
+    ):
+        class ActorExtendableAtRuntime(ActorExtendableAtRuntime, EventletActor):
             pass
+
+
 except ImportError:
     pass

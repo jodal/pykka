@@ -8,9 +8,7 @@ from pykka import compat
 logger = logging.getLogger('pykka')
 
 
-__all__ = [
-    'ActorRegistry',
-]
+__all__ = ['ActorRegistry']
 
 
 class ActorRegistry(object):
@@ -70,8 +68,10 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             return [
-                ref for ref in cls._actor_refs
-                if issubclass(ref.actor_class, actor_class)]
+                ref
+                for ref in cls._actor_refs
+                if issubclass(ref.actor_class, actor_class)
+            ]
 
     @classmethod
     def get_by_class_name(cls, actor_class_name):
@@ -86,8 +86,10 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             return [
-                ref for ref in cls._actor_refs
-                if ref.actor_class.__name__ == actor_class_name]
+                ref
+                for ref in cls._actor_refs
+                if ref.actor_class.__name__ == actor_class_name
+            ]
 
     @classmethod
     def get_by_urn(cls, actor_urn):
@@ -101,8 +103,8 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             refs = [
-                ref for ref in cls._actor_refs
-                if ref.actor_urn == actor_urn]
+                ref for ref in cls._actor_refs if ref.actor_urn == actor_urn
+            ]
             if refs:
                 return refs[0]
 
@@ -165,5 +167,4 @@ class ActorRegistry(object):
         if removed:
             logger.debug('Unregistered %s', actor_ref)
         else:
-            logger.debug(
-                'Unregistered %s (not found in registry)', actor_ref)
+            logger.debug('Unregistered %s (not found in registry)', actor_ref)

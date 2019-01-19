@@ -6,7 +6,6 @@ from pykka import Future, ThreadingFuture, Timeout, get_all
 
 
 class FutureBaseTest(unittest.TestCase):
-
     def setUp(self):
         self.future = Future()
 
@@ -21,7 +20,6 @@ class FutureBaseTest(unittest.TestCase):
 
 
 class FutureTest(object):
-
     def setUp(self):
         self.results = [self.future_class() for _ in range(3)]
 
@@ -82,15 +80,18 @@ class FutureTest(object):
         self.assertEqual(exc_class_set, exc_class_get)
         self.assertEqual(exc_instance_set, exc_instance_get)
 
-        exc_traceback_list_set = list(reversed(
-            traceback.extract_tb(exc_traceback_set)))
-        exc_traceback_list_get = list(reversed(
-            traceback.extract_tb(exc_traceback_get)))
+        exc_traceback_list_set = list(
+            reversed(traceback.extract_tb(exc_traceback_set))
+        )
+        exc_traceback_list_get = list(
+            reversed(traceback.extract_tb(exc_traceback_get))
+        )
 
         # All frames from the first traceback should be included in the
         # traceback from the future.get() reraise
         self.assertTrue(
-            len(exc_traceback_list_set) < len(exc_traceback_list_get))
+            len(exc_traceback_list_set) < len(exc_traceback_list_get)
+        )
         for i, frame in enumerate(exc_traceback_list_set):
             self.assertEqual(frame, exc_traceback_list_get[i])
 
@@ -187,6 +188,8 @@ try:
             # gevent prints the first half of the traceback instead of
             # passing it through to the other side of the AsyncResult
             pass
+
+
 except ImportError:
     pass
 
@@ -196,5 +199,7 @@ try:
 
     class EventletFutureTest(FutureTest, unittest.TestCase):
         future_class = EventletFuture
+
+
 except ImportError:
     pass

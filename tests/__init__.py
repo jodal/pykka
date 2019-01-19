@@ -5,7 +5,6 @@ import time
 
 
 class PykkaTestLogHandler(logging.Handler):
-
     def __init__(self, *args, **kwargs):
         self.lock = threading.RLock()
         with self.lock:

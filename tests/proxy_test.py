@@ -23,7 +23,6 @@ class AnActor(object):
 
 
 class ProxyTest(object):
-
     def setUp(self):
         self.proxy = ActorProxy(self.AnActor.start())
 
@@ -90,9 +89,9 @@ class ProxyTest(object):
 
 def ConcreteProxyTest(actor_class):
     class C(ProxyTest, unittest.TestCase):
-
         class AnActor(AnActor, actor_class):
             pass
+
     C.__name__ = '%sProxyTest' % actor_class.__name__
     return C
 
@@ -102,6 +101,7 @@ ThreadingActorProxyTest = ConcreteProxyTest(ThreadingActor)
 
 try:
     from pykka.gevent import GeventActor
+
     GeventActorProxyTest = ConcreteProxyTest(GeventActor)
 except ImportError:
     pass
@@ -109,6 +109,7 @@ except ImportError:
 
 try:
     from pykka.eventlet import EventletActor
+
     EventletActorProxyTest = ConcreteProxyTest(EventletActor)
 except ImportError:
     pass
