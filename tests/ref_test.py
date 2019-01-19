@@ -1,6 +1,8 @@
 import time
 import unittest
 
+import pytest
+
 from pykka import ActorDeadError, ThreadingActor, ThreadingFuture, Timeout
 
 
@@ -27,86 +29,82 @@ class RefTest(object):
 
     def test_repr_is_wrapped_in_lt_and_gt(self):
         result = repr(self.ref)
-        self.assertTrue(result.startswith('<'))
-        self.assertTrue(result.endswith('>'))
+        assert result.startswith('<')
+        assert result.endswith('>')
 
     def test_repr_reveals_that_this_is_a_ref(self):
-        self.assertTrue('ActorRef' in repr(self.ref))
+        assert 'ActorRef' in repr(self.ref)
 
     def test_repr_contains_actor_class_name(self):
-        self.assertTrue('AnActor' in repr(self.ref))
+        assert 'AnActor' in repr(self.ref)
 
     def test_repr_contains_actor_urn(self):
-        self.assertTrue(self.ref.actor_urn in repr(self.ref))
+        assert self.ref.actor_urn in repr(self.ref)
 
     def test_str_contains_actor_class_name(self):
-        self.assertTrue('AnActor' in str(self.ref))
+        assert 'AnActor' in str(self.ref)
 
     def test_str_contains_actor_urn(self):
-        self.assertTrue(self.ref.actor_urn in str(self.ref))
+        assert self.ref.actor_urn in str(self.ref)
 
     def test_is_alive_returns_true_for_running_actor(self):
-        self.assertTrue(self.ref.is_alive())
+        assert self.ref.is_alive()
 
     def test_is_alive_returns_false_for_dead_actor(self):
         self.ref.stop()
-        self.assertFalse(self.ref.is_alive())
+
+        assert not self.ref.is_alive()
 
     def test_stop_returns_true_if_actor_is_stopped(self):
-        self.assertTrue(self.ref.stop())
+        assert self.ref.stop()
 
     def test_stop_does_not_stop_already_dead_actor(self):
-        self.ref.stop()
-        try:
-            self.assertFalse(self.ref.stop())
-        except ActorDeadError:
-            self.fail('Should never raise ActorDeadError')
+        assert self.ref.stop()
+        assert not self.ref.stop()
 
     def test_tell_delivers_message_to_actors_custom_on_receive(self):
         self.ref.tell({'command': 'a custom message'})
-        self.assertEqual(
-            {'command': 'a custom message'}, self.received_message.get()
-        )
+
+        assert self.received_message.get() == {'command': 'a custom message'}
 
     def test_tell_fails_if_actor_is_stopped(self):
         self.ref.stop()
-        try:
+
+        with pytest.raises(ActorDeadError) as exc_info:
             self.ref.tell({'command': 'a custom message'})
-            self.fail('Should raise ActorDeadError')
-        except ActorDeadError as exception:
-            self.assertEqual('%s not found' % self.ref, str(exception))
+
+        assert str(exc_info.value) == '%s not found' % self.ref
 
     def test_ask_blocks_until_response_arrives(self):
         result = self.ref.ask({'command': 'ping'})
-        self.assertEqual('pong', result)
+
+        assert result == 'pong'
 
     def test_ask_can_timeout_if_blocked_too_long(self):
-        try:
+        with pytest.raises(Timeout):
             self.ref.ask({'command': 'ping'}, timeout=0)
-            self.fail('Should raise Timeout exception')
-        except Timeout:
-            pass
 
     def test_ask_can_return_future_instead_of_blocking(self):
         future = self.ref.ask({'command': 'ping'}, block=False)
-        self.assertEqual('pong', future.get())
+
+        assert future.get() == 'pong'
 
     def test_ask_fails_if_actor_is_stopped(self):
         self.ref.stop()
-        try:
+
+        with pytest.raises(ActorDeadError) as exc_info:
             self.ref.ask({'command': 'ping'})
-            self.fail('Should raise ActorDeadError')
-        except ActorDeadError as exception:
-            self.assertEqual('%s not found' % self.ref, str(exception))
+
+        assert str(exc_info.value) == '%s not found' % self.ref
 
     def test_ask_nonblocking_fails_future_if_actor_is_stopped(self):
         self.ref.stop()
         future = self.ref.ask({'command': 'ping'}, block=False)
-        try:
+
+        with pytest.raises(ActorDeadError) as exc_info:
             future.get()
-            self.fail('Should raise ActorDeadError')
-        except ActorDeadError as exception:
-            self.assertEqual('%s not found' % self.ref, str(exception))
+
+        assert str(exc_info.value) == '%s not found' % self.ref
 
 
 def ConcreteRefTest(actor_class, future_class, sleep_function):

@@ -1,5 +1,7 @@
 import unittest
 
+import pytest
+
 from pykka import ActorDeadError, ActorProxy, ThreadingActor
 
 
@@ -34,57 +36,63 @@ class ProxyTest(object):
 
     def test_repr_is_wrapped_in_lt_and_gt(self):
         result = repr(self.proxy)
-        self.assertTrue(result.startswith('<'))
-        self.assertTrue(result.endswith('>'))
+
+        assert result.startswith('<')
+        assert result.endswith('>')
 
     def test_repr_reveals_that_this_is_a_proxy(self):
-        self.assertTrue('ActorProxy' in repr(self.proxy))
+        assert 'ActorProxy' in repr(self.proxy)
 
     def test_repr_contains_actor_class_name(self):
-        self.assertTrue('AnActor' in repr(self.proxy))
+        assert 'AnActor' in repr(self.proxy)
 
     def test_repr_contains_actor_urn(self):
-        self.assertTrue(self.proxy.actor_ref.actor_urn in repr(self.proxy))
+        assert self.proxy.actor_ref.actor_urn in repr(self.proxy)
 
     def test_repr_contains_attr_path(self):
-        self.assertTrue('bar' in repr(self.proxy.bar))
+        assert 'bar' in repr(self.proxy.bar)
 
     def test_str_contains_actor_class_name(self):
-        self.assertTrue('AnActor' in str(self.proxy))
+        assert 'AnActor' in str(self.proxy)
 
     def test_str_contains_actor_urn(self):
-        self.assertTrue(self.proxy.actor_ref.actor_urn in str(self.proxy))
+        assert self.proxy.actor_ref.actor_urn in str(self.proxy)
 
     def test_dir_on_proxy_lists_attributes_of_the_actor(self):
         result = dir(self.proxy)
-        self.assertTrue('foo' in result)
-        self.assertTrue('cat' in result)
-        self.assertTrue('func' in result)
+
+        assert 'foo' in result
+        assert 'cat' in result
+        assert 'func' in result
 
     def test_dir_on_proxy_lists_private_attributes_of_the_proxy(self):
         result = dir(self.proxy)
-        self.assertTrue('__class__' in result)
-        self.assertTrue('__dict__' in result)
-        self.assertTrue('__getattr__' in result)
-        self.assertTrue('__setattr__' in result)
+
+        assert '__class__' in result
+        assert '__dict__' in result
+        assert '__getattr__' in result
+        assert '__setattr__' in result
 
     def test_refs_proxy_method_returns_a_proxy(self):
         proxy_from_ref_proxy = self.AnActor.start().proxy()
-        self.assertTrue(isinstance(proxy_from_ref_proxy, ActorProxy))
+
+        assert isinstance(proxy_from_ref_proxy, ActorProxy)
+
         proxy_from_ref_proxy.stop().get()
 
     def test_proxy_constructor_raises_exception_if_actor_is_dead(self):
         actor_ref = self.AnActor.start()
         actor_ref.stop()
-        try:
+
+        with pytest.raises(ActorDeadError) as exc_info:
             ActorProxy(actor_ref)
-            self.fail('Should raise ActorDeadError')
-        except ActorDeadError as exception:
-            self.assertEqual('%s not found' % actor_ref, str(exception))
+
+        assert str(exc_info.value) == '%s not found' % actor_ref
 
     def test_actor_ref_may_be_retrieved_from_proxy_if_actor_is_dead(self):
         self.proxy.actor_ref.stop()
-        self.assertFalse(self.proxy.actor_ref.is_alive())
+
+        assert not self.proxy.actor_ref.is_alive()
 
 
 def ConcreteProxyTest(actor_class):

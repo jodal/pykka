@@ -2,6 +2,8 @@ import logging
 import threading
 import unittest
 
+import pytest
+
 from pykka import ActorRegistry, ThreadingActor
 
 from tests import PykkaTestLogHandler
@@ -16,7 +18,8 @@ class LoggingNullHandlerTest(unittest.TestCase):
     def test_null_handler_is_added_to_avoid_warnings(self):
         logger = logging.getLogger('pykka')
         handler_names = [h.__class__.__name__ for h in logger.handlers]
-        self.assertTrue('NullHandler' in handler_names)
+
+        assert 'NullHandler' in handler_names
 
 
 class ActorLoggingTest(object):
@@ -43,61 +46,66 @@ class ActorLoggingTest(object):
 
     def test_unexpected_messages_are_logged(self):
         self.actor_ref.ask({'unhandled': 'message'})
+
         self.log_handler.wait_for_message('warning')
         with self.log_handler.lock:
-            self.assertEqual(1, len(self.log_handler.messages['warning']))
+            assert len(self.log_handler.messages['warning']) == 1
             log_record = self.log_handler.messages['warning'][0]
-        self.assertEqual(
-            'Unexpected message received by %s' % self.actor_ref,
-            log_record.getMessage().split(': ')[0],
+
+        assert log_record.getMessage().split(': ')[0] == (
+            'Unexpected message received by %s' % self.actor_ref
         )
 
     def test_exception_is_logged_when_returned_to_caller(self):
-        try:
+        with pytest.raises(Exception):
             self.actor_proxy.raise_exception().get()
-            self.fail('Should raise exception')
-        except Exception:
-            pass
+
         self.log_handler.wait_for_message('debug')
         with self.log_handler.lock:
-            self.assertEqual(1, len(self.log_handler.messages['debug']))
+            assert len(self.log_handler.messages['debug']) == 1
             log_record = self.log_handler.messages['debug'][0]
-        self.assertEqual(
-            'Exception returned from %s to caller:' % self.actor_ref,
-            log_record.getMessage(),
+
+        assert log_record.getMessage() == (
+            'Exception returned from %s to caller:' % self.actor_ref
         )
-        self.assertEqual(Exception, log_record.exc_info[0])
-        self.assertEqual('foo', str(log_record.exc_info[1]))
+
+        assert log_record.exc_info[0] == Exception
+        assert str(log_record.exc_info[1]) == 'foo'
 
     def test_exception_is_logged_when_not_reply_requested(self):
         self.on_failure_was_called.clear()
         self.actor_ref.tell({'command': 'raise exception'})
+
         self.on_failure_was_called.wait(5)
-        self.assertTrue(self.on_failure_was_called.is_set())
+        assert self.on_failure_was_called.is_set()
+
         self.log_handler.wait_for_message('error')
         with self.log_handler.lock:
-            self.assertEqual(1, len(self.log_handler.messages['error']))
+            assert len(self.log_handler.messages['error']) == 1
             log_record = self.log_handler.messages['error'][0]
-        self.assertEqual(
-            'Unhandled exception in %s:' % self.actor_ref,
-            log_record.getMessage(),
+
+        assert log_record.getMessage() == (
+            'Unhandled exception in %s:' % self.actor_ref
         )
-        self.assertEqual(Exception, log_record.exc_info[0])
-        self.assertEqual('foo', str(log_record.exc_info[1]))
+
+        assert log_record.exc_info[0] == Exception
+        assert str(log_record.exc_info[1]) == 'foo'
 
     def test_base_exception_is_logged(self):
         self.log_handler.reset()
         self.on_stop_was_called.clear()
         self.actor_ref.tell({'command': 'raise base exception'})
+
         self.on_stop_was_called.wait(5)
-        self.assertTrue(self.on_stop_was_called.is_set())
+        assert self.on_stop_was_called.is_set()
+
         self.log_handler.wait_for_message('debug', num_messages=3)
         with self.log_handler.lock:
-            self.assertEqual(3, len(self.log_handler.messages['debug']))
+            assert len(self.log_handler.messages['debug']) == 3
             log_record = self.log_handler.messages['debug'][0]
-        self.assertEqual(
-            'BaseException() in %s. Stopping all actors.' % self.actor_ref,
-            log_record.getMessage(),
+
+        assert log_record.getMessage() == (
+            'BaseException() in %s. Stopping all actors.' % self.actor_ref
         )
 
     def test_exception_in_on_start_is_logged(self):
@@ -105,12 +113,14 @@ class ActorLoggingTest(object):
         start_event = self.event_class()
         actor_ref = self.EarlyFailingActor.start(start_event)
         start_event.wait(5)
+
         self.log_handler.wait_for_message('error')
         with self.log_handler.lock:
-            self.assertEqual(1, len(self.log_handler.messages['error']))
+            assert len(self.log_handler.messages['error']) == 1
             log_record = self.log_handler.messages['error'][0]
-        self.assertEqual(
-            'Unhandled exception in %s:' % actor_ref, log_record.getMessage()
+
+        assert log_record.getMessage() == (
+            'Unhandled exception in %s:' % actor_ref
         )
 
     def test_exception_in_on_stop_is_logged(self):
@@ -118,12 +128,14 @@ class ActorLoggingTest(object):
         stop_event = self.event_class()
         actor_ref = self.LateFailingActor.start(stop_event)
         stop_event.wait(5)
+
         self.log_handler.wait_for_message('error')
         with self.log_handler.lock:
-            self.assertEqual(1, len(self.log_handler.messages['error']))
+            assert len(self.log_handler.messages['error']) == 1
             log_record = self.log_handler.messages['error'][0]
-        self.assertEqual(
-            'Unhandled exception in %s:' % actor_ref, log_record.getMessage()
+
+        assert log_record.getMessage() == (
+            'Unhandled exception in %s:' % actor_ref
         )
 
     def test_exception_in_on_failure_is_logged(self):
@@ -132,12 +144,14 @@ class ActorLoggingTest(object):
         actor_ref = self.FailingOnFailureActor.start(failure_event)
         actor_ref.tell({'command': 'raise exception'})
         failure_event.wait(5)
+
         self.log_handler.wait_for_message('error', num_messages=2)
         with self.log_handler.lock:
-            self.assertEqual(2, len(self.log_handler.messages['error']))
+            assert len(self.log_handler.messages['error']) == 2
             log_record = self.log_handler.messages['error'][0]
-        self.assertEqual(
-            'Unhandled exception in %s:' % actor_ref, log_record.getMessage()
+
+        assert log_record.getMessage() == (
+            'Unhandled exception in %s:' % actor_ref
         )
 
 

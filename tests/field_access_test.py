@@ -1,5 +1,7 @@
 import unittest
 
+import pytest
+
 from pykka import ThreadingActor
 
 
@@ -27,24 +29,21 @@ class FieldAccessTest(object):
         self.proxy.stop()
 
     def test_actor_field_can_be_read_using_get_postfix(self):
-        self.assertEqual('foo', self.proxy.foo.get())
+        assert self.proxy.foo.get() == 'foo'
 
     def test_actor_field_can_be_set_using_assignment(self):
-        self.assertEqual('foo', self.proxy.foo.get())
+        assert self.proxy.foo.get() == 'foo'
+
         self.proxy.foo = 'foo2'
-        self.assertEqual('foo2', self.proxy.foo.get())
+
+        assert self.proxy.foo.get() == 'foo2'
 
     def test_private_field_access_raises_exception(self):
-        try:
+        with pytest.raises(AttributeError):
             self.proxy._private_field.get()
-            self.fail('Should raise AttributeError exception')
-        except AttributeError:
-            pass
-        except Exception:
-            self.fail('Should raise AttributeError exception')
 
     def test_attr_of_traversable_attr_can_be_read(self):
-        self.assertEqual('bar.baz', self.proxy.bar.baz.get())
+        assert self.proxy.bar.baz.get() == 'bar.baz'
 
 
 def ConcreteFieldAccessTest(actor_class):

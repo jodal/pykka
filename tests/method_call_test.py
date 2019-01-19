@@ -1,5 +1,7 @@
 import unittest
 
+import pytest
+
 from pykka import ThreadingActor
 
 
@@ -35,36 +37,32 @@ class StaticMethodCallTest(object):
         self.proxy.stop()
 
     def test_functional_method_call_returns_correct_value(self):
-        self.assertEqual(
-            'Hello, world!', self.proxy.functional_hello('world').get()
-        )
-        self.assertEqual(
-            'Hello, moon!', self.proxy.functional_hello('moon').get()
-        )
+        assert self.proxy.functional_hello('world').get() == 'Hello, world!'
+        assert self.proxy.functional_hello('moon').get() == 'Hello, moon!'
 
     def test_side_effect_of_method_is_observable(self):
-        self.assertEqual('dog', self.proxy.cat.get())
+        assert self.proxy.cat.get() == 'dog'
+
         self.proxy.set_cat('eagle')
-        self.assertEqual('eagle', self.proxy.cat.get())
+
+        assert self.proxy.cat.get() == 'eagle'
 
     def test_calling_unknown_method_raises_attribute_error(self):
-        try:
+        with pytest.raises(AttributeError) as exc_info:
             self.proxy.unknown_method()
-            self.fail('Should raise AttributeError')
-        except AttributeError as e:
-            result = str(e)
-            self.assertTrue(
-                result.startswith('<ActorProxy for ActorWithMethods')
-            )
-            self.assertTrue(
-                result.endswith('has no attribute "unknown_method"')
-            )
+
+        result = str(exc_info.value)
+
+        assert result.startswith('<ActorProxy for ActorWithMethods')
+        assert result.endswith('has no attribute "unknown_method"')
 
     def test_can_proxy_itself_for_offloading_work_to_the_future(self):
         outer_future = self.proxy.talk_with_self()
         inner_future = outer_future.get(timeout=1)
+
         result = inner_future.get(timeout=1)
-        self.assertEqual('Hello, from the future!', result)
+
+        assert result == 'Hello, from the future!'
 
 
 class DynamicMethodCallTest(object):
@@ -78,7 +76,8 @@ class DynamicMethodCallTest(object):
         # We need to .get() after .add_method() to be sure that the method has
         # been added before we try to use it through the proxy.
         self.proxy.add_method('foo').get()
-        self.assertEqual('returned by foo', self.proxy.foo().get())
+
+        assert self.proxy.foo().get() == 'returned by foo'
 
     def test_can_proxy_itself_and_use_attrs_added_at_runtime(self):
         # We don't need to .get() after .add_method() here, because the actor
@@ -89,7 +88,8 @@ class DynamicMethodCallTest(object):
         outer_future = self.proxy.use_foo_through_self_proxy()
         inner_future = outer_future.get(timeout=1)
         result = inner_future.get(timeout=1)
-        self.assertEqual('returned by foo', result)
+
+        assert result == 'returned by foo'
 
 
 class ThreadingStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):

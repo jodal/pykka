@@ -2,6 +2,8 @@ import threading
 import unittest
 import uuid
 
+import pytest
+
 from pykka import ActorDeadError, ActorRegistry, ThreadingActor
 
 
@@ -134,7 +136,8 @@ class ActorTest(object):
         response = self.actor_ref.ask({'command': 'irrelevant'}, block=False)
         event.set()
 
-        self.assertRaises(ActorDeadError, response.get, timeout=0.5)
+        with pytest.raises(ActorDeadError):
+            response.get(timeout=0.5)
 
     def test_stop_requests_left_in_queue_after_actor_stops_are_handled(self):
         event = self.event_class()
@@ -146,7 +149,7 @@ class ActorTest(object):
         response.get(timeout=0.5)
 
     def test_actor_has_an_uuid4_based_urn(self):
-        self.assertEqual(4, uuid.UUID(self.actor_ref.actor_urn).version)
+        assert uuid.UUID(self.actor_ref.actor_urn).version == 4
 
     def test_actor_has_unique_uuid(self):
         event = self.event_class()
@@ -161,9 +164,9 @@ class ActorTest(object):
             for _ in range(3)
         ]
 
-        self.assertNotEqual(actors[0].actor_urn, actors[1].actor_urn)
-        self.assertNotEqual(actors[1].actor_urn, actors[2].actor_urn)
-        self.assertNotEqual(actors[2].actor_urn, actors[0].actor_urn)
+        assert actors[0].actor_urn != actors[1].actor_urn
+        assert actors[1].actor_urn != actors[2].actor_urn
+        assert actors[2].actor_urn != actors[0].actor_urn
 
     def test_str_on_raw_actor_contains_actor_class_name(self):
         event = self.event_class()
@@ -174,7 +177,8 @@ class ActorTest(object):
             actor_was_registered_before_on_start_was_called=event,
             greetings_was_received=event,
         )
-        self.assertTrue('AnActor' in str(unstarted_actor))
+
+        assert 'AnActor' in str(unstarted_actor)
 
     def test_str_on_raw_actor_contains_actor_urn(self):
         event = self.event_class()
@@ -185,14 +189,16 @@ class ActorTest(object):
             actor_was_registered_before_on_start_was_called=event,
             greetings_was_received=event,
         )
-        self.assertTrue(unstarted_actor.actor_urn in str(unstarted_actor))
+
+        assert unstarted_actor.actor_urn in str(unstarted_actor)
 
     def test_init_can_be_called_with_arbitrary_arguments(self):
         self.SuperInitActor(1, 2, 3, foo='bar')
 
     def test_on_start_is_called_before_first_message_is_processed(self):
         self.on_start_was_called.wait(5)
-        self.assertTrue(self.on_start_was_called.is_set())
+
+        assert self.on_start_was_called.is_set()
 
     def test_on_start_is_called_after_the_actor_is_registered(self):
         # NOTE: If the actor is registered after the actor is started, this
@@ -200,11 +206,12 @@ class ActorTest(object):
         # timing of events. When the actor is first registered and then
         # started, this test should always pass.
         self.on_start_was_called.wait(5)
-        self.assertTrue(self.on_start_was_called.is_set())
+
+        assert self.on_start_was_called.is_set()
+
         self.actor_was_registered_before_on_start_was_called.wait(0.1)
-        self.assertTrue(
-            self.actor_was_registered_before_on_start_was_called.is_set()
-        )
+
+        assert self.actor_was_registered_before_on_start_was_called.is_set()
 
     def test_on_start_can_stop_actor_before_receive_loop_is_started(self):
         # NOTE: This test will pass even if the actor is allowed to start the
@@ -214,51 +221,64 @@ class ActorTest(object):
         # an assertFalse(actor_thread.is_alive()), which would cause the test
         # to fail properly.
         stop_event = self.event_class()
+
         another_actor = self.EarlyStoppingActor.start(stop_event)
         stop_event.wait(5)
-        self.assertTrue(stop_event.is_set())
-        self.assertFalse(another_actor.is_alive())
+
+        assert stop_event.is_set()
+        assert not another_actor.is_alive()
 
     def test_on_start_failure_causes_actor_to_stop(self):
         # Actor should not be alive if on_start fails.
         start_event = self.event_class()
+
         actor_ref = self.EarlyFailingActor.start(start_event)
         start_event.wait(5)
+
         actor_ref.actor_stopped.wait(5)
-        self.assertFalse(actor_ref.is_alive())
+        assert not actor_ref.is_alive()
 
     def test_on_stop_is_called_when_actor_is_stopped(self):
-        self.assertFalse(self.on_stop_was_called.is_set())
+        assert not self.on_stop_was_called.is_set()
+
         self.actor_ref.stop()
+
         self.on_stop_was_called.wait(5)
-        self.assertTrue(self.on_stop_was_called.is_set())
+        assert self.on_stop_was_called.is_set()
 
     def test_on_stop_failure_causes_actor_to_stop(self):
         stop_event = self.event_class()
         actor = self.LateFailingActor.start(stop_event)
+
         stop_event.wait(5)
-        self.assertFalse(actor.is_alive())
+        assert not actor.is_alive()
 
     def test_on_failure_is_called_when_exception_cannot_be_returned(self):
-        self.assertFalse(self.on_failure_was_called.is_set())
+        assert not self.on_failure_was_called.is_set()
+
         self.actor_ref.tell({'command': 'raise exception'})
+
         self.on_failure_was_called.wait(5)
-        self.assertTrue(self.on_failure_was_called.is_set())
-        self.assertFalse(self.on_stop_was_called.is_set())
+        assert self.on_failure_was_called.is_set()
+        assert not self.on_stop_was_called.is_set()
 
     def test_on_failure_failure_causes_actor_to_stop(self):
         failure_event = self.event_class()
         actor = self.FailingOnFailureActor.start(failure_event)
+
         actor.tell({'command': 'raise exception'})
+
         failure_event.wait(5)
-        self.assertFalse(actor.is_alive())
+        assert not actor.is_alive()
 
     def test_actor_is_stopped_when_unhandled_exceptions_are_raised(self):
-        self.assertFalse(self.on_failure_was_called.is_set())
+        assert not self.on_failure_was_called.is_set()
+
         self.actor_ref.tell({'command': 'raise exception'})
+
         self.on_failure_was_called.wait(5)
-        self.assertTrue(self.on_failure_was_called.is_set())
-        self.assertEqual(0, len(ActorRegistry.get_all()))
+        assert self.on_failure_was_called.is_set()
+        assert len(ActorRegistry.get_all()) == 0
 
     def test_all_actors_are_stopped_on_base_exception(self):
         start_event = self.event_class()
@@ -274,15 +294,19 @@ class ActorTest(object):
             greetings_was_received=greetings_event,
         )
 
-        self.assertEqual(2, len(ActorRegistry.get_all()))
-        self.assertFalse(self.on_stop_was_called.is_set())
+        assert len(ActorRegistry.get_all()) == 2
+        assert not self.on_stop_was_called.is_set()
+
         self.actor_ref.tell({'command': 'raise base exception'})
+
         self.on_stop_was_called.wait(5)
-        self.assertTrue(self.on_stop_was_called.is_set())
-        self.assertTrue(1 >= len(ActorRegistry.get_all()))
+        assert self.on_stop_was_called.is_set()
+        assert len(ActorRegistry.get_all()) <= 1
+
         stop_event.wait(5)
-        self.assertTrue(stop_event.is_set())
-        self.assertEqual(0, len(ActorRegistry.get_all()))
+
+        assert stop_event.is_set()
+        assert len(ActorRegistry.get_all()) == 0
 
     def test_actor_can_call_stop_on_self_multiple_times(self):
         self.actor_ref.ask({'command': 'stop twice'})
@@ -291,11 +315,10 @@ class ActorTest(object):
         self.actor_ref.ask({'command': 'message self then stop'})
 
         self.greetings_was_received.wait(5)
-        self.assertTrue(self.greetings_was_received.is_set())
+        assert self.greetings_was_received.is_set()
 
         self.on_stop_was_called.wait(5)
-
-        self.assertEqual(0, len(ActorRegistry.get_all()))
+        assert len(ActorRegistry.get_all()) == 0
 
 
 def ConcreteActorTest(actor_class, event_class):
@@ -333,15 +356,17 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
         named_correctly = [
             name.startswith(AnActor.__name__) for name in alive_thread_names
         ]
-        self.assertTrue(any(named_correctly))
+
+        assert any(named_correctly)
 
     def test_actor_thread_is_not_daemonic_by_default(self):
         alive_threads = threading.enumerate()
         actor_threads = [
             t for t in alive_threads if t.name.startswith('AnActor')
         ]
-        self.assertEqual(1, len(actor_threads))
-        self.assertFalse(actor_threads[0].daemon)
+
+        assert len(actor_threads) == 1
+        assert not actor_threads[0].daemon
 
     def test_actor_thread_is_daemonic_if_use_daemon_thread_flag_is_set(self):
         actor_ref = self.DaemonActor.start()
@@ -349,8 +374,10 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
         actor_threads = [
             t for t in alive_threads if t.name.startswith('DaemonActor')
         ]
-        self.assertEqual(1, len(actor_threads))
-        self.assertTrue(actor_threads[0].daemon)
+
+        assert len(actor_threads) == 1
+        assert actor_threads[0].daemon
+
         actor_ref.stop()
 
 
