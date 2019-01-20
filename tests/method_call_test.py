@@ -104,6 +104,9 @@ class ThreadingDynamicMethodCallTest(DynamicMethodCallTest, unittest.TestCase):
 
 try:
     from pykka.gevent import GeventActor
+except ImportError:
+    pass
+else:
 
     class GeventStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
         class ActorWithMethods(ActorWithMethods, GeventActor):
@@ -114,12 +117,11 @@ try:
             pass
 
 
-except ImportError:
-    pass
-
-
 try:
     from pykka.eventlet import EventletActor
+except ImportError:
+    pass
+else:
 
     class EventletStaticMethodCallTest(StaticMethodCallTest, unittest.TestCase):
         class ActorWithMethods(ActorWithMethods, EventletActor):
@@ -130,7 +132,3 @@ try:
     ):
         class ActorExtendableAtRuntime(ActorExtendableAtRuntime, EventletActor):
             pass
-
-
-except ImportError:
-    pass

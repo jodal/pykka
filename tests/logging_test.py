@@ -206,19 +206,19 @@ ThreadingActorLoggingTest = ConcreteActorLoggingTest(
 try:
     import gevent.event
     from pykka.gevent import GeventActor
-
+except ImportError:
+    pass
+else:
     GeventActorLoggingTest = ConcreteActorLoggingTest(
         GeventActor, gevent.event.Event
     )
-except ImportError:
-    pass
 
 
 try:
     from pykka.eventlet import EventletActor, EventletEvent
-
+except ImportError:
+    pass
+else:
     EventletActorLoggingTest = ConcreteActorLoggingTest(
         EventletActor, EventletEvent
     )
-except ImportError:
-    pass

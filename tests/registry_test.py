@@ -185,14 +185,14 @@ ThreadingActorRegistryTest = ConcreteRegistryTest(ThreadingActor)
 
 try:
     from pykka.gevent import GeventActor
-
-    GeventActorRegistryTest = ConcreteRegistryTest(GeventActor)
 except ImportError:
     pass
+else:
+    GeventActorRegistryTest = ConcreteRegistryTest(GeventActor)
 
 try:
     from pykka.eventlet import EventletActor
-
-    EventletActorRegistryTest = ConcreteRegistryTest(EventletActor)
 except ImportError:
     pass
+else:
+    EventletActorRegistryTest = ConcreteRegistryTest(EventletActor)

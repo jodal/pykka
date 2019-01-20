@@ -192,6 +192,9 @@ class ThreadingFutureTest(FutureTest, unittest.TestCase):
 try:
     from gevent.event import AsyncResult
     from pykka.gevent import GeventFuture
+except ImportError:
+    pass
+else:
 
     class GeventFutureTest(FutureTest, unittest.TestCase):
         future_class = GeventFuture
@@ -207,16 +210,11 @@ try:
             pass
 
 
-except ImportError:
-    pass
-
-
 try:
     from pykka.eventlet import EventletFuture
+except ImportError:
+    pass
+else:
 
     class EventletFutureTest(FutureTest, unittest.TestCase):
         future_class = EventletFuture
-
-
-except ImportError:
-    pass

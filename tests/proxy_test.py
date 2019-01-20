@@ -109,15 +109,15 @@ ThreadingActorProxyTest = ConcreteProxyTest(ThreadingActor)
 
 try:
     from pykka.gevent import GeventActor
-
-    GeventActorProxyTest = ConcreteProxyTest(GeventActor)
 except ImportError:
     pass
+else:
+    GeventActorProxyTest = ConcreteProxyTest(GeventActor)
 
 
 try:
     from pykka.eventlet import EventletActor
-
-    EventletActorProxyTest = ConcreteProxyTest(EventletActor)
 except ImportError:
     pass
+else:
+    EventletActorProxyTest = ConcreteProxyTest(EventletActor)

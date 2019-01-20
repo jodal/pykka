@@ -60,15 +60,15 @@ ThreadingFieldAccessTest = ConcreteFieldAccessTest(ThreadingActor)
 
 try:
     from pykka.gevent import GeventActor
-
-    GeventFieldAccessTest = ConcreteFieldAccessTest(GeventActor)
 except ImportError:
     pass
+else:
+    GeventFieldAccessTest = ConcreteFieldAccessTest(GeventActor)
 
 
 try:
     from pykka.eventlet import EventletActor
-
-    EventletFieldAccessTest = ConcreteFieldAccessTest(EventletActor)
 except ImportError:
     pass
+else:
+    EventletFieldAccessTest = ConcreteFieldAccessTest(EventletActor)

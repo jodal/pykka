@@ -384,15 +384,15 @@ class ThreadingActorTest(ConcreteActorTest(ThreadingActor, threading.Event)):
 try:
     import gevent.event
     from pykka.gevent import GeventActor
-
-    GeventActorTest = ConcreteActorTest(GeventActor, gevent.event.Event)
 except ImportError:
     pass
+else:
+    GeventActorTest = ConcreteActorTest(GeventActor, gevent.event.Event)
 
 try:
     import eventlet  # noqa
     from pykka.eventlet import EventletActor, EventletEvent
-
-    EventletActorTest = ConcreteActorTest(EventletActor, EventletEvent)
 except ImportError:
     pass
+else:
+    EventletActorTest = ConcreteActorTest(EventletActor, EventletEvent)

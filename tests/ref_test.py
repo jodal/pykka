@@ -125,19 +125,19 @@ ThreadingActorRefTest = ConcreteRefTest(
 try:
     import gevent
     from pykka.gevent import GeventActor, GeventFuture
-
+except ImportError:
+    pass
+else:
     GeventActorRefTest = ConcreteRefTest(
         GeventActor, GeventFuture, gevent.sleep
     )
-except ImportError:
-    pass
 
 try:
     import eventlet
     from pykka.eventlet import EventletActor, EventletFuture
-
+except ImportError:
+    pass
+else:
     EventletActorRefTest = ConcreteRefTest(
         EventletActor, EventletFuture, eventlet.sleep
     )
-except ImportError:
-    pass
