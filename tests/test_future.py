@@ -1,0 +1,237 @@
+import sys
+import traceback
+
+import pytest
+
+from pykka import Future, Timeout, get_all
+
+from tests import has_gevent
+
+
+@pytest.fixture
+def future_class(runtime):
+    return runtime.future_class
+
+
+@pytest.fixture
+def future(runtime):
+    return runtime.future_class()
+
+
+@pytest.fixture
+def futures(runtime):
+    return [runtime.future_class() for _ in range(3)]
+
+
+def test_base_future_get_is_not_implemented():
+    future = Future()
+
+    with pytest.raises(NotImplementedError):
+        future.get()
+
+
+def test_base_future_set_is_not_implemented():
+    future = Future()
+
+    with pytest.raises(NotImplementedError):
+        future.set(None)
+
+
+def test_base_future_set_exception_is_not_implemented():
+    future = Future()
+
+    with pytest.raises(NotImplementedError):
+        future.set_exception(None)
+
+
+def test_set_multiple_times_fails(futures):
+    futures[0].set(0)
+
+    with pytest.raises(Exception):
+        futures[0].set(0)
+
+
+def test_get_all_blocks_until_all_futures_are_available(futures):
+    futures[0].set(0)
+    futures[1].set(1)
+    futures[2].set(2)
+
+    result = get_all(futures)
+
+    assert result == [0, 1, 2]
+
+
+def test_get_all_raises_timeout_if_not_all_futures_are_available(futures):
+    futures[0].set(0)
+    futures[1].set(1)
+    # futures[2] is unset
+
+    with pytest.raises(Timeout):
+        get_all(futures, timeout=0)
+
+
+def test_get_all_can_be_called_multiple_times(futures):
+    futures[0].set(0)
+    futures[1].set(1)
+    futures[2].set(2)
+
+    result1 = get_all(futures)
+    result2 = get_all(futures)
+
+    assert result1 == result2
+
+
+def test_future_in_future_works(future_class):
+    inner_future = future_class()
+    inner_future.set('foo')
+
+    outer_future = future_class()
+    outer_future.set(inner_future)
+
+    assert outer_future.get().get() == 'foo'
+
+
+def test_get_raises_exception_with_full_traceback(runtime, future_class):
+    exc_class_get = None
+    exc_class_set = None
+    exc_instance_get = None
+    exc_instance_set = None
+    exc_traceback_get = None
+    exc_traceback_set = None
+    future = future_class()
+
+    try:
+        raise NameError('foo')
+    except NameError:
+        exc_class_set, exc_instance_set, exc_traceback_set = sys.exc_info()
+        future.set_exception()
+
+    # We could move to another thread at this point
+
+    try:
+        future.get()
+    except NameError:
+        exc_class_get, exc_instance_get, exc_traceback_get = sys.exc_info()
+
+    assert exc_class_set == exc_class_get
+    assert exc_instance_set == exc_instance_get
+
+    exc_traceback_list_set = list(
+        reversed(traceback.extract_tb(exc_traceback_set))
+    )
+    exc_traceback_list_get = list(
+        reversed(traceback.extract_tb(exc_traceback_get))
+    )
+
+    if runtime.name == 'gevent':
+        # gevent prints the first half of the traceback instead of
+        # passing it through to the other side of the AsyncResult.
+        return
+
+    # All frames from the first traceback should be included in the
+    # traceback from the future.get() reraise
+    assert len(exc_traceback_list_set) < len(exc_traceback_list_get)
+    for i, frame in enumerate(exc_traceback_list_set):
+        assert frame == exc_traceback_list_get[i]
+
+
+def test_filter_excludes_items_not_matching_predicate(future):
+    filtered = future.filter(lambda x: x > 10)
+    future.set([1, 3, 5, 7, 9, 11, 13, 15, 17, 19])
+
+    assert filtered.get(timeout=0) == [11, 13, 15, 17, 19]
+
+
+def test_filter_on_noniterable(future):
+    filtered = future.filter(lambda x: x > 10)
+    future.set(1)
+
+    with pytest.raises(TypeError):
+        filtered.get(timeout=0)
+
+
+def test_filter_preserves_the_timeout_kwarg(future):
+    filtered = future.filter(lambda x: x > 10)
+
+    with pytest.raises(Timeout):
+        filtered.get(timeout=0)
+
+
+def test_join_combines_multiple_futures_into_one(futures):
+    joined = futures[0].join(futures[1], futures[2])
+    futures[0].set(0)
+    futures[1].set(1)
+    futures[2].set(2)
+
+    assert joined.get(timeout=0) == [0, 1, 2]
+
+
+def test_join_preserves_timeout_kwarg(futures):
+    joined = futures[0].join(futures[1], futures[2])
+    futures[0].set(0)
+    futures[1].set(1)
+    # futures[2] is unset
+
+    with pytest.raises(Timeout):
+        joined.get(timeout=0)
+
+
+def test_map_returns_future_which_passes_noniterable_through_func(future):
+    mapped = future.map(lambda x: x + 10)
+    future.set(30)
+
+    assert mapped.get(timeout=0) == 40
+
+
+def test_map_returns_future_which_maps_iterable_through_func(future):
+    mapped = future.map(lambda x: x + 10)
+    future.set([10, 20, 30])
+
+    assert mapped.get(timeout=0) == [20, 30, 40]
+
+
+def test_map_preserves_timeout_kwarg(future):
+    mapped = future.map(lambda x: x + 10)
+
+    with pytest.raises(Timeout):
+        mapped.get(timeout=0)
+
+
+def test_reduce_applies_function_cumulatively_from_the_left(future):
+    reduced = future.reduce(lambda x, y: x + y)
+    future.set([1, 2, 3, 4])
+
+    assert reduced.get(timeout=0) == 10
+
+
+def test_reduce_accepts_an_initial_value(future):
+    reduced = future.reduce(lambda x, y: x + y, 5)
+    future.set([1, 2, 3, 4])
+
+    assert reduced.get(timeout=0) == 15
+
+
+def test_reduce_on_noniterable(future):
+    reduced = future.reduce(lambda x, y: x + y)
+    future.set(1)
+
+    with pytest.raises(TypeError):
+        reduced.get(timeout=0)
+
+
+def test_reduce_preserves_the_timeout_kwarg(future):
+    reduced = future.reduce(lambda x, y: x + y)
+
+    with pytest.raises(Timeout):
+        reduced.get(timeout=0)
+
+
+@has_gevent
+def test_gevent_future_can_wrap_existing_async_result(gevent_runtime):
+    from gevent.event import AsyncResult
+
+    async_result = AsyncResult()
+
+    future = gevent_runtime.future_class(async_result)
+
+    assert async_result == future.async_result
