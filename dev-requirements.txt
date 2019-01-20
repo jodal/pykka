@@ -8,9 +8,6 @@ check-manifest
 flake8
 flake8-import-order
 
-# unittest.mock for Python 2.7
-mock
-
 # Unit testing
 pytest
 pytest-cov
