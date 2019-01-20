@@ -89,3 +89,72 @@ def runtime(request):
 def stop_all():
     yield
     ActorRegistry.stop_all()
+
+
+@pytest.fixture
+def events(runtime):
+    class Events(object):
+        on_start_was_called = runtime.event_class()
+        on_stop_was_called = runtime.event_class()
+        on_failure_was_called = runtime.event_class()
+        greetings_was_received = runtime.event_class()
+        actor_registered_before_on_start_was_called = runtime.event_class()
+
+    return Events()
+
+
+@pytest.fixture(scope='module')
+def early_failing_actor_class(runtime):
+    class EarlyFailingActor(runtime.actor_class):
+        def __init__(self, events):
+            super(EarlyFailingActor, self).__init__()
+            self.events = events
+
+        def on_start(self):
+            try:
+                raise RuntimeError('on_start failure')
+            finally:
+                self.events.on_start_was_called.set()
+
+    return EarlyFailingActor
+
+
+@pytest.fixture(scope='module')
+def late_failing_actor_class(runtime):
+    class LateFailingActor(runtime.actor_class):
+        def __init__(self, events):
+            super(LateFailingActor, self).__init__()
+            self.events = events
+
+        def on_start(self):
+            self.stop()
+
+        def on_stop(self):
+            try:
+                raise RuntimeError('on_stop failure')
+            finally:
+                self.events.on_stop_was_called.set()
+
+    return LateFailingActor
+
+
+@pytest.fixture(scope='module')
+def failing_on_failure_actor_class(runtime):
+    class FailingOnFailureActor(runtime.actor_class):
+        def __init__(self, events):
+            super(FailingOnFailureActor, self).__init__()
+            self.events = events
+
+        def on_receive(self, message):
+            if message.get('command') == 'raise exception':
+                raise Exception('on_receive failure')
+            else:
+                super(FailingOnFailureActor, self).on_receive(message)
+
+        def on_failure(self, *args):
+            try:
+                raise RuntimeError('on_failure failure')
+            finally:
+                self.events.on_failure_was_called.set()
+
+    return FailingOnFailureActor
