@@ -6,7 +6,7 @@ from pykka import ActorRegistry, ThreadingActor
 def time_it(func):
     start = time.time()
     func()
-    print('%s took %.3fs' % (func.func_name, time.time() - start))
+    print('%s took %.3fs' % (func.__name__, time.time() - start))
 
 
 class SomeObject(object):
@@ -43,13 +43,13 @@ def test_direct_callable_attribute_access():
         actor.func().get()
 
 
-def test_traversible_plain_attribute_access():
+def test_traversable_plain_attribute_access():
     actor = AnActor.start().proxy()
     for _ in range(10000):
         actor.bar.cat.get()
 
 
-def test_traversible_callable_attribute_access():
+def test_traversable_callable_attribute_access():
     actor = AnActor.start().proxy()
     for _ in range(10000):
         actor.bar.func().get()
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     try:
         time_it(test_direct_plain_attribute_access)
         time_it(test_direct_callable_attribute_access)
-        time_it(test_traversible_plain_attribute_access)
-        time_it(test_traversible_callable_attribute_access)
+        time_it(test_traversable_plain_attribute_access)
+        time_it(test_traversable_callable_attribute_access)
     finally:
         ActorRegistry.stop_all()
