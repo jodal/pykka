@@ -14,6 +14,7 @@ mock
 # Unit testing
 pytest
 pytest-cov
+pytest-mock
 
 # Build documentation
 sphinx
