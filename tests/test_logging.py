@@ -2,7 +2,7 @@ import logging
 
 import pytest
 
-from tests import PykkaTestLogHandler
+from tests.log_handler import PykkaTestLogHandler
 
 
 pytestmark = pytest.mark.usefixtures('stop_all')
