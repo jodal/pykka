@@ -66,8 +66,7 @@ class GeventActor(Actor):
     networking library that uses greenlet to provide a high-level synchronous
     API on top of libevent event loop.
 
-    This is a very fast implementation, but as of gevent 0.13.x it does not
-    work in combination with other threads.
+    This is a very fast implementation.
     """
 
     @staticmethod

@@ -9,6 +9,9 @@ v1.3.0 (UNRELEASED)
 
 - Include CPython 3.5, 3.6 and 3.7, and PyPy 3.5 in the test matrix.
 
+- Include gevent and Eventlet tests in all environments. Since Pykka was
+  originally developed, both has grown support for Python 3 and PyPy.
+
 - On Python 3, import :class:`Callable` and :class:`Iterable` from
   :mod:`collections.abc` instead of :mod:`collections`. This fixes a
   deprecation warning on Python 3.7 and prepares for Python 3.8.

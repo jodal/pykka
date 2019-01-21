@@ -51,19 +51,14 @@ Pykka's actor API comes with the following implementations:
 
 - gevent: Each ``GeventActor`` is executed by a gevent greenlet. `gevent
   <http://www.gevent.org/>`_ is a coroutine-based Python networking library
-  built on top of a libevent (in 0.13) or libev (in 1.0) event loop.
-  ``GeventActor`` is generally faster than ``ThreadingActor``, but as of gevent
-  0.13 it doesn't work in processes with other threads, which limits when it
-  can be used. With gevent 1.0, which is currently available as a release
-  candidate, this is no longer an issue. Pykka works with both gevent 0.13 and
-  1.0.
+  built on top of libev event loop. ``GeventActor`` is generally faster than
+  ``ThreadingActor``.
 
-- Eventlet: Each ``EventletActor`` is executed by a Eventlet greenlet. Pykka is
-  tested with Eventlet 0.12.1.
+- Eventlet: Each ``EventletActor`` is executed by an `Eventlet
+  <https://eventlet.net/>`_ greenlet.
 
 Pykka has an extensive test suite, and is tested on CPython 2.7, and 3.4+,
-as well as PyPy. gevent and eventlet are currently not available for CPython
-3.x or PyPy.
+as well as PyPy.
 
 
 A basic actor
