@@ -33,6 +33,7 @@ class Future(object):
     def __init__(self):
         super(Future, self).__init__()
         self._get_hook = None
+        self._get_hook_result = None
 
     def get(self, timeout=None):
         """
@@ -57,7 +58,9 @@ class Future(object):
         :return: encapsulated value if it is not an exception
         """
         if self._get_hook is not None:
-            return self._get_hook(timeout)
+            if self._get_hook_result is None:
+                self._get_hook_result = self._get_hook(timeout)
+            return self._get_hook_result
         raise NotImplementedError
 
     def set(self, value=None):

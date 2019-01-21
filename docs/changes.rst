@@ -16,6 +16,12 @@ v1.3.0 (UNRELEASED)
   :mod:`collections.abc` instead of :mod:`collections`. This fixes a
   deprecation warning on Python 3.7 and prepares for Python 3.8.
 
+- Futures: Reuse result from :meth:`pykka.Future.filter`,
+  :meth:`pykka.Future.map`, and :meth:`pykka.Future.reduce`. Recalculating the
+  result on each call to :meth:`pykka.Future.get` is both inconsistent with
+  regular futures and can cause problems if the function is expensive or has
+  side effects. (Fixes: :issue:`32`)
+
 - Various project setup and development improvements.
 
 

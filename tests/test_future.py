@@ -157,6 +157,17 @@ def test_filter_preserves_the_timeout_kwarg(future):
         filtered.get(timeout=0)
 
 
+def test_filter_reuses_result_if_called_multiple_times(future, mocker):
+    raise_on_reuse_func = mocker.Mock(side_effect=[False, True, Exception])
+
+    filtered = future.filter(raise_on_reuse_func)
+    future.set([1, 2])
+
+    assert filtered.get(timeout=0) == [2]
+    assert filtered.get(timeout=0) == [2]  # First map result is reused
+    assert filtered.get(timeout=0) == [2]  # First map result is reused
+
+
 def test_join_combines_multiple_futures_into_one(futures):
     joined = futures[0].join(futures[1], futures[2])
     futures[0].set(0)
@@ -197,6 +208,16 @@ def test_map_preserves_timeout_kwarg(future):
         mapped.get(timeout=0)
 
 
+def test_map_reuses_result_if_called_multiple_times(future, mocker):
+    raise_on_reuse_func = mocker.Mock(side_effect=[10, Exception])
+
+    mapped = future.map(raise_on_reuse_func)
+    future.set(30)
+
+    assert mapped.get(timeout=0) == 10
+    assert mapped.get(timeout=0) == 10  # First map result is reused
+
+
 def test_reduce_applies_function_cumulatively_from_the_left(future):
     reduced = future.reduce(lambda x, y: x + y)
     future.set([1, 2, 3, 4])
@@ -224,6 +245,17 @@ def test_reduce_preserves_the_timeout_kwarg(future):
 
     with pytest.raises(Timeout):
         reduced.get(timeout=0)
+
+
+def test_reduce_reuses_result_if_called_multiple_times(future, mocker):
+    raise_on_reuse_func = mocker.Mock(side_effect=[3, 6, Exception])
+
+    reduced = future.reduce(raise_on_reuse_func)
+    future.set([1, 2, 3])
+
+    assert reduced.get(timeout=0) == 6
+    assert reduced.get(timeout=0) == 6  # First reduce result is reused
+    assert reduced.get(timeout=0) == 6  # First reduce result is reused
 
 
 @has_gevent
