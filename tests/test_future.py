@@ -164,8 +164,8 @@ def test_filter_reuses_result_if_called_multiple_times(future, mocker):
     future.set([1, 2])
 
     assert filtered.get(timeout=0) == [2]
-    assert filtered.get(timeout=0) == [2]  # First map result is reused
-    assert filtered.get(timeout=0) == [2]  # First map result is reused
+    assert filtered.get(timeout=0) == [2]  # First result is reused
+    assert filtered.get(timeout=0) == [2]  # First result is reused
 
 
 def test_join_combines_multiple_futures_into_one(futures):
@@ -215,7 +215,7 @@ def test_map_reuses_result_if_called_multiple_times(future, mocker):
     future.set(30)
 
     assert mapped.get(timeout=0) == 10
-    assert mapped.get(timeout=0) == 10  # First map result is reused
+    assert mapped.get(timeout=0) == 10  # First result is reused
 
 
 def test_reduce_applies_function_cumulatively_from_the_left(future):
@@ -254,8 +254,8 @@ def test_reduce_reuses_result_if_called_multiple_times(future, mocker):
     future.set([1, 2, 3])
 
     assert reduced.get(timeout=0) == 6
-    assert reduced.get(timeout=0) == 6  # First reduce result is reused
-    assert reduced.get(timeout=0) == 6  # First reduce result is reused
+    assert reduced.get(timeout=0) == 6  # First result is reused
+    assert reduced.get(timeout=0) == 6  # First result is reused
 
 
 @has_gevent
