@@ -187,18 +187,32 @@ def test_join_preserves_timeout_kwarg(futures):
         joined.get(timeout=0)
 
 
-def test_map_returns_future_which_passes_noniterable_through_func(future):
+def test_map_returns_future_which_passes_result_through_func(future):
     mapped = future.map(lambda x: x + 10)
     future.set(30)
 
     assert mapped.get(timeout=0) == 40
 
 
-def test_map_returns_future_which_maps_iterable_through_func(future):
+def test_map_works_on_dict(future):
+    # Regression test for issue #64
+
+    mapped = future.map(lambda x: x['foo'])
+    future.set({'foo': 'bar'})
+
+    assert mapped.get(timeout=0) == 'bar'
+
+
+def test_map_does_not_map_each_value_in_futures_iterable_result(future):
+    # Behavior changed in Pykka 2.0:
+    # This used to map each value in the future's result through the func,
+    # yielding [20, 30, 40].
+
     mapped = future.map(lambda x: x + 10)
     future.set([10, 20, 30])
 
-    assert mapped.get(timeout=0) == [20, 30, 40]
+    with pytest.raises(TypeError):
+        mapped.get(timeout=0)
 
 
 def test_map_preserves_timeout_kwarg(future):

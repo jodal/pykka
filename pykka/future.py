@@ -1,22 +1,7 @@
 import functools
 
-from pykka import compat
-
 
 __all__ = ['Future', 'get_all']
-
-
-def _is_iterable(x):
-    return isinstance(x, compat.Iterable) and not isinstance(
-        x, compat.string_types
-    )
-
-
-def _map(func, *iterables):
-    if len(iterables) == 1 and not _is_iterable(iterables[0]):
-        return func(iterables[0])
-    else:
-        return list(map(func, *iterables))
 
 
 class Future(object):
@@ -174,10 +159,6 @@ class Future(object):
         Return a new future with the result of the future passed through a
         function.
 
-        If the future's result is a single value, it is simply passed to the
-        function. If the future's result is an iterable, the function is
-        applied to each item in the iterable.
-
         Example::
 
             >>> import pykka
@@ -188,15 +169,23 @@ class Future(object):
             40
 
             >>> f = pykka.ThreadingFuture()
-            >>> g = f.map(lambda x: x + 10)
-            >>> f.set([30, 300, 3000])
+            >>> g = f.map(lambda x: x['foo'])
+            >>> f.set({'foo': 'bar'}})
             >>> g.get()
-            [40, 310, 3010]
+            'bar'
 
         .. versionadded:: 1.2
+
+        .. versionchanged:: 2.0
+            Previously, if the future's result was an iterable (except a
+            string), the function was applied to each item in the iterable.
+            This behavior is unpredictable and makes regular use cases like
+            extracting a single field from a dict difficult, thus the
+            behavior has been simplified. Now, the entire result value is
+            passed to the function.
         """
         future = self.__class__()
-        future.set_get_hook(lambda timeout: _map(func, self.get(timeout)))
+        future.set_get_hook(lambda timeout: func(self.get(timeout)))
         return future
 
     def reduce(self, func, *args):
