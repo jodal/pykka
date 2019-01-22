@@ -1,10 +1,15 @@
 .. include:: ../README.rst
 
 
-Table of contents
-=================
+.. toctree::
+    :maxdepth: 2
+    :caption: Usage
+
+    quickstart
+    api
 
 .. toctree::
+    :maxdepth: 2
+    :caption: About
 
-    api
     changes
