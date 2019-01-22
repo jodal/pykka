@@ -24,7 +24,7 @@ Dependencies
 Futures
 -------
 
-- **Backwards incompatible:** :class:`pykka.Future.map` on a future with an
+- **Backwards incompatible:** :meth:`pykka.Future.map` on a future with an
   iterable result no longer applies the map function to each item in iterable.
   Instead, the entire future result is passed to the map function. (Fixes:
   :issue:`64`)
