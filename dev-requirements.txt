@@ -15,6 +15,7 @@ pytest-mock
 
 # Build documentation
 sphinx
+sphinx_rtd_theme
 
 # Test runner
 tox
