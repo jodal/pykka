@@ -5,9 +5,24 @@ Changes
 v2.0.0 (UNRELEASED)
 ===================
 
+Major feature release.
+
+Dependencies
+------------
+
 - Drop support for Python 2.6, 3.2, and 3.3.
 
 - Include CPython 3.5, 3.6 and 3.7, and PyPy 3.5 in the test matrix.
+
+- Include gevent and Eventlet tests in all environments. Since Pykka was
+  originally developed, both has grown support for Python 3 and PyPy.
+
+- On Python 3, import :class:`Callable` and :class:`Iterable` from
+  :mod:`collections.abc` instead of :mod:`collections`. This fixes a
+  deprecation warning on Python 3.7 and prepares for Python 3.8.
+
+Futures
+-------
 
 - **Backwards incompatible:** :class:`pykka.Future.map` on a future with an
   iterable result no longer applies the map function to each item in iterable.
@@ -35,20 +50,18 @@ v2.0.0 (UNRELEASED)
   Because dict is an iterable, the now removed special handling of iterables
   made this pattern difficult to use.
 
-- Include gevent and Eventlet tests in all environments. Since Pykka was
-  originally developed, both has grown support for Python 3 and PyPy.
+- Reuse result from :meth:`pykka.Future.filter`, :meth:`pykka.Future.map`, and
+  :meth:`pykka.Future.reduce`. Recalculating the result on each call to
+  :meth:`pykka.Future.get` is both inconsistent with regular futures and can
+  cause problems if the function is expensive or has side effects. (Fixes:
+  :issue:`32`)
 
-- On Python 3, import :class:`Callable` and :class:`Iterable` from
-  :mod:`collections.abc` instead of :mod:`collections`. This fixes a
-  deprecation warning on Python 3.7 and prepares for Python 3.8.
+Internals
+---------
 
-- Futures: Reuse result from :meth:`pykka.Future.filter`,
-  :meth:`pykka.Future.map`, and :meth:`pykka.Future.reduce`. Recalculating the
-  result on each call to :meth:`pykka.Future.get` is both inconsistent with
-  regular futures and can cause problems if the function is expensive or has
-  side effects. (Fixes: :issue:`32`)
+- Port tests to pytest.
 
-- Various project setup and development improvements.
+- Format code with Black.
 
 
 v1.2.1 (2015-07-20)
