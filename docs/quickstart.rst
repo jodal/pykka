@@ -2,6 +2,11 @@
 Quickstart
 ==========
 
+Pykka is a Python implementation of the `actor model
+<https://en.wikipedia.org/wiki/Actor_model>`_. The actor model introduces some
+simple rules to control the sharing of state and cooperation between execution
+units, which makes it easier to build concurrent applications.
+
 Rules of the actor model
 ========================
 
