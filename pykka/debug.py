@@ -45,7 +45,7 @@ def log_thread_tracebacks(*args, **kwargs):
       will only be handled, and the tracebacks logged, if your main thread is
       available to do some work. Making your main thread idle using
       :func:`time.sleep` is OK. The signal will awaken your main thread.
-      Blocking your main thread on e.g. :func:`Queue.Queue.get` or
+      Blocking your main thread on e.g. :func:`queue.Queue.get` or
       :meth:`pykka.Future.get` will break signal handling, and thus you won't
       be able to signal your process to print the thread tracebacks.
 

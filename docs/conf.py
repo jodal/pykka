@@ -121,4 +121,4 @@ extlinks = {'issue': ('https://github.com/jodal/pykka/issues/%s', '#')}
 
 # -- Options for intersphinx extension ----------------------------------------
 
-intersphinx_mapping = {'python': ('https://docs.python.org/2', None)}
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}

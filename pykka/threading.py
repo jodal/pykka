@@ -18,7 +18,7 @@ class ThreadingFuture(Future):
     :class:`ThreadingFuture` implements :class:`Future` for use with
     :class:`ThreadingActor <pykka.ThreadingActor>`.
 
-    The future is implemented using a :class:`Queue.Queue`.
+    The future is implemented using a :class:`queue.Queue`.
 
     The future does *not* make a copy of the object which is :meth:`set()
     <pykka.Future.set>` on it. It is the setters responsibility to only pass
