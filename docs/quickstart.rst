@@ -312,10 +312,3 @@ attribute to :class:`True`::
 You can access methods and attributes nested as deep as you like, as long as
 all attributes on the path between the actor and the method or attribute on the
 end is marked as traversable.
-
-
-Examples
-========
-
-See the ``examples/`` dir in `Pykka's Git repo
-<https://github.com/jodal/pykka/>`_ for some runnable examples.

@@ -11,7 +11,7 @@ Either run without arguments:
 
 Or specify pool size and IPs to resolve:
 
-    ./resolver.py 3 129.240.2.{1,2,3,4,5,6,7,8,9}
+    ./resolver.py 3 193.35.52.{1,2,3,4,5,6,7,8,9}
 """
 
 import pprint
@@ -53,5 +53,5 @@ if __name__ == '__main__':
     if len(sys.argv[1:]) >= 2:
         run(int(sys.argv[1]), *sys.argv[2:])
     else:
-        ips = [f'129.241.93.{i}' for i in range(1, 50)]
+        ips = [f'193.35.52.{i}' for i in range(1, 50)]
         run(10, *ips)

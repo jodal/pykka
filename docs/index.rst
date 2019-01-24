@@ -6,6 +6,7 @@
     :caption: Usage
 
     quickstart
+    examples
     api/index
 
 .. toctree::
