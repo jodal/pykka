@@ -51,7 +51,7 @@ def actor_class(runtime):
 
 
 @pytest.fixture
-def actor(actor_class, events):
+def actor_ref(actor_class, events):
     ref = actor_class.start(events)
     yield ref
     ref.stop()
@@ -64,8 +64,8 @@ def test_null_handler_is_added_to_avoid_warnings():
     assert 'NullHandler' in handler_names
 
 
-def test_unexpected_messages_are_logged(actor, log_handler):
-    actor.ask({'unhandled': 'message'})
+def test_unexpected_messages_are_logged(actor_ref, log_handler):
+    actor_ref.ask({'unhandled': 'message'})
 
     log_handler.wait_for_message('warning')
     with log_handler.lock:
@@ -73,13 +73,13 @@ def test_unexpected_messages_are_logged(actor, log_handler):
         log_record = log_handler.messages['warning'][0]
 
     assert log_record.getMessage().split(': ')[0] == (
-        'Unexpected message received by {}'.format(actor)
+        'Unexpected message received by {}'.format(actor_ref)
     )
 
 
-def test_exception_is_logged_when_returned_to_caller(actor, log_handler):
+def test_exception_is_logged_when_returned_to_caller(actor_ref, log_handler):
     with pytest.raises(Exception):
-        actor.proxy().raise_exception().get()
+        actor_ref.proxy().raise_exception().get()
 
     log_handler.wait_for_message('debug')
     with log_handler.lock:
@@ -87,17 +87,17 @@ def test_exception_is_logged_when_returned_to_caller(actor, log_handler):
         log_record = log_handler.messages['debug'][0]
 
     assert log_record.getMessage() == (
-        'Exception returned from {} to caller:'.format(actor)
+        'Exception returned from {} to caller:'.format(actor_ref)
     )
     assert log_record.exc_info[0] == Exception
     assert str(log_record.exc_info[1]) == 'foo'
 
 
 def test_exception_is_logged_when_not_reply_requested(
-    actor, events, log_handler
+    actor_ref, events, log_handler
 ):
     events.on_failure_was_called.clear()
-    actor.tell({'command': 'raise exception'})
+    actor_ref.tell({'command': 'raise exception'})
 
     events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
@@ -107,15 +107,17 @@ def test_exception_is_logged_when_not_reply_requested(
         assert len(log_handler.messages['error']) == 1
         log_record = log_handler.messages['error'][0]
 
-    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(actor)
+    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(
+        actor_ref
+    )
     assert log_record.exc_info[0] == Exception
     assert str(log_record.exc_info[1]) == 'foo'
 
 
-def test_base_exception_is_logged(actor, events, log_handler):
+def test_base_exception_is_logged(actor_ref, events, log_handler):
     log_handler.reset()
     events.on_stop_was_called.clear()
-    actor.tell({'command': 'raise base exception'})
+    actor_ref.tell({'command': 'raise base exception'})
 
     events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()
@@ -126,7 +128,7 @@ def test_base_exception_is_logged(actor, events, log_handler):
         log_record = log_handler.messages['debug'][0]
 
     assert log_record.getMessage() == (
-        'BaseException() in {}. Stopping all actors.'.format(actor)
+        'BaseException() in {}. Stopping all actors.'.format(actor_ref)
     )
 
 
@@ -134,7 +136,7 @@ def test_exception_in_on_start_is_logged(
     early_failing_actor_class, events, log_handler
 ):
     log_handler.reset()
-    actor = early_failing_actor_class.start(events)
+    actor_ref = early_failing_actor_class.start(events)
     events.on_start_was_called.wait(5)
 
     log_handler.wait_for_message('error')
@@ -142,14 +144,16 @@ def test_exception_in_on_start_is_logged(
         assert len(log_handler.messages['error']) == 1
         log_record = log_handler.messages['error'][0]
 
-    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(actor)
+    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(
+        actor_ref
+    )
 
 
 def test_exception_in_on_stop_is_logged(
     late_failing_actor_class, events, log_handler
 ):
     log_handler.reset()
-    actor = late_failing_actor_class.start(events)
+    actor_ref = late_failing_actor_class.start(events)
     events.on_stop_was_called.wait(5)
 
     log_handler.wait_for_message('error')
@@ -157,15 +161,17 @@ def test_exception_in_on_stop_is_logged(
         assert len(log_handler.messages['error']) == 1
         log_record = log_handler.messages['error'][0]
 
-    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(actor)
+    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(
+        actor_ref
+    )
 
 
 def test_exception_in_on_failure_is_logged(
     failing_on_failure_actor_class, events, log_handler
 ):
     log_handler.reset()
-    actor = failing_on_failure_actor_class.start(events)
-    actor.tell({'command': 'raise exception'})
+    actor_ref = failing_on_failure_actor_class.start(events)
+    actor_ref.tell({'command': 'raise exception'})
     events.on_failure_was_called.wait(5)
 
     log_handler.wait_for_message('error', num_messages=2)
@@ -173,4 +179,6 @@ def test_exception_in_on_failure_is_logged(
         assert len(log_handler.messages['error']) == 2
         log_record = log_handler.messages['error'][0]
 
-    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(actor)
+    assert log_record.getMessage() == 'Unhandled exception in {}:'.format(
+        actor_ref
+    )

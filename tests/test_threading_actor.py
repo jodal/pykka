@@ -14,20 +14,20 @@ class DaemonActor(ThreadingActor):
 
 
 @pytest.fixture
-def regular_actor():
+def regular_actor_ref():
     ref = RegularActor.start()
     yield ref
     ref.stop()
 
 
 @pytest.fixture
-def daemon_actor():
+def daemon_actor_ref():
     ref = DaemonActor.start()
     yield ref
     ref.stop()
 
 
-def test_actor_thread_is_named_after_pykka_actor_class(regular_actor):
+def test_actor_thread_is_named_after_pykka_actor_class(regular_actor_ref):
     alive_threads = threading.enumerate()
     alive_thread_names = [t.name for t in alive_threads]
     named_correctly = [
@@ -37,7 +37,7 @@ def test_actor_thread_is_named_after_pykka_actor_class(regular_actor):
     assert any(named_correctly)
 
 
-def test_actor_thread_is_not_daemonic_by_default(regular_actor):
+def test_actor_thread_is_not_daemonic_by_default(regular_actor_ref):
     alive_threads = threading.enumerate()
     actor_threads = [
         t for t in alive_threads if t.name.startswith('RegularActor')
@@ -48,7 +48,7 @@ def test_actor_thread_is_not_daemonic_by_default(regular_actor):
 
 
 def test_actor_thread_is_daemonic_if_use_daemon_thread_flag_is_set(
-    daemon_actor
+    daemon_actor_ref
 ):
     alive_threads = threading.enumerate()
     actor_threads = [

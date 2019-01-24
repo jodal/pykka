@@ -48,7 +48,7 @@ def actor_class(runtime):
 
 
 @pytest.fixture
-def actor(actor_class, events):
+def actor_ref(actor_class, events):
     ref = actor_class.start(events)
     yield ref
     ref.stop()
@@ -71,13 +71,13 @@ def early_stopping_actor_class(runtime):
 
 
 def test_messages_left_in_queue_after_actor_stops_receive_an_error(
-    runtime, actor
+    runtime, actor_ref
 ):
     event = runtime.event_class()
 
-    actor.tell({'command': 'callback', 'callback': event.wait})
-    actor.stop(block=False)
-    response = actor.ask({'command': 'irrelevant'}, block=False)
+    actor_ref.tell({'command': 'callback', 'callback': event.wait})
+    actor_ref.stop(block=False)
+    response = actor_ref.ask({'command': 'irrelevant'}, block=False)
     event.set()
 
     with pytest.raises(ActorDeadError):
@@ -85,20 +85,20 @@ def test_messages_left_in_queue_after_actor_stops_receive_an_error(
 
 
 def test_stop_requests_left_in_queue_after_actor_stops_are_handled(
-    runtime, actor
+    runtime, actor_ref
 ):
     event = runtime.event_class()
 
-    actor.tell({'command': 'callback', 'callback': event.wait})
-    actor.stop(block=False)
-    response = actor.ask({'command': 'pykka_stop'}, block=False)
+    actor_ref.tell({'command': 'callback', 'callback': event.wait})
+    actor_ref.stop(block=False)
+    response = actor_ref.ask({'command': 'pykka_stop'}, block=False)
     event.set()
 
     response.get(timeout=0.5)
 
 
-def test_actor_has_an_uuid4_based_urn(actor):
-    assert uuid.UUID(actor.actor_urn).version == 4
+def test_actor_has_an_uuid4_based_urn(actor_ref):
+    assert uuid.UUID(actor_ref.actor_urn).version == 4
 
 
 def test_actor_has_unique_uuid(actor_class, events):
@@ -125,12 +125,14 @@ def test_init_can_be_called_with_arbitrary_arguments(runtime):
     runtime.actor_class(1, 2, 3, foo='bar')
 
 
-def test_on_start_is_called_before_first_message_is_processed(actor, events):
+def test_on_start_is_called_before_first_message_is_processed(
+    actor_ref, events
+):
     events.on_start_was_called.wait(5)
     assert events.on_start_was_called.is_set()
 
 
-def test_on_start_is_called_after_the_actor_is_registered(actor, events):
+def test_on_start_is_called_after_the_actor_is_registered(actor_ref, events):
     # NOTE: If the actor is registered after the actor is started, this
     # test may still occasionally pass, as it is dependant on the exact
     # timing of events. When the actor is first registered and then
@@ -151,11 +153,11 @@ def test_on_start_can_stop_actor_before_receive_loop_is_started(
     # If one made this test specifically for ThreadingActor, one could add
     # an assertFalse(actor_thread.is_alive()), which would cause the test
     # to fail properly.
-    actor = early_stopping_actor_class.start(events)
+    actor_ref = early_stopping_actor_class.start(events)
 
     events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()
-    assert not actor.is_alive()
+    assert not actor_ref.is_alive()
 
 
 def test_on_start_failure_causes_actor_to_stop(
@@ -163,33 +165,35 @@ def test_on_start_failure_causes_actor_to_stop(
 ):
     # Actor should not be alive if on_start fails.
 
-    actor = early_failing_actor_class.start(events)
+    actor_ref = early_failing_actor_class.start(events)
     events.on_start_was_called.wait(5)
 
-    actor.actor_stopped.wait(5)
-    assert not actor.is_alive()
+    actor_ref.actor_stopped.wait(5)
+    assert not actor_ref.is_alive()
 
 
-def test_on_stop_is_called_when_actor_is_stopped(actor, events):
+def test_on_stop_is_called_when_actor_is_stopped(actor_ref, events):
     assert not events.on_stop_was_called.is_set()
 
-    actor.stop()
+    actor_ref.stop()
 
     events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()
 
 
 def test_on_stop_failure_causes_actor_to_stop(late_failing_actor_class, events):
-    actor = late_failing_actor_class.start(events)
+    actor_ref = late_failing_actor_class.start(events)
 
     events.on_stop_was_called.wait(5)
-    assert not actor.is_alive()
+    assert not actor_ref.is_alive()
 
 
-def test_on_failure_is_called_when_exception_cannot_be_returned(actor, events):
+def test_on_failure_is_called_when_exception_cannot_be_returned(
+    actor_ref, events
+):
     assert not events.on_failure_was_called.is_set()
 
-    actor.tell({'command': 'raise exception'})
+    actor_ref.tell({'command': 'raise exception'})
 
     events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
@@ -199,29 +203,31 @@ def test_on_failure_is_called_when_exception_cannot_be_returned(actor, events):
 def test_on_failure_failure_causes_actor_to_stop(
     failing_on_failure_actor_class, events
 ):
-    actor = failing_on_failure_actor_class.start(events)
+    actor_ref = failing_on_failure_actor_class.start(events)
 
-    actor.tell({'command': 'raise exception'})
+    actor_ref.tell({'command': 'raise exception'})
 
     events.on_failure_was_called.wait(5)
-    assert not actor.is_alive()
+    assert not actor_ref.is_alive()
 
 
-def test_actor_is_stopped_when_unhandled_exceptions_are_raised(actor, events):
+def test_actor_is_stopped_when_unhandled_exceptions_are_raised(
+    actor_ref, events
+):
     assert not events.on_failure_was_called.is_set()
 
-    actor.tell({'command': 'raise exception'})
+    actor_ref.tell({'command': 'raise exception'})
 
     events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
     assert len(ActorRegistry.get_all()) == 0
 
 
-def test_all_actors_are_stopped_on_base_exception(events, actor):
+def test_all_actors_are_stopped_on_base_exception(events, actor_ref):
     assert len(ActorRegistry.get_all()) == 1
     assert not events.on_stop_was_called.is_set()
 
-    actor.tell({'command': 'raise base exception'})
+    actor_ref.tell({'command': 'raise base exception'})
 
     events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()
@@ -232,14 +238,14 @@ def test_all_actors_are_stopped_on_base_exception(events, actor):
     assert len(ActorRegistry.get_all()) == 0
 
 
-def test_actor_can_call_stop_on_self_multiple_times(actor):
-    actor.ask({'command': 'stop twice'})
+def test_actor_can_call_stop_on_self_multiple_times(actor_ref):
+    actor_ref.ask({'command': 'stop twice'})
 
 
 def test_actor_processes_all_messages_before_stop_on_self_stops_it(
-    actor, events
+    actor_ref, events
 ):
-    actor.ask({'command': 'message self then stop'})
+    actor_ref.ask({'command': 'message self then stop'})
 
     events.greetings_was_received.wait(5)
     assert events.greetings_was_received.is_set()

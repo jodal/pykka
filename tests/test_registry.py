@@ -34,53 +34,53 @@ def actor_b_class(runtime):
 
 
 @pytest.fixture
-def actor_a(actor_a_class):
+def actor_ref(actor_a_class):
     return actor_a_class.start()
 
 
 @pytest.fixture
-def a_actors(actor_a_class):
+def a_actor_refs(actor_a_class):
     return [actor_a_class.start() for _ in range(3)]
 
 
 @pytest.fixture
-def b_actors(actor_b_class):
+def b_actor_refs(actor_b_class):
     return [actor_b_class.start() for _ in range(5)]
 
 
-def test_actor_is_registered_when_started(actor_a):
-    assert actor_a in ActorRegistry.get_all()
+def test_actor_is_registered_when_started(actor_ref):
+    assert actor_ref in ActorRegistry.get_all()
 
 
-def test_actor_is_unregistered_when_stopped(actor_a):
-    assert actor_a in ActorRegistry.get_all()
+def test_actor_is_unregistered_when_stopped(actor_ref):
+    assert actor_ref in ActorRegistry.get_all()
 
-    actor_a.stop()
+    actor_ref.stop()
 
-    assert actor_a not in ActorRegistry.get_all()
-
-
-def test_actor_may_be_registered_manually(actor_a):
-    ActorRegistry.unregister(actor_a)
-    assert actor_a not in ActorRegistry.get_all()
-
-    ActorRegistry.register(actor_a)
-
-    assert actor_a in ActorRegistry.get_all()
+    assert actor_ref not in ActorRegistry.get_all()
 
 
-def test_actor_may_be_unregistered_multiple_times_without_error(actor_a):
-    ActorRegistry.unregister(actor_a)
-    assert actor_a not in ActorRegistry.get_all()
+def test_actor_may_be_registered_manually(actor_ref):
+    ActorRegistry.unregister(actor_ref)
+    assert actor_ref not in ActorRegistry.get_all()
 
-    ActorRegistry.unregister(actor_a)
-    assert actor_a not in ActorRegistry.get_all()
+    ActorRegistry.register(actor_ref)
 
-    ActorRegistry.register(actor_a)
-    assert actor_a in ActorRegistry.get_all()
+    assert actor_ref in ActorRegistry.get_all()
 
 
-def test_all_actors_can_be_stopped_through_registry(a_actors, b_actors):
+def test_actor_may_be_unregistered_multiple_times_without_error(actor_ref):
+    ActorRegistry.unregister(actor_ref)
+    assert actor_ref not in ActorRegistry.get_all()
+
+    ActorRegistry.unregister(actor_ref)
+    assert actor_ref not in ActorRegistry.get_all()
+
+    ActorRegistry.register(actor_ref)
+    assert actor_ref in ActorRegistry.get_all()
+
+
+def test_all_actors_can_be_stopped_through_registry(a_actor_refs, b_actor_refs):
     assert len(ActorRegistry.get_all()) == 8
 
     ActorRegistry.stop_all(block=True)
@@ -111,41 +111,43 @@ def test_stop_all_stops_last_started_actor_first_if_blocking(mocker):
     assert stopped_actors[2] == started_actors[0]
 
 
-def test_actors_may_be_looked_up_by_class(actor_a_class, a_actors, b_actors):
+def test_actors_may_be_looked_up_by_class(
+    actor_a_class, a_actor_refs, b_actor_refs
+):
     result = ActorRegistry.get_by_class(actor_a_class)
 
-    for a_actor in a_actors:
+    for a_actor in a_actor_refs:
         assert a_actor in result
-    for b_actor in b_actors:
+    for b_actor in b_actor_refs:
         assert b_actor not in result
 
 
 def test_actors_may_be_looked_up_by_superclass(
-    actor_a_class, a_actors, b_actors
+    actor_a_class, a_actor_refs, b_actor_refs
 ):
     result = ActorRegistry.get_by_class(actor_a_class)
 
-    for a_actor in a_actors:
+    for a_actor in a_actor_refs:
         assert a_actor in result
-    for b_actor in b_actors:
+    for b_actor in b_actor_refs:
         assert b_actor not in result
 
 
 def test_actors_may_be_looked_up_by_class_name(
-    actor_a_class, a_actors, b_actors
+    actor_a_class, a_actor_refs, b_actor_refs
 ):
     result = ActorRegistry.get_by_class_name('ActorA')
 
-    for a_actor in a_actors:
+    for a_actor in a_actor_refs:
         assert a_actor in result
-    for b_actor in b_actors:
+    for b_actor in b_actor_refs:
         assert b_actor not in result
 
 
-def test_actors_may_be_looked_up_by_urn(actor_a):
-    result = ActorRegistry.get_by_urn(actor_a.actor_urn)
+def test_actors_may_be_looked_up_by_urn(actor_ref):
+    result = ActorRegistry.get_by_urn(actor_ref.actor_urn)
 
-    assert result == actor_a
+    assert result == actor_ref
 
 
 def test_get_by_urn_returns_none_if_not_found():
@@ -154,7 +156,9 @@ def test_get_by_urn_returns_none_if_not_found():
     assert result is None
 
 
-def test_broadcast_sends_message_to_all_actors_if_no_target(a_actors, b_actors):
+def test_broadcast_sends_message_to_all_actors_if_no_target(
+    a_actor_refs, b_actor_refs
+):
     ActorRegistry.broadcast({'command': 'foo'})
 
     running_actors = ActorRegistry.get_all()
