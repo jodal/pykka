@@ -17,7 +17,7 @@ class DeadlockActorA(pykka.ThreadingActor):
 
 class DeadlockActorB(pykka.ThreadingActor):
     def __init__(self, a):
-        super(DeadlockActorB, self).__init__()
+        super().__init__()
         self.a = a
 
     def bar(self):

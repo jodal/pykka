@@ -87,7 +87,7 @@ the :meth:`~pykka.Actor.start` method, and receive them using the regular
 
     class Greeter(pykka.ThreadingActor):
         def __init__(self, greeting='Hi there!'):
-            super(Greeter, self).__init__()
+            super().__init__()
             self.greeting = greeting
 
         def on_receive(self, message):
@@ -218,7 +218,7 @@ Let's create an actor and start it::
 
     class Calculator(pykka.ThreadingActor):
         def __init__(self):
-            super(Calculator, self).__init__()
+            super().__init__()
             self.last_result = None
 
         def add(self, a, b=None):

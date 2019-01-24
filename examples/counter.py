@@ -11,7 +11,7 @@ class Adder(pykka.ThreadingActor):
 
 class Bookkeeper(pykka.ThreadingActor):
     def __init__(self, adder):
-        super(Bookkeeper, self).__init__()
+        super().__init__()
         self.adder = adder
 
     def count_to(self, target):

@@ -194,7 +194,7 @@ v1.0.0 (2012-10-26)
   actor will no longer be properly initialized. Valid ways to call the
   overridden :meth:`__init__` method include::
 
-      super(MyActorSubclass, self).__init__()
+      super().__init__()
       # or
       pykka.ThreadingActor.__init__()
       # or
@@ -204,7 +204,7 @@ v1.0.0 (2012-10-26)
   keyword arguments by default. This allows you to use :func:`super` in
   :meth:`__init__` like this::
 
-      super(MyActorSubclass, self).__init__(1, 2, 3, foo='bar')
+      super().__init__(1, 2, 3, foo='bar')
 
   Without this fix, the above use of :func:`super` would cause an exception
   because the default implementation of :meth:`__init__` in
