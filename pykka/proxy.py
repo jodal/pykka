@@ -28,8 +28,8 @@ class ActorProxy(object):
     from the future, you must call :meth:`get() <pykka.Future.get>` on the
     returned future::
 
-        print actor_proxy.string_attribute.get()
-        print actor_proxy.count().get() + 1
+        print(actor_proxy.string_attribute.get())
+        print(actor_proxy.count().get() + 1)
 
     If you call a method just for it's side effects and do not care about the
     return value, you do not need to accept the returned future or call
