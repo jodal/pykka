@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Resolve a bunch of IP addresses using a pool of resolver actors.
