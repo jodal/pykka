@@ -114,8 +114,7 @@ class Actor(object):
 
     #: The actor URN string is a universally unique identifier for the actor.
     #: It may be used for looking up a specific actor using
-    #: :meth:`ActorRegistry.get_by_urn
-    #: <pykka.ActorRegistry.get_by_urn>`.
+    #: :meth:`ActorRegistry.get_by_urn`.
     actor_urn = None
 
     #: The actor's inbox. Use :meth:`ActorRef.tell`, :meth:`ActorRef.ask`, and
