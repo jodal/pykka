@@ -13,7 +13,8 @@ __all__ = ['log_thread_tracebacks']
 
 
 def log_thread_tracebacks(*args, **kwargs):
-    """Logs at ``CRITICAL`` level a traceback for each running thread.
+    """Logs at :attr:`logging.CRITICAL` level a traceback for each running
+    thread.
 
     This can be a convenient tool for debugging deadlocks.
 
@@ -52,9 +53,6 @@ def log_thread_tracebacks(*args, **kwargs):
     The morale is: setup signals using your main thread, start your actors,
     then let your main thread relax for the rest of your application's life
     cycle.
-
-    For a complete example of how to use this, see
-    ``examples/deadlock_debugging.py`` in Pykka's source code.
 
     .. versionadded:: 1.1
     """
