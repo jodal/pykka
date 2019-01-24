@@ -17,8 +17,9 @@ class AnActor(pykka.ThreadingActor):
         return 'this was returned by AnActor.func() after a delay'
 
 
-def log(s):
-    print('{}: {}'.format(threading.current_thread().name, s))
+def log(msg):
+    thread_name = threading.current_thread().name
+    print(f'{thread_name}: {msg}')
 
 
 if __name__ == '__main__':

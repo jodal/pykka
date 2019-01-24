@@ -25,10 +25,10 @@ class Resolver(pykka.ThreadingActor):
     def resolve(self, ip):
         try:
             info = socket.gethostbyaddr(ip)
-            print('Finished resolving {}'.format(ip))
+            print(f'Finished resolving {ip}')
             return info[0]
         except Exception:
-            print('Failed resolving {}'.format(ip))
+            print(f'Failed resolving {ip}')
             return None
 
 
@@ -53,5 +53,5 @@ if __name__ == '__main__':
     if len(sys.argv[1:]) >= 2:
         run(int(sys.argv[1]), *sys.argv[2:])
     else:
-        ips = ['129.241.93.%s' % i for i in range(1, 50)]
+        ips = [f'129.241.93.{i}' for i in range(1, 50)]
         run(10, *ips)
