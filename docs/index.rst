@@ -12,4 +12,5 @@
     :maxdepth: 2
     :caption: About
 
+    inspiration
     changes

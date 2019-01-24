@@ -14,7 +14,7 @@ Pykka is available from PyPI. To install it, run::
 
     pip install pykka
 
-Pykka works with CPython 2.7 or 3.4+, as well as PyPy 2.7 and 3.5.
+Pykka works with CPython 2.7 and 3.4+, as well as PyPy 2.7 and 3.5.
 
 Optional dependencies includes:
 
@@ -23,23 +23,6 @@ Optional dependencies includes:
 
 - `eventlet <https://eventlet.net/>`_, if you want to use eventlet based
   actors from ``pykka.eventlet``.
-
-
-What Pykka is not
-=================
-
-Much of the naming of concepts and methods in Pykka is taken from the `Akka
-<https://akka.io/>`_ project which implements actors on the JVM. Though, Pykka
-does not aim to be a Python port of Akka, and supports far fewer features.
-
-Notably, Pykka **does not** support the following features:
-
-- Supervision: Linking actors, supervisors, or supervisor groups.
-
-- Remoting: Communicating with actors running on other hosts.
-
-- Routers: Pykka does not come with a set of predefined message routers, though
-  you may make your own actors for routing messages.
 
 
 License
