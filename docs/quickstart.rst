@@ -65,7 +65,7 @@ A basic actor
 =============
 
 In its most basic form, a Pykka actor is a class with an
-:meth:`on_receive(message)` method::
+:meth:`~pykka.Actor.on_receive` method::
 
     import pykka
 
