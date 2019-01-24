@@ -94,7 +94,7 @@ class Actor(object):
             'Did you forget to call super() in your override?'
         )
         ActorRegistry.register(obj.actor_ref)
-        logger.debug('Starting %s', obj)
+        logger.debug('Starting {}'.format(obj))
         obj._start_actor_loop()
         return obj.actor_ref
 
@@ -155,10 +155,7 @@ class Actor(object):
         self.actor_ref = ActorRef(self)
 
     def __str__(self):
-        return '%(class)s (%(urn)s)' % {
-            'class': self.__class__.__name__,
-            'urn': self.actor_urn,
-        }
+        return '{} ({})'.format(self.__class__.__name__, self.actor_urn)
 
     def stop(self):
         """
@@ -174,7 +171,7 @@ class Actor(object):
         """
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
-        logger.debug('Stopped %s', self)
+        logger.debug('Stopped {}'.format(self))
         try:
             self.on_stop()
         except Exception:
@@ -202,7 +199,7 @@ class Actor(object):
             except Exception:
                 if reply_to:
                     logger.debug(
-                        'Exception returned from %s to caller:' % self,
+                        'Exception returned from {} to caller:'.format(self),
                         exc_info=sys.exc_info(),
                     )
                     reply_to.set_exception()
@@ -215,8 +212,9 @@ class Actor(object):
             except BaseException:
                 exception_value = sys.exc_info()[1]
                 logger.debug(
-                    '%s in %s. Stopping all actors.'
-                    % (repr(exception_value), self)
+                    '{!r} in {}. Stopping all actors.'.format(
+                        exception_value, self
+                    )
                 )
                 self._stop()
                 ActorRegistry.stop_all()
@@ -230,8 +228,9 @@ class Actor(object):
                 else:
                     reply_to.set_exception(
                         ActorDeadError(
-                            '%s stopped before handling the message'
-                            % self.actor_ref
+                            '{} stopped before handling the message'.format(
+                                self.actor_ref
+                            )
                         )
                     )
 
@@ -268,7 +267,7 @@ class Actor(object):
     def _handle_failure(self, exception_type, exception_value, traceback):
         """Logs unexpected failures, unregisters and stops the actor."""
         logger.error(
-            'Unhandled exception in %s:' % self,
+            'Unhandled exception in {}:'.format(self),
             exc_info=(exception_type, exception_value, traceback),
         )
         ActorRegistry.unregister(self.actor_ref)
@@ -320,7 +319,9 @@ class Actor(object):
 
         :returns: anything that should be sent as a reply to the sender
         """
-        logger.warning('Unexpected message received by %s: %s', self, message)
+        logger.warning(
+            'Unexpected message received by {}: {}'.format(self, message)
+        )
 
     def _get_attribute_from_path(self, attr_path):
         """
@@ -365,13 +366,10 @@ class ActorRef(object):
         self.actor_stopped = actor.actor_stopped
 
     def __repr__(self):
-        return '<ActorRef for %s>' % str(self)
+        return '<ActorRef for {}>'.format(self)
 
     def __str__(self):
-        return '%(class)s (%(urn)s)' % {
-            'urn': self.actor_urn,
-            'class': self.actor_class.__name__,
-        }
+        return '{} ({})'.format(self.actor_class.__name__, self.actor_urn)
 
     def is_alive(self):
         """
@@ -400,7 +398,7 @@ class ActorRef(object):
         :return: nothing
         """
         if not self.is_alive():
-            raise ActorDeadError('%s not found' % self)
+            raise ActorDeadError('{} not found'.format(self))
         self.actor_inbox.put(message)
 
     def ask(self, message, block=True, timeout=None):

@@ -121,7 +121,7 @@ class ActorRegistry(object):
         """
         with cls._actor_refs_lock:
             cls._actor_refs.append(actor_ref)
-        logger.debug('Registered %s', actor_ref)
+        logger.debug('Registered {}'.format(actor_ref))
 
     @classmethod
     def stop_all(cls, block=True, timeout=None):
@@ -165,6 +165,8 @@ class ActorRegistry(object):
                 cls._actor_refs.remove(actor_ref)
                 removed = True
         if removed:
-            logger.debug('Unregistered %s', actor_ref)
+            logger.debug('Unregistered {}'.format(actor_ref))
         else:
-            logger.debug('Unregistered %s (not found in registry)', actor_ref)
+            logger.debug(
+                'Unregistered {} (not found in registry)'.format(actor_ref)
+            )

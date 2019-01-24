@@ -92,7 +92,7 @@ class ActorProxy(object):
 
     def __init__(self, actor_ref, attr_path=None):
         if not actor_ref.is_alive():
-            raise ActorDeadError('%s not found' % actor_ref)
+            raise ActorDeadError('{} not found'.format(actor_ref))
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor
         self._attr_path = attr_path or tuple()
@@ -136,9 +136,8 @@ class ActorProxy(object):
         return hasattr(attr, 'pykka_traversable')
 
     def __repr__(self):
-        return '<ActorProxy for %s, attr_path=%s>' % (
-            self.actor_ref,
-            self._attr_path,
+        return '<ActorProxy for {}, attr_path={!r}>'.format(
+            self.actor_ref, self._attr_path
         )
 
     def __dir__(self):
@@ -155,7 +154,7 @@ class ActorProxy(object):
             self._known_attrs = self._get_attributes()
         attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:
-            raise AttributeError('%s has no attribute "%s"' % (self, name))
+            raise AttributeError('{} has no attribute {!r}'.format(self, name))
         if attr_info['callable']:
             if attr_path not in self._callable_proxies:
                 self._callable_proxies[attr_path] = _CallableProxy(

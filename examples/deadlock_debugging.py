@@ -41,8 +41,9 @@ if __name__ == '__main__':
 
     time.sleep(0.01)  # Yield to actors, so we get output in a readable order
 
+    pid = os.getpid()
     print('Making main thread relax; not block, not quit')
-    print('1) Use `kill -SIGUSR1 %d` to log thread tracebacks' % os.getpid())
-    print('2) Then `kill %d` to terminate the process' % os.getpid())
+    print('1) Use `kill -SIGUSR1 {:d}` to log thread tracebacks'.format(pid))
+    print('2) Then `kill {:d}` to terminate the process'.format(pid))
     while True:
         time.sleep(1)

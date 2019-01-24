@@ -93,7 +93,7 @@ def test_tell_fails_if_actor_is_stopped(ref):
     with pytest.raises(ActorDeadError) as exc_info:
         ref.tell({'command': 'a custom message'})
 
-    assert str(exc_info.value) == '%s not found' % ref
+    assert str(exc_info.value) == '{} not found'.format(ref)
 
 
 def test_ask_blocks_until_response_arrives(ref):
@@ -119,7 +119,7 @@ def test_ask_fails_if_actor_is_stopped(ref):
     with pytest.raises(ActorDeadError) as exc_info:
         ref.ask({'command': 'ping'})
 
-    assert str(exc_info.value) == '%s not found' % ref
+    assert str(exc_info.value) == '{} not found'.format(ref)
 
 
 def test_ask_nonblocking_fails_future_if_actor_is_stopped(ref):
@@ -129,4 +129,4 @@ def test_ask_nonblocking_fails_future_if_actor_is_stopped(ref):
     with pytest.raises(ActorDeadError) as exc_info:
         future.get()
 
-    assert str(exc_info.value) == '%s not found' % ref
+    assert str(exc_info.value) == '{} not found'.format(ref)

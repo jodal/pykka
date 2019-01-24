@@ -7,7 +7,7 @@ def actor_class(runtime):
         cat = 'dog'
 
         def functional_hello(self, s):
-            return 'Hello, %s!' % s
+            return 'Hello, {}!'.format(s)
 
         def set_cat(self, s):
             self.cat = s
@@ -48,7 +48,7 @@ def test_calling_unknown_method_raises_attribute_error(proxy):
     result = str(exc_info.value)
 
     assert result.startswith('<ActorProxy for ActorA')
-    assert result.endswith('has no attribute "unknown_method"')
+    assert result.endswith("has no attribute 'unknown_method'")
 
 
 def test_can_proxy_itself_for_offloading_work_to_the_future(proxy):
