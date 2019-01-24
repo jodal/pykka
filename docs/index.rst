@@ -6,7 +6,7 @@
     :caption: Usage
 
     quickstart
-    api
+    api/index
 
 .. toctree::
     :maxdepth: 2

@@ -79,7 +79,7 @@ class ActorProxy(object):
 
     An example of :class:`ActorProxy` usage:
 
-    .. literalinclude:: ../examples/counter.py
+    .. literalinclude:: ../../examples/counter.py
 
     :param actor_ref: reference to the actor to proxy
     :type actor_ref: :class:`pykka.ActorRef`
