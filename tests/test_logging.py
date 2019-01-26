@@ -81,10 +81,10 @@ def test_exception_is_logged_when_returned_to_caller(actor_ref, log_handler):
     with pytest.raises(Exception):
         actor_ref.proxy().raise_exception().get()
 
-    log_handler.wait_for_message('debug')
+    log_handler.wait_for_message('info')
     with log_handler.lock:
-        assert len(log_handler.messages['debug']) == 1
-        log_record = log_handler.messages['debug'][0]
+        assert len(log_handler.messages['info']) == 1
+        log_record = log_handler.messages['info'][0]
 
     assert log_record.getMessage() == (
         'Exception returned from {} to caller:'.format(actor_ref)

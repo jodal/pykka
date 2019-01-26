@@ -56,6 +56,17 @@ Futures
   cause problems if the function is expensive or has side effects. (Fixes:
   :issue:`32`)
 
+Logging
+-------
+
+- Pykka's use of different log levels has been :ref:`documented <logging>`.
+
+- Exceptions raised by an actor that are captured into a reply future are now
+  logged on the :attr:`~logging.INFO` level instead of the
+  :attr:`~logging.DEBUG` level. This makes it possible to detect potentially
+  unhandled exceptions during development without having to turn on debug
+  logging, which can have a low signal to noise ratio. (Fixes: :issue:`73`)
+
 Internals
 ---------
 
