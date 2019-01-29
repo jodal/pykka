@@ -44,11 +44,11 @@ def test_base_future_set_exception_is_not_implemented():
         future.set_exception(None)
 
 
-def test_set_multiple_times_fails(futures):
-    futures[0].set(0)
+def test_set_multiple_times_fails(future):
+    future.set(0)
 
     with pytest.raises(Exception):
-        futures[0].set(0)
+        future.set(0)
 
 
 def test_get_all_blocks_until_all_futures_are_available(futures):
