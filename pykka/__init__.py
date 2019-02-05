@@ -1,7 +1,8 @@
-from pykka.actor import Actor, ActorRef
+from pykka.actor import Actor
 from pykka.exceptions import ActorDeadError, Timeout
 from pykka.future import Future, get_all
 from pykka.proxy import ActorProxy
+from pykka.ref import ActorRef
 from pykka.registry import ActorRegistry
 from pykka.threading import ThreadingActor, ThreadingFuture
 
