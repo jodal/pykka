@@ -15,7 +15,6 @@ __all__ = ['EventletActor', 'EventletEvent', 'EventletFuture']
 
 
 class EventletEvent(eventlet.event.Event):
-
     """
     :class:`EventletEvent` adapts :class:`eventlet.event.Event` to
     :class:`threading.Event` interface.
@@ -53,7 +52,6 @@ class EventletEvent(eventlet.event.Event):
 
 
 class EventletFuture(Future):
-
     """
     :class:`EventletFuture` implements :class:`pykka.Future` for use with
     :class:`EventletActor`.
@@ -93,7 +91,6 @@ class EventletFuture(Future):
 
 
 class EventletActor(Actor):
-
     """
     :class:`EventletActor` implements :class:`pykka.Actor` using the `eventlet
     <https://eventlet.net/>`_ library.

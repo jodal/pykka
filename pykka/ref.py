@@ -6,7 +6,6 @@ __all__ = ['ActorRef']
 
 
 class ActorRef(object):
-
     """
     Reference to a running actor which may safely be passed around.
 

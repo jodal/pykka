@@ -5,7 +5,6 @@ __all__ = ['Future', 'get_all']
 
 
 class Future(object):
-
     """
     A :class:`Future` is a handle to a value which is available or will be
     available in the future.

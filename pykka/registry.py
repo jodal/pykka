@@ -12,7 +12,6 @@ __all__ = ['ActorRegistry']
 
 
 class ActorRegistry(object):
-
     """
     Registry which provides easy access to all running actors.
 

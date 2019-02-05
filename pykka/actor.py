@@ -16,7 +16,6 @@ logger = logging.getLogger('pykka')
 
 
 class Actor(object):
-
     """
     To create an actor:
 

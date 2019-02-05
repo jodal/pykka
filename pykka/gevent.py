@@ -15,7 +15,6 @@ __all__ = ['GeventActor', 'GeventFuture']
 
 
 class GeventFuture(Future):
-
     """
     :class:`GeventFuture` implements :class:`pykka.Future` for use with
     :class:`GeventActor`.
@@ -59,7 +58,6 @@ class GeventFuture(Future):
 
 
 class GeventActor(Actor):
-
     """
     :class:`GeventActor` implements :class:`pykka.Actor` using the `gevent
     <http://www.gevent.org/>`_ library. gevent is a coroutine-based Python
