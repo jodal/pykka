@@ -13,6 +13,20 @@ def actor_class(runtime):
         _private_attr = 'secret'
         nested = NestedObject()
 
+        @property
+        def a_ro_property(self):
+            return 'a_ro_property'
+
+        _a_rw_property = 'a_rw_property'
+
+        @property
+        def a_rw_property(self):
+            return self._a_rw_property
+
+        @a_rw_property.setter
+        def a_rw_property(self, value):
+            self._a_rw_property = value
+
     return ActorA
 
 
@@ -38,6 +52,22 @@ def test_actor_attr_can_be_set_using_assignment(proxy):
 def test_private_attr_access_raises_exception(proxy):
     with pytest.raises(AttributeError):
         proxy._private_attr.get()
+
+
+def test_actor_property_can_be_read_using_get_postfix(proxy):
+    assert proxy.a_ro_property.get() == 'a_ro_property'
+    assert proxy.a_rw_property.get() == 'a_rw_property'
+
+
+def test_actor_property_can_be_set_using_assignment(proxy):
+    proxy.a_rw_property = 'a_rw_property_2'
+
+    assert proxy.a_rw_property.get() == 'a_rw_property_2'
+
+
+def test_actor_read_only_property_cannot_be_set(proxy):
+    with pytest.raises(AttributeError):
+        proxy.a_ro_property = 'a_ro_property_2'
 
 
 def test_attr_of_traversable_attr_can_be_read(proxy):
