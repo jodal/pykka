@@ -95,25 +95,32 @@ class ActorProxy(object):
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor
         self._attr_path = attr_path or tuple()
-        self._known_attrs = self._get_attributes()
+        self._known_attrs = self._introspect_attributes()
         self._actor_proxies = {}
         self._callable_proxies = {}
 
-    def _get_attributes(self):
-        """Gathers actor attributes needed to proxy the actor"""
+    def _introspect_attributes(self):
+        """Introspects the actor's attributes."""
         result = {}
         attr_paths_to_visit = [[attr_name] for attr_name in dir(self._actor)]
+
         while attr_paths_to_visit:
             attr_path = attr_paths_to_visit.pop(0)
-            if self._is_exposable_attribute(attr_path[-1]):
-                attr = self._actor._get_attribute_from_path(attr_path)
-                result[tuple(attr_path)] = {
-                    'callable': self._is_callable_attribute(attr),
-                    'traversable': self._is_traversable_attribute(attr),
-                }
-                if self._is_traversable_attribute(attr):
-                    for attr_name in dir(attr):
-                        attr_paths_to_visit.append(attr_path + [attr_name])
+
+            if not self._is_exposable_attribute(attr_path[-1]):
+                continue
+
+            attr = self._actor._get_attribute_from_path(attr_path)
+            traversable = self._is_traversable_attribute(attr)
+            result[tuple(attr_path)] = {
+                'callable': self._is_callable_attribute(attr),
+                'traversable': traversable,
+            }
+
+            if traversable:
+                for attr_name in dir(attr):
+                    attr_paths_to_visit.append(attr_path + [attr_name])
+
         return result
 
     def _is_exposable_attribute(self, attr_name):
@@ -151,7 +158,7 @@ class ActorProxy(object):
         attr_path = self._attr_path + (name,)
 
         if attr_path not in self._known_attrs:
-            self._known_attrs = self._get_attributes()
+            self._known_attrs = self._introspect_attributes()
 
         attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:
