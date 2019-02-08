@@ -21,6 +21,13 @@ Dependencies
   :mod:`collections.abc` instead of :mod:`collections`. This fixes a
   deprecation warning on Python 3.7 and prepares for Python 3.8.
 
+Proxies
+-------
+
+- Fix infinite recursion when creating a proxy for an actor with an attribute
+  or method replaced with a :class:`~unittest.mock.Mock` without a ``spec``
+  defined. (Fixes: :issue:`26`, :issue:`27`)
+
 Futures
 -------
 

@@ -70,5 +70,31 @@ def test_actor_read_only_property_cannot_be_set(proxy):
         proxy.a_ro_property = 'a_ro_property_2'
 
 
+def test_actor_with_mock_attribute_works(runtime, mocker):
+    class Actor(runtime.actor_class):
+        attr = mocker.Mock()
+
+    actor_ref = Actor.start()
+    try:
+        actor_ref.proxy()
+    finally:
+        actor_ref.stop()
+
+
+def test_actor_with_mocked_method_works(runtime, mocker):
+    class Actor(runtime.actor_class):
+        def do_it(self):
+            pass
+
+    with mocker.patch.object(Actor, 'do_it') as mock:
+        actor_ref = Actor.start()
+        try:
+            actor_ref.proxy()
+        finally:
+            actor_ref.stop()
+
+        assert mock.call_count == 0
+
+
 def test_attr_of_traversable_attr_can_be_read(proxy):
     assert proxy.nested.inner.get() == 'nested.inner'

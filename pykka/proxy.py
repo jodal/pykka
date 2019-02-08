@@ -132,7 +132,7 @@ class ActorProxy(object):
         Returns true for any attribute that may be traversed from another
         actor through a proxy.
         """
-        return hasattr(attr, 'pykka_traversable')
+        return getattr(attr, 'pykka_traversable', False) is True
 
     def __repr__(self):
         return '<ActorProxy for {}, attr_path={!r}>'.format(
