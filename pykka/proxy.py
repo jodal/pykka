@@ -149,11 +149,14 @@ class ActorProxy(object):
     def __getattr__(self, name):
         """Get a field or callable from the actor."""
         attr_path = self._attr_path + (name,)
+
         if attr_path not in self._known_attrs:
             self._known_attrs = self._get_attributes()
+
         attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:
             raise AttributeError('{} has no attribute {!r}'.format(self, name))
+
         if attr_info['callable']:
             if attr_path not in self._callable_proxies:
                 self._callable_proxies[attr_path] = _CallableProxy(
