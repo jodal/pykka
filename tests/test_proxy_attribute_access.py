@@ -50,8 +50,17 @@ def test_actor_attr_can_be_set_using_assignment(proxy):
 
 
 def test_private_attr_access_raises_exception(proxy):
-    with pytest.raises(AttributeError):
+    with pytest.raises(AttributeError) as exc_info:
         proxy._private_attr.get()
+
+    assert "has no attribute '_private_attr'" in str(exc_info.value)
+
+
+def test_missing_attr_access_raises_exception(proxy):
+    with pytest.raises(AttributeError) as exc_info:
+        proxy.missing_attr.get()
+
+    assert "has no attribute 'missing_attr'" in str(exc_info.value)
 
 
 def test_actor_property_can_be_read_using_get_postfix(proxy):
