@@ -329,3 +329,29 @@ class Actor(object):
         for attr_name in attr_path:
             attr = getattr(attr, attr_name)
         return attr
+
+    def _introspect_attribute_from_path(self, attr_path):
+        """Get attribute information from ``__dict__`` on the container."""
+        if not attr_path:
+            return self
+
+        parent = self._get_attribute_from_path(attr_path[:-1])
+        parent_attrs = self._introspect_attributes(parent)
+        attr_name = attr_path[-1]
+
+        try:
+            return parent_attrs[attr_name]
+        except KeyError:
+            raise AttributeError(
+                'type object {!r} has no attribute {!r}'.format(
+                    parent.__class__.__name__, attr_name
+                )
+            )
+
+    def _introspect_attributes(self, obj):
+        """Combine ``__dict__`` from ``obj`` and all its superclasses."""
+        result = {}
+        for cls in reversed(obj.__class__.mro()):
+            result.update(cls.__dict__)
+        result.update(obj.__dict__)
+        return result

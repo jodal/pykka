@@ -105,5 +105,19 @@ def test_actor_with_mocked_method_works(runtime, mocker):
         assert mock.call_count == 0
 
 
+def test_actor_property_is_not_accessed_when_creating_proxy(runtime):
+    class Actor(runtime.actor_class):
+        @property
+        def a_property(self):
+            # Imagine code with side effects or heavy resource usage here
+            raise Exception('Proxy creation accessed property')
+
+    actor_ref = Actor.start()
+    try:
+        actor_ref.proxy()
+    finally:
+        actor_ref.stop()
+
+
 def test_attr_of_traversable_attr_can_be_read(proxy):
     assert proxy.nested.inner.get() == 'nested.inner'

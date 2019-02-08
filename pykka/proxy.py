@@ -110,7 +110,7 @@ class ActorProxy(object):
             if not self._is_exposable_attribute(attr_path[-1]):
                 continue
 
-            attr = self._actor._get_attribute_from_path(attr_path)
+            attr = self._actor._introspect_attribute_from_path(attr_path)
             traversable = self._is_traversable_attribute(attr)
             result[tuple(attr_path)] = {
                 'callable': self._is_callable_attribute(attr),

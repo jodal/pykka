@@ -24,6 +24,10 @@ Dependencies
 Proxies
 -------
 
+- Avoid accessing actor properties when creating a proxy for the actor. For
+  properties with side effects, this is a major bug fix. For properties which
+  does heavy work, this is a major startup performance improvement.
+
 - Fix infinite recursion when creating a proxy for an actor with an attribute
   or method replaced with a :class:`~unittest.mock.Mock` without a ``spec``
   defined. (Fixes: :issue:`26`, :issue:`27`)
