@@ -46,7 +46,7 @@ Futures
   Instead, the entire future result is passed to the map function. (Fixes:
   :issue:`64`)
 
-  To upgrade existing code, make sure to explictly apply the core of your map
+  To upgrade existing code, make sure to explicitly apply the core of your map
   function to each item in the iterable::
 
       >>> f = pykka.ThreadingFuture()
@@ -165,7 +165,7 @@ v1.2.0 (2013-07-15)
   time, and as late as possible.
 
 - Change :meth:`~pykka.ActorRef.is_alive` to check the actor's runnable flag
-  instead of checking if the actor is registrered in the actor registry.
+  instead of checking if the actor is registered in the actor registry.
 
 
 v1.1.0 (2013-01-19)
