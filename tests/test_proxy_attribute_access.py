@@ -121,3 +121,26 @@ def test_actor_property_is_not_accessed_when_creating_proxy(runtime):
 
 def test_attr_of_traversable_attr_can_be_read(proxy):
     assert proxy.nested.inner.get() == 'nested.inner'
+
+
+def test_traversable_object_returned_from_property_is_not_traversed(runtime):
+    class NestedObject(object):
+        pykka_traversable = True
+        inner = 'nested.inner'
+
+    class Actor(runtime.actor_class):
+        @property
+        def a_property(self):
+            return NestedObject()
+
+    actor_ref = Actor.start()
+    try:
+        proxy = actor_ref.proxy()
+
+        # In Pykka < 2, it worked like this:
+        # assert proxy.a_property.inner.get() == 'nested.inner'
+
+        # In Pykka >=2, the property getter always returns a future:
+        assert proxy.a_property.get().inner == 'nested.inner'
+    finally:
+        actor_ref.stop()
