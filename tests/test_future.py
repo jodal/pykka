@@ -9,11 +9,6 @@ from tests import has_gevent
 
 
 @pytest.fixture
-def future_class(runtime):
-    return runtime.future_class
-
-
-@pytest.fixture
 def future(runtime):
     return runtime.future_class()
 
@@ -81,24 +76,24 @@ def test_get_all_can_be_called_multiple_times(futures):
     assert result1 == result2
 
 
-def test_future_in_future_works(future_class):
-    inner_future = future_class()
+def test_future_in_future_works(runtime):
+    inner_future = runtime.future_class()
     inner_future.set('foo')
 
-    outer_future = future_class()
+    outer_future = runtime.future_class()
     outer_future.set(inner_future)
 
     assert outer_future.get().get() == 'foo'
 
 
-def test_get_raises_exception_with_full_traceback(runtime, future_class):
+def test_get_raises_exception_with_full_traceback(runtime):
     exc_class_get = None
     exc_class_set = None
     exc_instance_get = None
     exc_instance_set = None
     exc_traceback_get = None
     exc_traceback_set = None
-    future = future_class()
+    future = runtime.future_class()
 
     try:
         raise NameError('foo')
