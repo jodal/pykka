@@ -225,10 +225,14 @@ class Actor(object):
                     reply_to.set(None)
                 else:
                     reply_to.set_exception(
-                        ActorDeadError(
-                            '{} stopped before handling the message'.format(
-                                self.actor_ref
-                            )
+                        exc_info=(
+                            ActorDeadError,
+                            ActorDeadError(
+                                '{} stopped before handling the message'.format(
+                                    self.actor_ref
+                                )
+                            ),
+                            None,
                         )
                     )
 

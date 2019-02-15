@@ -69,11 +69,6 @@ class Future(object):
         arguments, from an except block, the exception you're currently
         handling will automatically be set on the future.
 
-        .. versionchanged:: 0.15
-            Previously, :meth:`set_exception` accepted an exception
-            instance as its only argument. This still works, but it is
-            deprecated and will be removed in a future release.
-
         :param exc_info: the encapsulated exception
         :type exc_info: three-tuple of (exc_class, exc_instance, traceback)
         """

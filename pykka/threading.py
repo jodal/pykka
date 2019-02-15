@@ -55,8 +55,7 @@ class ThreadingFuture(Future):
         self._queue.put({'value': value}, block=False)
 
     def set_exception(self, exc_info=None):
-        if isinstance(exc_info, BaseException):
-            exc_info = (exc_info.__class__, exc_info, None)
+        assert exc_info is None or len(exc_info) == 3
         self._queue.put({'exc_info': exc_info or sys.exc_info()})
 
 

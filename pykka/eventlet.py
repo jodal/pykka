@@ -85,8 +85,7 @@ class EventletFuture(Future):
         self.event.send(value)
 
     def set_exception(self, exc_info=None):
-        if isinstance(exc_info, BaseException):
-            exc_info = (exc_info,)
+        assert exc_info is None or len(exc_info) == 3
         self.event.send_exception(*(exc_info or sys.exc_info()))
 
 

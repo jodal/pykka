@@ -41,6 +41,11 @@ Proxies
 Futures
 -------
 
+- **Backwards incompatible:** :meth:`pykka.Future.set_exception` no longer
+  accepts an exception instance, which was deprecated in 0.15. The method can
+  be called with either an ``exc_info`` tuple or :class:`None`, in which case
+  it will use :func:`sys.exc_info` to get information on the current exception.
+
 - **Backwards incompatible:** :meth:`pykka.Future.map` on a future with an
   iterable result no longer applies the map function to each item in iterable.
   Instead, the entire future result is passed to the map function. (Fixes:

@@ -49,11 +49,8 @@ class GeventFuture(Future):
         self.async_result.set(value)
 
     def set_exception(self, exc_info=None):
-        if isinstance(exc_info, BaseException):
-            exception = exc_info
-        else:
-            exc_info = exc_info or sys.exc_info()
-            exception = exc_info[1]
+        assert exc_info is None or len(exc_info) == 3
+        exception = (exc_info or sys.exc_info())[1]
         self.async_result.set_exception(exception)
 
 
