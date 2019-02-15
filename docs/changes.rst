@@ -89,6 +89,12 @@ Logging
   unhandled exceptions during development without having to turn on debug
   logging, which can have a low signal to noise ratio. (Fixes: :issue:`73`)
 
+Gevent support
+--------------
+
+- Ensure that the original traceback is preserved when an exception is returned
+  through a future from a Gevent actor. (Fixes: :issue:`74`, PR: :issue:`75`)
+
 Internals
 ---------
 

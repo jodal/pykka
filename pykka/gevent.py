@@ -50,8 +50,8 @@ class GeventFuture(Future):
 
     def set_exception(self, exc_info=None):
         assert exc_info is None or len(exc_info) == 3
-        exception = (exc_info or sys.exc_info())[1]
-        self.async_result.set_exception(exception)
+        exc_info = exc_info or sys.exc_info()
+        self.async_result.set_exception(exc_info[1], exc_info=exc_info)
 
 
 class GeventActor(Actor):

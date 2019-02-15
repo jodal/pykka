@@ -118,11 +118,6 @@ def test_get_raises_exception_with_full_traceback(runtime):
         reversed(traceback.extract_tb(exc_traceback_get))
     )
 
-    if runtime.name == 'gevent':
-        # gevent prints the first half of the traceback instead of
-        # passing it through to the other side of the AsyncResult.
-        return
-
     # All frames from the first traceback should be included in the
     # traceback from the future.get() reraise
     assert len(exc_traceback_list_set) < len(exc_traceback_list_get)
