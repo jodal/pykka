@@ -28,10 +28,9 @@ class GeventFuture(Future):
 
     def __init__(self, async_result=None):
         super(GeventFuture, self).__init__()
-        if async_result is not None:
-            self.async_result = async_result
-        else:
-            self.async_result = gevent.event.AsyncResult()
+        if async_result is None:
+            async_result = gevent.event.AsyncResult()
+        self.async_result = async_result
 
     def get(self, timeout=None):
         try:
