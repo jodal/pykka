@@ -124,10 +124,6 @@ def test_attr_of_traversable_attr_can_be_read(proxy):
 
 
 def test_traversable_object_returned_from_property_is_not_traversed(runtime):
-    class NestedObject(object):
-        pykka_traversable = True
-        inner = 'nested.inner'
-
     class Actor(runtime.actor_class):
         @property
         def a_property(self):
