@@ -4,14 +4,14 @@ from pykka import ActorDeadError, ActorProxy
 
 
 class NestedObject(object):
-    cat = 'bar.cat'
     pykka_traversable = True
+    inner = 'nested.inner'
 
 
 @pytest.fixture(scope='module')
 def actor_class(runtime):
     class ActorA(runtime.actor_class):
-        bar = NestedObject()
+        nested = NestedObject()
 
         foo = 'foo'
 
@@ -35,6 +35,20 @@ def proxy(actor_class):
         pass
 
 
+def test_eq_to_self(proxy):
+    assert proxy == proxy
+
+
+def test_eq_to_another_proxy_for_same_actor_and_attr_path(proxy):
+    proxy2 = proxy.actor_ref.proxy()
+
+    assert proxy == proxy2
+
+
+def test_not_eq_to_proxy_with_different_attr_path(proxy):
+    assert proxy != proxy.nested
+
+
 def test_repr_is_wrapped_in_lt_and_gt(proxy):
     result = repr(proxy)
 
@@ -55,7 +69,7 @@ def test_repr_contains_actor_urn(proxy):
 
 
 def test_repr_contains_attr_path(proxy):
-    assert 'bar' in repr(proxy.bar)
+    assert 'nested' in repr(proxy.nested)
 
 
 def test_str_contains_actor_class_name(proxy):

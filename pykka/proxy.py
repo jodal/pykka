@@ -141,6 +141,15 @@ class ActorProxy(object):
         """
         return getattr(attr, 'pykka_traversable', False) is True
 
+    def __eq__(self, other):
+        if not isinstance(other, ActorProxy):
+            return False
+        if self._actor != other._actor:
+            return False
+        if self._attr_path != other._attr_path:
+            return False
+        return True
+
     def __repr__(self):
         return '<ActorProxy for {}, attr_path={!r}>'.format(
             self.actor_ref, self._attr_path
