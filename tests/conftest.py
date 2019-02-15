@@ -1,3 +1,4 @@
+import logging
 import threading
 import time
 from collections import namedtuple
@@ -5,6 +6,8 @@ from collections import namedtuple
 import pytest
 
 from pykka import ActorRegistry, ThreadingActor, ThreadingFuture
+
+from tests.log_handler import PykkaTestLogHandler
 
 
 Runtime = namedtuple(
@@ -89,6 +92,21 @@ def runtime(request):
 def stop_all():
     yield
     ActorRegistry.stop_all()
+
+
+@pytest.fixture
+def log_handler():
+    log_handler = PykkaTestLogHandler()
+
+    root_logger = logging.getLogger()
+    root_logger.addHandler(log_handler)
+    # pytest sets the root logger level to WARNING. We reset it to NOTSET
+    # so that all log messages reaches our log handler.
+    root_logger.setLevel(logging.NOTSET)
+
+    yield log_handler
+
+    log_handler.close()
 
 
 @pytest.fixture
