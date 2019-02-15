@@ -5,34 +5,29 @@ from pykka import ActorDeadError, ActorProxy
 
 class NestedObject(object):
     pykka_traversable = True
-    inner = 'nested.inner'
 
 
 @pytest.fixture(scope='module')
 def actor_class(runtime):
-    class ActorA(runtime.actor_class):
-        nested = NestedObject()
-
-        foo = 'foo'
+    class ActorForProxying(runtime.actor_class):
+        a_nested_object = NestedObject()
+        a_class_attr = 'class_attr'
 
         def __init__(self):
             super(runtime.actor_class, self).__init__()
-            self.cat = 'quox'
+            self.an_instance_attr = 'an_instance_attr'
 
-        def func(self):
+        def a_method(self):
             pass
 
-    return ActorA
+    return ActorForProxying
 
 
 @pytest.fixture
 def proxy(actor_class):
     proxy = ActorProxy(actor_class.start())
     yield proxy
-    try:
-        proxy.stop()
-    except ActorDeadError:
-        pass
+    proxy.stop()
 
 
 def test_eq_to_self(proxy):
@@ -46,7 +41,7 @@ def test_eq_to_another_proxy_for_same_actor_and_attr_path(proxy):
 
 
 def test_not_eq_to_proxy_with_different_attr_path(proxy):
-    assert proxy != proxy.nested
+    assert proxy != proxy.a_nested_object
 
 
 def test_repr_is_wrapped_in_lt_and_gt(proxy):
@@ -61,7 +56,7 @@ def test_repr_reveals_that_this_is_a_proxy(proxy):
 
 
 def test_repr_contains_actor_class_name(proxy):
-    assert 'ActorA' in repr(proxy)
+    assert 'ActorForProxying' in repr(proxy)
 
 
 def test_repr_contains_actor_urn(proxy):
@@ -69,11 +64,11 @@ def test_repr_contains_actor_urn(proxy):
 
 
 def test_repr_contains_attr_path(proxy):
-    assert 'nested' in repr(proxy.nested)
+    assert 'a_nested_object' in repr(proxy.a_nested_object)
 
 
 def test_str_contains_actor_class_name(proxy):
-    assert 'ActorA' in str(proxy)
+    assert 'ActorForProxying' in str(proxy)
 
 
 def test_str_contains_actor_urn(proxy):
@@ -83,9 +78,9 @@ def test_str_contains_actor_urn(proxy):
 def test_dir_on_proxy_lists_attributes_of_the_actor(proxy):
     result = dir(proxy)
 
-    assert 'foo' in result
-    assert 'cat' in result
-    assert 'func' in result
+    assert 'a_class_attr' in result
+    assert 'an_instance_attr' in result
+    assert 'a_method' in result
 
 
 def test_dir_on_proxy_lists_private_attributes_of_the_proxy(proxy):
