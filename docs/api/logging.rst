@@ -22,7 +22,8 @@ parts you're not interested in:
     are logged at this level.
 
 :attr:`~logging.WARNING`
-    Unhandled messages are logged at this level.
+    Unhandled messages and other potential programming errors are logged at
+    this level.
 
 :attr:`~logging.INFO`
     Exceptions raised by an actor that are captured into a reply future

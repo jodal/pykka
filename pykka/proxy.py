@@ -1,8 +1,14 @@
+from __future__ import absolute_import
+
+import logging
+
 from pykka import compat
 from pykka.exceptions import ActorDeadError
 
 
 __all__ = ['ActorProxy']
+
+logger = logging.getLogger('pykka')
 
 
 class ActorProxy(object):
@@ -111,6 +117,18 @@ class ActorProxy(object):
                 continue
 
             attr = self._actor._introspect_attribute_from_path(attr_path)
+
+            if self._is_self_proxy(attr):
+                logger.warning(
+                    (
+                        '{} attribute {!r} is a proxy to itself. '
+                        'Consider making it private by renaming it to {!r}.'
+                    ).format(
+                        self._actor, '.'.join(attr_path), '_' + attr_path[-1]
+                    )
+                )
+                continue
+
             traversable = self._is_traversable_attribute(attr)
             result[tuple(attr_path)] = {
                 'callable': self._is_callable_attribute(attr),
@@ -129,6 +147,10 @@ class ActorProxy(object):
         :class:`ActorProxy`.
         """
         return not attr_name.startswith('_')
+
+    def _is_self_proxy(self, attr):
+        """Returns true if attribute is an equivalent actor proxy."""
+        return attr == self
 
     def _is_callable_attribute(self, attr):
         """Returns true for any attribute that is callable."""

@@ -119,3 +119,33 @@ def test_actor_ref_may_be_retrieved_from_proxy_if_actor_is_dead(proxy):
     proxy.actor_ref.stop()
 
     assert not proxy.actor_ref.is_alive()
+
+
+def test_actor_proxy_does_not_expose_proxy_to_self(runtime, log_handler):
+    class Actor(runtime.actor_class):
+        def __init__(self):
+            super(Actor, self).__init__()
+            self.self_proxy = self.actor_ref.proxy()
+            self.foo = 'bar'
+
+    actor_ref = Actor.start()
+    try:
+        proxy = actor_ref.proxy()
+
+        assert proxy.foo.get() == 'bar'
+        with pytest.raises(
+            AttributeError, match="has no attribute 'self_proxy'"
+        ):
+            proxy.self_proxy.foo.get()
+    finally:
+        actor_ref.stop()
+
+    log_handler.wait_for_message('warning')
+    with log_handler.lock:
+        assert len(log_handler.messages['warning']) == 2
+        log_record = log_handler.messages['warning'][0]
+
+    assert (
+        "attribute 'self_proxy' is a proxy to itself. "
+        "Consider making it private by renaming it to '_self_proxy'."
+    ) in log_record.getMessage()

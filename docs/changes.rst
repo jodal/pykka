@@ -38,6 +38,11 @@ Proxies
   or method replaced with a :class:`~unittest.mock.Mock` without a ``spec``
   defined. (Fixes: :issue:`26`, :issue:`27`)
 
+- Fix infinite recursion when creating a proxy for an actor with an attribute
+  that was itself a proxy to the same actor. The attribute will now be ignored
+  and a warning log message will ask you to consider making the self-proxy
+  private. (Fixes: :issue:`48`)
+
 Futures
 -------
 
