@@ -353,5 +353,6 @@ class Actor(object):
         result = {}
         for cls in reversed(obj.__class__.mro()):
             result.update(cls.__dict__)
-        result.update(obj.__dict__)
+        if hasattr(obj, '__dict__'):
+            result.update(obj.__dict__)
         return result

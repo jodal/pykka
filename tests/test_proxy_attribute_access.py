@@ -8,6 +8,15 @@ class NestedObject(object):
     inner = 'nested.inner'
 
 
+class NestedObjectWithSlots(object):
+    __slots__ = ['pykka_traversable', 'inner']
+
+    def __init__(self):
+        # Objects using '__slots__' cannot have class attributes.
+        self.pykka_traversable = True
+        self.inner = 'nested_with_slots.inner'
+
+
 @pytest.fixture
 def actor_class(runtime):
     class ActorA(runtime.actor_class):
@@ -179,7 +188,20 @@ def test_traversable_object_returned_from_property_is_not_traversed(runtime):
         # In Pykka < 2, it worked like this:
         # assert proxy.a_property.inner.get() == 'nested.inner'
 
-        # In Pykka >=2, the property getter always returns a future:
+        # In Pykka >= 2, the property getter always returns a future:
         assert proxy.a_property.get().inner == 'nested.inner'
+    finally:
+        actor_ref.stop()
+
+
+def test_traversable_object_using_slots_works(runtime):
+    class Actor(runtime.actor_class):
+        nested_with_slots = NestedObjectWithSlots()
+
+    actor_ref = Actor.start()
+    try:
+        proxy = actor_ref.proxy()
+
+        assert proxy.nested_with_slots.inner.get() == 'nested_with_slots.inner'
     finally:
         actor_ref.stop()
