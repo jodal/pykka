@@ -1,4 +1,5 @@
 import logging
+import os
 import threading
 import time
 from collections import namedtuple
@@ -6,6 +7,7 @@ from collections import namedtuple
 import pytest
 
 from pykka import ActorRegistry, ThreadingActor, ThreadingFuture
+from pykka.compat import PY3
 
 from tests.log_handler import PykkaTestLogHandler
 
@@ -14,6 +16,18 @@ Runtime = namedtuple(
     'Runtime',
     ['name', 'actor_class', 'event_class', 'future_class', 'sleep_func'],
 )
+
+
+class NullCollector(pytest.collect.File):
+    def collect(self):
+        return []
+
+
+# skip test files that end with _py3 if not testing under Python 3
+def pytest_pycollect_makemodule(path, parent):
+    file_name = os.path.splitext(path.basename)[0]
+    if not PY3 and file_name.endswith('_py3'):
+        return NullCollector(path, parent=parent)
 
 
 RUNTIMES = {
@@ -176,3 +190,13 @@ def failing_on_failure_actor_class(runtime):
                 self.events.on_failure_was_called.set()
 
     return FailingOnFailureActor
+
+
+@pytest.fixture
+def future(runtime):
+    return runtime.future_class()
+
+
+@pytest.fixture
+def futures(runtime):
+    return [runtime.future_class() for _ in range(3)]

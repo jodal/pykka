@@ -1,5 +1,7 @@
 import functools
 
+from pykka import compat
+
 
 __all__ = ['Future', 'get_all']
 
@@ -237,6 +239,9 @@ class Future(object):
             lambda timeout: functools.reduce(func, self.get(timeout), *args)
         )
         return future
+
+    __await__ = compat.await_dunder_future
+    __iter__ = __await__
 
 
 def get_all(futures, timeout=None):
