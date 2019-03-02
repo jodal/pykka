@@ -8,16 +8,6 @@ from pykka import Future, Timeout, get_all
 from tests import has_gevent
 
 
-@pytest.fixture
-def future(runtime):
-    return runtime.future_class()
-
-
-@pytest.fixture
-def futures(runtime):
-    return [runtime.future_class() for _ in range(3)]
-
-
 def test_base_future_get_is_not_implemented():
     future = Future()
 
