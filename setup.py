@@ -34,4 +34,20 @@ setup(
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Software Development :: Libraries',
     ],
+    extras_require={
+        'dev': [
+            'black',
+            'check-manifest',
+            'flake8',
+            'flake8-import-order',
+            'pytest',
+            'pytest-cov',
+            'pytest-mock',
+            'sphinx',
+            'sphinx_rtd_theme',
+            'tox',
+            'twine',
+            'wheel',
+        ]
+    },
 )
