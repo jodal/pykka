@@ -16,16 +16,16 @@ with open('README.rst') as fh:
 setup(
     name='Pykka',
     version=get_version(),
-    author='Stein Magnus Jodal',
-    author_email='stein.magnus@jodal.no',
-    packages=find_packages(exclude=['tests', 'tests.*']),
-    url='https://www.pykka.org/',
-    license='Apache License, Version 2.0',
     description='Pykka is a Python implementation of the actor model',
     long_description=long_description,
+    url='https://www.pykka.org/',
+    author='Stein Magnus Jodal',
+    author_email='stein.magnus@jodal.no',
+    license='Apache License, Version 2.0',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
+        'Topic :: Software Development :: Libraries',
         'License :: OSI Approved :: Apache Software License',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -36,8 +36,8 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
-        'Topic :: Software Development :: Libraries',
     ],
+    packages=find_packages(exclude=['tests', 'tests.*']),
     python_requires='>=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*',
     extras_require={
         'dev': [
