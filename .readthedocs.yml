@@ -8,8 +8,9 @@ python:
   install:
     - method: pip
       path: .
-  formats: all
 
 sphinx:
   builder: htmldir
   configuration: docs/conf.py
+
+formats: all
