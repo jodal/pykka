@@ -44,9 +44,9 @@ Project resources
     :target: https://pypi.python.org/pypi/Pykka/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/travis/jodal/pykka/develop.svg
-    :target: https://travis-ci.org/jodal/pykka
-    :alt: Travis CI build status
+.. image:: https://img.shields.io/circleci/project/github/jodal/pykka/develop.svg
+    :target: https://circleci.com/gh/jodal/pykka
+    :alt: CircleCI build status
 
 .. image:: https://img.shields.io/coveralls/jodal/pykka/develop.svg
    :target: https://coveralls.io/r/jodal/pykka?branch=develop
