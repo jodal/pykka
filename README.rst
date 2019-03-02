@@ -48,6 +48,6 @@ Project resources
     :target: https://circleci.com/gh/jodal/pykka
     :alt: CircleCI build status
 
-.. image:: https://img.shields.io/coveralls/jodal/pykka/develop.svg
-   :target: https://coveralls.io/r/jodal/pykka?branch=develop
+.. image:: https://img.shields.io/codecov/c/github/jodal/pykka/develop.svg
+   :target: https://codecov.io/gh/jodal/pykka
    :alt: Test coverage
