@@ -1,6 +1,5 @@
 include *.rst
 include *.txt
-include .coveragerc
 include .travis.yml
 include LICENSE
 include pylintrc
