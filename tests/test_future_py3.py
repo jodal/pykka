@@ -1,7 +1,7 @@
-import pytest
-
 import asyncio
 import sys
+
+import pytest
 
 from pykka.compat import await_keyword
 
