@@ -40,14 +40,14 @@ Project resources
 - `Source code <https://github.com/jodal/pykka>`_
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
 
-.. image:: https://img.shields.io/pypi/v/Pykka.svg?style=flat
+.. image:: https://img.shields.io/pypi/v/Pykka.svg
     :target: https://pypi.python.org/pypi/Pykka/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/travis/jodal/pykka/develop.svg?style=flat
+.. image:: https://img.shields.io/travis/jodal/pykka/develop.svg
     :target: https://travis-ci.org/jodal/pykka
     :alt: Travis CI build status
 
-.. image:: https://img.shields.io/coveralls/jodal/pykka/develop.svg?style=flat
+.. image:: https://img.shields.io/coveralls/jodal/pykka/develop.svg
    :target: https://coveralls.io/r/jodal/pykka?branch=develop
    :alt: Test coverage
