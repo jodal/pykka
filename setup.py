@@ -9,6 +9,10 @@ def get_version():
     return metadata['version']
 
 
+with open('README.rst') as fh:
+    long_description = fh.read()
+
+
 setup(
     name='Pykka',
     version=get_version(),
@@ -18,7 +22,7 @@ setup(
     url='https://www.pykka.org/',
     license='Apache License, Version 2.0',
     description='Pykka is a Python implementation of the actor model',
-    long_description=open('README.rst').read(),
+    long_description=long_description,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
