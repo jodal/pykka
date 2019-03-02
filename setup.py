@@ -55,4 +55,8 @@ setup(
             'wheel',
         ]
     },
+    project_urls={
+        'Issues': 'https://github.com/jodal/pykka/issues',
+        'Source': 'https://github.com/jodal/pykka',
+    },
 )
