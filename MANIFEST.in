@@ -1,6 +1,5 @@
 include *.rst
 include *.txt
-include .travis.yml
 include LICENSE
 include pylintrc
 include pyproject.toml
