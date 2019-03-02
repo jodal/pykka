@@ -8,6 +8,8 @@ include pyproject.toml
 include setup.cfg
 include tox.ini
 
+recursive-include .circleci *
+
 recursive-include docs *
 prune docs/_build
 
