@@ -19,9 +19,12 @@ class Actor(object):
     """
     To create an actor:
 
-    1. subclass one of the :class:`Actor` implementations, e.g.
-       :class:`GeventActor <pykka.gevent.GeventActor>` or
-       :class:`ThreadingActor`,
+    1. subclass one of the :class:`Actor` implementations:
+
+       - :class:`~pykka.ThreadingActor`
+       - :class:`~pykka.gevent.GeventActor`
+       - :class:`~pykka.eventlet.EventletActor`
+
     2. implement your methods, including :meth:`__init__`, as usual,
     3. call :meth:`Actor.start` on your actor class, passing the method any
        arguments for your constructor.
