@@ -2,8 +2,6 @@
 Futures
 =======
 
-.. autoexception:: pykka.Timeout
-
 .. autoclass:: pykka.Future
     :members:
 

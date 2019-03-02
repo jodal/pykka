@@ -14,5 +14,6 @@ Pykka API
     proxies
     futures
     registry
+    exceptions
     logging
     debug
