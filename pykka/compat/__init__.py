@@ -2,7 +2,7 @@ import sys
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
-GT_PY34 = sys.version_info > (3, 4)
+PY35 = sys.version_info >= (3, 5)
 
 if PY2:
     import Queue as queue  # noqa
@@ -29,18 +29,14 @@ else:
 
 
 if PY3:
-
-    # Return inside a generator is a syntax error on python2
+    # Return inside a generator is a syntax error on Python 2
     # so we need to dynamically load it
     from pykka.compat.await_dunder_future_py3 import await_dunder_future  # noqa
-
 else:
-
     await_dunder_future = None
 
 
-if GT_PY34:
+if PY35:
     from pykka.compat.await_keyword_py3 import await_keyword  # noqa
 else:
-
     await_keyword = None
