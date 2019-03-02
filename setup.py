@@ -1,6 +1,6 @@
 import re
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 def get_version():
@@ -14,7 +14,7 @@ setup(
     version=get_version(),
     author='Stein Magnus Jodal',
     author_email='stein.magnus@jodal.no',
-    packages=['pykka'],
+    packages=find_packages(exclude=['tests', 'tests.*']),
     url='https://www.pykka.org/',
     license='Apache License, Version 2.0',
     description='Pykka is a Python implementation of the actor model',
