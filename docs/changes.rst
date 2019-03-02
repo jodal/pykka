@@ -97,13 +97,15 @@ Logging
   logged on the :attr:`~logging.INFO` level instead of the
   :attr:`~logging.DEBUG` level. This makes it possible to detect potentially
   unhandled exceptions during development without having to turn on debug
-  logging, which can have a low signal to noise ratio. (Fixes: :issue:`73`)
+  logging, which can have a low signal to noise ratio. (Contributed by Stefan
+  Möhl. Fixes: :issue:`73`)
 
 Gevent support
 --------------
 
 - Ensure that the original traceback is preserved when an exception is returned
-  through a future from a Gevent actor. (Fixes: :issue:`74`, PR: :issue:`75`)
+  through a future from a Gevent actor. (Contributed by Arne Brutschy. Fixes:
+  :issue:`74`, PR: :issue:`75`)
 
 Internals
 ---------
