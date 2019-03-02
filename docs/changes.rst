@@ -12,7 +12,8 @@ Dependencies
 
 - Drop support for Python 2.6, 3.2, and 3.3.
 
-- Include CPython 3.5, 3.6 and 3.7, and PyPy 3.5 in the test matrix.
+- Include CPython 3.5, 3.6, 3.7, and 3.8 pre-releases, and PyPy 3.5 in the test
+  matrix.
 
 - Include gevent and Eventlet tests in all environments. Since Pykka was
   originally developed, both has grown support for Python 3 and PyPy.
