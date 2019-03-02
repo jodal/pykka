@@ -16,14 +16,6 @@ Pykka is available from PyPI. To install it, run::
 
 Pykka works with CPython 2.7 and 3.4+, as well as PyPy 2.7 and 3.5.
 
-Optional dependencies includes:
-
-- `gevent <http://www.gevent.org/>`_, if you want to use gevent based actors
-  from ``pykka.gevent``.
-
-- `eventlet <https://eventlet.net/>`_, if you want to use eventlet based
-  actors from ``pykka.eventlet``.
-
 
 License
 =======

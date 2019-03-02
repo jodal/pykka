@@ -8,6 +8,7 @@
     quickstart
     examples
     api/index
+    runtimes/index
 
 .. toctree::
     :maxdepth: 2

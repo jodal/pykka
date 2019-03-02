@@ -14,7 +14,5 @@ Pykka API
     proxies
     futures
     registry
-    gevent
-    eventlet
     logging
     debug
