@@ -1,4 +1,7 @@
-version: 2
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.4
 
 workflows:
   version: 2
@@ -34,13 +37,16 @@ jobs:
           name: Run tests
           command: |
             tox -e $CIRCLE_JOB -- \
-              --junit-xml=test-results/pytest/results.xml
+              --junit-xml=test-results/pytest/results.xml \
+              --cov-report=xml
       - save_cache:
           name: Saving tox cache
           key: tox-v1-{{ .Environment.CIRCLE_JOB }}-{{ .BuildNum }}
           paths:
             - ./.tox
             - ~/.cache/pip
+      - codecov/upload:
+          file: coverage.xml
       - store_test_results:
           path: test-results
 
