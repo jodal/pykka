@@ -83,6 +83,11 @@ Futures
   cause problems if the function is expensive or has side effects. (Fixes:
   :issue:`32`)
 
+- If using Python 3.5+, one can now use the ``await`` keyword to get the
+  result from a future. (Contributed by Joshua Doncaster-Marsiglio. PR:
+  :issue:`78`)
+
+
 Logging
 -------
 
