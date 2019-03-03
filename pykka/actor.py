@@ -224,7 +224,7 @@ class Actor(object):
             msg = self.actor_inbox.get()
             reply_to = msg.pop('pykka_reply_to', None)
             if reply_to:
-                if msg.get('command') == 'pykka_stop':
+                if isinstance(msg, dict) and msg.get('command') == 'pykka_stop':
                     reply_to.set(None)
                 else:
                     reply_to.set_exception(
@@ -296,20 +296,24 @@ class Actor(object):
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        if message.get('command') == 'pykka_stop':
-            return self._stop()
-        if message.get('command') == 'pykka_call':
-            callee = self._get_attribute_from_path(message['attr_path'])
-            return callee(*message['args'], **message['kwargs'])
-        if message.get('command') == 'pykka_getattr':
-            attr = self._get_attribute_from_path(message['attr_path'])
-            return attr
-        if message.get('command') == 'pykka_setattr':
-            parent_attr = self._get_attribute_from_path(
-                message['attr_path'][:-1]
-            )
-            attr_name = message['attr_path'][-1]
-            return setattr(parent_attr, attr_name, message['value'])
+        if isinstance(message, dict) and message.get('command', '').startswith(
+            'pykka_'
+        ):
+            command = message['command']
+            if command == 'pykka_stop':
+                return self._stop()
+            if command == 'pykka_call':
+                callee = self._get_attribute_from_path(message['attr_path'])
+                return callee(*message['args'], **message['kwargs'])
+            if command == 'pykka_getattr':
+                attr = self._get_attribute_from_path(message['attr_path'])
+                return attr
+            if command == 'pykka_setattr':
+                parent_attr = self._get_attribute_from_path(
+                    message['attr_path'][:-1]
+                )
+                attr_name = message['attr_path'][-1]
+                return setattr(parent_attr, attr_name, message['value'])
         return self.on_receive(message)
 
     def on_receive(self, message):
