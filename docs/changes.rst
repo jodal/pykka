@@ -128,6 +128,9 @@ Internals
 
 - Format code with Black.
 
+- Change internal messaging format from ``dict`` to ``namedtuple``. (PR:
+  :issue:`80`)
+
 
 v1.2.1 (2015-07-20)
 ===================

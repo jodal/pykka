@@ -5,6 +5,7 @@ import sys
 import threading
 import uuid
 
+from pykka import messaging
 from pykka.exceptions import ActorDeadError
 from pykka.ref import ActorRef
 from pykka.registry import ActorRegistry
@@ -164,7 +165,7 @@ class Actor(object):
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
-        self.actor_ref.tell({'command': 'pykka_stop'})
+        self.actor_ref.tell(messaging.ActorStop())
 
     def _stop(self):
         """
@@ -221,10 +222,7 @@ class Actor(object):
         while not self.actor_inbox.empty():
             envelope = self.actor_inbox.get()
             if envelope.reply_to is not None:
-                if (
-                    isinstance(envelope.message, dict)
-                    and envelope.message.get('command') == 'pykka_stop'
-                ):
+                if isinstance(envelope.message, messaging.ActorStop):
                     envelope.reply_to.set(None)
                 else:
                     envelope.reply_to.set_exception(
@@ -296,32 +294,24 @@ class Actor(object):
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        if isinstance(message, dict) and message.get('command', '').startswith(
-            'pykka_'
-        ):
-            command = message['command']
-            if command == 'pykka_stop':
-                return self._stop()
-            if command == 'pykka_call':
-                callee = self._get_attribute_from_path(message['attr_path'])
-                return callee(*message['args'], **message['kwargs'])
-            if command == 'pykka_getattr':
-                attr = self._get_attribute_from_path(message['attr_path'])
-                return attr
-            if command == 'pykka_setattr':
-                parent_attr = self._get_attribute_from_path(
-                    message['attr_path'][:-1]
-                )
-                attr_name = message['attr_path'][-1]
-                return setattr(parent_attr, attr_name, message['value'])
+        message = messaging.upgrade_internal_message(message)
+        if isinstance(message, messaging.ActorStop):
+            return self._stop()
+        if isinstance(message, messaging.ProxyCall):
+            callee = self._get_attribute_from_path(message.attr_path)
+            return callee(*message.args, **message.kwargs)
+        if isinstance(message, messaging.ProxyGetAttr):
+            attr = self._get_attribute_from_path(message.attr_path)
+            return attr
+        if isinstance(message, messaging.ProxySetAttr):
+            parent_attr = self._get_attribute_from_path(message.attr_path[:-1])
+            attr_name = message.attr_path[-1]
+            return setattr(parent_attr, attr_name, message.value)
         return self.on_receive(message)
 
     def on_receive(self, message):
         """
         May be implemented for the actor to handle regular non-proxy messages.
-
-        Messages where the value of the "command" key matches "pykka_*" are
-        reserved for internal use in Pykka.
 
         :param message: the message to handle
         :type message: any
