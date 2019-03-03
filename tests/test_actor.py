@@ -91,7 +91,7 @@ def test_stop_requests_left_in_queue_after_actor_stops_are_handled(
 
     actor_ref.tell({'command': 'callback', 'callback': event.wait})
     actor_ref.stop(block=False)
-    response = actor_ref.ask({'command': 'pykka_stop'}, block=False)
+    response = actor_ref.stop(block=False)
     event.set()
 
     response.get(timeout=0.5)
