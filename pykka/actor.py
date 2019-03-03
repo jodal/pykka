@@ -190,20 +190,18 @@ class Actor(object):
             self._handle_failure(*sys.exc_info())
 
         while not self.actor_stopped.is_set():
-            message = self.actor_inbox.get()
-            reply_to = None
+            envelope = self.actor_inbox.get()
             try:
-                reply_to = message.pop('pykka_reply_to', None)
-                response = self._handle_receive(message)
-                if reply_to:
-                    reply_to.set(response)
+                response = self._handle_receive(envelope.message)
+                if envelope.reply_to is not None:
+                    envelope.reply_to.set(response)
             except Exception:
-                if reply_to:
+                if envelope.reply_to is not None:
                     logger.info(
                         'Exception returned from {} to caller:'.format(self),
                         exc_info=sys.exc_info(),
                     )
-                    reply_to.set_exception()
+                    envelope.reply_to.set_exception()
                 else:
                     self._handle_failure(*sys.exc_info())
                     try:
@@ -221,13 +219,15 @@ class Actor(object):
                 ActorRegistry.stop_all()
 
         while not self.actor_inbox.empty():
-            msg = self.actor_inbox.get()
-            reply_to = msg.pop('pykka_reply_to', None)
-            if reply_to:
-                if isinstance(msg, dict) and msg.get('command') == 'pykka_stop':
-                    reply_to.set(None)
+            envelope = self.actor_inbox.get()
+            if envelope.reply_to is not None:
+                if (
+                    isinstance(envelope.message, dict)
+                    and envelope.message.get('command') == 'pykka_stop'
+                ):
+                    envelope.reply_to.set(None)
                 else:
-                    reply_to.set_exception(
+                    envelope.reply_to.set_exception(
                         exc_info=(
                             ActorDeadError,
                             ActorDeadError(
@@ -324,7 +324,7 @@ class Actor(object):
         reserved for internal use in Pykka.
 
         :param message: the message to handle
-        :type message: picklable dict
+        :type message: any
 
         :returns: anything that should be sent as a reply to the sender
         """

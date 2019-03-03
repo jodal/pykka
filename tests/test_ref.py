@@ -13,7 +13,7 @@ def actor_class(runtime):
             self.received_message = received_message
 
         def on_receive(self, message):
-            if message.get('command') == 'ping':
+            if isinstance(message, dict) and message.get('command') == 'ping':
                 runtime.sleep_func(0.01)
                 return 'pong'
             else:
@@ -85,7 +85,26 @@ def test_tell_delivers_message_to_actors_custom_on_receive(
 ):
     actor_ref.tell({'command': 'a custom message'})
 
-    assert received_messages.get() == {'command': 'a custom message'}
+    assert received_messages.get(timeout=1) == {'command': 'a custom message'}
+
+
+@pytest.mark.parametrize(
+    'message',
+    [
+        123,
+        123.456,
+        {'a': 'dict'},
+        ('a', 'tuple'),
+        ['a', 'list'],
+        Exception('an exception'),
+    ],
+)
+def test_tell_accepts_any_object_as_the_message(
+    actor_ref, message, received_messages
+):
+    actor_ref.tell(message)
+
+    assert received_messages.get(timeout=1) == message
 
 
 def test_tell_fails_if_actor_is_stopped(actor_ref):

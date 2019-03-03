@@ -1,4 +1,5 @@
 from pykka.exceptions import ActorDeadError
+from pykka.messaging import Envelope
 from pykka.proxy import ActorProxy
 
 
@@ -70,7 +71,7 @@ class ActorRef(object):
         """
         if not self.is_alive():
             raise ActorDeadError('{} not found'.format(self))
-        self.actor_inbox.put(message)
+        self.actor_inbox.put(Envelope(message))
 
     def ask(self, message, block=True, timeout=None):
         """
@@ -100,11 +101,15 @@ class ActorRef(object):
         :return: :class:`pykka.Future`, or response if blocking
         """
         future = self.actor_class._create_future()
-        message['pykka_reply_to'] = future
+
         try:
-            self.tell(message)
+            if not self.is_alive():
+                raise ActorDeadError('{} not found'.format(self))
         except ActorDeadError:
             future.set_exception()
+        else:
+            self.actor_inbox.put(Envelope(message, reply_to=future))
+
         if block:
             return future.get(timeout=timeout)
         else:

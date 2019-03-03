@@ -126,8 +126,8 @@ for an answer. If you want an answer, but don't need it right away because
 you have other stuff you can do first, you can pass ``block=False``, and
 :meth:`~pykka.ActorRef.ask` will immediately return a "future" object.
 
-The message itself must always be a :class:`dict`, but you're mostly free to
-use whatever dict keys you want to.
+The message itself can be of any type, for example a dict or your own message
+class type.
 
 Summarized in code::
 
@@ -149,10 +149,10 @@ Summarized in code::
 
 .. warning::
 
-    For performance reasons, Pykka **does not** clone the dict you send before
-    delivering it to the receiver. You are yourself responsible for either using
-    immutable data structures or to :func:`copy.deepcopy` the data you're
-    sending off to other actors.
+    For performance reasons, Pykka **does not** clone the message you send
+    before delivering it to the receiver. You are yourself responsible for
+    either using immutable data structures or to :func:`copy.deepcopy` the
+    data you're sending off to other actors.
 
 
 Replying to messages
