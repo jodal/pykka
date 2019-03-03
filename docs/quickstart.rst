@@ -131,16 +131,16 @@ class type.
 
 Summarized in code::
 
-    actor_ref.tell({'msg': 'Hi!'})
+    actor_ref.tell('Hi!')
     # => Returns nothing. Will never block.
 
-    answer = actor_ref.ask({'msg': 'Hi?'})
+    answer = actor_ref.ask('Hi?')
     # => May block forever waiting for an answer
 
-    answer = actor_ref.ask({'msg': 'Hi?'}, timeout=3)
+    answer = actor_ref.ask('Hi?', timeout=3)
     # => May wait 3s for an answer, then raises exception if no answer.
 
-    future = actor_ref.ask({'msg': 'Hi?'}, block=False)
+    future = actor_ref.ask('Hi?', block=False)
     # => Will return a future object immediately.
     answer = future.get()
     # => May block forever waiting for an answer
@@ -170,7 +170,7 @@ the message by simply returning a value from the
 
     actor_ref = Greeter.start()
 
-    answer = actor_ref.ask({'msg': 'Hi?'})
+    answer = actor_ref.ask('Hi?')
     print(answer)
     # => 'Hi there!'
 
@@ -197,7 +197,7 @@ sender::
     actor_ref = Raiser.start()
 
     try:
-        actor_ref.ask({'msg': 'How are you?'})
+        actor_ref.ask('How are you?')
     except Exception as e:
         print(repr(e))
         # => Exception('Oops')
