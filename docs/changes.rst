@@ -22,6 +22,20 @@ Dependencies
   :mod:`collections.abc` instead of :mod:`collections`. This fixes a
   deprecation warning on Python 3.7 and prepares for Python 3.8.
 
+Actors
+------
+
+- Actor messages are no longer required to be ``dict`` objects. Any object type
+  can be used as an actor message. (Fixes: :issue:`39`, :issue:`45`, PR:
+  :issue:`79`)
+
+  For existing code, this means that :meth:`~pykka.Actor.on_receive`
+  implementations should no longer assume the received message to be a
+  ``dict``, and guard with the appropriate amount of :func:`isinstance`
+  checks. As an existing application will not observe any new message types
+  before it starts using them itself, this is not marked as backwards
+  incompatible.
+
 Proxies
 -------
 
@@ -87,7 +101,6 @@ Futures
 - If using Python 3.5+, one can now use the ``await`` keyword to get the
   result from a future. (Contributed by Joshua Doncaster-Marsiglio. PR:
   :issue:`78`)
-
 
 Logging
 -------
