@@ -294,7 +294,7 @@ class Actor(object):
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        # TODO Handle old dict format too, but emit DeprecationWarning
+        message = messaging.upgrade_internal_message(message)
         if isinstance(message, messaging.ActorStop):
             return self._stop()
         if isinstance(message, messaging.ProxyCall):
