@@ -47,7 +47,7 @@ Proxies
   This is backwards incompatible if you in a property getter returned an
   object instance with the ``pykka_traversable`` marker. Previously, this
   would work just like a traversable attribute. Now, the property always
-  returns a future with the property getters return value.
+  returns a future with the property getter's return value.
 
 - Fix infinite recursion when creating a proxy for an actor with an attribute
   or method replaced with a :class:`~unittest.mock.Mock` without a ``spec``
