@@ -124,7 +124,7 @@ returned, potentially forever. If you provide a ``timeout`` keyword argument
 to :meth:`~pykka.ActorRef.ask`, you can specify for how long it should wait
 for an answer. If you want an answer, but don't need it right away because
 you have other stuff you can do first, you can pass ``block=False``, and
-:meth:`~pykka.Actorref.ask` will immediately return a "future" object.
+:meth:`~pykka.ActorRef.ask` will immediately return a "future" object.
 
 The message itself must always be a :class:`dict`, but you're mostly free to
 use whatever dict keys you want to.
