@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import logging
 
-from pykka import compat
+from pykka import compat, messaging
 from pykka.exceptions import ActorDeadError
 
 
@@ -208,7 +208,7 @@ class ActorProxy(object):
                 )
             return self._actor_proxies[attr_path]
         else:
-            message = {'command': 'pykka_getattr', 'attr_path': attr_path}
+            message = messaging.ProxyGetAttr(attr_path=attr_path)
             return self.actor_ref.ask(message, block=False)
 
     def __setattr__(self, name, value):
@@ -220,11 +220,7 @@ class ActorProxy(object):
         if name == 'actor_ref' or name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
         attr_path = self._attr_path + (name,)
-        message = {
-            'command': 'pykka_setattr',
-            'attr_path': attr_path,
-            'value': value,
-        }
+        message = messaging.ProxySetAttr(attr_path=attr_path, value=value)
         return self.actor_ref.ask(message)
 
 
@@ -236,10 +232,7 @@ class _CallableProxy(object):
         self._attr_path = attr_path
 
     def __call__(self, *args, **kwargs):
-        message = {
-            'command': 'pykka_call',
-            'attr_path': self._attr_path,
-            'args': args,
-            'kwargs': kwargs,
-        }
+        message = messaging.ProxyCall(
+            attr_path=self._attr_path, args=args, kwargs=kwargs
+        )
         return self.actor_ref.ask(message, block=False)

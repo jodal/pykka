@@ -1,5 +1,5 @@
 from pykka.exceptions import ActorDeadError
-from pykka.messaging import Envelope
+from pykka.messaging import ActorStop, Envelope
 from pykka.proxy import ActorProxy
 
 
@@ -135,7 +135,7 @@ class ActorRef(object):
 
         :return: :class:`pykka.Future`, or a boolean result if blocking
         """
-        ask_future = self.ask({'command': 'pykka_stop'}, block=False)
+        ask_future = self.ask(ActorStop(), block=False)
 
         def _stop_result_converter(timeout):
             try:

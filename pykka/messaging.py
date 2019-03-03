@@ -1,3 +1,6 @@
+from collections import namedtuple
+
+
 class Envelope(object):
     """
     Envelope to add metadata to a message.
@@ -21,3 +24,12 @@ class Envelope(object):
         return 'Envelope(message={!r}, reply_to={!r})'.format(
             self.message, self.reply_to
         )
+
+
+# Internal actor messages
+ActorStop = namedtuple('ActorStop', [])
+
+# Internal proxy messages
+ProxyCall = namedtuple('ProxyCall', ['attr_path', 'args', 'kwargs'])
+ProxyGetAttr = namedtuple('ProxyGetAttr', ['attr_path'])
+ProxySetAttr = namedtuple('ProxySetAttr', ['attr_path', 'value'])
