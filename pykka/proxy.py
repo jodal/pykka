@@ -28,6 +28,8 @@ class ActorProxy(object):
 
         actor_proxy = MyActor.start().proxy()
 
+    **Attributes and method calls**
+
     When reading an attribute or getting a return value from a method, you get
     a :class:`Future <pykka.Future>` object back. To get the enclosed value
     from the future, you must call :meth:`get() <pykka.Future.get>` on the
@@ -53,6 +55,8 @@ class ActorProxy(object):
     block until the method completes::
 
         await actor_proxy.method_with_side_effect()
+
+    **Proxy to itself**
 
     An actor can use a proxy to itself to schedule work for itself. The
     scheduled work will only be done after the current message and all messages
@@ -86,6 +90,8 @@ class ActorProxy(object):
 
         def do_more_work(self):
             ...
+
+    **Examples**
 
     An example of :class:`ActorProxy` usage:
 
