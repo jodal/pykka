@@ -49,6 +49,11 @@ class ActorProxy(object):
 
         actor_proxy.method_with_side_effect().get()
 
+    If you're using Python 3.5+, you can also use the ``await`` keyword to
+    block until the method completes::
+
+        await actor_proxy.method_with_side_effect()
+
     An actor can use a proxy to itself to schedule work for itself. The
     scheduled work will only be done after the current message and all messages
     already in the inbox are processed.
