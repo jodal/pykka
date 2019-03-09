@@ -56,6 +56,9 @@ class ActorProxy(object):
 
         await actor_proxy.method_with_side_effect()
 
+    If you access a proxied method as an attribute, without calling it, you
+    get an :class:`CallableProxy`.
+
     **Proxy to itself**
 
     An actor can use a proxy to itself to schedule work for itself. The
@@ -212,7 +215,7 @@ class ActorProxy(object):
 
         if attr_info['callable']:
             if attr_path not in self._callable_proxies:
-                self._callable_proxies[attr_path] = _CallableProxy(
+                self._callable_proxies[attr_path] = CallableProxy(
                     self.actor_ref, attr_path
                 )
             return self._callable_proxies[attr_path]
@@ -239,14 +242,34 @@ class ActorProxy(object):
         return self.actor_ref.ask(message)
 
 
-class _CallableProxy(object):
-    """Internal helper class for proxying callables."""
+class CallableProxy(object):
+    """Proxy to a single method.
+
+    :class:`CallableProxy` instances are returned when accessing methods on a
+    :class:`ActorProxy` without calling them.
+
+    Example::
+
+        proxy = AnActor.start().proxy()
+
+        # Ask semantics returns a future. See `__call__()` docs.
+        future = proxy.do_work()
+    """
 
     def __init__(self, ref, attr_path):
         self.actor_ref = ref
         self._attr_path = attr_path
 
     def __call__(self, *args, **kwargs):
+        """Call with :meth:`~pykka.ActorRef.ask` semantics.
+
+        Returns a future which will yield the called method's return value.
+
+        If the call raises an exception is set on the future, and will be
+        reraised by :meth:`~pykka.Future.get`. If the future is left unused,
+        the exception will not be reraised. Either way, the exception will
+        also be logged. See :ref:`logging` for details.
+        """
         message = messaging.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )

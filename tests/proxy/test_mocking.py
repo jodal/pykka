@@ -57,12 +57,12 @@ def test_actor_with_callable_mock_property_does_not_work(
     proxy = actor_class.start().proxy()
 
     # XXX Because Mock and MagicMock are callable by default, they cause the
-    # property to be wrapped in a `_CallableProxy`. Thus, the property no
+    # property to be wrapped in a `CallableProxy`. Thus, the property no
     # longer behaves as a property when mocked and accessed through a proxy.
     with pytest.raises(AttributeError) as exc_info:
         assert proxy.a_rw_property.get()
 
-    assert "'_CallableProxy' object has no attribute 'get'" in str(
+    assert "'CallableProxy' object has no attribute 'get'" in str(
         exc_info.value
     )
 
