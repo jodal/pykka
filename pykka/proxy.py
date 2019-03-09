@@ -80,16 +80,20 @@ class ActorProxy(object):
 
         def __init__(self):
             ...
-            self.in_future = self.actor_ref.proxy()
+            self._in_future = self.actor_ref.proxy()
             ...
 
         def do_work(self):
             ...
-            self.in_future.do_more_work()
+            self._in_future.do_more_work()
             ...
 
         def do_more_work(self):
             ...
+
+    To avoid infinite loops during proxy introspection, proxies to self
+    should be kept as private instance attributes by prefixing the attribute
+    name with ``_``.
 
     **Examples**
 
