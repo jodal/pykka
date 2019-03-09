@@ -6,14 +6,24 @@ def actor_class(runtime):
     class ActorA(runtime.actor_class):
         cat = 'dog'
 
+        def __init__(self, events):
+            super(ActorA, self).__init__()
+            self.events = events
+
+        def on_stop(self):
+            self.events.on_stop_was_called.set()
+
+        def on_failure(self, *args):
+            self.events.on_failure_was_called.set()
+
         def functional_hello(self, s):
             return 'Hello, {}!'.format(s)
 
         def set_cat(self, s):
             self.cat = s
 
-        def raise_keyboard_interrupt(self):
-            raise KeyboardInterrupt
+        def raise_exception(self):
+            raise Exception('boom!')
 
         def talk_with_self(self):
             return self.actor_ref.proxy().functional_hello('from the future')
@@ -22,8 +32,8 @@ def actor_class(runtime):
 
 
 @pytest.fixture
-def proxy(actor_class):
-    proxy = actor_class.start().proxy()
+def proxy(actor_class, events):
+    proxy = actor_class.start(events).proxy()
     yield proxy
     proxy.stop()
 
@@ -39,6 +49,18 @@ def test_side_effect_of_method_is_observable(proxy):
     proxy.set_cat('eagle')
 
     assert proxy.cat.get() == 'eagle'
+
+
+
+def test_exception_in_method_reraised_by_future(proxy, events):
+    assert not events.on_failure_was_called.is_set()
+
+    future = proxy.raise_exception()
+    with pytest.raises(Exception) as exc_info:
+        future.get()
+
+    assert str(exc_info.value) == 'boom!'
+    assert not events.on_failure_was_called.is_set()
 
 
 def test_calling_unknown_method_raises_attribute_error(proxy):
