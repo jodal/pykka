@@ -259,8 +259,8 @@ class CallableProxy(object):
         proxy.do_work.defer()
     """
 
-    def __init__(self, ref, attr_path):
-        self.actor_ref = ref
+    def __init__(self, actor_ref, attr_path):
+        self.actor_ref = actor_ref
         self._attr_path = attr_path
 
     def __call__(self, *args, **kwargs):
