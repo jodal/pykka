@@ -58,6 +58,10 @@ Proxies
   and a warning log message will ask you to consider making the self-proxy
   private. (Fixes: :issue:`48`)
 
+- Add :meth:`~pykka.CallableProxy.defer` to support method calls through a
+  proxy with :meth:`~pykka.ActorRef.tell` semantics. (Contributed by Andrey
+  Gubarev. Fixes: :issue:`63`. PR: :issue:`72`)
+
 Futures
 -------
 

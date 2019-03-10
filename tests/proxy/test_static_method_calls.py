@@ -52,6 +52,14 @@ def test_side_effect_of_method_call_is_observable(proxy):
     assert proxy.cat.get() == 'eagle'
 
 
+def test_side_effect_of_deferred_method_call_is_observable(proxy):
+    assert proxy.cat.get() == 'dog'
+
+    result = proxy.set_cat.defer('eagle')
+
+    assert result is None
+    assert proxy.cat.get() == 'eagle'
+
 
 def test_exception_in_method_reraised_by_future(proxy, events):
     assert not events.on_failure_was_called.is_set()
@@ -64,9 +72,30 @@ def test_exception_in_method_reraised_by_future(proxy, events):
     assert not events.on_failure_was_called.is_set()
 
 
+def test_exception_in_deferred_method_call_triggers_on_failure(proxy, events):
+    assert not events.on_failure_was_called.is_set()
+
+    result = proxy.raise_exception.defer()
+
+    assert result is None
+    events.on_failure_was_called.wait(5)
+    assert events.on_failure_was_called.is_set()
+    assert not events.on_stop_was_called.is_set()
+
+
 def test_call_to_unknown_method_raises_attribute_error(proxy):
     with pytest.raises(AttributeError) as exc_info:
         proxy.unknown_method()
+
+    result = str(exc_info.value)
+
+    assert result.startswith('<ActorProxy for ActorA')
+    assert result.endswith("has no attribute 'unknown_method'")
+
+
+def test_deferred_call_to_unknown_method_raises_attribute_error(proxy):
+    with pytest.raises(AttributeError) as exc_info:
+        proxy.unknown_method.defer()
 
     result = str(exc_info.value)
 

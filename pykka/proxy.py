@@ -254,6 +254,9 @@ class CallableProxy(object):
 
         # Ask semantics returns a future. See `__call__()` docs.
         future = proxy.do_work()
+
+        # Tell semantics are fire and forget. See `defer()` docs.
+        proxy.do_work.defer()
     """
 
     def __init__(self, ref, attr_path):
@@ -274,3 +277,17 @@ class CallableProxy(object):
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
         return self.actor_ref.ask(message, block=False)
+
+    def defer(self, *args, **kwargs):
+        """Call with :meth:`~pykka.ActorRef.tell` semantics.
+
+        Does not create or return a future.
+
+        If the call raises an exception, there is no future to set the
+        exception on. Thus, the actor's :meth:`~pykka.Actor.on_failure` hook
+        is called instead.
+        """
+        message = messaging.ProxyCall(
+            attr_path=self._attr_path, args=args, kwargs=kwargs
+        )
+        return self.actor_ref.tell(message)
