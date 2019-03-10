@@ -1,8 +1,22 @@
 import pytest
 
+import pykka
+
 
 class NestedWithNoMarker(object):
     inner = 'nested_with_no_marker.inner'
+
+
+class NestedWithNoMarkerAndSlots(object):
+    __slots__ = ['inner']
+
+    def __init__(self):
+        self.inner = 'nested_with_no_marker_and_slots.inner'
+
+
+@pykka.traversable
+class NestedWithDecoratorMarker(object):
+    inner = 'nested_with_decorator_marker.inner'
 
 
 class NestedWithAttrMarker(object):
@@ -23,6 +37,8 @@ class NestedWithAttrMarkerAndSlots(object):
 def actor_class(runtime):
     class ActorWithTraversableObjects(runtime.actor_class):
         nested_with_no_marker = NestedWithNoMarker()
+        nested_with_function_marker = pykka.traversable(NestedWithNoMarker())
+        nested_with_decorator_marker = NestedWithDecoratorMarker()
         nested_with_attr_marker = NestedWithAttrMarker()
         nested_with_attr_marker_and_slots = NestedWithAttrMarkerAndSlots()
 
@@ -50,6 +66,8 @@ def test_attr_without_marker_cannot_be_traversed(proxy):
 @pytest.mark.parametrize(
     'attr_name, expected',
     [
+        ('nested_with_function_marker', 'nested_with_no_marker.inner'),
+        ('nested_with_decorator_marker', 'nested_with_decorator_marker.inner'),
         ('nested_with_attr_marker', 'nested_with_attr_marker.inner'),
         (
             'nested_with_attr_marker_and_slots',
@@ -72,3 +90,10 @@ def test_traversable_object_returned_from_property_is_not_traversed(proxy):
         proxy.nested_object_property.get().inner
         == 'nested_with_attr_marker.inner'
     )
+
+
+def test_traversable_cannot_mark_object_using_slots():
+    with pytest.raises(Exception) as exc_info:
+        pykka.traversable(NestedWithNoMarkerAndSlots())
+
+    assert 'cannot be used to mark an object using slots' in str(exc_info.value)

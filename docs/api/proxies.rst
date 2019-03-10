@@ -9,3 +9,5 @@ Proxies
     :members:
 
     .. automethod:: __call__
+
+.. autofunction:: pykka.traversable

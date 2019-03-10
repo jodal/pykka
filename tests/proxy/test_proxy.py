@@ -1,16 +1,17 @@
 import pytest
 
+import pykka
 from pykka import ActorDeadError, ActorProxy
 
 
 class NestedObject(object):
-    pykka_traversable = True
+    pass
 
 
 @pytest.fixture(scope='module')
 def actor_class(runtime):
     class ActorForProxying(runtime.actor_class):
-        a_nested_object = NestedObject()
+        a_nested_object = pykka.traversable(NestedObject())
         a_class_attr = 'class_attr'
 
         def __init__(self):

@@ -179,7 +179,10 @@ class ActorProxy(object):
         Returns true for any attribute that may be traversed from another
         actor through a proxy.
         """
-        return getattr(attr, 'pykka_traversable', False) is True
+        return (
+            getattr(attr, '_pykka_traversable', False) is True
+            or getattr(attr, 'pykka_traversable', False) is True
+        )
 
     def __eq__(self, other):
         if not isinstance(other, ActorProxy):
@@ -293,3 +296,60 @@ class CallableProxy(object):
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
         return self.actor_ref.tell(message)
+
+
+def traversable(obj):
+    """Marks an actor attribute as traversable.
+
+    The traversable marker makes the actor attribute's own methods and
+    attributes available to users of the actor through an
+    :class:`~pykka.ActorProxy`.
+
+    Used as a function to mark a single attribute::
+
+        class AnActor(pykka.ThreadingActor):
+            playback = pykka.traversable(Playback())
+
+        class Playback(object):
+            def play(self):
+                return True
+
+    This function can also be used as a class decorator, making all instances
+    of the class traversable::
+
+        class AnActor(pykka.ThreadingActor):
+            playback = Playback()
+
+        @pykka.traversable
+        class Playback(object):
+            def play(self):
+                return True
+
+    The third alternative, and the only way in Pykka < 2.0, is to manually
+    mark a class as traversable by setting the ``pykka_traversable`` attribute
+    to :class:`True`::
+
+        class AnActor(pykka.ThreadingActor):
+            playback = Playback()
+
+        class Playback(object):
+            pykka_traversable = True
+
+            def play(self):
+                return True
+
+    When the attribute is marked as traversable, its methods can be executed
+    in the context of the actor through an actor proxy::
+
+        proxy = AnActor.start().proxy()
+        assert proxy.playback.play().get() is True
+
+    .. versionadded:: 2.0
+    """
+    if hasattr(obj, '__slots__'):
+        raise Exception(
+            'pykka.traversable() cannot be used to mark '
+            'an object using slots as traversable.'
+        )
+    obj._pykka_traversable = True
+    return obj
