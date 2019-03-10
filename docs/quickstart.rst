@@ -291,19 +291,16 @@ through a proxy. For this case, Pykka supports "traversable attributes". By
 marking an actor attribute as traversable, Pykka will not return the attribute
 when accessed, but wrap it in a new proxy which is returned instead.
 
-To mark an attribute as traversable, simply set the ``pykka_traversable``
-attribute to :class:`True`::
+To mark an attribute as traversable, simply mark it with the
+:func:`~pykka.traversable` function::
 
     import pykka
 
     class AnActor(pykka.ThreadingActor):
-        playback = Playback()
+        playback = pykka.traversable(Playback())
 
     class Playback(object):
-        pykka_traversable = True
-
         def play(self):
-            # ...
             return True
 
     proxy = AnActor.start().proxy()

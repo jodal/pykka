@@ -1,7 +1,7 @@
 from pykka.actor import Actor
 from pykka.exceptions import ActorDeadError, Timeout
 from pykka.future import Future, get_all
-from pykka.proxy import ActorProxy, CallableProxy
+from pykka.proxy import ActorProxy, CallableProxy, traversable
 from pykka.ref import ActorRef
 from pykka.registry import ActorRegistry
 from pykka.threading import ThreadingActor, ThreadingFuture
@@ -19,6 +19,7 @@ __all__ = [
     'ThreadingFuture',
     'Timeout',
     'get_all',
+    'traversable',
 ]
 
 

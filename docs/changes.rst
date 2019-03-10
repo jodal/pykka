@@ -62,6 +62,13 @@ Proxies
   proxy with :meth:`~pykka.ActorRef.tell` semantics. (Contributed by Andrey
   Gubarev. Fixes: :issue:`63`. PR: :issue:`72`)
 
+- Add :func:`~pykka.traversable` for marking an actor's attributes as
+  traversable when used through actor proxies. The old way of manually adding
+  a ``pykka_traversable`` attribute to the object to be traversed still works,
+  but the new function is recommended as it provides protection against typos
+  in the marker name, and keeps the traversable marking in the actor class
+  itself. (PR: :issue:`81`)
+
 Futures
 -------
 
