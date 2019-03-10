@@ -311,4 +311,4 @@ attribute to :class:`True`::
 
 You can access methods and attributes nested as deep as you like, as long as
 all attributes on the path between the actor and the method or attribute on the
-end is marked as traversable.
+end are marked as traversable.
