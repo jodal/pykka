@@ -72,5 +72,3 @@ def test_traversable_object_returned_from_property_is_not_traversed(proxy):
         proxy.nested_object_property.get().inner
         == 'nested_with_attr_marker.inner'
     )
-
-
