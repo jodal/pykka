@@ -286,6 +286,8 @@ class CallableProxy(object):
         If the call raises an exception, there is no future to set the
         exception on. Thus, the actor's :meth:`~pykka.Actor.on_failure` hook
         is called instead.
+
+        .. versionadded:: 2.0
         """
         message = messaging.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
