@@ -5,10 +5,7 @@ import sys
 import threading
 import uuid
 
-from pykka import messaging
-from pykka.exceptions import ActorDeadError
-from pykka.ref import ActorRef
-from pykka.registry import ActorRegistry
+from pykka import ActorDeadError, ActorRef, ActorRegistry, _messages
 
 
 __all__ = ['Actor']
@@ -165,7 +162,7 @@ class Actor(object):
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
-        self.actor_ref.tell(messaging.ActorStop())
+        self.actor_ref.tell(_messages.ActorStop())
 
     def _stop(self):
         """
@@ -222,7 +219,7 @@ class Actor(object):
         while not self.actor_inbox.empty():
             envelope = self.actor_inbox.get()
             if envelope.reply_to is not None:
-                if isinstance(envelope.message, messaging.ActorStop):
+                if isinstance(envelope.message, _messages.ActorStop):
                     envelope.reply_to.set(None)
                 else:
                     envelope.reply_to.set_exception(
@@ -294,16 +291,16 @@ class Actor(object):
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        message = messaging.upgrade_internal_message(message)
-        if isinstance(message, messaging.ActorStop):
+        message = _messages.upgrade_internal_message(message)
+        if isinstance(message, _messages.ActorStop):
             return self._stop()
-        if isinstance(message, messaging.ProxyCall):
+        if isinstance(message, _messages.ProxyCall):
             callee = self._get_attribute_from_path(message.attr_path)
             return callee(*message.args, **message.kwargs)
-        if isinstance(message, messaging.ProxyGetAttr):
+        if isinstance(message, _messages.ProxyGetAttr):
             attr = self._get_attribute_from_path(message.attr_path)
             return attr
-        if isinstance(message, messaging.ProxySetAttr):
+        if isinstance(message, _messages.ProxySetAttr):
             parent_attr = self._get_attribute_from_path(message.attr_path[:-1])
             attr_name = message.attr_path[-1]
             return setattr(parent_attr, attr_name, message.value)

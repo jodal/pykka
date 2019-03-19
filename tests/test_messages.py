@@ -2,20 +2,13 @@ import warnings
 
 import pytest
 
-from pykka.messaging import (
+from pykka._messages import (
     ActorStop,
-    Envelope,
     ProxyCall,
     ProxyGetAttr,
     ProxySetAttr,
     upgrade_internal_message,
 )
-
-
-def test_envelope_repr():
-    envelope = Envelope('message', reply_to=123)
-
-    assert repr(envelope) == "Envelope(message='message', reply_to=123)"
 
 
 @pytest.mark.parametrize(

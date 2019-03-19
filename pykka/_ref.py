@@ -1,6 +1,6 @@
-from pykka.exceptions import ActorDeadError
-from pykka.messaging import ActorStop, Envelope
-from pykka.proxy import ActorProxy
+from pykka import ActorDeadError, ActorProxy
+from pykka._envelope import Envelope
+from pykka._messages import ActorStop
 
 
 __all__ = ['ActorRef']

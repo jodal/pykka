@@ -3,7 +3,7 @@ import sys
 
 import pytest
 
-from pykka.compat import await_keyword
+from pykka import _compat
 
 
 def run_async(coroutine):
@@ -18,7 +18,7 @@ def run_async(coroutine):
 def test_future_supports_await_syntax(future):
     @asyncio.coroutine
     def get_value():
-        return await_keyword(future)
+        return _compat.await_keyword(future)
 
     future.set(1)
     assert run_async(get_value()) == 1

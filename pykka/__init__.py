@@ -1,10 +1,10 @@
-from pykka.actor import Actor
-from pykka.exceptions import ActorDeadError, Timeout
-from pykka.future import Future, get_all
-from pykka.proxy import ActorProxy, CallableProxy, traversable
-from pykka.ref import ActorRef
-from pykka.registry import ActorRegistry
-from pykka.threading import ThreadingActor, ThreadingFuture
+from pykka._exceptions import ActorDeadError, Timeout
+from pykka._future import Future, get_all
+from pykka._proxy import ActorProxy, CallableProxy, traversable
+from pykka._ref import ActorRef
+from pykka._registry import ActorRegistry
+from pykka._actor import Actor  # noqa: Must be imported late
+from pykka._threading import ThreadingActor, ThreadingFuture
 
 
 __all__ = [

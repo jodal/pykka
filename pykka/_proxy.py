@@ -2,8 +2,7 @@ from __future__ import absolute_import
 
 import logging
 
-from pykka import compat, messaging
-from pykka.exceptions import ActorDeadError
+from pykka import ActorDeadError, _compat, _messages
 
 
 __all__ = ['ActorProxy']
@@ -172,7 +171,7 @@ class ActorProxy(object):
 
     def _is_callable_attribute(self, attr):
         """Returns true for any attribute that is callable."""
-        return isinstance(attr, compat.Callable)
+        return isinstance(attr, _compat.Callable)
 
     def _is_traversable_attribute(self, attr):
         """
@@ -229,7 +228,7 @@ class ActorProxy(object):
                 )
             return self._actor_proxies[attr_path]
         else:
-            message = messaging.ProxyGetAttr(attr_path=attr_path)
+            message = _messages.ProxyGetAttr(attr_path=attr_path)
             return self.actor_ref.ask(message, block=False)
 
     def __setattr__(self, name, value):
@@ -241,7 +240,7 @@ class ActorProxy(object):
         if name == 'actor_ref' or name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
         attr_path = self._attr_path + (name,)
-        message = messaging.ProxySetAttr(attr_path=attr_path, value=value)
+        message = _messages.ProxySetAttr(attr_path=attr_path, value=value)
         return self.actor_ref.ask(message)
 
 
@@ -276,7 +275,7 @@ class CallableProxy(object):
         the exception will not be reraised. Either way, the exception will
         also be logged. See :ref:`logging` for details.
         """
-        message = messaging.ProxyCall(
+        message = _messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
         return self.actor_ref.ask(message, block=False)
@@ -292,7 +291,7 @@ class CallableProxy(object):
 
         .. versionadded:: 2.0
         """
-        message = messaging.ProxyCall(
+        message = _messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
         return self.actor_ref.tell(message)

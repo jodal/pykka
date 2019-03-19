@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import logging
 import threading
 
-from pykka import compat
+from pykka import _compat
 
 logger = logging.getLogger('pykka')
 
@@ -35,7 +35,7 @@ class ActorRegistry(object):
         :param target_class: optional actor class to broadcast the message to
         :type target_class: class or class name
         """
-        if isinstance(target_class, compat.string_types):
+        if isinstance(target_class, _compat.string_types):
             targets = cls.get_by_class_name(target_class)
         elif target_class is not None:
             targets = cls.get_by_class(target_class)

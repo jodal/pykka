@@ -31,12 +31,14 @@ else:
 if PY3:
     # Return inside a generator is a syntax error on Python 2
     # so we need to dynamically load it
-    from pykka.compat.await_dunder_future_py3 import await_dunder_future  # noqa
+    from pykka._compat.await_dunder_future_py3 import (
+        await_dunder_future,
+    )  # noqa
 else:
     await_dunder_future = None
 
 
 if PY35:
-    from pykka.compat.await_keyword_py3 import await_keyword  # noqa
+    from pykka._compat.await_keyword_py3 import await_keyword  # noqa
 else:
     await_keyword = None

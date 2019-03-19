@@ -135,6 +135,10 @@ Gevent support
 Internals
 ---------
 
+- **Backwards incompatible:** Prefix all internal modules with ``_``. This is
+  backwards incompatible if you have imported objects from other import paths
+  than what is used in the documentation.
+
 - Port tests to pytest.
 
 - Format code with Black.
