@@ -14,7 +14,7 @@ Pykka is available from PyPI. To install it, run::
 
     pip install pykka
 
-Pykka works with CPython 2.7 and 3.4+, as well as PyPy 2.7 and 3.5.
+Pykka works with CPython 2.7 and 3.5+, as well as PyPy 2.7 and 3.5+.
 
 
 .. toctree::
