@@ -10,7 +10,8 @@ Major feature release.
 Dependencies
 ------------
 
-- Drop support for Python 2.6, 3.2, and 3.3.
+- Drop support for Python 2.6, 3.2, 3.3, and 3.4. All have reached their end of
+  life and do no longer receive security updates.
 
 - Include CPython 3.5, 3.6, 3.7, and 3.8 pre-releases, and PyPy 3.5 in the test
   matrix.

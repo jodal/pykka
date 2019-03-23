@@ -1,8 +1,7 @@
 import sys
 
+
 PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-PY35 = sys.version_info >= (3, 5)
 
 if PY2:
     import Queue as queue  # noqa
@@ -13,6 +12,8 @@ if PY2:
     def reraise(tp, value, tb=None):
         exec('raise tp, value, tb')
 
+    await_dunder_future = None
+    await_keyword = None
 
 else:
     import queue  # noqa
@@ -27,18 +28,9 @@ else:
             raise value.with_traceback(tb)
         raise value
 
-
-if PY3:
-    # Return inside a generator is a syntax error on Python 2
-    # so we need to dynamically load it
-    from pykka._compat.await_dunder_future_py3 import (
+    # `async def` and return inside a generator are syntax errors on Python 2
+    # so these must be hidden behind a conditional import.
+    from pykka._compat.await_py3 import (  # noqa
         await_dunder_future,
-    )  # noqa
-else:
-    await_dunder_future = None
-
-
-if PY35:
-    from pykka._compat.await_keyword_py3 import await_keyword  # noqa
-else:
-    await_keyword = None
+        await_keyword,
+    )
