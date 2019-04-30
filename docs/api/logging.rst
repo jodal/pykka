@@ -76,7 +76,7 @@ messages from Pykka by increasing the threshold on the Pykka logger to
 
 Given that you've fixed all unhandled exceptions logged at the
 :attr:`~logging.INFO` level during development, you probably want to disable
-logging from Pykka at the:attr:`~logging.INFO` level in production to avoid
+logging from Pykka at the :attr:`~logging.INFO` level in production to avoid
 logging exceptions that are properly handled::
 
     import logging
