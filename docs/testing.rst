@@ -29,7 +29,7 @@ Let's look at an example actor that we want to test:
 .. literalinclude:: ../examples/producer.py
 
 We can test this actor with `pytest`_ by mocking the consumer
-and asserting that it receives a newly produced item::
+and asserting that it receives a newly produced item:
 
 .. literalinclude:: ../examples/producer_test.py
 
