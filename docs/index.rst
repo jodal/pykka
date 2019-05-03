@@ -25,6 +25,7 @@ Pykka works with CPython 2.7 and 3.5+, as well as PyPy 2.7 and 3.5+.
     examples
     api/index
     runtimes/index
+    testing
 
 
 .. toctree::
