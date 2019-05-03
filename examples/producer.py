@@ -3,7 +3,7 @@ import pykka
 
 class ProducerActor(pykka.ThreadingActor):
     def __init__(self, consumer):
-        super().__init__()
+        super(ProducerActor, self).__init__()
         self.consumer = consumer
 
     def produce(self):
