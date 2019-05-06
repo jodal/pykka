@@ -5,7 +5,7 @@ import sys
 import threading
 import uuid
 
-from pykka import ActorDeadError, ActorRef, ActorRegistry, _messages
+from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
 
 __all__ = ['Actor']
@@ -162,7 +162,7 @@ class Actor(object):
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
-        self.actor_ref.tell(_messages.ActorStop())
+        self.actor_ref.tell(messages._ActorStop())
 
     def _stop(self):
         """
@@ -219,7 +219,7 @@ class Actor(object):
         while not self.actor_inbox.empty():
             envelope = self.actor_inbox.get()
             if envelope.reply_to is not None:
-                if isinstance(envelope.message, _messages.ActorStop):
+                if isinstance(envelope.message, messages._ActorStop):
                     envelope.reply_to.set(None)
                 else:
                     envelope.reply_to.set_exception(
@@ -291,16 +291,16 @@ class Actor(object):
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        message = _messages.upgrade_internal_message(message)
-        if isinstance(message, _messages.ActorStop):
+        message = messages._upgrade_internal_message(message)
+        if isinstance(message, messages._ActorStop):
             return self._stop()
-        if isinstance(message, _messages.ProxyCall):
+        if isinstance(message, messages.ProxyCall):
             callee = self._get_attribute_from_path(message.attr_path)
             return callee(*message.args, **message.kwargs)
-        if isinstance(message, _messages.ProxyGetAttr):
+        if isinstance(message, messages.ProxyGetAttr):
             attr = self._get_attribute_from_path(message.attr_path)
             return attr
-        if isinstance(message, _messages.ProxySetAttr):
+        if isinstance(message, messages.ProxySetAttr):
             parent_attr = self._get_attribute_from_path(message.attr_path[:-1])
             attr_name = message.attr_path[-1]
             return setattr(parent_attr, attr_name, message.value)

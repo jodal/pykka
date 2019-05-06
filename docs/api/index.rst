@@ -15,5 +15,6 @@ Pykka API
     futures
     registry
     exceptions
+    messages
     logging
     debug

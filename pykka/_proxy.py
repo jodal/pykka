@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import logging
 
-from pykka import ActorDeadError, _compat, _messages
+from pykka import ActorDeadError, _compat, messages
 
 
 __all__ = ['ActorProxy']
@@ -228,7 +228,7 @@ class ActorProxy(object):
                 )
             return self._actor_proxies[attr_path]
         else:
-            message = _messages.ProxyGetAttr(attr_path=attr_path)
+            message = messages.ProxyGetAttr(attr_path=attr_path)
             return self.actor_ref.ask(message, block=False)
 
     def __setattr__(self, name, value):
@@ -240,7 +240,7 @@ class ActorProxy(object):
         if name == 'actor_ref' or name.startswith('_'):
             return super(ActorProxy, self).__setattr__(name, value)
         attr_path = self._attr_path + (name,)
-        message = _messages.ProxySetAttr(attr_path=attr_path, value=value)
+        message = messages.ProxySetAttr(attr_path=attr_path, value=value)
         return self.actor_ref.ask(message)
 
 
@@ -275,7 +275,7 @@ class CallableProxy(object):
         the exception will not be reraised. Either way, the exception will
         also be logged. See :ref:`logging` for details.
         """
-        message = _messages.ProxyCall(
+        message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
         return self.actor_ref.ask(message, block=False)
@@ -291,7 +291,7 @@ class CallableProxy(object):
 
         .. versionadded:: 2.0
         """
-        message = _messages.ProxyCall(
+        message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
         return self.actor_ref.tell(message)

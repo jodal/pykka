@@ -2,19 +2,19 @@ import warnings
 
 import pytest
 
-from pykka._messages import (
-    ActorStop,
+from pykka.messages import (
     ProxyCall,
     ProxyGetAttr,
     ProxySetAttr,
-    upgrade_internal_message,
+    _ActorStop,
+    _upgrade_internal_message,
 )
 
 
 @pytest.mark.parametrize(
     'old_format, new_format',
     [
-        ({'command': 'pykka_stop'}, ActorStop()),
+        ({'command': 'pykka_stop'}, _ActorStop()),
         (
             {
                 'command': 'pykka_call',
@@ -42,7 +42,7 @@ from pykka._messages import (
 )
 def test_upgrade_internal_message(old_format, new_format):
     with warnings.catch_warnings(record=True) as w:
-        assert upgrade_internal_message(old_format) == new_format
+        assert _upgrade_internal_message(old_format) == new_format
 
         assert len(w) == 1
         assert issubclass(w[0].category, DeprecationWarning)
