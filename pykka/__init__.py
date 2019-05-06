@@ -1,3 +1,5 @@
+import logging as _logging
+
 from pykka._exceptions import ActorDeadError, Timeout
 from pykka._future import Future, get_all
 from pykka._proxy import ActorProxy, CallableProxy, traversable
@@ -27,18 +29,4 @@ __all__ = [
 __version__ = '2.0.0a1'
 
 
-def _add_null_handler_for_logging():
-    import logging
-
-    try:
-        NullHandler = logging.NullHandler  # Python 2.7 and upwards
-    except AttributeError:
-
-        class NullHandler(logging.Handler):
-            def emit(self, record):
-                pass
-
-    logging.getLogger('pykka').addHandler(NullHandler())
-
-
-_add_null_handler_for_logging()
+_logging.getLogger('pykka').addHandler(_logging.NullHandler())
