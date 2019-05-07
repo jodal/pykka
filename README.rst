@@ -41,9 +41,9 @@ Project resources
     :alt: CircleCI build status
 
 .. image:: https://img.shields.io/readthedocs/pykka.svg
-   :target: https://www.pykka.org/
-   :alt: Read the Docs build status
+    :target: https://www.pykka.org/
+    :alt: Read the Docs build status
 
 .. image:: https://img.shields.io/codecov/c/github/jodal/pykka/develop.svg
-   :target: https://codecov.io/gh/jodal/pykka
-   :alt: Test coverage
+    :target: https://codecov.io/gh/jodal/pykka
+    :alt: Test coverage
