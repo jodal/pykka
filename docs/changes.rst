@@ -2,7 +2,7 @@
 Changes
 =======
 
-v2.0.0 (UNRELEASED)
+v2.0.0 (2019-05-07)
 ===================
 
 Major feature release.
