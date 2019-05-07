@@ -33,7 +33,7 @@ Project resources
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
 
 .. image:: https://img.shields.io/pypi/v/Pykka.svg
-    :target: https://pypi.python.org/pypi/Pykka/
+    :target: https://pypi.org/project/Pykka/
     :alt: Latest PyPI version
 
 .. image:: https://img.shields.io/circleci/project/github/jodal/pykka/develop.svg
