@@ -55,7 +55,7 @@ class Future(object):
         Set the encapsulated value.
 
         :param value: the encapsulated value or nothing
-        :type value: any picklable object or :class:`None`
+        :type value: any object or :class:`None`
         :raise: an exception if set is called multiple times
         """
         raise NotImplementedError

@@ -30,7 +30,7 @@ class ActorRegistry(object):
         actors.
 
         :param message: the message to send
-        :type message: picklable dict
+        :type message: any
 
         :param target_class: optional actor class to broadcast the message to
         :type target_class: class or class name

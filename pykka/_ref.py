@@ -64,7 +64,7 @@ class ActorRef(object):
         block until a free slot is available.
 
         :param message: message to send
-        :type message: picklable dict
+        :type message: any
 
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: nothing
@@ -77,7 +77,7 @@ class ActorRef(object):
         """
         Send message to actor and wait for the reply.
 
-        The message must be a picklable dict.
+        The message can be of any type.
         If ``block`` is :class:`False`, it will immediately return a
         :class:`Future <pykka.Future>` instead of blocking.
 
@@ -88,7 +88,7 @@ class ActorRef(object):
         :exc:`pykka.Timeout`.
 
         :param message: message to send
-        :type message: picklable dict
+        :type message: any
 
         :param block: whether to block while waiting for a reply
         :type block: boolean
