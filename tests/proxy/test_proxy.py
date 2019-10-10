@@ -35,6 +35,10 @@ def test_eq_to_self(proxy):
     assert proxy == proxy
 
 
+def test_is_hashable(proxy):
+    assert hash(proxy) == hash(proxy)
+
+
 def test_eq_to_another_proxy_for_same_actor_and_attr_path(proxy):
     proxy2 = proxy.actor_ref.proxy()
 

@@ -2,6 +2,14 @@
 Changes
 =======
 
+v2.0.1 (UNRELEASED)
+===================
+
+Bugfix release.
+
+- Make :class:`~pykka.ActorRef` hashable.
+
+
 v2.0.0 (2019-05-07)
 ===================
 

@@ -192,6 +192,9 @@ class ActorProxy(object):
             return False
         return True
 
+    def __hash__(self):
+        return hash((self._actor, self._attr_path))
+
     def __repr__(self):
         return '<ActorProxy for {}, attr_path={!r}>'.format(
             self.actor_ref, self._attr_path
