@@ -2,7 +2,7 @@
 Changes
 =======
 
-v2.0.1 (UNRELEASED)
+v2.0.1 (2019-10-10)
 ===================
 
 Bugfix release.
