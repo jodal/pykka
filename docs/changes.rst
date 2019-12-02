@@ -3,7 +3,7 @@ Changes
 =======
 
 
-v2.0.2 (UNRELEASED)
+v2.0.2 (2019-12-02)
 ===================
 
 Bugfix release.

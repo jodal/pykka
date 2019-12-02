@@ -26,7 +26,7 @@ __all__ = [
 
 
 #: Pykka's :pep:`396` and :pep:`440` compatible version number
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 
 _logging.getLogger('pykka').addHandler(_logging.NullHandler())
