@@ -69,25 +69,9 @@ def test_actor_with_callable_mock_property_does_not_work(
 
 def test_actor_with_mocked_method_works(actor_class, stop_all, mocker):
     mock = mocker.MagicMock(return_value='mocked method return')
-    with mocker.patch.object(actor_class, 'a_method', new=mock):
-        proxy = actor_class.start().proxy()
+    mocker.patch.object(actor_class, 'a_method', new=mock)
+    proxy = actor_class.start().proxy()
 
-        assert proxy.a_method().get() == 'mocked method return'
+    assert proxy.a_method().get() == 'mocked method return'
 
     assert mock.call_count == 1
-
-
-def test_actor_with_mock_created_by_patch_does_not_work(
-    actor_class, stop_all, mocker
-):
-    with mocker.patch.object(
-        actor_class, 'a_method', return_value='foo'
-    ) as mock:
-        proxy = actor_class.start().proxy()
-
-        # The method is properly mocked, as seen from the return value
-        assert proxy.a_method().get() == 'foo'
-
-    # XXX But, with a mock created by the `mock.patch.object()` context
-    # manager, we cannot inspect the calls. Patches welcome!
-    assert mock.call_count == 0

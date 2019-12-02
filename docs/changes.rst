@@ -2,6 +2,15 @@
 Changes
 =======
 
+
+v2.0.2 (UNRELEASED)
+===================
+
+Bugfix release.
+
+- Fix test suite run with pytest-mocker >= 1.11.2. (Fixes: :issue:`85`)
+
+
 v2.0.1 (2019-10-10)
 ===================
 
