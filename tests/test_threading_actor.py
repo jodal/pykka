@@ -48,7 +48,7 @@ def test_actor_thread_is_not_daemonic_by_default(regular_actor_ref):
 
 
 def test_actor_thread_is_daemonic_if_use_daemon_thread_flag_is_set(
-    daemon_actor_ref
+    daemon_actor_ref,
 ):
     alive_threads = threading.enumerate()
     actor_threads = [
