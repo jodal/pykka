@@ -33,10 +33,30 @@ from collections import namedtuple
 _ActorStop = namedtuple('ActorStop', [])
 
 # Public proxy messages
-# TODO Add docstrings to classes and attributes once we drop Python 2.7 support
 ProxyCall = namedtuple('ProxyCall', ['attr_path', 'args', 'kwargs'])
+ProxyCall.__doc__ = """
+Message to ask the actor to call the method with the arguments.
+"""
+ProxyCall.attr_path.__doc__ = "List with the path from the actor to the method."
+ProxyCall.args.__doc__ = "List with positional arguments."
+ProxyCall.kwargs.__doc__ = "Dict with keyword arguments."
+
 ProxyGetAttr = namedtuple('ProxyGetAttr', ['attr_path'])
+ProxyGetAttr.__doc__ = """
+Message to ask the actor to return the value of the attribute.
+"""
+ProxyGetAttr.attr_path.__doc__ = """
+List with the path from the actor to the attribute.
+"""
+
 ProxySetAttr = namedtuple('ProxySetAttr', ['attr_path', 'value'])
+ProxySetAttr.__doc__ = """
+Message to ask the actor to set the attribute to the value.
+"""
+ProxySetAttr.attr_path.__doc__ = """
+List with the path from the actor to the attribute.
+"""
+ProxySetAttr.value.__doc__ = "The value to set the attribute to."
 
 
 def _upgrade_internal_message(message):

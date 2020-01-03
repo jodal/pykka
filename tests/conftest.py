@@ -1,12 +1,11 @@
 import logging
-import os
 import threading
 import time
 from collections import namedtuple
 
 import pytest
 
-from pykka import ActorRegistry, ThreadingActor, ThreadingFuture, _compat
+from pykka import ActorRegistry, ThreadingActor, ThreadingFuture
 
 from tests.log_handler import PykkaTestLogHandler
 
@@ -20,13 +19,6 @@ Runtime = namedtuple(
 class NullCollector(pytest.collect.File):
     def collect(self):
         return []
-
-
-# skip test files that end with _py3 if not testing under Python 3
-def pytest_pycollect_makemodule(path, parent):
-    file_name = os.path.splitext(path.basename)[0]
-    if _compat.PY2 and file_name.endswith('_py3'):
-        return NullCollector(path, parent=parent)
 
 
 RUNTIMES = {

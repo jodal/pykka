@@ -2,6 +2,11 @@
 Changes
 =======
 
+v3.0.0 (UNRELEASED)
+===================
+
+- Remove support for Python 2.7. (PR: :issue:`87`)
+
 
 v2.0.2 (2019-12-02)
 ===================

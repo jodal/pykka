@@ -1,9 +1,10 @@
 from __future__ import absolute_import
 
+import queue
 import sys
 import threading
 
-from pykka import Actor, Future, Timeout, _compat
+from pykka import Actor, Future, Timeout
 
 
 __all__ = ['ThreadingActor', 'ThreadingFuture']
@@ -29,7 +30,7 @@ class ThreadingFuture(Future):
 
     def __init__(self):
         super(ThreadingFuture, self).__init__()
-        self._queue = _compat.queue.Queue(maxsize=1)
+        self._queue = queue.Queue(maxsize=1)
         self._data = None
 
     def get(self, timeout=None):
@@ -42,10 +43,15 @@ class ThreadingFuture(Future):
             if self._data is None:
                 self._data = self._queue.get(True, timeout)
             if 'exc_info' in self._data:
-                _compat.reraise(*self._data['exc_info'])
+                (exc_type, exc_value, exc_traceback) = self._data['exc_info']
+                if exc_value is None:
+                    exc_value = exc_type()
+                if exc_value.__traceback__ is not exc_traceback:
+                    raise exc_value.with_traceback(exc_traceback)
+                raise exc_value
             else:
                 return self._data['value']
-        except _compat.queue.Empty:
+        except queue.Empty:
             raise Timeout('{} seconds'.format(timeout))
 
     def set(self, value=None):
@@ -84,7 +90,7 @@ class ThreadingActor(Actor):
 
     @staticmethod
     def _create_actor_inbox():
-        return _compat.queue.Queue()
+        return queue.Queue()
 
     @staticmethod
     def _create_future():
