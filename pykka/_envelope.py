@@ -11,13 +11,13 @@ class Envelope:
     """
 
     # Using slots speeds up envelope creation with ~20%
-    __slots__ = ['message', 'reply_to']
+    __slots__ = ["message", "reply_to"]
 
     def __init__(self, message, reply_to=None):
         self.message = message
         self.reply_to = reply_to
 
     def __repr__(self):
-        return 'Envelope(message={!r}, reply_to={!r})'.format(
+        return "Envelope(message={!r}, reply_to={!r})".format(
             self.message, self.reply_to
         )

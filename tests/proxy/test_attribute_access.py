@@ -4,14 +4,14 @@ import pytest
 @pytest.fixture
 def actor_class(runtime):
     class ActorWithProperties(runtime.actor_class):
-        an_attr = 'an_attr'
-        _private_attr = 'secret'
+        an_attr = "an_attr"
+        _private_attr = "secret"
 
         @property
         def a_ro_property(self):
-            return 'a_ro_property'
+            return "a_ro_property"
 
-        _a_rw_property = 'a_rw_property'
+        _a_rw_property = "a_rw_property"
 
         @property
         def a_rw_property(self):
@@ -32,15 +32,15 @@ def proxy(actor_class):
 
 
 def test_attr_can_be_read_using_get_postfix(proxy):
-    assert proxy.an_attr.get() == 'an_attr'
+    assert proxy.an_attr.get() == "an_attr"
 
 
 def test_attr_can_be_set_using_assignment(proxy):
-    assert proxy.an_attr.get() == 'an_attr'
+    assert proxy.an_attr.get() == "an_attr"
 
-    proxy.an_attr = 'an_attr_2'
+    proxy.an_attr = "an_attr_2"
 
-    assert proxy.an_attr.get() == 'an_attr_2'
+    assert proxy.an_attr.get() == "an_attr_2"
 
 
 def test_private_attr_access_raises_exception(proxy):
@@ -58,19 +58,19 @@ def test_missing_attr_access_raises_exception(proxy):
 
 
 def test_property_can_be_read_using_get_postfix(proxy):
-    assert proxy.a_ro_property.get() == 'a_ro_property'
-    assert proxy.a_rw_property.get() == 'a_rw_property'
+    assert proxy.a_ro_property.get() == "a_ro_property"
+    assert proxy.a_rw_property.get() == "a_rw_property"
 
 
 def test_property_can_be_set_using_assignment(proxy):
-    proxy.a_rw_property = 'a_rw_property_2'
+    proxy.a_rw_property = "a_rw_property_2"
 
-    assert proxy.a_rw_property.get() == 'a_rw_property_2'
+    assert proxy.a_rw_property.get() == "a_rw_property_2"
 
 
 def test_read_only_property_cannot_be_set(proxy):
     with pytest.raises(AttributeError):
-        proxy.a_ro_property = 'a_ro_property_2'
+        proxy.a_ro_property = "a_ro_property_2"
 
 
 def test_property_is_not_accessed_when_creating_proxy(runtime):
@@ -78,7 +78,7 @@ def test_property_is_not_accessed_when_creating_proxy(runtime):
         @property
         def a_property(self):
             # Imagine code with side effects or heavy resource usage here
-            raise Exception('Proxy creation accessed property')
+            raise Exception("Proxy creation accessed property")
 
     actor_ref = ExpensiveSideEffectActor.start()
     try:

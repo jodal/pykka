@@ -75,12 +75,12 @@ def test_get_all_can_be_called_multiple_times(futures):
 
 def test_future_in_future_works(runtime):
     inner_future = runtime.future_class()
-    inner_future.set('foo')
+    inner_future.set("foo")
 
     outer_future = runtime.future_class()
     outer_future.set(inner_future)
 
-    assert outer_future.get().get() == 'foo'
+    assert outer_future.get().get() == "foo"
 
 
 def test_get_raises_exception_with_full_traceback(runtime):
@@ -93,7 +93,7 @@ def test_get_raises_exception_with_full_traceback(runtime):
     future = runtime.future_class()
 
     try:
-        raise NameError('foo')
+        raise NameError("foo")
     except NameError:
         exc_class_set, exc_instance_set, exc_traceback_set = sys.exc_info()
         future.set_exception()
@@ -201,10 +201,10 @@ def test_map_returns_future_which_passes_result_through_func(future):
 def test_map_works_on_dict(future):
     # Regression test for issue #64
 
-    mapped = future.map(lambda x: x['foo'])
-    future.set({'foo': 'bar'})
+    mapped = future.map(lambda x: x["foo"])
+    future.set({"foo": "bar"})
 
-    assert mapped.get(timeout=0) == 'bar'
+    assert mapped.get(timeout=0) == "bar"
 
 
 def test_map_does_not_map_each_value_in_futures_iterable_result(future):

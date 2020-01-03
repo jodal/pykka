@@ -3,7 +3,7 @@ import pytest
 from pykka import ActorDeadError, Timeout
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def actor_class(runtime):
     class ActorA(runtime.actor_class):
         received_messages = None
@@ -13,9 +13,9 @@ def actor_class(runtime):
             self.received_message = received_message
 
         def on_receive(self, message):
-            if isinstance(message, dict) and message.get('command') == 'ping':
+            if isinstance(message, dict) and message.get("command") == "ping":
                 runtime.sleep_func(0.01)
-                return 'pong'
+                return "pong"
             else:
                 self.received_message.set(message)
 
@@ -37,16 +37,16 @@ def actor_ref(actor_class, received_messages):
 def test_repr_is_wrapped_in_lt_and_gt(actor_ref):
     result = repr(actor_ref)
 
-    assert result.startswith('<')
-    assert result.endswith('>')
+    assert result.startswith("<")
+    assert result.endswith(">")
 
 
 def test_repr_reveals_that_this_is_a_ref(actor_ref):
-    assert 'ActorRef' in repr(actor_ref)
+    assert "ActorRef" in repr(actor_ref)
 
 
 def test_repr_contains_actor_class_name(actor_ref):
-    assert 'ActorA' in repr(actor_ref)
+    assert "ActorA" in repr(actor_ref)
 
 
 def test_repr_contains_actor_urn(actor_ref):
@@ -54,7 +54,7 @@ def test_repr_contains_actor_urn(actor_ref):
 
 
 def test_str_contains_actor_class_name(actor_ref):
-    assert 'ActorA' in str(actor_ref)
+    assert "ActorA" in str(actor_ref)
 
 
 def test_str_contains_actor_urn(actor_ref):
@@ -83,20 +83,20 @@ def test_stop_does_not_stop_already_dead_actor(actor_ref):
 def test_tell_delivers_message_to_actors_custom_on_receive(
     actor_ref, received_messages
 ):
-    actor_ref.tell({'command': 'a custom message'})
+    actor_ref.tell({"command": "a custom message"})
 
-    assert received_messages.get(timeout=1) == {'command': 'a custom message'}
+    assert received_messages.get(timeout=1) == {"command": "a custom message"}
 
 
 @pytest.mark.parametrize(
-    'message',
+    "message",
     [
         123,
         123.456,
-        {'a': 'dict'},
-        ('a', 'tuple'),
-        ['a', 'list'],
-        Exception('an exception'),
+        {"a": "dict"},
+        ("a", "tuple"),
+        ["a", "list"],
+        Exception("an exception"),
     ],
 )
 def test_tell_accepts_any_object_as_the_message(
@@ -111,42 +111,42 @@ def test_tell_fails_if_actor_is_stopped(actor_ref):
     actor_ref.stop()
 
     with pytest.raises(ActorDeadError) as exc_info:
-        actor_ref.tell({'command': 'a custom message'})
+        actor_ref.tell({"command": "a custom message"})
 
-    assert str(exc_info.value) == '{} not found'.format(actor_ref)
+    assert str(exc_info.value) == "{} not found".format(actor_ref)
 
 
 def test_ask_blocks_until_response_arrives(actor_ref):
-    result = actor_ref.ask({'command': 'ping'})
+    result = actor_ref.ask({"command": "ping"})
 
-    assert result == 'pong'
+    assert result == "pong"
 
 
 def test_ask_can_timeout_if_blocked_too_long(actor_ref):
     with pytest.raises(Timeout):
-        actor_ref.ask({'command': 'ping'}, timeout=0)
+        actor_ref.ask({"command": "ping"}, timeout=0)
 
 
 def test_ask_can_return_future_instead_of_blocking(actor_ref):
-    future = actor_ref.ask({'command': 'ping'}, block=False)
+    future = actor_ref.ask({"command": "ping"}, block=False)
 
-    assert future.get() == 'pong'
+    assert future.get() == "pong"
 
 
 def test_ask_fails_if_actor_is_stopped(actor_ref):
     actor_ref.stop()
 
     with pytest.raises(ActorDeadError) as exc_info:
-        actor_ref.ask({'command': 'ping'})
+        actor_ref.ask({"command": "ping"})
 
-    assert str(exc_info.value) == '{} not found'.format(actor_ref)
+    assert str(exc_info.value) == "{} not found".format(actor_ref)
 
 
 def test_ask_nonblocking_fails_future_if_actor_is_stopped(actor_ref):
     actor_ref.stop()
-    future = actor_ref.ask({'command': 'ping'}, block=False)
+    future = actor_ref.ask({"command": "ping"}, block=False)
 
     with pytest.raises(ActorDeadError) as exc_info:
         future.get()
 
-    assert str(exc_info.value) == '{} not found'.format(actor_ref)
+    assert str(exc_info.value) == "{} not found".format(actor_ref)

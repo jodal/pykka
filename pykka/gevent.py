@@ -7,7 +7,7 @@ import gevent.queue
 from pykka import Actor, Future, Timeout
 
 
-__all__ = ['GeventActor', 'GeventFuture']
+__all__ = ["GeventActor", "GeventFuture"]
 
 
 class GeventFuture(Future):
@@ -40,7 +40,7 @@ class GeventFuture(Future):
             raise Timeout(e)
 
     def set(self, value=None):
-        assert not self.async_result.ready(), 'value has already been set'
+        assert not self.async_result.ready(), "value has already been set"
         self.async_result.set(value)
 
     def set_exception(self, exc_info=None):

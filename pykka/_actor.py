@@ -6,9 +6,9 @@ import uuid
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
 
-__all__ = ['Actor']
+__all__ = ["Actor"]
 
-logger = logging.getLogger('pykka')
+logger = logging.getLogger("pykka")
 
 
 class Actor:
@@ -88,27 +88,27 @@ class Actor:
         """
         obj = cls(*args, **kwargs)
         assert obj.actor_ref is not None, (
-            'Actor.__init__() have not been called. '
-            'Did you forget to call super() in your override?'
+            "Actor.__init__() have not been called. "
+            "Did you forget to call super() in your override?"
         )
         ActorRegistry.register(obj.actor_ref)
-        logger.debug('Starting {}'.format(obj))
+        logger.debug("Starting {}".format(obj))
         obj._start_actor_loop()
         return obj.actor_ref
 
     @staticmethod
     def _create_actor_inbox():
         """Internal method for implementors of new actor types."""
-        raise NotImplementedError('Use a subclass of Actor')
+        raise NotImplementedError("Use a subclass of Actor")
 
     @staticmethod
     def _create_future():
         """Internal method for implementors of new actor types."""
-        raise NotImplementedError('Use a subclass of Actor')
+        raise NotImplementedError("Use a subclass of Actor")
 
     def _start_actor_loop(self):
         """Internal method for implementors of new actor types."""
-        raise NotImplementedError('Use a subclass of Actor')
+        raise NotImplementedError("Use a subclass of Actor")
 
     #: The actor URN string is a universally unique identifier for the actor.
     #: It may be used for looking up a specific actor using
@@ -152,7 +152,7 @@ class Actor:
         self.actor_ref = ActorRef(self)
 
     def __str__(self):
-        return '{} ({})'.format(self.__class__.__name__, self.actor_urn)
+        return "{} ({})".format(self.__class__.__name__, self.actor_urn)
 
     def stop(self):
         """
@@ -168,7 +168,7 @@ class Actor:
         """
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
-        logger.debug('Stopped {}'.format(self))
+        logger.debug("Stopped {}".format(self))
         try:
             self.on_stop()
         except Exception:
@@ -194,7 +194,7 @@ class Actor:
             except Exception:
                 if envelope.reply_to is not None:
                     logger.info(
-                        'Exception returned from {} to caller:'.format(self),
+                        "Exception returned from {} to caller:".format(self),
                         exc_info=sys.exc_info(),
                     )
                     envelope.reply_to.set_exception()
@@ -207,7 +207,7 @@ class Actor:
             except BaseException:
                 exception_value = sys.exc_info()[1]
                 logger.debug(
-                    '{!r} in {}. Stopping all actors.'.format(
+                    "{!r} in {}. Stopping all actors.".format(
                         exception_value, self
                     )
                 )
@@ -224,7 +224,7 @@ class Actor:
                         exc_info=(
                             ActorDeadError,
                             ActorDeadError(
-                                '{} stopped before handling the message'.format(
+                                "{} stopped before handling the message".format(
                                     self.actor_ref
                                 )
                             ),
@@ -265,7 +265,7 @@ class Actor:
     def _handle_failure(self, exception_type, exception_value, traceback):
         """Logs unexpected failures, unregisters and stops the actor."""
         logger.error(
-            'Unhandled exception in {}:'.format(self),
+            "Unhandled exception in {}:".format(self),
             exc_info=(exception_type, exception_value, traceback),
         )
         ActorRegistry.unregister(self.actor_ref)
@@ -314,7 +314,7 @@ class Actor:
         :returns: anything that should be sent as a reply to the sender
         """
         logger.warning(
-            'Unexpected message received by {}: {}'.format(self, message)
+            "Unexpected message received by {}: {}".format(self, message)
         )
 
     def _get_attribute_from_path(self, attr_path):
@@ -339,7 +339,7 @@ class Actor:
             return parent_attrs[attr_name]
         except KeyError:
             raise AttributeError(
-                'type object {!r} has no attribute {!r}'.format(
+                "type object {!r} has no attribute {!r}".format(
                     parent.__class__.__name__, attr_name
                 )
             )
@@ -349,6 +349,6 @@ class Actor:
         result = {}
         for cls in reversed(obj.__class__.mro()):
             result.update(cls.__dict__)
-        if hasattr(obj, '__dict__'):
+        if hasattr(obj, "__dict__"):
             result.update(obj.__dict__)
         return result

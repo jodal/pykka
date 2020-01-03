@@ -21,7 +21,7 @@ class PykkaTestLogHandler(logging.Handler):
 
     def reset(self):
         with self.lock:
-            for level in ('debug', 'info', 'warning', 'error', 'critical'):
+            for level in ("debug", "info", "warning", "error", "critical"):
                 self.events[level].clear()
                 self.messages[level] = []
 
@@ -35,4 +35,4 @@ class PykkaTestLogHandler(logging.Handler):
                     return
                 self.events[level].clear()
             self.events[level].wait(1)
-        raise Exception('Timeout: Waited {:d}s for log message'.format(timeout))
+        raise Exception("Timeout: Waited {:d}s for log message".format(timeout))

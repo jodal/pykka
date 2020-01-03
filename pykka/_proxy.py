@@ -4,9 +4,9 @@ from collections.abc import Callable
 from pykka import ActorDeadError, messages
 
 
-__all__ = ['ActorProxy']
+__all__ = ["ActorProxy"]
 
-logger = logging.getLogger('pykka')
+logger = logging.getLogger("pykka")
 
 
 class ActorProxy:
@@ -113,7 +113,7 @@ class ActorProxy:
 
     def __init__(self, actor_ref, attr_path=None):
         if not actor_ref.is_alive():
-            raise ActorDeadError('{} not found'.format(actor_ref))
+            raise ActorDeadError("{} not found".format(actor_ref))
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor
         self._attr_path = attr_path or tuple()
@@ -137,18 +137,18 @@ class ActorProxy:
             if self._is_self_proxy(attr):
                 logger.warning(
                     (
-                        '{} attribute {!r} is a proxy to itself. '
-                        'Consider making it private by renaming it to {!r}.'
+                        "{} attribute {!r} is a proxy to itself. "
+                        "Consider making it private by renaming it to {!r}."
                     ).format(
-                        self._actor, '.'.join(attr_path), '_' + attr_path[-1]
+                        self._actor, ".".join(attr_path), "_" + attr_path[-1]
                     )
                 )
                 continue
 
             traversable = self._is_traversable_attribute(attr)
             result[tuple(attr_path)] = {
-                'callable': self._is_callable_attribute(attr),
-                'traversable': traversable,
+                "callable": self._is_callable_attribute(attr),
+                "traversable": traversable,
             }
 
             if traversable:
@@ -162,7 +162,7 @@ class ActorProxy:
         Returns true for any attribute name that may be exposed through
         :class:`ActorProxy`.
         """
-        return not attr_name.startswith('_')
+        return not attr_name.startswith("_")
 
     def _is_self_proxy(self, attr):
         """Returns true if attribute is an equivalent actor proxy."""
@@ -178,8 +178,8 @@ class ActorProxy:
         actor through a proxy.
         """
         return (
-            getattr(attr, '_pykka_traversable', False) is True
-            or getattr(attr, 'pykka_traversable', False) is True
+            getattr(attr, "_pykka_traversable", False) is True
+            or getattr(attr, "pykka_traversable", False) is True
         )
 
     def __eq__(self, other):
@@ -195,12 +195,12 @@ class ActorProxy:
         return hash((self._actor, self._attr_path))
 
     def __repr__(self):
-        return '<ActorProxy for {}, attr_path={!r}>'.format(
+        return "<ActorProxy for {}, attr_path={!r}>".format(
             self.actor_ref, self._attr_path
         )
 
     def __dir__(self):
-        result = ['__class__']
+        result = ["__class__"]
         result += list(self.__class__.__dict__.keys())
         result += list(self.__dict__.keys())
         result += [attr_path[0] for attr_path in list(self._known_attrs.keys())]
@@ -215,15 +215,15 @@ class ActorProxy:
 
         attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:
-            raise AttributeError('{} has no attribute {!r}'.format(self, name))
+            raise AttributeError("{} has no attribute {!r}".format(self, name))
 
-        if attr_info['callable']:
+        if attr_info["callable"]:
             if attr_path not in self._callable_proxies:
                 self._callable_proxies[attr_path] = CallableProxy(
                     self.actor_ref, attr_path
                 )
             return self._callable_proxies[attr_path]
-        elif attr_info['traversable']:
+        elif attr_info["traversable"]:
             if attr_path not in self._actor_proxies:
                 self._actor_proxies[attr_path] = ActorProxy(
                     self.actor_ref, attr_path
@@ -239,7 +239,7 @@ class ActorProxy:
 
         Blocks until the field is set to check if any exceptions was raised.
         """
-        if name == 'actor_ref' or name.startswith('_'):
+        if name == "actor_ref" or name.startswith("_"):
             return super().__setattr__(name, value)
         attr_path = self._attr_path + (name,)
         message = messages.ProxySetAttr(attr_path=attr_path, value=value)
@@ -347,10 +347,10 @@ def traversable(obj):
 
     .. versionadded:: 2.0
     """
-    if hasattr(obj, '__slots__'):
+    if hasattr(obj, "__slots__"):
         raise Exception(
-            'pykka.traversable() cannot be used to mark '
-            'an object using slots as traversable.'
+            "pykka.traversable() cannot be used to mark "
+            "an object using slots as traversable."
         )
     obj._pykka_traversable = True
     return obj

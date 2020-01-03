@@ -12,23 +12,23 @@ from pykka._threading import ThreadingActor, ThreadingFuture
 
 
 __all__ = [
-    'Actor',
-    'ActorDeadError',
-    'ActorProxy',
-    'ActorRef',
-    'ActorRegistry',
-    'CallableProxy',
-    'Future',
-    'ThreadingActor',
-    'ThreadingFuture',
-    'Timeout',
-    'get_all',
-    'traversable',
+    "Actor",
+    "ActorDeadError",
+    "ActorProxy",
+    "ActorRef",
+    "ActorRegistry",
+    "CallableProxy",
+    "Future",
+    "ThreadingActor",
+    "ThreadingFuture",
+    "Timeout",
+    "get_all",
+    "traversable",
 ]
 
 
 #: Pykka's :pep:`396` and :pep:`440` compatible version number
-__version__ = _pkg_resources.get_distribution('pykka').version
+__version__ = _pkg_resources.get_distribution("pykka").version
 
 
-_logging.getLogger('pykka').addHandler(_logging.NullHandler())
+_logging.getLogger("pykka").addHandler(_logging.NullHandler())

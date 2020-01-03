@@ -18,9 +18,9 @@ class PlainActor(pykka.ThreadingActor):
             self.stored_messages.append(message)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     actor = PlainActor.start()
-    actor.tell({'no': 'Norway', 'se': 'Sweden'})
-    actor.tell({'a': 3, 'b': 4, 'c': 5})
+    actor.tell({"no": "Norway", "se": "Sweden"})
+    actor.tell({"a": 3, "b": 4, "c": 5})
     print(actor.ask(GetMessages))
     actor.stop()

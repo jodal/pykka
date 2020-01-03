@@ -3,7 +3,7 @@ import pytest
 from pykka import ActorRegistry
 
 
-pytestmark = pytest.mark.usefixtures('stop_all')
+pytestmark = pytest.mark.usefixtures("stop_all")
 
 
 class ActorBase:
@@ -17,7 +17,7 @@ class ActorBase:
         self.received_messages.append(message)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def actor_a_class(runtime):
     class ActorA(ActorBase, runtime.actor_class):
         pass
@@ -25,7 +25,7 @@ def actor_a_class(runtime):
     return ActorA
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def actor_b_class(runtime):
     class ActorB(ActorBase, runtime.actor_class):
         pass
@@ -89,7 +89,7 @@ def test_all_actors_can_be_stopped_through_registry(a_actor_refs, b_actor_refs):
 
 
 def test_stop_all_stops_last_started_actor_first_if_blocking(mocker):
-    mocker.patch.object(ActorRegistry, 'get_all')
+    mocker.patch.object(ActorRegistry, "get_all")
 
     stopped_actors = []
     started_actors = [mocker.Mock(name=i) for i in range(3)]
@@ -136,7 +136,7 @@ def test_actors_may_be_looked_up_by_superclass(
 def test_actors_may_be_looked_up_by_class_name(
     actor_a_class, a_actor_refs, b_actor_refs
 ):
-    result = ActorRegistry.get_by_class_name('ActorA')
+    result = ActorRegistry.get_by_class_name("ActorA")
 
     for a_actor in a_actor_refs:
         assert a_actor in result
@@ -151,7 +151,7 @@ def test_actors_may_be_looked_up_by_urn(actor_ref):
 
 
 def test_get_by_urn_returns_none_if_not_found():
-    result = ActorRegistry.get_by_urn('urn:foo:bar')
+    result = ActorRegistry.get_by_urn("urn:foo:bar")
 
     assert result is None
 
@@ -159,39 +159,39 @@ def test_get_by_urn_returns_none_if_not_found():
 def test_broadcast_sends_message_to_all_actors_if_no_target(
     a_actor_refs, b_actor_refs
 ):
-    ActorRegistry.broadcast({'command': 'foo'})
+    ActorRegistry.broadcast({"command": "foo"})
 
     running_actors = ActorRegistry.get_all()
     assert running_actors
 
     for actor_ref in running_actors:
         received_messages = actor_ref.proxy().received_messages.get()
-        assert {'command': 'foo'} in received_messages
+        assert {"command": "foo"} in received_messages
 
 
 def test_broadcast_sends_message_to_all_actors_of_given_class(
     actor_a_class, actor_b_class
 ):
-    ActorRegistry.broadcast({'command': 'foo'}, target_class=actor_a_class)
+    ActorRegistry.broadcast({"command": "foo"}, target_class=actor_a_class)
 
     for actor_ref in ActorRegistry.get_by_class(actor_a_class):
         received_messages = actor_ref.proxy().received_messages.get()
-        assert {'command': 'foo'} in received_messages
+        assert {"command": "foo"} in received_messages
 
     for actor_ref in ActorRegistry.get_by_class(actor_b_class):
         received_messages = actor_ref.proxy().received_messages.get()
-        assert {'command': 'foo'} not in received_messages
+        assert {"command": "foo"} not in received_messages
 
 
 def test_broadcast_sends_message_to_all_actors_of_given_class_name(
     actor_a_class, actor_b_class
 ):
-    ActorRegistry.broadcast({'command': 'foo'}, target_class='ActorA')
+    ActorRegistry.broadcast({"command": "foo"}, target_class="ActorA")
 
     for actor_ref in ActorRegistry.get_by_class(actor_a_class):
         received_messages = actor_ref.proxy().received_messages.get()
-        assert {'command': 'foo'} in received_messages
+        assert {"command": "foo"} in received_messages
 
     for actor_ref in ActorRegistry.get_by_class(actor_b_class):
         received_messages = actor_ref.proxy().received_messages.get()
-        assert {'command': 'foo'} not in received_messages
+        assert {"command": "foo"} not in received_messages

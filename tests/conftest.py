@@ -11,8 +11,8 @@ from tests.log_handler import PykkaTestLogHandler
 
 
 Runtime = namedtuple(
-    'Runtime',
-    ['name', 'actor_class', 'event_class', 'future_class', 'sleep_func'],
+    "Runtime",
+    ["name", "actor_class", "event_class", "future_class", "sleep_func"],
 )
 
 
@@ -22,15 +22,15 @@ class NullCollector(pytest.collect.File):
 
 
 RUNTIMES = {
-    'threading': pytest.param(
+    "threading": pytest.param(
         Runtime(
-            name='threading',
+            name="threading",
             actor_class=ThreadingActor,
             event_class=threading.Event,
             future_class=ThreadingFuture,
             sleep_func=time.sleep,
         ),
-        id='threading',
+        id="threading",
     )
 }
 
@@ -39,56 +39,56 @@ try:
     import gevent.event
     from pykka.gevent import GeventActor, GeventFuture
 except ImportError:
-    RUNTIMES['gevent'] = pytest.param(
+    RUNTIMES["gevent"] = pytest.param(
         None,
-        id='gevent',
-        marks=pytest.mark.skip(reason='skipping gevent tests'),
+        id="gevent",
+        marks=pytest.mark.skip(reason="skipping gevent tests"),
     )
 else:
-    RUNTIMES['gevent'] = pytest.param(
+    RUNTIMES["gevent"] = pytest.param(
         Runtime(
-            name='gevent',
+            name="gevent",
             actor_class=GeventActor,
             event_class=gevent.event.Event,
             future_class=GeventFuture,
             sleep_func=gevent.sleep,
         ),
-        id='gevent',
+        id="gevent",
     )
 
 try:
     import eventlet
     from pykka.eventlet import EventletActor, EventletEvent, EventletFuture
 except ImportError:
-    RUNTIMES['eventlet'] = pytest.param(
+    RUNTIMES["eventlet"] = pytest.param(
         None,
-        id='eventlet',
-        marks=pytest.mark.skip(reason='skipping eventlet tests'),
+        id="eventlet",
+        marks=pytest.mark.skip(reason="skipping eventlet tests"),
     )
 else:
-    RUNTIMES['eventlet'] = pytest.param(
+    RUNTIMES["eventlet"] = pytest.param(
         Runtime(
-            name='eventlet',
+            name="eventlet",
             actor_class=EventletActor,
             event_class=EventletEvent,
             future_class=EventletFuture,
             sleep_func=eventlet.sleep,
         ),
-        id='eventlet',
+        id="eventlet",
     )
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def eventlet_runtime():
-    return RUNTIMES['eventlet'].values[0]
+    return RUNTIMES["eventlet"].values[0]
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def gevent_runtime():
-    return RUNTIMES['gevent'].values[0]
+    return RUNTIMES["gevent"].values[0]
 
 
-@pytest.fixture(scope='session', params=RUNTIMES.values())
+@pytest.fixture(scope="session", params=RUNTIMES.values())
 def runtime(request):
     return request.param
 
@@ -126,7 +126,7 @@ def events(runtime):
     return Events()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def early_failing_actor_class(runtime):
     class EarlyFailingActor(runtime.actor_class):
         def __init__(self, events):
@@ -135,14 +135,14 @@ def early_failing_actor_class(runtime):
 
         def on_start(self):
             try:
-                raise RuntimeError('on_start failure')
+                raise RuntimeError("on_start failure")
             finally:
                 self.events.on_start_was_called.set()
 
     return EarlyFailingActor
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def late_failing_actor_class(runtime):
     class LateFailingActor(runtime.actor_class):
         def __init__(self, events):
@@ -154,14 +154,14 @@ def late_failing_actor_class(runtime):
 
         def on_stop(self):
             try:
-                raise RuntimeError('on_stop failure')
+                raise RuntimeError("on_stop failure")
             finally:
                 self.events.on_stop_was_called.set()
 
     return LateFailingActor
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def failing_on_failure_actor_class(runtime):
     class FailingOnFailureActor(runtime.actor_class):
         def __init__(self, events):
@@ -169,14 +169,14 @@ def failing_on_failure_actor_class(runtime):
             self.events = events
 
         def on_receive(self, message):
-            if message.get('command') == 'raise exception':
-                raise Exception('on_receive failure')
+            if message.get("command") == "raise exception":
+                raise Exception("on_receive failure")
             else:
                 super().on_receive(message)
 
         def on_failure(self, *args):
             try:
-                raise RuntimeError('on_failure failure')
+                raise RuntimeError("on_failure failure")
             finally:
                 self.events.on_failure_was_called.set()
 

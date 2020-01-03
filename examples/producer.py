@@ -7,5 +7,5 @@ class ProducerActor(pykka.ThreadingActor):
         self.consumer = consumer
 
     def produce(self):
-        new_item = {'item': 1, 'new': True}
+        new_item = {"item": 1, "new": True}
         self.consumer.consume(new_item)

@@ -1,4 +1,4 @@
-__all__ = ['ActorDeadError', 'Timeout']
+__all__ = ["ActorDeadError", "Timeout"]
 
 
 class ActorDeadError(Exception):

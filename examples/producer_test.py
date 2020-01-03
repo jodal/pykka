@@ -28,4 +28,4 @@ def test_producer_actor(consumer_mock, producer):
     producer.produce().get()
 
     # Step 3: Assert that the return values or actor state is as expected.
-    consumer_mock.consume.assert_called_once_with({'item': 1, 'new': True})
+    consumer_mock.consume.assert_called_once_with({"item": 1, "new": True})

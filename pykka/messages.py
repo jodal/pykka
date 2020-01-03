@@ -30,10 +30,10 @@ from collections import namedtuple
 
 
 # Internal actor messages
-_ActorStop = namedtuple('ActorStop', [])
+_ActorStop = namedtuple("ActorStop", [])
 
 # Public proxy messages
-ProxyCall = namedtuple('ProxyCall', ['attr_path', 'args', 'kwargs'])
+ProxyCall = namedtuple("ProxyCall", ["attr_path", "args", "kwargs"])
 ProxyCall.__doc__ = """
 Message to ask the actor to call the method with the arguments.
 """
@@ -41,7 +41,7 @@ ProxyCall.attr_path.__doc__ = "List with the path from the actor to the method."
 ProxyCall.args.__doc__ = "List with positional arguments."
 ProxyCall.kwargs.__doc__ = "Dict with keyword arguments."
 
-ProxyGetAttr = namedtuple('ProxyGetAttr', ['attr_path'])
+ProxyGetAttr = namedtuple("ProxyGetAttr", ["attr_path"])
 ProxyGetAttr.__doc__ = """
 Message to ask the actor to return the value of the attribute.
 """
@@ -49,7 +49,7 @@ ProxyGetAttr.attr_path.__doc__ = """
 List with the path from the actor to the attribute.
 """
 
-ProxySetAttr = namedtuple('ProxySetAttr', ['attr_path', 'value'])
+ProxySetAttr = namedtuple("ProxySetAttr", ["attr_path", "value"])
 ProxySetAttr.__doc__ = """
 Message to ask the actor to set the attribute to the value.
 """
@@ -68,30 +68,30 @@ def _upgrade_internal_message(message):
 
     if not isinstance(message, dict):
         return message
-    if not message.get('command', '').startswith('pykka_'):
+    if not message.get("command", "").startswith("pykka_"):
         return message
 
     warnings.warn(
-        'Pykka received a dict-based internal message. '
-        'This is deprecated and will be unsupported in the future. '
-        'Message: {!r}'.format(message),
+        "Pykka received a dict-based internal message. "
+        "This is deprecated and will be unsupported in the future. "
+        "Message: {!r}".format(message),
         DeprecationWarning,
     )
 
-    command = message.get('command')
-    if command == 'pykka_stop':
+    command = message.get("command")
+    if command == "pykka_stop":
         return _ActorStop()
-    elif command == 'pykka_call':
+    elif command == "pykka_call":
         return ProxyCall(
-            attr_path=message['attr_path'],
-            args=message['args'],
-            kwargs=message['kwargs'],
+            attr_path=message["attr_path"],
+            args=message["args"],
+            kwargs=message["kwargs"],
         )
-    elif command == 'pykka_getattr':
-        return ProxyGetAttr(attr_path=message['attr_path'])
-    elif command == 'pykka_setattr':
+    elif command == "pykka_getattr":
+        return ProxyGetAttr(attr_path=message["attr_path"])
+    elif command == "pykka_setattr":
         return ProxySetAttr(
-            attr_path=message['attr_path'], value=message['value']
+            attr_path=message["attr_path"], value=message["value"]
         )
     else:
-        raise ValueError('Unknown internal message: {!r}'.format(message))
+        raise ValueError("Unknown internal message: {!r}".format(message))

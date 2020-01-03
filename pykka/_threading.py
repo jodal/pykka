@@ -5,7 +5,7 @@ import threading
 from pykka import Actor, Future, Timeout
 
 
-__all__ = ['ThreadingActor', 'ThreadingFuture']
+__all__ = ["ThreadingActor", "ThreadingFuture"]
 
 
 class ThreadingFuture(Future):
@@ -40,24 +40,24 @@ class ThreadingFuture(Future):
         try:
             if self._data is None:
                 self._data = self._queue.get(True, timeout)
-            if 'exc_info' in self._data:
-                (exc_type, exc_value, exc_traceback) = self._data['exc_info']
+            if "exc_info" in self._data:
+                (exc_type, exc_value, exc_traceback) = self._data["exc_info"]
                 if exc_value is None:
                     exc_value = exc_type()
                 if exc_value.__traceback__ is not exc_traceback:
                     raise exc_value.with_traceback(exc_traceback)
                 raise exc_value
             else:
-                return self._data['value']
+                return self._data["value"]
         except queue.Empty:
-            raise Timeout('{} seconds'.format(timeout))
+            raise Timeout("{} seconds".format(timeout))
 
     def set(self, value=None):
-        self._queue.put({'value': value}, block=False)
+        self._queue.put({"value": value}, block=False)
 
     def set_exception(self, exc_info=None):
         assert exc_info is None or len(exc_info) == 3
-        self._queue.put({'exc_info': exc_info or sys.exc_info()})
+        self._queue.put({"exc_info": exc_info or sys.exc_info()})
 
 
 class ThreadingActor(Actor):
@@ -96,6 +96,6 @@ class ThreadingActor(Actor):
 
     def _start_actor_loop(self):
         thread = threading.Thread(target=self._actor_loop)
-        thread.name = thread.name.replace('Thread', self.__class__.__name__)
+        thread.name = thread.name.replace("Thread", self.__class__.__name__)
         thread.daemon = self.use_daemon_thread
         thread.start()

@@ -5,10 +5,10 @@ import pytest
 from pykka import ActorDeadError, ActorRegistry
 
 
-pytestmark = pytest.mark.usefixtures('stop_all')
+pytestmark = pytest.mark.usefixtures("stop_all")
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def actor_class(runtime):
     class ActorA(runtime.actor_class):
         def __init__(self, events):
@@ -27,20 +27,20 @@ def actor_class(runtime):
             self.events.on_failure_was_called.set()
 
         def on_receive(self, message):
-            if message.get('command') == 'raise exception':
-                raise Exception('foo')
-            elif message.get('command') == 'raise base exception':
+            if message.get("command") == "raise exception":
+                raise Exception("foo")
+            elif message.get("command") == "raise base exception":
                 raise BaseException()
-            elif message.get('command') == 'stop twice':
+            elif message.get("command") == "stop twice":
                 self.stop()
                 self.stop()
-            elif message.get('command') == 'message self then stop':
-                self.actor_ref.tell({'command': 'greetings'})
+            elif message.get("command") == "message self then stop":
+                self.actor_ref.tell({"command": "greetings"})
                 self.stop()
-            elif message.get('command') == 'greetings':
+            elif message.get("command") == "greetings":
                 self.events.greetings_was_received.set()
-            elif message.get('command') == 'callback':
-                message['callback']()
+            elif message.get("command") == "callback":
+                message["callback"]()
             else:
                 super().on_receive(message)
 
@@ -54,7 +54,7 @@ def actor_ref(actor_class, events):
     ref.stop()
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def early_stopping_actor_class(runtime):
     class EarlyStoppingActor(runtime.actor_class):
         def __init__(self, events):
@@ -75,9 +75,9 @@ def test_messages_left_in_queue_after_actor_stops_receive_an_error(
 ):
     event = runtime.event_class()
 
-    actor_ref.tell({'command': 'callback', 'callback': event.wait})
+    actor_ref.tell({"command": "callback", "callback": event.wait})
     actor_ref.stop(block=False)
-    response = actor_ref.ask({'command': 'irrelevant'}, block=False)
+    response = actor_ref.ask({"command": "irrelevant"}, block=False)
     event.set()
 
     with pytest.raises(ActorDeadError):
@@ -89,7 +89,7 @@ def test_stop_requests_left_in_queue_after_actor_stops_are_handled(
 ):
     event = runtime.event_class()
 
-    actor_ref.tell({'command': 'callback', 'callback': event.wait})
+    actor_ref.tell({"command": "callback", "callback": event.wait})
     actor_ref.stop(block=False)
     response = actor_ref.stop(block=False)
     event.set()
@@ -112,7 +112,7 @@ def test_actor_has_unique_uuid(actor_class, events):
 def test_str_on_raw_actor_contains_actor_class_name(actor_class, events):
     unstarted_actor = actor_class(events)
 
-    assert 'ActorA' in str(unstarted_actor)
+    assert "ActorA" in str(unstarted_actor)
 
 
 def test_str_on_raw_actor_contains_actor_urn(actor_class, events):
@@ -122,7 +122,7 @@ def test_str_on_raw_actor_contains_actor_urn(actor_class, events):
 
 
 def test_init_can_be_called_with_arbitrary_arguments(runtime):
-    runtime.actor_class(1, 2, 3, foo='bar')
+    runtime.actor_class(1, 2, 3, foo="bar")
 
 
 def test_on_start_is_called_before_first_message_is_processed(
@@ -193,7 +193,7 @@ def test_on_failure_is_called_when_exception_cannot_be_returned(
 ):
     assert not events.on_failure_was_called.is_set()
 
-    actor_ref.tell({'command': 'raise exception'})
+    actor_ref.tell({"command": "raise exception"})
 
     events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
@@ -205,7 +205,7 @@ def test_on_failure_failure_causes_actor_to_stop(
 ):
     actor_ref = failing_on_failure_actor_class.start(events)
 
-    actor_ref.tell({'command': 'raise exception'})
+    actor_ref.tell({"command": "raise exception"})
 
     events.on_failure_was_called.wait(5)
     assert not actor_ref.is_alive()
@@ -216,7 +216,7 @@ def test_actor_is_stopped_when_unhandled_exceptions_are_raised(
 ):
     assert not events.on_failure_was_called.is_set()
 
-    actor_ref.tell({'command': 'raise exception'})
+    actor_ref.tell({"command": "raise exception"})
 
     events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
@@ -227,7 +227,7 @@ def test_all_actors_are_stopped_on_base_exception(events, actor_ref):
     assert len(ActorRegistry.get_all()) == 1
     assert not events.on_stop_was_called.is_set()
 
-    actor_ref.tell({'command': 'raise base exception'})
+    actor_ref.tell({"command": "raise base exception"})
 
     events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()
@@ -239,13 +239,13 @@ def test_all_actors_are_stopped_on_base_exception(events, actor_ref):
 
 
 def test_actor_can_call_stop_on_self_multiple_times(actor_ref):
-    actor_ref.ask({'command': 'stop twice'})
+    actor_ref.ask({"command": "stop twice"})
 
 
 def test_actor_processes_all_messages_before_stop_on_self_stops_it(
     actor_ref, events
 ):
-    actor_ref.ask({'command': 'message self then stop'})
+    actor_ref.ask({"command": "message self then stop"})
 
     events.greetings_was_received.wait(5)
     assert events.greetings_was_received.is_set()

@@ -40,7 +40,7 @@ def test_actor_thread_is_named_after_pykka_actor_class(regular_actor_ref):
 def test_actor_thread_is_not_daemonic_by_default(regular_actor_ref):
     alive_threads = threading.enumerate()
     actor_threads = [
-        t for t in alive_threads if t.name.startswith('RegularActor')
+        t for t in alive_threads if t.name.startswith("RegularActor")
     ]
 
     assert len(actor_threads) == 1
@@ -52,7 +52,7 @@ def test_actor_thread_is_daemonic_if_use_daemon_thread_flag_is_set(
 ):
     alive_threads = threading.enumerate()
     actor_threads = [
-        t for t in alive_threads if t.name.startswith('DaemonActor')
+        t for t in alive_threads if t.name.startswith("DaemonActor")
     ]
 
     assert len(actor_threads) == 1

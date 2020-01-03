@@ -4,10 +4,10 @@ import threading
 import traceback
 
 
-logger = logging.getLogger('pykka')
+logger = logging.getLogger("pykka")
 
 
-__all__ = ['log_thread_tracebacks']
+__all__ = ["log_thread_tracebacks"]
 
 
 def log_thread_tracebacks(*args, **kwargs):
@@ -58,8 +58,8 @@ def log_thread_tracebacks(*args, **kwargs):
     thread_names = {t.ident: t.name for t in threading.enumerate()}
 
     for ident, frame in sys._current_frames().items():
-        name = thread_names.get(ident, '?')
-        stack = ''.join(traceback.format_stack(frame))
+        name = thread_names.get(ident, "?")
+        stack = "".join(traceback.format_stack(frame))
         logger.critical(
-            'Current state of {} (ident: {}):\n{}'.format(name, ident, stack)
+            "Current state of {} (ident: {}):\n{}".format(name, ident, stack)
         )

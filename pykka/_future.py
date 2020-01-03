@@ -1,7 +1,7 @@
 import functools
 
 
-__all__ = ['Future', 'get_all']
+__all__ = ["Future", "get_all"]
 
 
 class Future:
