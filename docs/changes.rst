@@ -21,6 +21,9 @@ v3.0.0 (UNRELEASED)
   :class:`~threading.Event` API.
   (PR: :issue:`91`)
 
+- Include complete type hint stubs for all public APIs in the PyPI distribution.
+  (PR: :issue:`92`)
+
 
 v2.0.2 (2019-12-02)
 ===================

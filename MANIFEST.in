@@ -2,6 +2,7 @@ include *.rst
 include *.txt
 include *.yml
 include LICENSE
+include pykka/py.typed
 include pylintrc
 include pyproject.toml
 include setup.cfg
@@ -14,5 +15,7 @@ recursive-include docs *
 prune docs/_build
 
 recursive-include examples *.py
+
+recursive-include pykka *.pyi
 
 recursive-include tests *.py
