@@ -14,10 +14,10 @@ workflows:
       - py38
       - pypy
       - pypy3
+      - black
+      - check-manifest
       - docs
       - flake8
-      - check-manifest
-      - black
 
 jobs:
   py38: &test-template
@@ -80,10 +80,11 @@ jobs:
     docker:
       - image: pypy:3.5
 
+  black: *test-template
+
+  check-manifest: *test-template
+
   docs: *test-template
 
   flake8: *test-template
 
-  check-manifest: *test-template
-
-  black: *test-template
