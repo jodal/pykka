@@ -1,3 +1,4 @@
+import asyncio
 import sys
 import traceback
 
@@ -6,6 +7,12 @@ import pytest
 from pykka import Future, Timeout, get_all
 
 from tests import has_gevent
+
+
+def run_async(coroutine):
+    loop = asyncio.get_event_loop()
+    f = asyncio.ensure_future(coroutine, loop=loop)
+    return loop.run_until_complete(f)
 
 
 def test_base_future_get_is_not_implemented():
@@ -113,6 +120,23 @@ def test_get_raises_exception_with_full_traceback(runtime):
     assert len(exc_traceback_list_set) < len(exc_traceback_list_get)
     for i, frame in enumerate(exc_traceback_list_set):
         assert frame == exc_traceback_list_get[i]
+
+
+def test_future_supports_await_syntax(future):
+    async def get_value():
+        return await future
+
+    future.set(1)
+    assert run_async(get_value()) == 1
+
+
+def test_future_supports_yield_from_syntax(future):
+    def get_value():
+        val = yield from future
+        return val
+
+    future.set(1)
+    assert run_async(get_value()) == 1
 
 
 def test_filter_excludes_items_not_matching_predicate(future):

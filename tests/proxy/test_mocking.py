@@ -1,6 +1,6 @@
-import pytest
+from collections.abc import Callable
 
-from pykka import _compat
+import pytest
 
 
 @pytest.fixture
@@ -34,7 +34,7 @@ def test_actor_with_noncallable_mock_property_works(
 ):
     mock = mocker.NonCallableMock()
     mock.__get__ = mocker.Mock(return_value='mocked property value')
-    assert not isinstance(mock, _compat.Callable)
+    assert not isinstance(mock, Callable)
 
     actor_class.a_rw_property = mock
     proxy = actor_class.start().proxy()
@@ -51,7 +51,7 @@ def test_actor_with_callable_mock_property_does_not_work(
 ):
     mock = mocker.Mock()
     mock.__get__ = mocker.Mock(return_value='mocked property value')
-    assert isinstance(mock, _compat.Callable)
+    assert isinstance(mock, Callable)
 
     actor_class.a_rw_property = mock
     proxy = actor_class.start().proxy()

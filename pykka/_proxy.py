@@ -1,8 +1,9 @@
 from __future__ import absolute_import
 
 import logging
+from collections.abc import Callable
 
-from pykka import ActorDeadError, _compat, messages
+from pykka import ActorDeadError, messages
 
 
 __all__ = ['ActorProxy']
@@ -171,7 +172,7 @@ class ActorProxy(object):
 
     def _is_callable_attribute(self, attr):
         """Returns true for any attribute that is callable."""
-        return isinstance(attr, _compat.Callable)
+        return isinstance(attr, Callable)
 
     def _is_traversable_attribute(self, attr):
         """

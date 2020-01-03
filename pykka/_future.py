@@ -1,7 +1,5 @@
 import functools
 
-from pykka import _compat
-
 
 __all__ = ['Future', 'get_all']
 
@@ -241,7 +239,11 @@ class Future(object):
         )
         return future
 
-    __await__ = _compat.await_dunder_future
+    def __await__(self):
+        yield
+        value = self.get()
+        return value
+
     __iter__ = __await__
 
 
