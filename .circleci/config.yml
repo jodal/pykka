@@ -20,9 +20,9 @@ workflows:
       - black
 
 jobs:
-  py37: &test-template
+  py38: &test-template
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
@@ -65,10 +65,10 @@ jobs:
     docker:
       - image: circleci/python:3.6
 
-  py38:
+  py37:
     <<: *test-template
     docker:
-      - image: circleci/python:3.8-rc
+      - image: circleci/python:3.7
 
   pypy:
     <<: *test-template
