@@ -15,6 +15,7 @@ workflows:
       - check-manifest
       - docs
       - flake8
+      - mypy
 
 jobs:
   py38: &test-template
@@ -69,3 +70,5 @@ jobs:
   docs: *test-template
 
   flake8: *test-template
+
+  mypy: *test-template
