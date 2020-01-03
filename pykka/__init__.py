@@ -1,5 +1,7 @@
 import logging as _logging
 
+import pkg_resources as _pkg_resources
+
 from pykka._exceptions import ActorDeadError, Timeout
 from pykka._future import Future, get_all
 from pykka._proxy import ActorProxy, CallableProxy, traversable
@@ -26,7 +28,7 @@ __all__ = [
 
 
 #: Pykka's :pep:`396` and :pep:`440` compatible version number
-__version__ = '2.0.2'
+__version__ = _pkg_resources.get_distribution('pykka').version
 
 
 _logging.getLogger('pykka').addHandler(_logging.NullHandler())

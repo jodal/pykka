@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 
+import configparser
 import os
 import re
 import sys
@@ -63,9 +64,11 @@ copyright = u'2010-2019, Stein Magnus Jodal and contributors'
 
 
 def get_version():
-    init_py = open('../pykka/__init__.py').read()
-    metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", init_py))
-    return metadata['version']
+    # Get current library version without requiring the library to be
+    # installed, like ``pkg_resources.get_distribution(...).version`` requires.
+    cp = configparser.ConfigParser()
+    cp.read(os.path.join(os.path.dirname(__file__), '..', 'setup.cfg'))
+    return cp['metadata']['version']
 
 
 release = get_version()
