@@ -20,7 +20,7 @@ Pykka works with CPython 2.7 and 3.5+, as well as PyPy 2.7 and 3.5+.
 License
 =======
 
-Pykka is copyright 2010-2019 Stein Magnus Jodal and contributors.
+Pykka is copyright 2010-2020 Stein Magnus Jodal and contributors.
 Pykka is licensed under the `Apache License, Version 2.0
 <https://www.apache.org/licenses/LICENSE-2.0>`_.
 
