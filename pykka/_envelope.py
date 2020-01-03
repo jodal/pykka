@@ -1,4 +1,4 @@
-class Envelope(object):
+class Envelope:
     """
     Envelope to add metadata to a message.
 

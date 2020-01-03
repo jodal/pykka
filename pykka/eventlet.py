@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import sys
 
 import eventlet
@@ -38,7 +36,7 @@ class EventletEvent(eventlet.event.Event):
 
             try:
                 with wait_timeout:
-                    super(EventletEvent, self).wait()
+                    super().wait()
             except eventlet.Timeout as t:
                 if t is not wait_timeout:
                     raise
@@ -58,12 +56,12 @@ class EventletFuture(Future):
     event = None
 
     def __init__(self):
-        super(EventletFuture, self).__init__()
+        super().__init__()
         self.event = eventlet.event.Event()
 
     def get(self, timeout=None):
         try:
-            return super(EventletFuture, self).get(timeout=timeout)
+            return super().get(timeout=timeout)
         except NotImplementedError:
             pass
 

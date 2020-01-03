@@ -6,7 +6,7 @@ from pykka.messages import _ActorStop
 __all__ = ['ActorRef']
 
 
-class ActorRef(object):
+class ActorRef:
     """
     Reference to a running actor which may safely be passed around.
 

@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import queue
 import sys
 import threading
@@ -29,13 +27,13 @@ class ThreadingFuture(Future):
     """
 
     def __init__(self):
-        super(ThreadingFuture, self).__init__()
+        super().__init__()
         self._queue = queue.Queue(maxsize=1)
         self._data = None
 
     def get(self, timeout=None):
         try:
-            return super(ThreadingFuture, self).get(timeout=timeout)
+            return super().get(timeout=timeout)
         except NotImplementedError:
             pass
 

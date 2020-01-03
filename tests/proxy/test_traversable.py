@@ -3,11 +3,11 @@ import pytest
 import pykka
 
 
-class NestedWithNoMarker(object):
+class NestedWithNoMarker:
     inner = 'nested_with_no_marker.inner'
 
 
-class NestedWithNoMarkerAndSlots(object):
+class NestedWithNoMarkerAndSlots:
     __slots__ = ['inner']
 
     def __init__(self):
@@ -15,16 +15,16 @@ class NestedWithNoMarkerAndSlots(object):
 
 
 @pykka.traversable
-class NestedWithDecoratorMarker(object):
+class NestedWithDecoratorMarker:
     inner = 'nested_with_decorator_marker.inner'
 
 
-class NestedWithAttrMarker(object):
+class NestedWithAttrMarker:
     pykka_traversable = True
     inner = 'nested_with_attr_marker.inner'
 
 
-class NestedWithAttrMarkerAndSlots(object):
+class NestedWithAttrMarkerAndSlots:
     __slots__ = ['pykka_traversable', 'inner']
 
     def __init__(self):

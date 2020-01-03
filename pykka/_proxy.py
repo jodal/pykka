@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import logging
 from collections.abc import Callable
 
@@ -11,7 +9,7 @@ __all__ = ['ActorProxy']
 logger = logging.getLogger('pykka')
 
 
-class ActorProxy(object):
+class ActorProxy:
     """
     An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>`
     instance. The proxy allows the referenced actor to be used through regular
@@ -242,13 +240,13 @@ class ActorProxy(object):
         Blocks until the field is set to check if any exceptions was raised.
         """
         if name == 'actor_ref' or name.startswith('_'):
-            return super(ActorProxy, self).__setattr__(name, value)
+            return super().__setattr__(name, value)
         attr_path = self._attr_path + (name,)
         message = messages.ProxySetAttr(attr_path=attr_path, value=value)
         return self.actor_ref.ask(message)
 
 
-class CallableProxy(object):
+class CallableProxy:
     """Proxy to a single method.
 
     :class:`CallableProxy` instances are returned when accessing methods on a

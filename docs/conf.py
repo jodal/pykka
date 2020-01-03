@@ -1,8 +1,5 @@
-# encoding: utf-8
-
 """Pykka documentation build configuration file"""
 
-from __future__ import unicode_literals
 
 import configparser
 import os
@@ -14,7 +11,7 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 
-class Mock(object):
+class Mock:
     def __init__(self, *args, **kwargs):
         pass
 
@@ -58,8 +55,8 @@ templates_path = ['_templates']
 source_suffix = '.rst'
 master_doc = 'index'
 
-project = u'Pykka'
-copyright = u'2010-2020, Stein Magnus Jodal and contributors'
+project = 'Pykka'
+copyright = '2010-2020, Stein Magnus Jodal and contributors'
 
 
 def get_version():

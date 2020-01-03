@@ -4,7 +4,7 @@ import functools
 __all__ = ['Future', 'get_all']
 
 
-class Future(object):
+class Future:
     """
     A :class:`Future` is a handle to a value which is available or will be
     available in the future.
@@ -16,7 +16,7 @@ class Future(object):
     """
 
     def __init__(self):
-        super(Future, self).__init__()
+        super().__init__()
         self._get_hook = None
         self._get_hook_result = None
 

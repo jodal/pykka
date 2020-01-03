@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import logging
 import sys
 import threading
@@ -13,7 +11,7 @@ __all__ = ['Actor']
 logger = logging.getLogger('pykka')
 
 
-class Actor(object):
+class Actor:
     """
     To create an actor:
 

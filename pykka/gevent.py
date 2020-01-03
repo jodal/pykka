@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import sys
 
 import gevent
@@ -25,14 +23,14 @@ class GeventFuture(Future):
     async_result = None
 
     def __init__(self, async_result=None):
-        super(GeventFuture, self).__init__()
+        super().__init__()
         if async_result is None:
             async_result = gevent.event.AsyncResult()
         self.async_result = async_result
 
     def get(self, timeout=None):
         try:
-            return super(GeventFuture, self).get(timeout=timeout)
+            return super().get(timeout=timeout)
         except NotImplementedError:
             pass
 

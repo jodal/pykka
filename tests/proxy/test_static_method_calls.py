@@ -7,7 +7,7 @@ def actor_class(runtime):
         cat = 'dog'
 
         def __init__(self, events):
-            super(ActorA, self).__init__()
+            super().__init__()
             self.events = events
 
         def on_stop(self):

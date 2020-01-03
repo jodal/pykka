@@ -9,7 +9,7 @@ def time_it(func):
     print('{!r} took {:.3f}s'.format(func.__name__, time.time() - start))
 
 
-class SomeObject(object):
+class SomeObject:
     pykka_traversable = False
     cat = 'bar.cat'
 
@@ -24,7 +24,7 @@ class AnActor(ThreadingActor):
     foo = 'foo'
 
     def __init__(self):
-        super(AnActor, self).__init__()
+        super().__init__()
         self.cat = 'quox'
 
     def func(self):

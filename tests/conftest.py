@@ -116,7 +116,7 @@ def log_handler():
 
 @pytest.fixture
 def events(runtime):
-    class Events(object):
+    class Events:
         on_start_was_called = runtime.event_class()
         on_stop_was_called = runtime.event_class()
         on_failure_was_called = runtime.event_class()
@@ -130,7 +130,7 @@ def events(runtime):
 def early_failing_actor_class(runtime):
     class EarlyFailingActor(runtime.actor_class):
         def __init__(self, events):
-            super(EarlyFailingActor, self).__init__()
+            super().__init__()
             self.events = events
 
         def on_start(self):
@@ -146,7 +146,7 @@ def early_failing_actor_class(runtime):
 def late_failing_actor_class(runtime):
     class LateFailingActor(runtime.actor_class):
         def __init__(self, events):
-            super(LateFailingActor, self).__init__()
+            super().__init__()
             self.events = events
 
         def on_start(self):
@@ -165,14 +165,14 @@ def late_failing_actor_class(runtime):
 def failing_on_failure_actor_class(runtime):
     class FailingOnFailureActor(runtime.actor_class):
         def __init__(self, events):
-            super(FailingOnFailureActor, self).__init__()
+            super().__init__()
             self.events = events
 
         def on_receive(self, message):
             if message.get('command') == 'raise exception':
                 raise Exception('on_receive failure')
             else:
-                super(FailingOnFailureActor, self).on_receive(message)
+                super().on_receive(message)
 
         def on_failure(self, *args):
             try:

@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import logging
 import sys
 import threading
@@ -57,7 +55,7 @@ def log_thread_tracebacks(*args, **kwargs):
     .. versionadded:: 1.1
     """
 
-    thread_names = dict((t.ident, t.name) for t in threading.enumerate())
+    thread_names = {t.ident: t.name for t in threading.enumerate()}
 
     for ident, frame in sys._current_frames().items():
         name = thread_names.get(ident, '?')

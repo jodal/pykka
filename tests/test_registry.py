@@ -6,11 +6,11 @@ from pykka import ActorRegistry
 pytestmark = pytest.mark.usefixtures('stop_all')
 
 
-class ActorBase(object):
+class ActorBase:
     received_messages = None
 
     def __init__(self):
-        super(ActorBase, self).__init__()
+        super().__init__()
         self.received_messages = []
 
     def on_receive(self, message):

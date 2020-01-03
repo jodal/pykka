@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import logging
 import threading
 
@@ -10,7 +8,7 @@ logger = logging.getLogger('pykka')
 __all__ = ['ActorRegistry']
 
 
-class ActorRegistry(object):
+class ActorRegistry:
     """
     Registry which provides easy access to all running actors.
 

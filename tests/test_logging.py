@@ -10,7 +10,7 @@ pytestmark = pytest.mark.usefixtures('stop_all')
 def actor_class(runtime):
     class ActorA(runtime.actor_class):
         def __init__(self, events):
-            super(ActorA, self).__init__()
+            super().__init__()
             self.events = events
 
         def on_stop(self):
@@ -25,7 +25,7 @@ def actor_class(runtime):
             elif message.get('command') == 'raise base exception':
                 raise BaseException()
             else:
-                super(ActorA, self).on_receive(message)
+                super().on_receive(message)
 
         def raise_exception(self):
             raise Exception('foo')

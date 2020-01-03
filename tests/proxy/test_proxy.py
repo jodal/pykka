@@ -4,7 +4,7 @@ import pykka
 from pykka import ActorDeadError, ActorProxy
 
 
-class NestedObject(object):
+class NestedObject:
     pass
 
 
@@ -124,7 +124,7 @@ def test_actor_ref_may_be_retrieved_from_proxy_if_actor_is_dead(proxy):
 def test_actor_proxy_does_not_expose_proxy_to_self(runtime, log_handler):
     class Actor(runtime.actor_class):
         def __init__(self):
-            super(Actor, self).__init__()
+            super().__init__()
             self.self_proxy = self.actor_ref.proxy()
             self.foo = 'bar'
 

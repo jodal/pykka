@@ -12,7 +12,7 @@ pytestmark = pytest.mark.usefixtures('stop_all')
 def actor_class(runtime):
     class ActorA(runtime.actor_class):
         def __init__(self, events):
-            super(ActorA, self).__init__()
+            super().__init__()
             self.events = events
 
         def on_start(self):
@@ -42,7 +42,7 @@ def actor_class(runtime):
             elif message.get('command') == 'callback':
                 message['callback']()
             else:
-                super(ActorA, self).on_receive(message)
+                super().on_receive(message)
 
     return ActorA
 
@@ -58,7 +58,7 @@ def actor_ref(actor_class, events):
 def early_stopping_actor_class(runtime):
     class EarlyStoppingActor(runtime.actor_class):
         def __init__(self, events):
-            super(EarlyStoppingActor, self).__init__()
+            super().__init__()
             self.events = events
 
         def on_start(self):
