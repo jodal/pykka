@@ -25,7 +25,6 @@ It should be noted that these optimizations should only be necessary in very
 special circumstances.
 """
 
-import warnings
 from collections import namedtuple
 
 
@@ -57,41 +56,3 @@ ProxySetAttr.attr_path.__doc__ = """
 List with the path from the actor to the attribute.
 """
 ProxySetAttr.value.__doc__ = "The value to set the attribute to."
-
-
-def _upgrade_internal_message(message):
-    """Filter that upgrades dict-based internal messages to the new format.
-
-    This is needed for a transitional period because Mopidy < 3 uses
-    the old internal message format directly, and maybe others.
-    """
-
-    if not isinstance(message, dict):
-        return message
-    if not message.get("command", "").startswith("pykka_"):
-        return message
-
-    warnings.warn(
-        "Pykka received a dict-based internal message. "
-        "This is deprecated and will be unsupported in the future. "
-        "Message: {!r}".format(message),
-        DeprecationWarning,
-    )
-
-    command = message.get("command")
-    if command == "pykka_stop":
-        return _ActorStop()
-    elif command == "pykka_call":
-        return ProxyCall(
-            attr_path=message["attr_path"],
-            args=message["args"],
-            kwargs=message["kwargs"],
-        )
-    elif command == "pykka_getattr":
-        return ProxyGetAttr(attr_path=message["attr_path"])
-    elif command == "pykka_setattr":
-        return ProxySetAttr(
-            attr_path=message["attr_path"], value=message["value"]
-        )
-    else:
-        raise ValueError("Unknown internal message: {!r}".format(message))

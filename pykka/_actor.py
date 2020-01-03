@@ -289,7 +289,6 @@ class Actor:
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        message = messages._upgrade_internal_message(message)
         if isinstance(message, messages._ActorStop):
             return self._stop()
         if isinstance(message, messages.ProxyCall):
