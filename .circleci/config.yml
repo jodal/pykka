@@ -7,12 +7,10 @@ workflows:
   version: 2
   test:
     jobs:
-      - py27
       - py35
       - py36
       - py37
       - py38
-      - pypy
       - pypy3
       - docs
       - flake8
@@ -50,11 +48,6 @@ jobs:
       - store_test_results:
           path: test-results
 
-  py27:
-    <<: *test-template
-    docker:
-      - image: circleci/python:2.7
-
   py35:
     <<: *test-template
     docker:
@@ -69,11 +62,6 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
-
-  pypy:
-    <<: *test-template
-    docker:
-      - image: pypy:2.7
 
   pypy3:
     <<: *test-template
