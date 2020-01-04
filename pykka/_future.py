@@ -11,8 +11,8 @@ class Future:
 
     Typically returned by calls to actor methods or accesses to actor fields.
 
-    To get hold of the encapsulated value, call :meth:`Future.get` or, if
-    using Python 3.5+, ``await`` the future.
+    To get hold of the encapsulated value, call :meth:`Future.get` or
+    ``await`` the future.
     """
 
     def __init__(self):

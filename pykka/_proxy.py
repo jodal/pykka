@@ -49,8 +49,7 @@ class ActorProxy:
 
         actor_proxy.method_with_side_effect().get()
 
-    If you're using Python 3.5+, you can also use the ``await`` keyword to
-    block until the method completes::
+    You can also use the ``await`` keyword to block until the method completes::
 
         await actor_proxy.method_with_side_effect()
 
