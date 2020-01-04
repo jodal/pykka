@@ -56,7 +56,7 @@ def test_unexpected_messages_are_logged(actor_ref, log_handler):
         log_record = log_handler.messages["warning"][0]
 
     assert log_record.getMessage().split(": ")[0] == (
-        "Unexpected message received by {}".format(actor_ref)
+        f"Unexpected message received by {actor_ref}"
     )
 
 
@@ -70,7 +70,7 @@ def test_exception_is_logged_when_returned_to_caller(actor_ref, log_handler):
         log_record = log_handler.messages["info"][0]
 
     assert log_record.getMessage() == (
-        "Exception returned from {} to caller:".format(actor_ref)
+        f"Exception returned from {actor_ref} to caller:"
     )
     assert log_record.exc_info[0] == Exception
     assert str(log_record.exc_info[1]) == "foo"
@@ -90,9 +90,7 @@ def test_exception_is_logged_when_not_reply_requested(
         assert len(log_handler.messages["error"]) == 1
         log_record = log_handler.messages["error"][0]
 
-    assert log_record.getMessage() == "Unhandled exception in {}:".format(
-        actor_ref
-    )
+    assert log_record.getMessage() == f"Unhandled exception in {actor_ref}:"
     assert log_record.exc_info[0] == Exception
     assert str(log_record.exc_info[1]) == "foo"
 
@@ -111,7 +109,7 @@ def test_base_exception_is_logged(actor_ref, events, log_handler):
         log_record = log_handler.messages["debug"][0]
 
     assert log_record.getMessage() == (
-        "BaseException() in {}. Stopping all actors.".format(actor_ref)
+        f"BaseException() in {actor_ref}. Stopping all actors."
     )
 
 
@@ -127,9 +125,7 @@ def test_exception_in_on_start_is_logged(
         assert len(log_handler.messages["error"]) == 1
         log_record = log_handler.messages["error"][0]
 
-    assert log_record.getMessage() == "Unhandled exception in {}:".format(
-        actor_ref
-    )
+    assert log_record.getMessage() == f"Unhandled exception in {actor_ref}:"
 
 
 def test_exception_in_on_stop_is_logged(
@@ -144,9 +140,7 @@ def test_exception_in_on_stop_is_logged(
         assert len(log_handler.messages["error"]) == 1
         log_record = log_handler.messages["error"][0]
 
-    assert log_record.getMessage() == "Unhandled exception in {}:".format(
-        actor_ref
-    )
+    assert log_record.getMessage() == f"Unhandled exception in {actor_ref}:"
 
 
 def test_exception_in_on_failure_is_logged(
@@ -162,6 +156,4 @@ def test_exception_in_on_failure_is_logged(
         assert len(log_handler.messages["error"]) == 2
         log_record = log_handler.messages["error"][0]
 
-    assert log_record.getMessage() == "Unhandled exception in {}:".format(
-        actor_ref
-    )
+    assert log_record.getMessage() == f"Unhandled exception in {actor_ref}:"

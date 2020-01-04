@@ -112,7 +112,7 @@ def test_proxy_constructor_raises_exception_if_actor_is_dead(actor_class):
     with pytest.raises(ActorDeadError) as exc_info:
         ActorProxy(actor_ref)
 
-    assert str(exc_info.value) == "{} not found".format(actor_ref)
+    assert str(exc_info.value) == f"{actor_ref} not found"
 
 
 def test_actor_ref_may_be_retrieved_from_proxy_if_actor_is_dead(proxy):

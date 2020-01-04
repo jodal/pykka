@@ -17,7 +17,7 @@ def actor_class(runtime):
             self.events.on_failure_was_called.set()
 
         def functional_hello(self, s):
-            return "Hello, {}!".format(s)
+            return f"Hello, {s}!"
 
         def set_cat(self, s):
             self.cat = s

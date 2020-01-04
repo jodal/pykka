@@ -6,7 +6,8 @@ from pykka import ActorRegistry, ThreadingActor
 def time_it(func):
     start = time.time()
     func()
-    print("{!r} took {:.3f}s".format(func.__name__, time.time() - start))
+    elapsed = time.time() - start
+    print(f"{func.__name__!r} took {elapsed:.3f}s")
 
 
 class SomeObject:

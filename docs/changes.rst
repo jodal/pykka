@@ -7,6 +7,8 @@ v3.0.0 (UNRELEASED)
 
 - Remove support for Python 2.7. (PR: :issue:`87`)
 
+- Remove support for Python 3.5. (PR: :issue:`89`)
+
 - Remove support for automatically upgrading the internal message format used
   by Pykka 1.x to the message types used by Pykka 2+. (PR: :issue:`88`)
 
