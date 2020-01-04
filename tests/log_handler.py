@@ -35,4 +35,4 @@ class PykkaTestLogHandler(logging.Handler):
                     return
                 self.events[level].clear()
             self.events[level].wait(1)
-        raise Exception("Timeout: Waited {:d}s for log message".format(timeout))
+        raise Exception(f"Timeout: Waited {timeout:d}s for log message")

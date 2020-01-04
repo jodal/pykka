@@ -60,6 +60,4 @@ def log_thread_tracebacks(*args, **kwargs):
     for ident, frame in sys._current_frames().items():
         name = thread_names.get(ident, "?")
         stack = "".join(traceback.format_stack(frame))
-        logger.critical(
-            "Current state of {} (ident: {}):\n{}".format(name, ident, stack)
-        )
+        logger.critical(f"Current state of {name} (ident: {ident}):\n{stack}")

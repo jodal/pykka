@@ -112,7 +112,7 @@ class ActorProxy:
 
     def __init__(self, actor_ref, attr_path=None):
         if not actor_ref.is_alive():
-            raise ActorDeadError("{} not found".format(actor_ref))
+            raise ActorDeadError(f"{actor_ref} not found")
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor
         self._attr_path = attr_path or tuple()
@@ -136,10 +136,10 @@ class ActorProxy:
             if self._is_self_proxy(attr):
                 logger.warning(
                     (
-                        "{} attribute {!r} is a proxy to itself. "
-                        "Consider making it private by renaming it to {!r}."
-                    ).format(
-                        self._actor, ".".join(attr_path), "_" + attr_path[-1]
+                        f"{self._actor} attribute {'.'.join(attr_path)!r} "
+                        f"is a proxy to itself. "
+                        f"Consider making it private "
+                        f"by renaming it to {'_' + attr_path[-1]!r}."
                     )
                 )
                 continue
@@ -194,8 +194,8 @@ class ActorProxy:
         return hash((self._actor, self._attr_path))
 
     def __repr__(self):
-        return "<ActorProxy for {}, attr_path={!r}>".format(
-            self.actor_ref, self._attr_path
+        return (
+            f"<ActorProxy for {self.actor_ref}, attr_path={self._attr_path!r}>"
         )
 
     def __dir__(self):
@@ -214,7 +214,7 @@ class ActorProxy:
 
         attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:
-            raise AttributeError("{} has no attribute {!r}".format(self, name))
+            raise AttributeError(f"{self} has no attribute {name!r}")
 
         if attr_info["callable"]:
             if attr_path not in self._callable_proxies:

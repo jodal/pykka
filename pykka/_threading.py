@@ -50,7 +50,7 @@ class ThreadingFuture(Future):
             else:
                 return self._data["value"]
         except queue.Empty:
-            raise Timeout("{} seconds".format(timeout))
+            raise Timeout(f"{timeout} seconds")
 
     def set(self, value=None):
         self._queue.put({"value": value}, block=False)

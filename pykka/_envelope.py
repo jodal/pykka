@@ -18,6 +18,4 @@ class Envelope:
         self.reply_to = reply_to
 
     def __repr__(self):
-        return "Envelope(message={!r}, reply_to={!r})".format(
-            self.message, self.reply_to
-        )
+        return f"Envelope(message={self.message!r}, reply_to={self.reply_to!r})"

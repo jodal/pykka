@@ -38,10 +38,10 @@ class ActorRef:
         self.actor_stopped = actor.actor_stopped
 
     def __repr__(self):
-        return "<ActorRef for {}>".format(self)
+        return f"<ActorRef for {self}>"
 
     def __str__(self):
-        return "{} ({})".format(self.actor_class.__name__, self.actor_urn)
+        return f"{self.actor_class.__name__} ({self.actor_urn})"
 
     def is_alive(self):
         """
@@ -70,7 +70,7 @@ class ActorRef:
         :return: nothing
         """
         if not self.is_alive():
-            raise ActorDeadError("{} not found".format(self))
+            raise ActorDeadError(f"{self} not found")
         self.actor_inbox.put(Envelope(message))
 
     def ask(self, message, block=True, timeout=None):
@@ -104,7 +104,7 @@ class ActorRef:
 
         try:
             if not self.is_alive():
-                raise ActorDeadError("{} not found".format(self))
+                raise ActorDeadError(f"{self} not found")
         except ActorDeadError:
             future.set_exception()
         else:

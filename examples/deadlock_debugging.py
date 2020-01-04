@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     pid = os.getpid()
     print("Making main thread relax; not block, not quit")
-    print("1) Use `kill -SIGUSR1 {:d}` to log thread tracebacks".format(pid))
-    print("2) Then `kill {:d}` to terminate the process".format(pid))
+    print(f"1) Use `kill -SIGUSR1 {pid:d}` to log thread tracebacks")
+    print(f"2) Then `kill {pid:d}` to terminate the process")
     while True:
         time.sleep(1)
