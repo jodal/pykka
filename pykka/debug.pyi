@@ -1,0 +1,3 @@
+from typing import Any
+
+def log_thread_tracebacks(*args: Any, **kwargs: Any) -> None: ...
