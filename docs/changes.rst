@@ -16,6 +16,11 @@ v3.0.0 (UNRELEASED)
   this method is not part of the :class:`~threading.Event` API in Python 3.
   (PR: :issue:`91`)
 
+- Add missing :class:`None` default value for the ``timeout`` keyword argument to
+  :meth:`~pykka.eventlet.EventletEvent.wait`, so that it matches the
+  :class:`~threading.Event` API.
+  (PR: :issue:`91`)
+
 
 v2.0.2 (2019-12-02)
 ===================
