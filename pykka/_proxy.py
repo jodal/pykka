@@ -242,7 +242,7 @@ class ActorProxy:
             return super().__setattr__(name, value)
         attr_path = self._attr_path + (name,)
         message = messages.ProxySetAttr(attr_path=attr_path, value=value)
-        return self.actor_ref.ask(message)
+        self.actor_ref.ask(message)
 
 
 class CallableProxy:
@@ -295,7 +295,7 @@ class CallableProxy:
         message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
-        return self.actor_ref.tell(message)
+        self.actor_ref.tell(message)
 
 
 def traversable(obj):
