@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Callable
+from typing import NamedTuple
 
 from pykka import ActorDeadError, messages
 
@@ -7,6 +8,11 @@ from pykka import ActorDeadError, messages
 __all__ = ["ActorProxy"]
 
 logger = logging.getLogger("pykka")
+
+
+class AttrInfo(NamedTuple):
+    callable: bool
+    traversable: bool
 
 
 class ActorProxy:
@@ -144,13 +150,13 @@ class ActorProxy:
                 )
                 continue
 
-            traversable = self._is_traversable_attribute(attr)
-            result[tuple(attr_path)] = {
-                "callable": self._is_callable_attribute(attr),
-                "traversable": traversable,
-            }
+            attr_info = AttrInfo(
+                callable=self._is_callable_attribute(attr),
+                traversable=self._is_traversable_attribute(attr),
+            )
+            result[tuple(attr_path)] = attr_info
 
-            if traversable:
+            if attr_info.traversable:
                 for attr_name in dir(attr):
                     attr_paths_to_visit.append(attr_path + [attr_name])
 
@@ -216,13 +222,13 @@ class ActorProxy:
         if attr_info is None:
             raise AttributeError(f"{self} has no attribute {name!r}")
 
-        if attr_info["callable"]:
+        if attr_info.callable:
             if attr_path not in self._callable_proxies:
                 self._callable_proxies[attr_path] = CallableProxy(
                     self.actor_ref, attr_path
                 )
             return self._callable_proxies[attr_path]
-        elif attr_info["traversable"]:
+        elif attr_info.traversable:
             if attr_path not in self._actor_proxies:
                 self._actor_proxies[attr_path] = ActorProxy(
                     self.actor_ref, attr_path
