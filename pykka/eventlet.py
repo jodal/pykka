@@ -24,8 +24,6 @@ class EventletEvent(eventlet.event.Event):
     def is_set(self):
         return self.ready()
 
-    isSet = is_set
-
     def clear(self):
         if self.ready():
             self.reset()
