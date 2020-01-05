@@ -25,34 +25,40 @@ It should be noted that these optimizations should only be necessary in very
 special circumstances.
 """
 
-from collections import namedtuple
+from typing import Any, Dict, NamedTuple, Sequence, Tuple
 
 
-# Internal actor messages
-_ActorStop = namedtuple("ActorStop", [])
+class _ActorStop(NamedTuple):
+    """Internal message."""
 
-# Public proxy messages
-ProxyCall = namedtuple("ProxyCall", ["attr_path", "args", "kwargs"])
-ProxyCall.__doc__ = """
-Message to ask the actor to call the method with the arguments.
-"""
-ProxyCall.attr_path.__doc__ = "List with the path from the actor to the method."
-ProxyCall.args.__doc__ = "List with positional arguments."
-ProxyCall.kwargs.__doc__ = "Dict with keyword arguments."
+    pass
 
-ProxyGetAttr = namedtuple("ProxyGetAttr", ["attr_path"])
-ProxyGetAttr.__doc__ = """
-Message to ask the actor to return the value of the attribute.
-"""
-ProxyGetAttr.attr_path.__doc__ = """
-List with the path from the actor to the attribute.
-"""
 
-ProxySetAttr = namedtuple("ProxySetAttr", ["attr_path", "value"])
-ProxySetAttr.__doc__ = """
-Message to ask the actor to set the attribute to the value.
-"""
-ProxySetAttr.attr_path.__doc__ = """
-List with the path from the actor to the attribute.
-"""
-ProxySetAttr.value.__doc__ = "The value to set the attribute to."
+class ProxyCall(NamedTuple):
+    """Message to ask the actor to call the method with the arguments."""
+
+    #: List with the path from the actor to the method.
+    attr_path: Sequence[str]
+
+    #: List with positional arguments.
+    args: Tuple[Any]
+
+    #: Dict with keyword arguments.
+    kwargs: Dict[str, Any]
+
+
+class ProxyGetAttr(NamedTuple):
+    """Message to ask the actor to return the value of the attribute."""
+
+    #: List with the path from the actor to the attribute.
+    attr_path: Sequence[str]
+
+
+class ProxySetAttr(NamedTuple):
+    """Message to ask the actor to set the attribute to the value."""
+
+    #: List with the path from the actor to the attribute.
+    attr_path: Sequence[str]
+
+    #: The value to set the attribute to.
+    value: Any
