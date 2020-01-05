@@ -1,0 +1,16 @@
+from typing import Optional
+
+import eventlet.event
+
+from pykka import Actor, Future
+
+class EventletEvent(eventlet.event.Event):
+    def set(self) -> None: ...
+    def is_set(self) -> bool: ...
+    def clear(self) -> None: ...
+    def wait(self, timeout: Optional[float] = ...) -> bool: ...
+
+class EventletFuture(Future):
+    event = EventletEvent
+
+class EventletActor(Actor): ...
