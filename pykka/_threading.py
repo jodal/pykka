@@ -1,11 +1,18 @@
 import queue
 import sys
 import threading
+from types import TracebackType
+from typing import Any, NamedTuple, Optional, Tuple, Type
 
 from pykka import Actor, Future, Timeout
 
 
 __all__ = ["ThreadingActor", "ThreadingFuture"]
+
+
+class ThreadingFutureResult(NamedTuple):
+    value: Optional[Any] = None
+    exc_info: Optional[Tuple[Type[Exception], Exception, TracebackType]] = None
 
 
 class ThreadingFuture(Future):
@@ -29,7 +36,7 @@ class ThreadingFuture(Future):
     def __init__(self):
         super().__init__()
         self._queue = queue.Queue(maxsize=1)
-        self._data = None
+        self._result = None
 
     def get(self, timeout=None):
         try:
@@ -38,26 +45,28 @@ class ThreadingFuture(Future):
             pass
 
         try:
-            if self._data is None:
-                self._data = self._queue.get(True, timeout)
-            if "exc_info" in self._data:
-                (exc_type, exc_value, exc_traceback) = self._data["exc_info"]
+            if self._result is None:
+                self._result = self._queue.get(True, timeout)
+            if self._result.exc_info is not None:
+                (exc_type, exc_value, exc_traceback) = self._result.exc_info
                 if exc_value is None:
                     exc_value = exc_type()
                 if exc_value.__traceback__ is not exc_traceback:
                     raise exc_value.with_traceback(exc_traceback)
                 raise exc_value
             else:
-                return self._data["value"]
+                return self._result.value
         except queue.Empty:
             raise Timeout(f"{timeout} seconds")
 
     def set(self, value=None):
-        self._queue.put({"value": value}, block=False)
+        self._queue.put(ThreadingFutureResult(value=value), block=False)
 
     def set_exception(self, exc_info=None):
         assert exc_info is None or len(exc_info) == 3
-        self._queue.put({"exc_info": exc_info or sys.exc_info()})
+        self._queue.put(
+            ThreadingFutureResult(exc_info=exc_info or sys.exc_info())
+        )
 
 
 class ThreadingActor(Actor):
