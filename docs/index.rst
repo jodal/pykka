@@ -33,5 +33,6 @@ Pykka works with CPython 3.6+ and PyPy 3.6+. If you need support for Python
     :maxdepth: 2
     :caption: About
 
-    inspiration
     changes
+    inspiration
+    authors
