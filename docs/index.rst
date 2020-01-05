@@ -32,5 +32,6 @@ Pykka works with CPython 2.7 and 3.5+, as well as PyPy 2.7 and 3.5+.
     :maxdepth: 2
     :caption: About
 
-    inspiration
     changes
+    inspiration
+    authors
