@@ -24,13 +24,11 @@ class EventletEvent(eventlet.event.Event):
     def is_set(self):
         return self.ready()
 
-    isSet = is_set
-
     def clear(self):
         if self.ready():
             self.reset()
 
-    def wait(self, timeout):
+    def wait(self, timeout=None):
         if timeout is not None:
             wait_timeout = eventlet.Timeout(timeout)
 
