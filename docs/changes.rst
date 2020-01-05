@@ -8,6 +8,11 @@ v2.0.3 (UNRELEASED)
 
 - Include Python 3.9 in the test matrix. (PR: :issue:`98`)
 
+- Add missing :class:`None` default value for the ``timeout`` keyword argument to
+  :meth:`~pykka.eventlet.EventletEvent.wait`, so that it matches the
+  :class:`~threading.Event` API.
+  (PR: :issue:`91`)
+
 
 v2.0.2 (2019-12-02)
 ===================

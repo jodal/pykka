@@ -32,7 +32,7 @@ class EventletEvent(eventlet.event.Event):
         if self.ready():
             self.reset()
 
-    def wait(self, timeout):
+    def wait(self, timeout=None):
         if timeout is not None:
             wait_timeout = eventlet.Timeout(timeout)
 
