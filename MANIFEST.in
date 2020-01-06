@@ -1,6 +1,8 @@
 include *.rst
 include *.txt
 include *.yml
+include AUTHORS
+include AUTHORS.update
 include LICENSE
 include pylintrc
 include pyproject.toml
