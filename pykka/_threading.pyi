@@ -1,12 +1,12 @@
 from queue import Queue
-from types import TracebackType
-from typing import Any, ClassVar, NamedTuple, Optional, Tuple, Type
+from typing import Any, ClassVar, NamedTuple, Optional
 
 from pykka import Actor, Future
+from pykka._future import ExcInfo
 
 class ThreadingFutureResult(NamedTuple):
     value: Optional[Any] = ...
-    exc_info: Optional[Tuple[Type[Exception], Exception, TracebackType]] = ...
+    exc_info: Optional[ExcInfo] = ...
 
 class ThreadingFuture(Future):
     _queue: Queue[ThreadingFutureResult]

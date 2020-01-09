@@ -34,14 +34,14 @@ class Actor(Generic[_A]):
     def on_stop(self) -> None: ...
     def _handle_failure(
         self,
-        exception_type: Type[Exception],
-        exception_value: Exception,
+        exception_type: Type[BaseException],
+        exception_value: BaseException,
         traceback: TracebackType,
     ) -> None: ...
     def on_failure(
         self,
-        exception_type: Type[Exception],
-        exception_value: Exception,
+        exception_type: Type[BaseException],
+        exception_value: BaseException,
         traceback: TracebackType,
     ) -> None: ...
     def _handle_receive(self, message: Any) -> Any: ...

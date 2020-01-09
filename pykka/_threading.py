@@ -12,7 +12,9 @@ __all__ = ["ThreadingActor", "ThreadingFuture"]
 
 class ThreadingFutureResult(NamedTuple):
     value: Optional[Any] = None
-    exc_info: Optional[Tuple[Type[Exception], Exception, TracebackType]] = None
+    exc_info: Optional[
+        Tuple[Type[BaseException], BaseException, TracebackType]
+    ] = None
 
 
 class ThreadingFuture(Future):

@@ -17,7 +17,7 @@ I = TypeVar("I")  # For when T is Iterable[I]  # noqa
 _M = TypeVar("_M")  # For Future.map()
 _R = TypeVar("_R")  # For Future.reduce()
 
-ExcInfo = Tuple[Type[Exception], Exception, TracebackType]
+ExcInfo = Tuple[Type[BaseException], BaseException, TracebackType]
 
 GetHookFunc = Callable[[Optional[float]], _T]
 
