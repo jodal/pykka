@@ -2,11 +2,11 @@ from queue import Queue
 from typing import Any, ClassVar, NamedTuple, Optional
 
 from pykka import Actor, Future
-from pykka._future import ExcInfo
+from pykka._types import OptExcInfo
 
 class ThreadingFutureResult(NamedTuple):
     value: Optional[Any] = ...
-    exc_info: Optional[ExcInfo] = ...
+    exc_info: Optional[OptExcInfo] = ...
 
 class ThreadingFuture(Future):
     _queue: Queue[ThreadingFutureResult]

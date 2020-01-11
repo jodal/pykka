@@ -1,10 +1,10 @@
 import queue
 import sys
 import threading
-from types import TracebackType
-from typing import Any, NamedTuple, Optional, Tuple, Type
+from typing import Any, NamedTuple, Optional
 
 from pykka import Actor, Future, Timeout
+from pykka._types import OptExcInfo
 
 
 __all__ = ["ThreadingActor", "ThreadingFuture"]
@@ -12,9 +12,7 @@ __all__ = ["ThreadingActor", "ThreadingFuture"]
 
 class ThreadingFutureResult(NamedTuple):
     value: Optional[Any] = None
-    exc_info: Optional[
-        Tuple[Type[BaseException], BaseException, TracebackType]
-    ] = None
+    exc_info: Optional[OptExcInfo] = None
 
 
 class ThreadingFuture(Future):
@@ -66,9 +64,9 @@ class ThreadingFuture(Future):
 
     def set_exception(self, exc_info=None):
         assert exc_info is None or len(exc_info) == 3
-        self._queue.put(
-            ThreadingFutureResult(exc_info=exc_info or sys.exc_info())
-        )
+        if exc_info is None:
+            exc_info = sys.exc_info()
+        self._queue.put(ThreadingFutureResult(exc_info=exc_info))
 
 
 class ThreadingActor(Actor):
