@@ -2,7 +2,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Generic,
     NamedTuple,
     Optional,
     Sequence,
@@ -12,9 +11,6 @@ from typing import (
 )
 
 from pykka import Actor, ActorRef, Future
-from pykka._actor import _A
-
-_P = TypeVar("_P")  # Type at the end of the attr_path
 
 AttrPath = Sequence[str]
 
@@ -22,15 +18,15 @@ class AttrInfo(NamedTuple):
     callable: bool
     traversable: bool
 
-class ActorProxy(Generic[_A, _P]):
-    actor_ref: ActorRef[_A]
-    _actor: Actor[_A]
+class ActorProxy:
+    actor_ref: ActorRef
+    _actor: Actor
     _attr_path: AttrPath
     _known_attrs: Dict[AttrPath, AttrInfo]
-    _actor_proxies: Dict[AttrPath, ActorProxy[_A, Any]]
-    _callable_proxies: Dict[AttrPath, CallableProxy[_A, Any]]
+    _actor_proxies: Dict[AttrPath, ActorProxy]
+    _callable_proxies: Dict[AttrPath, CallableProxy]
     def __init__(
-        self, actor_ref: ActorRef[_A], attr_path: Optional[AttrPath] = ...
+        self, actor_ref: ActorRef, attr_path: Optional[AttrPath] = ...
     ) -> None: ...
     def _introspect_attributes(self) -> Dict[AttrPath, AttrInfo]: ...
     def _is_exposable_attribute(self, attr_name: str) -> bool: ...
@@ -43,15 +39,13 @@ class ActorProxy(Generic[_A, _P]):
     def __dir__(self) -> Dict[str, Any]: ...
     def __getattr__(
         self, name: str
-    ) -> Union[CallableProxy[_A, Any], ActorProxy[_A, Any], Future[Any]]: ...
+    ) -> Union[CallableProxy, ActorProxy, Future[Any]]: ...
     def __setattr__(self, name: str, value: Any) -> None: ...
 
-class CallableProxy(Generic[_A, _P]):
-    actor_ref: ActorRef[_A]
+class CallableProxy:
+    actor_ref: ActorRef
     _attr_path: AttrPath
-    def __init__(
-        self, actor_ref: ActorRef[_A], attr_path: AttrPath
-    ) -> None: ...
+    def __init__(self, actor_ref: ActorRef, attr_path: AttrPath) -> None: ...
     def __call__(
         self, *args: Tuple[Any], **kwargs: Dict[str, Any]
     ) -> Future[Any]: ...

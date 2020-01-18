@@ -1,7 +1,6 @@
 import threading
 from typing import (
     Any,
-    Generic,
     Optional,
     Type,
     Union,
@@ -11,14 +10,15 @@ from typing import (
 from typing_extensions import Literal
 
 from pykka import ActorProxy, Future
-from pykka._actor import ActorInbox, _A
+from pykka._actor import Actor, ActorInbox
 
-class ActorRef(Generic[_A]):
-    actor_class: Type[_A]
+class ActorRef:
+    _actor: Actor
+    actor_class: Type[Actor]
     actor_urn: str
     actor_inbox: ActorInbox
     actor_stopped: threading.Event
-    def __init__(self, actor: _A) -> None: ...
+    def __init__(self, actor: Actor) -> None: ...
     def __repr__(self) -> str: ...
     def __str__(self) -> str: ...
     def is_alive(self) -> bool: ...

@@ -1,21 +1,19 @@
 import threading
 from types import TracebackType
-from typing import Any, Dict, Generic, Sequence, Type, TypeVar
+from typing import Any, Dict, Sequence, Type
 
 from typing_extensions import Protocol  # Py38+: Available in ``typing``
 
 from pykka import ActorRef, Future
 from pykka._envelope import Envelope
 
-_A = TypeVar("_A", bound=Actor)
-
 class ActorInbox(Protocol):
     def put(self, envelope: Envelope) -> None: ...
     def get(self) -> Envelope: ...
 
-class Actor(Generic[_A]):
+class Actor:
     @classmethod
-    def start(cls, *args: Any, **kwargs: Any) -> ActorRef[_A]: ...
+    def start(cls, *args: Any, **kwargs: Any) -> ActorRef: ...
     @staticmethod
     def _create_actor_inbox() -> ActorInbox: ...
     @staticmethod
@@ -23,7 +21,7 @@ class Actor(Generic[_A]):
     def _start_actor_loop(self) -> None: ...
     actor_urn: str
     actor_inbox: ActorInbox
-    actor_ref: ActorRef[_A]
+    actor_ref: ActorRef
     actor_stopped: threading.Event
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
     def __str__(self) -> str: ...
