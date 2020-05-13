@@ -22,9 +22,9 @@ class Cancellable:
     """
 
     def __init__(self, timer):
-        self._cancelled = False
-        self._timer = timer
-        self._timer_lock = Lock()
+        self._cancelled: bool = False
+        self._timer: Optional[Timer] = timer
+        self._timer_lock: Lock = Lock()
 
     def is_cancelled(self) -> bool:
         """
@@ -84,7 +84,7 @@ class Scheduler:
     """
     A basic Pykka Scheduler service based on Akka Scheduler behaviour.
 
-    Its main purpose is to tell a message to an actor after a specified
+    Its main purpose is to `tell` a message to an actor after a specified
     delay or to do it periodically. It isn't a long-term scheduler
     and is expected to be used for retransmitting messages or to schedule
     periodic startup of an actor-based data processing pipeline.
@@ -102,7 +102,7 @@ class Scheduler:
             message: Any
         ): Cancellable
 
-        Creates a ``threading.Timer`` object to ``tell`` a message to an
+        Creates a `threading.Timer` object to `tell` a message to an
         actor once after a specified delay. The returning Cancellable object
         can be cancelled before a message was sent.
 
