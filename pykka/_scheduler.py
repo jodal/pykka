@@ -91,7 +91,9 @@ class Scheduler:
     """
 
     @staticmethod
-    def schedule_once(delay: float, receiver: ActorRef, message: Any) -> Cancellable:
+    def schedule_once(
+            delay: float, receiver: ActorRef, message: Any
+    ) -> Cancellable:
         """
         Based on:
         akka.Scheduler.scheduleOnce(
@@ -116,7 +118,11 @@ class Scheduler:
 
     @classmethod
     def schedule_at_fixed_rate(
-        cls, initial_delay: float, interval: float, receiver: ActorRef, message: Any
+            cls,
+            initial_delay: float,
+            interval: float,
+            receiver: ActorRef,
+            message: Any,
     ) -> Cancellable:
         """
         Based on:
@@ -145,7 +151,11 @@ class Scheduler:
 
     @classmethod
     def schedule_with_fixed_delay(
-        cls, initial_delay: float, delay: float, receiver: ActorRef, message: Any
+            cls,
+            initial_delay: float,
+            delay: float,
+            receiver: ActorRef,
+            message: Any,
     ) -> Cancellable:
         """
         Based on:
@@ -173,12 +183,12 @@ class Scheduler:
 
     @classmethod
     def _tell_periodically(
-        cls,
-        initial_delay: float,
-        interval: float,
-        receiver: ActorRef,
-        message: Any,
-        precise: bool,
+            cls,
+            initial_delay: float,
+            interval: float,
+            receiver: ActorRef,
+            message: Any,
+            precise: bool,
     ) -> Cancellable:
         """
         A generic method to handle both precise and imprecise versions of
@@ -219,12 +229,12 @@ class Scheduler:
 
     @classmethod
     def _tell_and_update_cancellable(
-        cls,
-        cancellable: Cancellable,
-        interval: float,
-        receiver: ActorRef,
-        message: Any,
-        started: Optional[float] = None,
+            cls,
+            cancellable: Cancellable,
+            interval: float,
+            receiver: ActorRef,
+            message: Any,
+            started: Optional[float] = None,
     ):
         """
         A pseudo-callback function that creates a new Timer for the next
@@ -247,7 +257,8 @@ class Scheduler:
         Returns: None, since that's a pseudo-callback.
         """
         if started:
-            delay = interval - (time.time() - started) % interval
+            time_drift = (time.time() - started) % interval
+            delay = interval - time_drift
         else:
             delay = interval
 
