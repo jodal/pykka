@@ -104,7 +104,7 @@ def test_schedule_once_is_cancellable(actor_ref):
 
 
 def test_periodic_job_is_cancellable_before_the_first_run(
-        periodic_job_method, actor_ref
+    periodic_job_method, actor_ref
 ):
     cancellable = periodic_job_method(
         0.1, 0.1, actor_ref, {"command": "increment"}
@@ -116,7 +116,7 @@ def test_periodic_job_is_cancellable_before_the_first_run(
 
 
 def test_periodic_job_is_cancellable_after_the_first_run(
-        periodic_job_method, actor_ref
+    periodic_job_method, actor_ref
 ):
     cancellable = periodic_job_method(
         0.1, 0.1, actor_ref, {"command": "increment"}
@@ -155,7 +155,7 @@ def test_periodic_job_is_executed_periodically(periodic_job_method, actor_ref):
 
 
 def test_periodic_job_stops_when_actor_is_stopped(
-        periodic_job_method, counting_actor_class
+    periodic_job_method, counting_actor_class
 ):
     actor_ref = counting_actor_class.start()
     cancellable = periodic_job_method(
