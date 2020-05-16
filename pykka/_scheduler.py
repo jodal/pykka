@@ -3,7 +3,7 @@ import time
 from threading import Timer, Lock
 from typing import Any, Optional
 
-from pykka import ActorRef
+from pykka import ActorRef, ActorDeadError
 
 logger = logging.getLogger("pykka")
 
@@ -22,9 +22,9 @@ class Cancellable:
     """
 
     def __init__(self, timer):
-        self._cancelled: bool = False
-        self._timer: Optional[Timer] = timer
-        self._timer_lock: Lock = Lock()
+        self._cancelled = False
+        self._timer = timer
+        self._timer_lock = Lock()
 
     def is_cancelled(self) -> bool:
         """
@@ -54,9 +54,8 @@ class Cancellable:
                     "An attempt to update a timer for a stopped Cancellable happened."
                 )
                 return False
-            else:
-                self._timer = timer
-                return True
+            self._timer = timer
+            return True
 
     def cancel(self) -> bool:
         """
@@ -73,9 +72,13 @@ class Cancellable:
         with self._timer_lock:
             if self.is_cancelled():
                 return False
-            else:
-                if isinstance(self._timer, Timer):
-                    self._timer.cancel()
+            try:
+                self._timer.cancel()
+            except AttributeError:
+                logger.error(
+                    "Tried to cancel Cancellable without a proper Timer."
+                )
+            finally:
                 self._cancelled = True
                 return True
 
@@ -92,7 +95,7 @@ class Scheduler:
 
     @staticmethod
     def schedule_once(
-            delay: float, receiver: ActorRef, message: Any
+        delay: float, receiver: ActorRef, message: Any
     ) -> Cancellable:
         """
         Based on:
@@ -118,11 +121,11 @@ class Scheduler:
 
     @classmethod
     def schedule_at_fixed_rate(
-            cls,
-            initial_delay: float,
-            interval: float,
-            receiver: ActorRef,
-            message: Any,
+        cls,
+        initial_delay: float,
+        interval: float,
+        receiver: ActorRef,
+        message: Any,
     ) -> Cancellable:
         """
         Based on:
@@ -151,11 +154,11 @@ class Scheduler:
 
     @classmethod
     def schedule_with_fixed_delay(
-            cls,
-            initial_delay: float,
-            delay: float,
-            receiver: ActorRef,
-            message: Any,
+        cls,
+        initial_delay: float,
+        delay: float,
+        receiver: ActorRef,
+        message: Any,
     ) -> Cancellable:
         """
         Based on:
@@ -183,12 +186,12 @@ class Scheduler:
 
     @classmethod
     def _tell_periodically(
-            cls,
-            initial_delay: float,
-            interval: float,
-            receiver: ActorRef,
-            message: Any,
-            precise: bool,
+        cls,
+        initial_delay: float,
+        interval: float,
+        receiver: ActorRef,
+        message: Any,
+        precise: bool,
     ) -> Cancellable:
         """
         A generic method to handle both precise and imprecise versions of
@@ -229,12 +232,12 @@ class Scheduler:
 
     @classmethod
     def _tell_and_update_cancellable(
-            cls,
-            cancellable: Cancellable,
-            interval: float,
-            receiver: ActorRef,
-            message: Any,
-            started: Optional[float] = None,
+        cls,
+        cancellable: Cancellable,
+        interval: float,
+        receiver: ActorRef,
+        message: Any,
+        started: Optional[float] = None,
     ):
         """
         A pseudo-callback function that creates a new Timer for the next
@@ -262,12 +265,15 @@ class Scheduler:
         else:
             delay = interval
 
-        timer = Timer(
-            interval=delay,
-            function=cls._tell_and_update_cancellable,
-            args=(cancellable, interval, receiver, message, started),
-        )
-        timer.start()
+        try:
+            receiver.tell(message)
+            timer = Timer(
+                interval=delay,
+                function=cls._tell_and_update_cancellable,
+                args=(cancellable, interval, receiver, message, started),
+            )
+            timer.start()
 
-        receiver.tell(message)
-        cancellable.set_timer(timer)
+            cancellable.set_timer(timer)
+        except ActorDeadError as exception:
+            logger.error("Stopping periodic job: %s", exception)
