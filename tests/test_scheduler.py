@@ -86,7 +86,7 @@ def test_schedule_once_sends_a_message_only_once(actor_ref):
     first_count = actor_ref.ask({"command": "return count"})
     time.sleep(0.3)
     second_count = actor_ref.ask({"command": "return count"})
-    if not(issubclass(actor_ref.actor_class, EventletActor)):
+    if not (issubclass(actor_ref.actor_class, EventletActor)):
         assert first_count == 1
     else:
         assert first_count == 0
@@ -104,7 +104,7 @@ def test_schedule_once_is_cancellable(actor_ref):
 
 
 def test_periodic_job_is_cancellable_before_the_first_run(
-    periodic_job_method, actor_ref
+        periodic_job_method, actor_ref
 ):
     cancellable = periodic_job_method(
         0.1, 0.1, actor_ref, {"command": "increment"}
@@ -116,7 +116,7 @@ def test_periodic_job_is_cancellable_before_the_first_run(
 
 
 def test_periodic_job_is_cancellable_after_the_first_run(
-    periodic_job_method, actor_ref
+        periodic_job_method, actor_ref
 ):
     cancellable = periodic_job_method(
         0.1, 0.1, actor_ref, {"command": "increment"}
@@ -126,7 +126,7 @@ def test_periodic_job_is_cancellable_after_the_first_run(
     first_count = actor_ref.ask({"command": "return count"})
     time.sleep(0.1)
     second_count = actor_ref.ask({"command": "return count"})
-    if not(issubclass(actor_ref.actor_class, EventletActor)):
+    if not (issubclass(actor_ref.actor_class, EventletActor)):
         assert first_count == 1
     else:
         assert first_count == 0
@@ -144,7 +144,7 @@ def test_periodic_job_is_executed_periodically(periodic_job_method, actor_ref):
     time.sleep(0.1)
     third_count = actor_ref.ask({"command": "return count"})
     cancellable.cancel()
-    if not(issubclass(actor_ref.actor_class, EventletActor)):
+    if not (issubclass(actor_ref.actor_class, EventletActor)):
         assert first_count == 1
         assert second_count == 2
         assert third_count == 3
@@ -155,7 +155,7 @@ def test_periodic_job_is_executed_periodically(periodic_job_method, actor_ref):
 
 
 def test_periodic_job_stops_when_actor_is_stopped(
-    periodic_job_method, counting_actor_class
+        periodic_job_method, counting_actor_class
 ):
     actor_ref = counting_actor_class.start()
     cancellable = periodic_job_method(
