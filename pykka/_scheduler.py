@@ -4,7 +4,6 @@ from threading import Lock, Timer
 from typing import Any, Optional
 
 from pykka import ActorDeadError, ActorRef
-from pykka.eventlet import EventletActor
 
 logger = logging.getLogger("pykka")
 
@@ -117,10 +116,6 @@ class Scheduler:
         """
         cancellable = Cancellable(None)
 
-        if issubclass(receiver.actor_class, EventletActor):
-            logger.error("Scheduling doesn't work for Eventlet Actors.")
-            return cancellable
-
         timer = Timer(interval=delay, function=receiver.tell, args=(message,))
         timer.start()
         cancellable.set_timer(timer)
@@ -221,10 +216,6 @@ class Scheduler:
         Returns: A Cancellable object.
         """
         cancellable = Cancellable(None)
-
-        if issubclass(receiver.actor_class, EventletActor):
-            logger.error("Scheduling doesn't work for Eventlet Actors.")
-            return cancellable
 
         if precise:
             started = time.time() + initial_delay
