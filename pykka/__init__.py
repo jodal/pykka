@@ -8,8 +8,9 @@ from pykka._proxy import ActorProxy, CallableProxy, traversable
 from pykka._ref import ActorRef
 from pykka._registry import ActorRegistry
 from pykka._actor import Actor  # noqa: Must be imported late
+from pykka._scheduler import Cancellable, Scheduler
+
 from pykka._threading import ThreadingActor, ThreadingFuture
-from pykka._scheduler import Scheduler, Cancellable
 
 
 __all__ = [

@@ -1,9 +1,10 @@
 import logging
 import time
-from threading import Timer, Lock
+from threading import Lock, Timer
 from typing import Any, Optional
 
-from pykka import ActorRef, ActorDeadError
+from pykka import ActorDeadError, ActorRef
+from pykka.eventlet import EventletActor
 
 logger = logging.getLogger("pykka")
 
@@ -21,10 +22,10 @@ class Cancellable:
     property with a non-cancelled timer, Lock is used.
     """
 
-    def __init__(self, timer):
-        self._cancelled = False
-        self._timer = timer
-        self._timer_lock = Lock()
+    def __init__(self, timer: Optional[Timer]) -> None:
+        self._cancelled: bool = False
+        self._timer: Optional[Timer] = timer
+        self._timer_lock: Lock = Lock()
 
     def is_cancelled(self) -> bool:
         """
@@ -78,9 +79,8 @@ class Cancellable:
                 logger.error(
                     "Tried to cancel Cancellable without a proper Timer."
                 )
-            finally:
-                self._cancelled = True
-                return True
+            self._cancelled = True
+            return True
 
 
 class Scheduler:
@@ -115,9 +115,16 @@ class Scheduler:
             message (Any): Message to send to an addressee.
         Returns: A Cancellable object.
         """
+        cancellable = Cancellable(None)
+
+        if issubclass(receiver.actor_class, EventletActor):
+            logger.error("Scheduling doesn't work for Eventlet Actors.")
+            return cancellable
+
         timer = Timer(interval=delay, function=receiver.tell, args=(message,))
         timer.start()
-        return Cancellable(timer)
+        cancellable.set_timer(timer)
+        return cancellable
 
     @classmethod
     def schedule_at_fixed_rate(
@@ -215,6 +222,10 @@ class Scheduler:
         """
         cancellable = Cancellable(None)
 
+        if issubclass(receiver.actor_class, EventletActor):
+            logger.error("Scheduling doesn't work for Eventlet Actors.")
+            return cancellable
+
         if precise:
             started = time.time() + initial_delay
         else:
@@ -238,7 +249,7 @@ class Scheduler:
         receiver: ActorRef,
         message: Any,
         started: Optional[float] = None,
-    ):
+    ) -> None:
         """
         A pseudo-callback function that creates a new Timer for the next
         message delivery and updates a Cancellable object with this Timer
