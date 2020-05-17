@@ -18,9 +18,6 @@ def periodic_job_method(request):
 
 @pytest.fixture(scope="module")
 def counting_actor_class(runtime):
-    if runtime.name == "eventlet":
-        pytest.skip("Scheduling doesn't support Eventlet.")
-
     class CountingActor(runtime.actor_class):
         def __init__(self):
             super().__init__()
@@ -134,15 +131,15 @@ def test_periodic_job_is_executed_periodically(periodic_job_method, actor_ref):
         0.1, 0.1, actor_ref, {"command": "increment"}
     )
     time.sleep(0.15)
-    first_count = actor_ref.ask({"command": "return count"})
+    first_count = actor_ref.ask({"command": "return count"}, block=False)
     time.sleep(0.1)
-    second_count = actor_ref.ask({"command": "return count"})
+    second_count = actor_ref.ask({"command": "return count"}, block=False)
     time.sleep(0.1)
-    third_count = actor_ref.ask({"command": "return count"})
+    third_count = actor_ref.ask({"command": "return count"}, block=False)
     cancellable.cancel()
-    assert first_count == 1
-    assert second_count == 2
-    assert third_count == 3
+    assert first_count.get() == 1
+    assert second_count.get() == 2
+    assert third_count.get() == 3
 
 
 def test_periodic_job_stops_when_actor_is_stopped(
@@ -152,7 +149,7 @@ def test_periodic_job_stops_when_actor_is_stopped(
     cancellable = periodic_job_method(
         0.1, 0.1, actor_ref, {"command": "increment"}
     )
-    # There is no exception on stop during interval:
+    # There is no exception on stop during running interval:
     actor_ref.stop()
     time.sleep(0.15)
     cancellable.cancel()
