@@ -19,14 +19,14 @@ def counting_actor_class(runtime):
             logger.debug("CountingActor received message %s.", message)
             if message.get("command") == "return count":
                 return self.count
-            else:
-                self.count += 1
+            self.count += 1
+            return None
 
     return CountingActor
 
 
 @pytest.fixture
-def actor_ref_scheduler_sleep(counting_actor_class, runtime):
+def ref_scheduler_sleep(counting_actor_class, runtime):
     ref = counting_actor_class.start()
     yield ref, runtime.scheduler_class, runtime.sleep_func
     ref.stop()
@@ -72,8 +72,8 @@ def test_cancelled_cancellable_set_timer(timer):
     assert result is False
 
 
-def test_schedule_once_sends_a_message_only_once(actor_ref_scheduler_sleep):
-    actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
+def test_schedule_once_sends_a_message_only_once(ref_scheduler_sleep):
+    actor_ref, scheduler, sleep = ref_scheduler_sleep
     scheduler.schedule_once(0.2, actor_ref, {"command": "increment"})
     sleep(0.3)
     first_count = actor_ref.ask({"command": "return count"})
@@ -83,8 +83,8 @@ def test_schedule_once_sends_a_message_only_once(actor_ref_scheduler_sleep):
     assert second_count == first_count
 
 
-def test_schedule_once_is_cancellable(actor_ref_scheduler_sleep):
-    actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
+def test_schedule_once_is_cancellable(ref_scheduler_sleep):
+    actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_once(
         0.2, actor_ref, {"command": "increment"}
     )
@@ -94,10 +94,8 @@ def test_schedule_once_is_cancellable(actor_ref_scheduler_sleep):
     assert count == 0
 
 
-def test_periodic_job_is_cancellable_before_the_first_run(
-    actor_ref_scheduler_sleep
-):
-    actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
+def test_periodic_job_is_cancellable_before_the_first_run(ref_scheduler_sleep):
+    actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_with_fixed_delay(
         0.1, 0.1, actor_ref, {"command": "increment"}
     )
@@ -107,10 +105,8 @@ def test_periodic_job_is_cancellable_before_the_first_run(
     assert count == 0
 
 
-def test_periodic_job_is_cancellable_after_the_first_run(
-    actor_ref_scheduler_sleep
-):
-    actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
+def test_periodic_job_is_cancellable_after_the_first_run(ref_scheduler_sleep):
+    actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
         0.1, 0.1, actor_ref, {"command": "increment"}
     )
@@ -123,10 +119,8 @@ def test_periodic_job_is_cancellable_after_the_first_run(
     assert second_count == first_count
 
 
-def test_schedule_at_fixed_rate_executed_periodically(
-    actor_ref_scheduler_sleep
-):
-    actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
+def test_schedule_at_fixed_rate_executed_periodically(ref_scheduler_sleep):
+    actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
         0.1, 0.1, actor_ref, {"command": "increment"}
     )
@@ -142,10 +136,8 @@ def test_schedule_at_fixed_rate_executed_periodically(
     assert third_count == 3
 
 
-def test_schedule_with_fixed_delay_executed_periodically(
-    actor_ref_scheduler_sleep
-):
-    actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
+def test_schedule_with_fixed_delay_executed_periodically(ref_scheduler_sleep):
+    actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_with_fixed_delay(
         0.1, 0.1, actor_ref, {"command": "increment"}
     )
@@ -161,8 +153,8 @@ def test_schedule_with_fixed_delay_executed_periodically(
     assert third_count == 3
 
 
-def test_periodic_job_stops_when_actor_is_stopped(actor_ref_scheduler_sleep):
-    actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
+def test_periodic_job_stops_when_actor_is_stopped(ref_scheduler_sleep):
+    actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
         0.1, 0.1, actor_ref, {"command": "increment"}
     )
