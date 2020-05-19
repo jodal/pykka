@@ -9,7 +9,7 @@ from pykka._ref import ActorRef
 from pykka._registry import ActorRegistry
 from pykka._actor import Actor  # noqa: Must be imported late
 from pykka._scheduler import Cancellable, Scheduler
-from pykka._threading import ThreadingActor, ThreadingFuture
+from pykka._threading import ThreadingActor, ThreadingFuture, ThreadingScheduler
 
 
 __all__ = [
@@ -22,6 +22,7 @@ __all__ = [
     "Cancellable",
     "Future",
     "Scheduler",
+    "ThreadingScheduler",
     "ThreadingActor",
     "ThreadingFuture",
     "Timeout",

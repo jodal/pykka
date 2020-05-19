@@ -3,11 +3,11 @@ import sys
 import gevent
 import gevent.event
 import gevent.queue
+from gevent.greenlet import Greenlet
 
-from pykka import Actor, Future, Timeout
+from pykka import Actor, Future, Timeout, Scheduler
 
-
-__all__ = ["GeventActor", "GeventFuture"]
+__all__ = ["GeventActor", "GeventFuture", "GeventScheduler"]
 
 
 class GeventFuture(Future):
@@ -69,3 +69,30 @@ class GeventActor(Actor):
 
     def _start_actor_loop(self):
         gevent.Greenlet.spawn(self._actor_loop)
+
+
+class GeventScheduler(Scheduler):
+    """
+    A basic Pykka Scheduler service based on Akka Scheduler behaviour.
+
+    Its main purpose is to `tell` a message to an actor after a specified
+    delay or to do it periodically. It isn't a long-term scheduler
+    and is expected to be used for retransmitting messages or to schedule
+    periodic startup of an actor-based data processing pipeline.
+
+    Gevent scheduler is based on gevent.Greenlet.
+    """
+
+    @staticmethod
+    def _get_timer(delay, func, *args) -> Greenlet:
+        """
+        Creates a Greenlet to schedule function execution.
+
+        Args:
+            delay: Delay before function execution.
+            func: Function to execute.
+            args: Function arguments.
+        Returns: Greenlet object.
+        """
+        timer = gevent.spawn_later(delay, func, *args)
+        return timer

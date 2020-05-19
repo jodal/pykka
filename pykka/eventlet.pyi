@@ -1,8 +1,10 @@
-from typing import Optional
+from typing import Any, Callable, Optional
 
 import eventlet.event
+import eventlet.greenthread
 
-from pykka import Actor, Future
+from pykka import Actor, Future, Scheduler
+
 
 class EventletEvent(eventlet.event.Event):
     def set(self) -> None: ...
@@ -14,3 +16,7 @@ class EventletFuture(Future):
     event = EventletEvent
 
 class EventletActor(Actor): ...
+
+class EventletScheduler(Scheduler):
+    @staticmethod
+    def _get_timer(delay: float, func: Callable, *args: Any) -> eventlet.greenthread.GreenThread: ...

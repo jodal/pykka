@@ -1,13 +1,14 @@
 import logging
 import time
-from threading import Lock, Timer
-from typing import Any, Optional
+from abc import abstractmethod, ABC
+from threading import Lock
+from typing import Any
 
 from pykka import ActorDeadError, ActorRef
 
 logger = logging.getLogger("pykka")
 
-__all__ = ["Scheduler", "Cancellable"]
+__all__ = ["Cancellable", "Scheduler"]
 
 
 class Cancellable:
@@ -21,9 +22,9 @@ class Cancellable:
     property with a non-cancelled timer, Lock is used.
     """
 
-    def __init__(self, timer: Optional[Timer]) -> None:
+    def __init__(self, timer: Any) -> None:
         self._cancelled: bool = False
-        self._timer: Optional[Timer] = timer
+        self._timer: Any = timer
         self._timer_lock: Lock = Lock()
 
     def is_cancelled(self) -> bool:
@@ -36,16 +37,16 @@ class Cancellable:
         """
         return self._cancelled
 
-    def set_timer(self, timer: Timer) -> bool:
+    def set_timer(self, timer: Any) -> bool:
         """
         `_.timer` property setter to update timers for periodic jobs.
 
         There is no external getter for this property.
 
-        Cancelled Canellable objects shouldn't allow to update their timers.
+        Cancelled Cancellable objects shouldn't allow to update their timers.
 
         Args:
-            timer (Timer): Timer object handling a delayed task execution.
+            timer: Timer or GreenEvent object handling a delayed task execution.
         Returns: Bool that shows whether the '_.timer` property was updated.
         """
         with self._timer_lock:
@@ -66,35 +67,34 @@ class Cancellable:
         it returns False to be consistent with a Cancellable object
         from Akka.
 
+        'threading.Timer' and 'GreenThread' has 'cancel' commands.
+        'Greenlet' from gevent has only 'kill' command.
+
         Returns: Bool that shows whether this request actually cancelled
                  the Cancellable timer.
         """
         with self._timer_lock:
             if self.is_cancelled():
                 return False
-            try:
-                self._timer.cancel()
-            except AttributeError:
-                logger.error(
-                    "Tried to cancel Cancellable without a proper Timer."
-                )
             self._cancelled = True
+            if hasattr(self._timer, "cancel"):
+                self._timer.cancel()
+                return True
+            if hasattr(self._timer, "kill"):
+                self._timer.kill()
+                return True
+            logger.error("Tried to cancel Cancellable without a proper Timer.")
             return True
 
 
-class Scheduler:
+class Scheduler(ABC):
     """
-    A basic Pykka Scheduler service based on Akka Scheduler behaviour.
-
-    Its main purpose is to `tell` a message to an actor after a specified
-    delay or to do it periodically. It isn't a long-term scheduler
-    and is expected to be used for retransmitting messages or to schedule
-    periodic startup of an actor-based data processing pipeline.
+    Interface for a Scheduler class.
     """
 
-    @staticmethod
+    @classmethod
     def schedule_once(
-        delay: float, receiver: ActorRef, message: Any
+        cls, delay: float, receiver: ActorRef, message: Any
     ) -> Cancellable:
         """
         Based on:
@@ -104,9 +104,9 @@ class Scheduler:
             message: Any
         ): Cancellable
 
-        Creates a `threading.Timer` object to `tell` a message to an
-        actor once after a specified delay. The returning Cancellable object
-        can be cancelled before a message was sent.
+        Creates a time object to `tell` a message to an actor once after a specified
+        delay. The returning Cancellable object can be cancelled before a message was
+        sent.
 
         Args:
             delay (float): How much time in ``seconds`` must pass before execution.
@@ -115,9 +115,7 @@ class Scheduler:
         Returns: A Cancellable object.
         """
         cancellable = Cancellable(None)
-
-        timer = Timer(interval=delay, function=receiver.tell, args=(message,))
-        timer.start()
+        timer = cls._get_timer(delay, receiver.tell, message)
         cancellable.set_timer(timer)
         return cancellable
 
@@ -217,18 +215,18 @@ class Scheduler:
         """
         cancellable = Cancellable(None)
 
-        if precise:
-            started = time.time() + initial_delay
-        else:
-            started = None
+        started = time.time() + initial_delay
 
-        timer = Timer(
-            interval=initial_delay,
-            function=cls._tell_and_update_cancellable,
-            args=(cancellable, interval, receiver, message, started),
+        timer = cls._get_timer(
+            initial_delay,
+            cls._tell_and_update_cancellable,
+            cancellable,
+            interval,
+            receiver,
+            message,
+            started,
+            precise,
         )
-        timer.start()
-
         cancellable.set_timer(timer)
         return cancellable
 
@@ -239,14 +237,15 @@ class Scheduler:
         interval: float,
         receiver: ActorRef,
         message: Any,
-        started: Optional[float] = None,
+        started: float,
+        precise: bool,
     ) -> None:
         """
         A pseudo-callback function that creates a new Timer for the next
         message delivery and updates a Cancellable object with this Timer
         to keep the scheduled activity cancellable.
 
-        If `started` parameter is not None, it tried to be as precise as
+        If `started` parameter is not None, it tries to be as precise as
         possible and to calculate and compensate time drift from the 'ideal'
         execution time.
 
@@ -261,21 +260,34 @@ class Scheduler:
                 and compensate time drift between executions.
         Returns: None, since that's a pseudo-callback.
         """
-        if started:
-            time_drift = (time.time() - started) % interval
+        now = time.time()
+        if precise or now < started:
+            time_drift = (now - started) % interval
             delay = interval - time_drift
         else:
             delay = interval
 
         try:
-            receiver.tell(message)
-            timer = Timer(
-                interval=delay,
-                function=cls._tell_and_update_cancellable,
-                args=(cancellable, interval, receiver, message, started),
+            if now >= started:
+                receiver.tell(message)
+            timer = cls._get_timer(
+                delay,
+                cls._tell_and_update_cancellable,
+                cancellable,
+                interval,
+                receiver,
+                message,
+                started,
+                precise,
             )
-            timer.start()
-
             cancellable.set_timer(timer)
         except ActorDeadError as exception:
             logger.error("Stopping periodic job: %s", exception)
+
+    @staticmethod
+    @abstractmethod
+    def _get_timer(delay, func, *args):
+        """
+        Abstract method to return a timer of an specific type.
+        """
+        raise NotImplementedError("Use a subclass of Scheduler")
