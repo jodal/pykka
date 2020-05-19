@@ -5,7 +5,6 @@ from gevent import Greenlet
 
 from pykka import Actor, Future, Scheduler
 
-
 class GeventFuture(Future):
     async_result: gevent.event.AsyncResult
 

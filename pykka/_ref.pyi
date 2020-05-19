@@ -1,11 +1,5 @@
 import threading
-from typing import (
-    Any,
-    Optional,
-    Type,
-    Union,
-    overload,
-)
+from typing import Any, Optional, Type, Union, overload
 
 from typing_extensions import Literal
 
@@ -32,10 +26,7 @@ class ActorRef:
     ) -> Future[Any]: ...
     @overload  # noqa: Allow redefinition
     def ask(
-        self,
-        message: Any,
-        block: Literal[True],
-        timeout: Optional[float] = ...,
+        self, message: Any, block: Literal[True], timeout: Optional[float] = ...
     ) -> Any: ...
     @overload  # noqa: Allow redefinition
     def ask(

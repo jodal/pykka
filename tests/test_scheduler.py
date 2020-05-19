@@ -92,7 +92,7 @@ def test_schedule_once_is_cancellable(actor_ref_scheduler_sleep):
 
 
 def test_periodic_job_is_cancellable_before_the_first_run(
-        actor_ref_scheduler_sleep
+    actor_ref_scheduler_sleep
 ):
     actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
     cancellable = scheduler.schedule_with_fixed_delay(
@@ -105,7 +105,7 @@ def test_periodic_job_is_cancellable_before_the_first_run(
 
 
 def test_periodic_job_is_cancellable_after_the_first_run(
-        actor_ref_scheduler_sleep
+    actor_ref_scheduler_sleep
 ):
     actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
@@ -121,7 +121,7 @@ def test_periodic_job_is_cancellable_after_the_first_run(
 
 
 def test_schedule_at_fixed_rate_is_executed_periodically(
-        actor_ref_scheduler_sleep
+    actor_ref_scheduler_sleep
 ):
     actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
@@ -140,7 +140,7 @@ def test_schedule_at_fixed_rate_is_executed_periodically(
 
 
 def test_schedule_with_fixed_delay_is_executed_periodically(
-        actor_ref_scheduler_sleep
+    actor_ref_scheduler_sleep
 ):
     actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
     cancellable = scheduler.schedule_with_fixed_delay(
