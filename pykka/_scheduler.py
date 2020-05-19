@@ -22,6 +22,10 @@ class Cancellable:
     property with a non-cancelled timer, Lock is used.
     """
 
+    _cancelled: bool
+    _timer: Any
+    _timer_lock: Lock
+
     def __init__(self, timer: Any) -> None:
         self._cancelled: bool = False
         self._timer: Any = timer
@@ -248,6 +252,11 @@ class Scheduler(ABC):
         If `started` parameter is not None, it tries to be as precise as
         possible and to calculate and compensate time drift from the 'ideal'
         execution time.
+
+        `gevent.sleep` sometimes lets this preudo-callback start too early,
+        it leads to sending an unexpected message. Checks bases on `now`
+        and `started` are added to avoid this situation for both precise
+        and imprecise options.
 
         Args:
             cancellable (Cancellable): A previously returned object whose

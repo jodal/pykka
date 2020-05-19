@@ -1,9 +1,14 @@
 from abc import ABC, abstractmethod
+from threading import Lock
 from typing import Any, Callable
 
 from pykka import ActorRef
 
 class Cancellable:
+    _cancelled: bool
+    _timer: Any
+    _timer_lock: Lock
+    def __init__(self, timer: Any) -> None: ...
     def is_cancelled(self) -> bool: ...
     def set_timer(self, timer: Any) -> bool: ...
     def cancel(self) -> bool: ...

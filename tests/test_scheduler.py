@@ -123,7 +123,7 @@ def test_periodic_job_is_cancellable_after_the_first_run(
     assert second_count == first_count
 
 
-def test_schedule_at_fixed_rate_is_executed_periodically(
+def test_schedule_at_fixed_rate_executed_periodically(
     actor_ref_scheduler_sleep
 ):
     actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
@@ -142,7 +142,7 @@ def test_schedule_at_fixed_rate_is_executed_periodically(
     assert third_count == 3
 
 
-def test_schedule_with_fixed_delay_is_executed_periodically(
+def test_schedule_with_fixed_delay_executed_periodically(
     actor_ref_scheduler_sleep
 ):
     actor_ref, scheduler, sleep = actor_ref_scheduler_sleep
