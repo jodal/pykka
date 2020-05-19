@@ -127,7 +127,8 @@ class Actor:
     #: continue processing messages. Use :meth:`stop` to change it.
     actor_stopped = None
 
-    #: A stack of message handlers. These handlers are
+    #: A stack of message handlers. These handlers are tuples of a function and
+    #: its args. It always has at least one element - default :meth:`on_receive`.
     actor_message_handlers = None
 
     def __init__(self, *args, **kwargs):
