@@ -5,7 +5,7 @@ import gevent.event
 import gevent.queue
 from gevent.greenlet import Greenlet
 
-from pykka import Actor, Future, Timeout, Scheduler
+from pykka import Actor, Future, Scheduler, Timeout
 
 __all__ = ["GeventActor", "GeventFuture", "GeventScheduler"]
 

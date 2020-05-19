@@ -2,8 +2,7 @@ from threading import Timer
 
 import pytest
 
-import time
-from pykka import Cancellable, ThreadingScheduler
+from pykka import Cancellable
 
 
 @pytest.fixture(scope="module")

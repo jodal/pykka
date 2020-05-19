@@ -1,6 +1,6 @@
 import logging
 import time
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from threading import Lock
 from typing import Any
 
