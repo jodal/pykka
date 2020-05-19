@@ -1,8 +1,11 @@
+import logging
 from threading import Timer
 
 import pytest
 
 from pykka import Cancellable
+
+logger = logging.getLogger("pykka")
 
 
 @pytest.fixture(scope="module")
@@ -13,6 +16,7 @@ def counting_actor_class(runtime):
             self.count = 0
 
         def on_receive(self, message):
+            logger.debug("CountingActor received message %s.", message)
             if message.get("command") == "return count":
                 return self.count
             else:
