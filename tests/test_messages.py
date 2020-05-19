@@ -1,9 +1,4 @@
-from pykka.messages import (
-    ProxyCall,
-    ProxyGetAttr,
-    ProxySetAttr,
-    _ActorStop,
-)
+from pykka.messages import ProxyCall, ProxyGetAttr, ProxySetAttr, _ActorStop
 
 
 def test_actor_stop():

@@ -2,6 +2,7 @@ import logging
 import sys
 import threading
 import uuid
+from collections import deque
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
@@ -126,6 +127,9 @@ class Actor:
     #: continue processing messages. Use :meth:`stop` to change it.
     actor_stopped = None
 
+    #: A stack of message handlers. These handlers are
+    actor_message_handlers = None
+
     def __init__(self, *args, **kwargs):
         """
         Your are free to override :meth:`__init__`, but you must call your
@@ -149,6 +153,7 @@ class Actor:
         self.actor_inbox = self._create_actor_inbox()
         self.actor_stopped = threading.Event()
 
+        self.actor_message_handlers = deque([(self.on_receive, ())])
         self.actor_ref = ActorRef(self)
 
     def __str__(self):
@@ -229,6 +234,30 @@ class Actor:
                         )
                     )
 
+    def _become(self, func, *args, discard_old=True):
+        """
+        Adds a specified message handler to a stack to allow changing actor
+        behaviour on the fly.
+
+        If `discard_old` is set to `True`, it replaces the latest handler,
+        so :meth:`_unbecome` will always lead to returning to the original
+        :meth:`on_receive` method.
+        If `discard_old` is set to `False`, the new handler will be placed
+        to the top of the stack, and it will need several :meth:`_unbecome`s
+        to return to the original behaviour.
+        """
+        if discard_old:
+            self._unbecome()
+        self.actor_message_handlers.append((func, args))
+
+    def _unbecome(self):
+        """
+        Removes one message handler from a stack if there are any handlers
+        but the original :meth:`on_receive` method.
+        """
+        if len(self.actor_message_handlers) > 1:
+            self.actor_message_handlers.pop()
+
     def on_start(self):
         """
         Hook for doing any setup that should be done *after* the actor is
@@ -298,7 +327,8 @@ class Actor:
             parent_attr = self._get_attribute_from_path(message.attr_path[:-1])
             attr_name = message.attr_path[-1]
             return setattr(parent_attr, attr_name, message.value)
-        return self.on_receive(message)
+        message_handler, args = self.actor_message_handlers[-1]
+        return message_handler(message, *args)
 
     def on_receive(self, message):
         """

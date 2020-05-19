@@ -1,6 +1,7 @@
 import threading
+from collections import deque
 from types import TracebackType
-from typing import Any, Dict, Sequence, Type
+from typing import Any, Callable, Dict, Sequence, Type
 
 from typing_extensions import Protocol  # Py38+: Available in ``typing``
 
@@ -23,6 +24,7 @@ class Actor:
     actor_inbox: ActorInbox
     actor_ref: ActorRef
     actor_stopped: threading.Event
+    actor_message_handlers: deque
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
     def __str__(self) -> str: ...
     def stop(self) -> None: ...
@@ -30,6 +32,10 @@ class Actor:
     def _actor_loop(self) -> None: ...
     def on_start(self) -> None: ...
     def on_stop(self) -> None: ...
+    def _unbecome(self) -> None: ...
+    def _become(
+        self, func: Callable, *args: Any, discard_old: bool
+    ) -> None: ...
     def _handle_failure(
         self,
         exception_type: Type[BaseException],

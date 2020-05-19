@@ -4,7 +4,6 @@ import pytest
 
 from pykka import ActorDeadError, ActorRegistry
 
-
 pytestmark = pytest.mark.usefixtures("stop_all")
 
 
@@ -50,6 +49,45 @@ def actor_class(runtime):
 @pytest.fixture
 def actor_ref(actor_class, events):
     ref = actor_class.start(events)
+    yield ref
+    ref.stop()
+
+
+@pytest.fixture(scope="module")
+def dynamic_actor_class(runtime):
+    class DynamicActor(runtime.actor_class):
+        def on_receive(self, message):
+            if message.get("command") == "current behaviour":
+                return "default"
+            if message.get("command") == "go deeper":
+                self._become(self.new_behaviour1, "deep")
+            if message.get("command") == "go high":
+                self._unbecome()
+
+        def new_behaviour1(self, message, word1):
+            if message.get("command") == "current behaviour":
+                return word1
+            if message.get("command") == "go deeper":
+                self._become(self.new_behaviour2, "very", "deep")
+            if message.get("command") == "step deeper":
+                self._become(
+                    self.new_behaviour2, "very", "deep", discard_old=False
+                )
+            if message.get("command") == "go high":
+                self._unbecome()
+
+        def new_behaviour2(self, message, word1, word2):
+            if message.get("command") == "current behaviour":
+                return f"{word1} {word2}"
+            if message.get("command") == "go high":
+                self._unbecome()
+
+    return DynamicActor
+
+
+@pytest.fixture
+def dynamic_actor_ref(dynamic_actor_class):
+    ref = dynamic_actor_class.start()
     yield ref
     ref.stop()
 
@@ -252,3 +290,48 @@ def test_actor_processes_all_messages_before_stop_on_self_stops_it(
 
     events.on_stop_was_called.wait(5)
     assert len(ActorRegistry.get_all()) == 0
+
+
+def test_actor_changes_behaviour_on_become(dynamic_actor_ref):
+    before_become = dynamic_actor_ref.ask({"command": "current behaviour"})
+    dynamic_actor_ref.tell({"command": "go deeper"})
+    first_become = dynamic_actor_ref.ask({"command": "current behaviour"})
+    dynamic_actor_ref.tell({"command": "go deeper"})
+    second_become = dynamic_actor_ref.ask({"command": "current behaviour"})
+    assert before_become == "default"
+    assert first_become == "deep"
+    assert second_become == "very deep"
+
+
+def test_actor_changes_behaviour_on_unbecome(dynamic_actor_ref):
+    dynamic_actor_ref.tell({"command": "go deeper"})
+    dynamic_actor_ref.tell({"command": "go deeper"})
+    after_become = dynamic_actor_ref.ask({"command": "current behaviour"})
+    dynamic_actor_ref.tell({"command": "go high"})
+    after_unbecome = dynamic_actor_ref.ask({"command": "current behaviour"})
+    assert after_become == "very deep"
+    assert after_unbecome == "default"
+
+
+def test_actor_stacks_handlers(dynamic_actor_ref):
+    dynamic_actor_ref.tell({"command": "go deeper"})
+    dynamic_actor_ref.tell({"command": "step deeper"})
+    after_become = dynamic_actor_ref.ask({"command": "current behaviour"})
+    dynamic_actor_ref.tell({"command": "go high"})
+    after_unbecome = dynamic_actor_ref.ask({"command": "current behaviour"})
+    assert after_become == "very deep"
+    assert after_unbecome == "deep"
+
+
+def test_actor_cant_drop_default_handler(dynamic_actor_ref):
+    before_become = dynamic_actor_ref.ask({"command": "current behaviour"})
+    dynamic_actor_ref.tell({"command": "go deeper"})
+    after_become = dynamic_actor_ref.ask({"command": "current behaviour"})
+    dynamic_actor_ref.tell({"command": "go high"})
+    first_unbecome = dynamic_actor_ref.ask({"command": "current behaviour"})
+    dynamic_actor_ref.tell({"command": "go high"})
+    second_unbecome = dynamic_actor_ref.ask({"command": "current behaviour"})
+    assert before_become == "default"
+    assert after_become == "deep"
+    assert first_unbecome == "default"
+    assert second_unbecome == "default"
