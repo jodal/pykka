@@ -11,7 +11,7 @@ from typing import (
 from pykka._types import OptExcInfo
 
 _T = TypeVar("_T")
-I = TypeVar("I")  # For when T is Iterable[I]  # noqa
+I = TypeVar("I") # noqa # For when T is Iterable[I]
 
 _M = TypeVar("_M")  # For Future.map()
 _R = TypeVar("_R")  # For Future.reduce()
@@ -26,12 +26,12 @@ class Future(Generic[_T]):
     def set_exception(self, exc_info: Optional[OptExcInfo] = ...) -> None: ...
     def set_get_hook(self, func: GetHookFunc) -> None: ...
     def filter(
-        self: Future[Iterable[I]], func: Callable[[I], bool]
-    ) -> Future[Iterable[I]]: ...
+        self: Future[Iterable[I]], func: Callable[[I], bool] # noqa
+    ) -> Future[Iterable[I]]: ... # noqa
     def join(self, *futures: Future[Any]) -> Future[Iterable[Any]]: ...
     def map(self, func: Callable[[_T], _M]) -> Future[_M]: ...
     def reduce(
-        self: Future[Iterable[I]], func: Callable[[_R, I], _R], *args: _R
+        self: Future[Iterable[I]], func: Callable[[_R, I], _R], *args: _R # noqa
     ) -> Future[_R]: ...
     def __await__(self) -> Generator[None, None, _T]: ...
 
