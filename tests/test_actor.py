@@ -4,6 +4,7 @@ import pytest
 
 from pykka import ActorDeadError, ActorRegistry
 
+
 pytestmark = pytest.mark.usefixtures("stop_all")
 
 
@@ -54,6 +55,22 @@ def actor_ref(actor_class, events):
 
 
 @pytest.fixture(scope="module")
+def early_stopping_actor_class(runtime):
+    class EarlyStoppingActor(runtime.actor_class):
+        def __init__(self, events):
+            super().__init__()
+            self.events = events
+
+        def on_start(self):
+            self.stop()
+
+        def on_stop(self):
+            self.events.on_stop_was_called.set()
+
+    return EarlyStoppingActor
+
+
+@pytest.fixture(scope="module")
 def dynamic_actor_class(runtime):
     class DynamicActor(runtime.actor_class):
         def on_receive(self, message):
@@ -90,22 +107,6 @@ def dynamic_actor_ref(dynamic_actor_class):
     ref = dynamic_actor_class.start()
     yield ref
     ref.stop()
-
-
-@pytest.fixture(scope="module")
-def early_stopping_actor_class(runtime):
-    class EarlyStoppingActor(runtime.actor_class):
-        def __init__(self, events):
-            super().__init__()
-            self.events = events
-
-        def on_start(self):
-            self.stop()
-
-        def on_stop(self):
-            self.events.on_stop_was_called.set()
-
-    return EarlyStoppingActor
 
 
 def test_messages_left_in_queue_after_actor_stops_receive_an_error(

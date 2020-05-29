@@ -6,7 +6,6 @@ from collections import deque
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
-
 __all__ = ["Actor"]
 
 logger = logging.getLogger("pykka")
@@ -154,8 +153,8 @@ class Actor:
         self.actor_inbox = self._create_actor_inbox()
         self.actor_stopped = threading.Event()
 
-        self.actor_message_handlers = deque([(self.on_receive, ())])
         self.actor_ref = ActorRef(self)
+        self.actor_message_handlers = deque([(self.on_receive, ())])
 
     def __str__(self):
         return f"{self.__class__.__name__} ({self.actor_urn})"
@@ -234,30 +233,6 @@ class Actor:
                             None,
                         )
                     )
-
-    def _become(self, func, *args, discard_old=True):
-        """
-        Adds a specified message handler to a stack to allow changing actor
-        behaviour on the fly.
-
-        If `discard_old` is set to `True`, it replaces the latest handler,
-        so :meth:`_unbecome` will always lead to returning to the original
-        :meth:`on_receive` method.
-        If `discard_old` is set to `False`, the new handler will be placed
-        to the top of the stack, and it will need several :meth:`_unbecome`s
-        to return to the original behaviour.
-        """
-        if discard_old:
-            self._unbecome()
-        self.actor_message_handlers.append((func, args))
-
-    def _unbecome(self):
-        """
-        Removes one message handler from a stack if there are any handlers
-        but the original :meth:`on_receive` method.
-        """
-        if len(self.actor_message_handlers) > 1:
-            self.actor_message_handlers.pop()
 
     def on_start(self):
         """
@@ -376,3 +351,27 @@ class Actor:
         if hasattr(obj, "__dict__"):
             result.update(obj.__dict__)
         return result
+
+    def _become(self, func, *args, discard_old=True):
+        """
+        Adds a specified message handler to a stack to allow changing actor
+        behaviour on the fly.
+
+        If `discard_old` is set to `True`, it replaces the latest handler,
+        so :meth:`_unbecome` will always lead to returning to the original
+        :meth:`on_receive` method.
+        If `discard_old` is set to `False`, the new handler will be placed
+        to the top of the stack, and it will need several :meth:`_unbecome`s
+        to return to the original behaviour.
+        """
+        if discard_old:
+            self._unbecome()
+        self.actor_message_handlers.append((func, args))
+
+    def _unbecome(self):
+        """
+        Removes one message handler from a stack if there are any handlers
+        but the original :meth:`on_receive` method.
+        """
+        if len(self.actor_message_handlers) > 1:
+            self.actor_message_handlers.pop()
