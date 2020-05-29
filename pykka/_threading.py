@@ -3,11 +3,10 @@ import sys
 import threading
 from typing import Any, NamedTuple, Optional
 
-from pykka import Actor, Future, Timeout
+from pykka import Actor, Future, Scheduler, Timeout
 from pykka._types import OptExcInfo
 
-
-__all__ = ["ThreadingActor", "ThreadingFuture"]
+__all__ = ["ThreadingActor", "ThreadingFuture", "ThreadingScheduler"]
 
 
 class ThreadingFutureResult(NamedTuple):
@@ -108,3 +107,31 @@ class ThreadingActor(Actor):
         thread.name = thread.name.replace("Thread", self.__class__.__name__)
         thread.daemon = self.use_daemon_thread
         thread.start()
+
+
+class ThreadingScheduler(Scheduler):
+    """
+    A basic Pykka Scheduler service based on Akka Scheduler behaviour.
+
+    Its main purpose is to `tell` a message to an actor after a specified
+    delay or to do it periodically. It isn't a long-term scheduler
+    and is expected to be used for retransmitting messages or to schedule
+    periodic startup of an actor-based data processing pipeline.
+
+    Threading scheduler is based on threading.Timer.
+    """
+
+    @staticmethod
+    def _get_timer(delay, func, *args) -> threading.Timer:
+        """
+        Creates a threading.Timer to schedule function execution.
+
+        Args:
+            delay: Delay before function execution.
+            func: Function to execute.
+            args: Function arguments.
+        Returns: Threading Timer object.
+        """
+        timer = threading.Timer(interval=delay, function=func, args=args)
+        timer.start()
+        return timer

@@ -3,11 +3,16 @@ import sys
 import eventlet
 import eventlet.event
 import eventlet.queue
+from eventlet.greenthread import GreenThread
 
-from pykka import Actor, Future, Timeout
+from pykka import Actor, Future, Scheduler, Timeout
 
-
-__all__ = ["EventletActor", "EventletEvent", "EventletFuture"]
+__all__ = [
+    "EventletActor",
+    "EventletEvent",
+    "EventletFuture",
+    "EventletScheduler",
+]
 
 
 class EventletEvent(eventlet.event.Event):
@@ -101,3 +106,30 @@ class EventletActor(Actor):
 
     def _start_actor_loop(self):
         eventlet.greenthread.spawn(self._actor_loop)
+
+
+class EventletScheduler(Scheduler):
+    """
+    A basic Pykka Scheduler service based on Akka Scheduler behaviour.
+
+    Its main purpose is to `tell` a message to an actor after a specified
+    delay or to do it periodically. It isn't a long-term scheduler
+    and is expected to be used for retransmitting messages or to schedule
+    periodic startup of an actor-based data processing pipeline.
+
+    Eventlet scheduler is based on eventlet.greenthread.GreenThread.
+    """
+
+    @staticmethod
+    def _get_timer(delay, func, *args) -> GreenThread:
+        """
+        Creates a GreenThread to schedule function execution.
+
+        Args:
+            delay: Delay before function execution.
+            func: Function to execute.
+            args: Function arguments.
+        Returns: GreenThread object.
+        """
+        timer = eventlet.spawn_after(delay, func, *args)
+        return timer

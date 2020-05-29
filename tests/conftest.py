@@ -5,14 +5,26 @@ from collections import namedtuple
 
 import pytest
 
-from pykka import ActorRegistry, ThreadingActor, ThreadingFuture
+from pykka import (
+    ActorRegistry,
+    ThreadingActor,
+    ThreadingFuture,
+    ThreadingScheduler,
+)
 
 from tests.log_handler import PykkaTestLogHandler
 
 
 Runtime = namedtuple(
     "Runtime",
-    ["name", "actor_class", "event_class", "future_class", "sleep_func"],
+    [
+        "name",
+        "actor_class",
+        "event_class",
+        "future_class",
+        "sleep_func",
+        "scheduler_class",
+    ],
 )
 
 
@@ -29,6 +41,7 @@ RUNTIMES = {
             event_class=threading.Event,
             future_class=ThreadingFuture,
             sleep_func=time.sleep,
+            scheduler_class=ThreadingScheduler,
         ),
         id="threading",
     )
@@ -37,7 +50,7 @@ RUNTIMES = {
 try:
     import gevent
     import gevent.event
-    from pykka.gevent import GeventActor, GeventFuture
+    from pykka.gevent import GeventActor, GeventFuture, GeventScheduler
 except ImportError:
     RUNTIMES["gevent"] = pytest.param(
         None,
@@ -52,13 +65,19 @@ else:
             event_class=gevent.event.Event,
             future_class=GeventFuture,
             sleep_func=gevent.sleep,
+            scheduler_class=GeventScheduler,
         ),
         id="gevent",
     )
 
 try:
     import eventlet
-    from pykka.eventlet import EventletActor, EventletEvent, EventletFuture
+    from pykka.eventlet import (
+        EventletActor,
+        EventletEvent,
+        EventletFuture,
+        EventletScheduler,
+    )
 except ImportError:
     RUNTIMES["eventlet"] = pytest.param(
         None,
@@ -73,6 +92,7 @@ else:
             event_class=EventletEvent,
             future_class=EventletFuture,
             sleep_func=eventlet.sleep,
+            scheduler_class=EventletScheduler,
         ),
         id="eventlet",
     )
