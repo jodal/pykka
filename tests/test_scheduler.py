@@ -74,10 +74,10 @@ def test_cancelled_cancellable_set_timer(timer):
 
 def test_schedule_once_sends_a_message_only_once(ref_scheduler_sleep):
     actor_ref, scheduler, sleep = ref_scheduler_sleep
-    scheduler.schedule_once(0.2, actor_ref, {"command": "increment"})
-    sleep(0.3)
+    scheduler.schedule_once(0.01, actor_ref, {"command": "increment"})
+    sleep(0.02)
     first_count = actor_ref.ask({"command": "return count"})
-    sleep(0.3)
+    sleep(0.01)
     second_count = actor_ref.ask({"command": "return count"})
     assert first_count == 1
     assert second_count == first_count
@@ -86,10 +86,10 @@ def test_schedule_once_sends_a_message_only_once(ref_scheduler_sleep):
 def test_schedule_once_is_cancellable(ref_scheduler_sleep):
     actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_once(
-        0.2, actor_ref, {"command": "increment"}
+        0.03, actor_ref, {"command": "increment"}
     )
     cancellable.cancel()
-    sleep(0.3)
+    sleep(0.05)
     count = actor_ref.ask({"command": "return count"})
     assert count == 0
 
@@ -97,10 +97,10 @@ def test_schedule_once_is_cancellable(ref_scheduler_sleep):
 def test_periodic_job_is_cancellable_before_the_first_run(ref_scheduler_sleep):
     actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_with_fixed_delay(
-        0.1, 0.1, actor_ref, {"command": "increment"}
+        0.03, 0.03, actor_ref, {"command": "increment"}
     )
     cancellable.cancel()
-    sleep(0.2)
+    sleep(0.02)
     count = actor_ref.ask({"command": "return count"})
     assert count == 0
 
@@ -108,12 +108,12 @@ def test_periodic_job_is_cancellable_before_the_first_run(ref_scheduler_sleep):
 def test_periodic_job_is_cancellable_after_the_first_run(ref_scheduler_sleep):
     actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
-        0.1, 0.1, actor_ref, {"command": "increment"}
+        0.03, 0.03, actor_ref, {"command": "increment"}
     )
-    sleep(0.15)
+    sleep(0.035)
     cancellable.cancel()
     first_count = actor_ref.ask({"command": "return count"})
-    sleep(0.1)
+    sleep(0.03)
     second_count = actor_ref.ask({"command": "return count"})
     assert first_count == 1
     assert second_count == first_count
@@ -122,13 +122,13 @@ def test_periodic_job_is_cancellable_after_the_first_run(ref_scheduler_sleep):
 def test_schedule_at_fixed_rate_executed_periodically(ref_scheduler_sleep):
     actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
-        0.1, 0.1, actor_ref, {"command": "increment"}
+        0.03, 0.03, actor_ref, {"command": "increment"}
     )
-    sleep(0.15)
+    sleep(0.045)
     first_count = actor_ref.ask({"command": "return count"})
-    sleep(0.1)
+    sleep(0.03)
     second_count = actor_ref.ask({"command": "return count"})
-    sleep(0.1)
+    sleep(0.03)
     third_count = actor_ref.ask({"command": "return count"})
     cancellable.cancel()
     assert first_count == 1
@@ -139,13 +139,13 @@ def test_schedule_at_fixed_rate_executed_periodically(ref_scheduler_sleep):
 def test_schedule_with_fixed_delay_executed_periodically(ref_scheduler_sleep):
     actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_with_fixed_delay(
-        0.1, 0.1, actor_ref, {"command": "increment"}
+        0.03, 0.03, actor_ref, {"command": "increment"}
     )
-    sleep(0.15)
+    sleep(0.045)
     first_count = actor_ref.ask({"command": "return count"})
-    sleep(0.1)
+    sleep(0.03)
     second_count = actor_ref.ask({"command": "return count"})
-    sleep(0.1)
+    sleep(0.03)
     third_count = actor_ref.ask({"command": "return count"})
     cancellable.cancel()
     assert first_count == 1
@@ -156,9 +156,9 @@ def test_schedule_with_fixed_delay_executed_periodically(ref_scheduler_sleep):
 def test_periodic_job_stops_when_actor_is_stopped(ref_scheduler_sleep):
     actor_ref, scheduler, sleep = ref_scheduler_sleep
     cancellable = scheduler.schedule_at_fixed_rate(
-        0.1, 0.1, actor_ref, {"command": "increment"}
+        0.01, 0.01, actor_ref, {"command": "increment"}
     )
     # There is no exception on stop during running interval:
     actor_ref.stop()
-    sleep(0.15)
+    sleep(0.015)
     cancellable.cancel()
