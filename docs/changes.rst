@@ -3,6 +3,12 @@ Changes
 =======
 
 
+v2.0.3 (UNRELEASED)
+===================
+
+- Include Python 3.9 in the test matrix. (PR: :issue:`98`)
+
+
 v2.0.2 (2019-12-02)
 ===================
 
