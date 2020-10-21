@@ -16,11 +16,6 @@ Runtime = namedtuple(
 )
 
 
-class NullCollector(pytest.collect.File):
-    def collect(self):
-        return []
-
-
 RUNTIMES = {
     "threading": pytest.param(
         Runtime(
