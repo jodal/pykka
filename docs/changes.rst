@@ -5,6 +5,8 @@ Changes
 v3.0.0 (UNRELEASED)
 ===================
 
+- Include Python 3.9 in the test matrix. (PR: :issue:`98`)
+
 - Remove support for Python 2.7. (PR: :issue:`87`)
 
 - Remove support for Python 3.5. (PR: :issue:`89`)

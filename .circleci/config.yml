@@ -10,6 +10,7 @@ workflows:
       - py36
       - py37
       - py38
+      - py39
       - pypy3
       - black
       - check-manifest
@@ -18,9 +19,9 @@ workflows:
       - mypy
 
 jobs:
-  py38: &test-template
+  py39: &test-template
     docker:
-      - image: circleci/python:3.8
+      - image: circleci/python:3.9
     steps:
       - checkout
       - run:
@@ -57,6 +58,11 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.7
+
+  py38:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
 
   pypy3:
     <<: *test-template
