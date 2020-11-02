@@ -55,7 +55,7 @@ class ActorRef:
         """
         return not self.actor_stopped.is_set()
 
-    def tell(self, message):
+    def tell(self, message, delay=0):
         """
         Send message to actor without waiting for any response.
 
@@ -70,9 +70,9 @@ class ActorRef:
         """
         if not self.is_alive():
             raise ActorDeadError(f"{self} not found")
-        self.actor_inbox.put(Envelope(message))
+        self.actor_inbox.put(Envelope(message, delay=delay))
 
-    def ask(self, message, block=True, timeout=None):
+    def ask(self, message, block=True, timeout=None, delay=0):
         """
         Send message to actor and wait for the reply.
 
@@ -107,7 +107,9 @@ class ActorRef:
         except ActorDeadError:
             future.set_exception()
         else:
-            self.actor_inbox.put(Envelope(message, reply_to=future))
+            self.actor_inbox.put(
+                Envelope(message, reply_to=future, delay=delay)
+            )
 
         if block:
             return future.get(timeout=timeout)

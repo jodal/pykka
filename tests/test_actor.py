@@ -1,3 +1,4 @@
+import time
 import uuid
 
 import pytest
@@ -237,3 +238,45 @@ def test_actor_processes_all_messages_before_stop_on_self_stops_it(actor_ref, ev
 
     events.on_stop_was_called.wait(5)
     assert len(ActorRegistry.get_all()) == 0
+
+
+def test_delayed_message_is_actually_delayed(runtime, actor_ref):
+    event = runtime.event_class()
+    lst = []
+
+    actor_ref.tell(
+        {
+            "command": "callback",
+            "callback": lambda: lst.append(2) or event.set(),
+        },
+        delay=1,
+    )
+    actor_ref.tell(
+        {"command": "callback", "callback": lambda: lst.append(1)}, delay=0.5
+    )
+    event_set = event.wait()
+    actor_ref.stop()
+
+    assert event_set
+    assert lst == [1, 2]
+
+
+def test_delayed_message_with_shorter_delay_cuts_in_line(runtime, actor_ref):
+    event = runtime.event_class()
+
+    departure_time = time.time()
+    arrival_time = []
+    delay = 1
+
+    actor_ref.tell(
+        {
+            "command": "callback",
+            "callback": lambda: arrival_time.append(time.time()) or event.set(),
+        },
+        delay=delay,
+    )
+    event_set = event.wait()
+    actor_ref.stop()
+
+    assert event_set
+    assert abs(arrival_time[0] - departure_time - delay) < 0.1
