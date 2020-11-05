@@ -1,5 +1,5 @@
-from pykka import ActorDeadError, ActorProxy
 from pykka._envelope import Envelope
+from pykka._proxy import ActorDeadError, ActorProxy, ExtendedActorProxy
 from pykka.messages import _ActorStop
 
 __all__ = ["ActorRef"]
@@ -107,9 +107,7 @@ class ActorRef:
         except ActorDeadError:
             future.set_exception()
         else:
-            self.actor_inbox.put(
-                Envelope(message, reply_to=future, delay=delay)
-            )
+            self.actor_inbox.put(Envelope(message, reply_to=future, delay=delay))
 
         if block:
             return future.get(timeout=timeout)
@@ -153,7 +151,7 @@ class ActorRef:
         else:
             return converted_future
 
-    def proxy(self):
+    def proxy(self, extended=False):
         """
         Wraps the :class:`ActorRef` in an :class:`ActorProxy
         <pykka.ActorProxy>`.
@@ -169,4 +167,7 @@ class ActorRef:
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.ActorProxy`
         """
-        return ActorProxy(self)
+        if extended:
+            return ExtendedActorProxy(self)
+        else:
+            return ActorProxy.from_actor_ref(self)

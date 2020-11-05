@@ -89,7 +89,7 @@ def test_call_to_unknown_method_raises_attribute_error(proxy):
 
     result = str(exc_info.value)
 
-    assert result.startswith("<ActorProxy for ActorA")
+    assert result.startswith("<ActorProxyMessageBuilder for ActorA")
     assert result.endswith("has no attribute 'unknown_method'")
 
 
@@ -99,7 +99,7 @@ def test_deferred_call_to_unknown_method_raises_attribute_error(proxy):
 
     result = str(exc_info.value)
 
-    assert result.startswith("<ActorProxy for ActorA")
+    assert result.startswith("<ActorProxyMessageBuilder for ActorA")
     assert result.endswith("has no attribute 'unknown_method'")
 
 

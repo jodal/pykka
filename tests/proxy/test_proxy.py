@@ -26,7 +26,7 @@ def actor_class(runtime):
 
 @pytest.fixture
 def proxy(actor_class):
-    proxy = ActorProxy(actor_class.start())
+    proxy = ActorProxy.from_actor_ref(actor_class.start())
     yield proxy
     proxy.stop()
 
@@ -110,7 +110,7 @@ def test_proxy_constructor_raises_exception_if_actor_is_dead(actor_class):
     actor_ref.stop()
 
     with pytest.raises(ActorDeadError) as exc_info:
-        ActorProxy(actor_ref)
+        ActorProxy.from_actor_ref(actor_ref)
 
     assert str(exc_info.value) == f"{actor_ref} not found"
 
