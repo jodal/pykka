@@ -24,7 +24,7 @@ def log(msg):
 
 if __name__ == '__main__':
     actor = AnActor.start().proxy()
-    for i in range(3):
+    for _ in range(3):
         # Method with side effect
         log('calling AnActor.proc() ...')
         actor.proc()
