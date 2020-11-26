@@ -3,7 +3,7 @@ Changes
 =======
 
 
-v2.0.3 (UNRELEASED)
+v2.0.3 (2020-11-27)
 ===================
 
 - Mark eventlet and gevent support as deprecated. The support will be removed
