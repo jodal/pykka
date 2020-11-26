@@ -2,6 +2,11 @@
 eventlet
 ========
 
+.. deprecated:: 2.0.3
+
+.. warning::
+   eventlet support is deprecated and will be removed in Pykka 3.0.
+
 
 Installation
 ============

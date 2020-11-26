@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import sys
+import warnings
 
 import eventlet
 import eventlet.event
@@ -10,6 +11,12 @@ from pykka import Actor, Future, Timeout
 
 
 __all__ = ['EventletActor', 'EventletEvent', 'EventletFuture']
+
+
+warnings.warn(
+    "eventlet support is deprecated and will be removed in Pykka 3.0.",
+    DeprecationWarning,
+)
 
 
 class EventletEvent(eventlet.event.Event):
