@@ -27,6 +27,25 @@ v3.0.0 (UNRELEASED)
   (PR: :issue:`92`)
 
 
+v2.0.3 (2020-11-27)
+===================
+
+- Mark eventlet and gevent support as deprecated. The support will be removed
+  in Pykka 3.0.
+
+  These where somewhat interesting ways to implement
+  concurrency in Python when Pykka was conceived in 2011. Today, it is
+  unclear it these libraries still have any mindshare or if keeping the
+  support for them just adds an unecessary burden to Pykka's maintenance.
+
+- Include Python 3.9 in the test matrix. (PR: :issue:`98`)
+
+- Add missing :class:`None` default value for the ``timeout`` keyword argument to
+  :meth:`~pykka.eventlet.EventletEvent.wait`, so that it matches the
+  :class:`~threading.Event` API.
+  (PR: :issue:`91`)
+
+
 v2.0.2 (2019-12-02)
 ===================
 

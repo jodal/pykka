@@ -2,6 +2,11 @@
 gevent
 ======
 
+.. deprecated:: 2.0.3
+
+.. warning::
+   gevent support is deprecated and will be removed in Pykka 3.0.
+
 
 Installation
 ============

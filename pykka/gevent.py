@@ -1,4 +1,5 @@
 import sys
+import warnings
 
 import gevent
 import gevent.event
@@ -8,6 +9,12 @@ from pykka import Actor, Future, Timeout
 
 
 __all__ = ["GeventActor", "GeventFuture"]
+
+
+warnings.warn(
+    "eventlet support is deprecated and will be removed in Pykka 3.0.",
+    DeprecationWarning,
+)
 
 
 class GeventFuture(Future):
