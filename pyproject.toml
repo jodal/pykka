@@ -37,8 +37,6 @@ mypy = "^0.812"
 pytest = "^6.2.2"
 pytest-cov = "^2.11.1"
 pytest-mock = "^3.5.1"
-Sphinx = "^3.5.2"
-sphinx-rtd-theme = "^0.5.1"
 tox = "^3.23.0"
 
 [tool.black]
