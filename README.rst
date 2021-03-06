@@ -18,14 +18,6 @@ Pykka works with Python 3.6+. If you need support for Python 2.7 or 3.5, you
 can use Pykka 2.x.
 
 
-License
-=======
-
-Pykka is copyright 2010-2021 Stein Magnus Jodal and contributors.
-Pykka is licensed under the `Apache License, Version 2.0
-<https://www.apache.org/licenses/LICENSE-2.0>`_.
-
-
 Project resources
 =================
 
