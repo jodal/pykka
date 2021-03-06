@@ -5,7 +5,6 @@ import uuid
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
-
 __all__ = ["Actor"]
 
 logger = logging.getLogger("pykka")
@@ -206,9 +205,7 @@ class Actor:
                         self._handle_failure(*sys.exc_info())
             except BaseException:
                 exception_value = sys.exc_info()[1]
-                logger.debug(
-                    f"{exception_value!r} in {self}. Stopping all actors."
-                )
+                logger.debug(f"{exception_value!r} in {self}. Stopping all actors.")
                 self._stop()
                 ActorRegistry.stop_all()
 

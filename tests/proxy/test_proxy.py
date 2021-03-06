@@ -133,9 +133,7 @@ def test_actor_proxy_does_not_expose_proxy_to_self(runtime, log_handler):
         proxy = actor_ref.proxy()
 
         assert proxy.foo.get() == "bar"
-        with pytest.raises(
-            AttributeError, match="has no attribute 'self_proxy'"
-        ):
+        with pytest.raises(AttributeError, match="has no attribute 'self_proxy'"):
             proxy.self_proxy.foo.get()
     finally:
         actor_ref.stop()

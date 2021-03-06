@@ -86,10 +86,7 @@ def test_traversable_object_returned_from_property_is_not_traversed(proxy):
     # assert proxy.nested_object_property.inner.get() == 'nested.inner'
 
     # In Pykka >= 2, the property getter always returns a future:
-    assert (
-        proxy.nested_object_property.get().inner
-        == "nested_with_attr_marker.inner"
-    )
+    assert proxy.nested_object_property.get().inner == "nested_with_attr_marker.inner"
 
 
 def test_traversable_cannot_mark_object_using_slots():

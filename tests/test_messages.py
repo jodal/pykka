@@ -1,9 +1,4 @@
-from pykka.messages import (
-    ProxyCall,
-    ProxyGetAttr,
-    ProxySetAttr,
-    _ActorStop,
-)
+from pykka.messages import ProxyCall, ProxyGetAttr, ProxySetAttr, _ActorStop
 
 
 def test_actor_stop():
@@ -13,9 +8,7 @@ def test_actor_stop():
 
 
 def test_proxy_call():
-    message = ProxyCall(
-        attr_path=["nested", "method"], args=[1], kwargs={"a": "b"}
-    )
+    message = ProxyCall(attr_path=["nested", "method"], args=[1], kwargs={"a": "b"})
 
     assert isinstance(message, ProxyCall)
     assert message.attr_path == ["nested", "method"]

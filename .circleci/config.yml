@@ -12,7 +12,6 @@ workflows:
       - py38
       - py39
       - pypy3
-      - black
       - check-manifest
       - docs
       - flake8
@@ -68,8 +67,6 @@ jobs:
     <<: *test-template
     docker:
       - image: pypy:3.6
-
-  black: *test-template
 
   check-manifest: *test-template
 

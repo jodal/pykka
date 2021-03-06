@@ -4,7 +4,6 @@ from typing import NamedTuple
 
 from pykka import ActorDeadError, messages
 
-
 __all__ = ["ActorProxy"]
 
 logger = logging.getLogger("pykka")
@@ -200,9 +199,7 @@ class ActorProxy:
         return hash((self._actor, self._attr_path))
 
     def __repr__(self):
-        return (
-            f"<ActorProxy for {self.actor_ref}, attr_path={self._attr_path!r}>"
-        )
+        return f"<ActorProxy for {self.actor_ref}, attr_path={self._attr_path!r}>"
 
     def __dir__(self):
         result = ["__class__"]
@@ -230,9 +227,7 @@ class ActorProxy:
             return self._callable_proxies[attr_path]
         elif attr_info.traversable:
             if attr_path not in self._actor_proxies:
-                self._actor_proxies[attr_path] = ActorProxy(
-                    self.actor_ref, attr_path
-                )
+                self._actor_proxies[attr_path] = ActorProxy(self.actor_ref, attr_path)
             return self._actor_proxies[attr_path]
         else:
             message = messages.ProxyGetAttr(attr_path=attr_path)

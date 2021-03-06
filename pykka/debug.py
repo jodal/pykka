@@ -3,7 +3,6 @@ import sys
 import threading
 import traceback
 
-
 logger = logging.getLogger("pykka")
 
 

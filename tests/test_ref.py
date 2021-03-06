@@ -99,9 +99,7 @@ def test_tell_delivers_message_to_actors_custom_on_receive(
         Exception("an exception"),
     ],
 )
-def test_tell_accepts_any_object_as_the_message(
-    actor_ref, message, received_messages
-):
+def test_tell_accepts_any_object_as_the_message(actor_ref, message, received_messages):
     actor_ref.tell(message)
 
     assert received_messages.get(timeout=1) == message

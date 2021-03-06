@@ -7,7 +7,6 @@ import gevent.queue
 
 from pykka import Actor, Future, Timeout
 
-
 __all__ = ["GeventActor", "GeventFuture"]
 
 

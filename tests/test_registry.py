@@ -2,7 +2,6 @@ import pytest
 
 from pykka import ActorRegistry
 
-
 pytestmark = pytest.mark.usefixtures("stop_all")
 
 
@@ -111,9 +110,7 @@ def test_stop_all_stops_last_started_actor_first_if_blocking(mocker):
     assert stopped_actors[2] == started_actors[0]
 
 
-def test_actors_may_be_looked_up_by_class(
-    actor_a_class, a_actor_refs, b_actor_refs
-):
+def test_actors_may_be_looked_up_by_class(actor_a_class, a_actor_refs, b_actor_refs):
     result = ActorRegistry.get_by_class(actor_a_class)
 
     for a_actor in a_actor_refs:
@@ -156,9 +153,7 @@ def test_get_by_urn_returns_none_if_not_found():
     assert result is None
 
 
-def test_broadcast_sends_message_to_all_actors_if_no_target(
-    a_actor_refs, b_actor_refs
-):
+def test_broadcast_sends_message_to_all_actors_if_no_target(a_actor_refs, b_actor_refs):
     ActorRegistry.broadcast({"command": "foo"})
 
     running_actors = ActorRegistry.get_all()

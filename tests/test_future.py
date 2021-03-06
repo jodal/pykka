@@ -5,7 +5,6 @@ import traceback
 import pytest
 
 from pykka import Future, Timeout, get_all
-
 from tests import has_gevent
 
 
@@ -108,12 +107,8 @@ def test_get_raises_exception_with_full_traceback(runtime):
     assert exc_class_set == exc_class_get
     assert exc_instance_set == exc_instance_get
 
-    exc_traceback_list_set = list(
-        reversed(traceback.extract_tb(exc_traceback_set))
-    )
-    exc_traceback_list_get = list(
-        reversed(traceback.extract_tb(exc_traceback_get))
-    )
+    exc_traceback_list_set = list(reversed(traceback.extract_tb(exc_traceback_set)))
+    exc_traceback_list_get = list(reversed(traceback.extract_tb(exc_traceback_get)))
 
     # All frames from the first traceback should be included in the
     # traceback from the future.get() reraise

@@ -1,6 +1,5 @@
 import functools
 
-
 __all__ = ["Future", "get_all"]
 
 
@@ -116,9 +115,7 @@ class Future:
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(
-            lambda timeout: list(filter(func, self.get(timeout)))
-        )
+        future.set_get_hook(lambda timeout: list(filter(func, self.get(timeout))))
         return future
 
     def join(self, *futures):

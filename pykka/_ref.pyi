@@ -1,11 +1,5 @@
 import threading
-from typing import (
-    Any,
-    Optional,
-    Type,
-    Union,
-    overload,
-)
+from typing import Any, Optional, Type, Union, overload
 
 from typing_extensions import Literal
 

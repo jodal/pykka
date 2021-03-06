@@ -5,7 +5,6 @@ import configparser
 import os
 import sys
 
-
 # -- Workarounds to have autodoc generate API docs ----------------------------
 
 sys.path.insert(0, os.path.abspath(".."))
