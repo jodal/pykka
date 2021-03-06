@@ -37,9 +37,9 @@ Project resources
     :target: https://pypi.org/project/Pykka/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/circleci/project/github/jodal/pykka/develop.svg
-    :target: https://circleci.com/gh/jodal/pykka
-    :alt: CircleCI build status
+.. image:: https://img.shields.io/github/workflow/status/jodal/pykka/CI
+    :target: https://github.com/jodal/pykka/actions?workflow=CI
+    :alt: CI build status
 
 .. image:: https://img.shields.io/readthedocs/pykka.svg
     :target: https://www.pykka.org/
