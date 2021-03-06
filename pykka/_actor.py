@@ -17,8 +17,6 @@ class Actor:
     1. subclass one of the :class:`Actor` implementations:
 
        - :class:`~pykka.ThreadingActor`
-       - :class:`~pykka.gevent.GeventActor`
-       - :class:`~pykka.eventlet.EventletActor`
 
     2. implement your methods, including :meth:`__init__`, as usual,
     3. call :meth:`Actor.start` on your actor class, passing the method any
@@ -138,8 +136,6 @@ class Actor:
         Or call you superclass directly::
 
             pykka.ThreadingActor.__init__(self)
-            # or
-            pykka.gevent.GeventActor.__init__(self)
 
         :meth:`__init__` is called before the actor is started and registered
         in :class:`ActorRegistry <pykka.ActorRegistry>`.

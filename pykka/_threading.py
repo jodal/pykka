@@ -72,10 +72,6 @@ class ThreadingActor(Actor):
     """
     :class:`ThreadingActor` implements :class:`Actor` using regular Python
     threads.
-
-    This implementation is slower than :class:`GeventActor
-    <pykka.gevent.GeventActor>`, but can be used in a process with other
-    threads that are not Pykka actors.
     """
 
     use_daemon_thread = False

@@ -9,12 +9,12 @@ v3.0.0 (UNRELEASED)
 
 - Remove support for Python 3.5. (PR: :issue:`89`)
 
+- Remove support for running actors on top of eventlet. (PR: :issue:`111`)
+
+- Remove support for running actors on top of gevent. (PR: :issue:`111`)
+
 - Remove support for automatically upgrading the internal message format used
   by Pykka 1.x to the message types used by Pykka 2+. (PR: :issue:`88`)
-
-- Remove ``isSet()`` method from :class:`~pykka.eventlet.EventletEvent`, as
-  this method is not part of the :class:`~threading.Event` API in Python 3.
-  (PR: :issue:`91`)
 
 - Include complete type hint stubs for all public APIs in the PyPI distribution.
   (PR: :issue:`92`)
