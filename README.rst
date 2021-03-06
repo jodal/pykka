@@ -8,7 +8,7 @@ simple rules to control the sharing of state and cooperation between execution
 units, which makes it easier to build concurrent applications.
 
 For details and code examples, see the `Pykka documentation
-<https://www.pykka.org/>`_.
+<https://pykka.readthedocs.io/>`_.
 
 Pykka is available from PyPI. To install it, run::
 
@@ -29,7 +29,7 @@ Pykka is licensed under the `Apache License, Version 2.0
 Project resources
 =================
 
-- `Documentation <https://www.pykka.org/>`_
+- `Documentation <https://pykka.readthedocs.io/>`_
 - `Source code <https://github.com/jodal/pykka>`_
 - `Issue tracker <https://github.com/jodal/pykka/issues>`_
 
@@ -42,7 +42,7 @@ Project resources
     :alt: CI build status
 
 .. image:: https://img.shields.io/readthedocs/pykka.svg
-    :target: https://www.pykka.org/
+    :target: https://pykka.readthedocs.io/
     :alt: Read the Docs build status
 
 .. image:: https://img.shields.io/codecov/c/github/jodal/pykka/develop.svg

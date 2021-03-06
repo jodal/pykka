@@ -7,7 +7,7 @@ license = "Apache License, Version 2.0"
 readme = "README.rst"
 homepage = "https://github.com/jodal/pykka"
 repository = "https://github.com/jodal/pykka"
-documentation = "https://www.pykka.org/"
+documentation = "https://pykka.readthedocs.io/"
 keywords = ["actor", "concurrency", "threading"]
 classifiers = [
    "Development Status :: 5 - Production/Stable",

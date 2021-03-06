@@ -8,7 +8,7 @@ simple rules to control the sharing of state and cooperation between execution
 units, which makes it easier to build concurrent applications.
 
 For details and code examples, see the `Pykka documentation
-<https://www.pykka.org/>`_.
+<https://pykka.readthedocs.io/>`_.
 
 Pykka is available from PyPI. To install it, run::
 
