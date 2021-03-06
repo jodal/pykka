@@ -43,19 +43,14 @@ Pykka's actor API comes with the following implementations:
   :class:`queue.Queue`. It has no dependencies outside Python itself.
   :class:`~pykka.ThreadingActor` plays well together with non-actor threads.
 
-  Note: If you monkey patch the standard library with ``gevent`` or
-  ``eventlet`` you can still use :class:`~pykka.ThreadingActor` and
-  :class:`~pykka.ThreadingFuture`. Python's threads will transparently use
-  the underlying implementation  provided by gevent or Eventlet.
+Pykka 2 and earlier shipped with some alternative implementations that were
+removed in Pykka 3:
 
-- gevent: Each :class:`~pykka.gevent.GeventActor` is executed by a gevent
-  greenlet. `gevent <http://www.gevent.org/>`_ is a coroutine-based Python
-  networking library built on top of libev event loop.
-  :class:`~pykka.gevent.GeventActor` is generally faster than
-  :class:`~pykka.ThreadingActor`.
+- gevent: Each actor was executed by a `gevent <http://www.gevent.org/>`_
+  greenlet.
 
-- Eventlet: Each :class:`~pykka.eventlet.EventletActor` is executed by an
-  `Eventlet  <https://eventlet.net/>`_ greenlet.
+- Eventlet: Each actor was executed by an `Eventlet <https://eventlet.net/>`_
+  greenlet.
 
 Pykka has an extensive test suite, and is tested on CPython 3.6+
 as well as PyPy.

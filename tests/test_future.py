@@ -5,7 +5,6 @@ import traceback
 import pytest
 
 from pykka import Future, Timeout, get_all
-from tests import has_gevent
 
 
 def run_async(coroutine):
@@ -269,14 +268,3 @@ def test_reduce_reuses_result_if_called_multiple_times(future, mocker):
     assert reduced.get(timeout=0) == 6
     assert reduced.get(timeout=0) == 6  # First result is reused
     assert reduced.get(timeout=0) == 6  # First result is reused
-
-
-@has_gevent
-def test_gevent_future_can_wrap_existing_async_result(gevent_runtime):
-    from gevent.event import AsyncResult
-
-    async_result = AsyncResult()
-
-    future = gevent_runtime.future_class(async_result)
-
-    assert async_result == future.async_result
