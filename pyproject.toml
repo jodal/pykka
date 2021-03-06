@@ -1,8 +1,51 @@
-[build-system]
-requires = ["setuptools", "wheel"]
+[tool.poetry]
+name = "pykka"
+version = "3.0.0"
+description = "Pykka is a Python implementation of the actor model"
+authors = ["Stein Magnus Jodal <stein.magnus@jodal.no>"]
+license = "Apache License, Version 2.0"
+readme = "README.rst"
+homepage = "https://github.com/jodal/pykka"
+repository = "https://github.com/jodal/pykka"
+documentation = "https://www.pykka.org/"
+keywords = ["actor", "concurrency", "threading"]
+classifiers = [
+   "Development Status :: 5 - Production/Stable",
+   "Intended Audience :: Developers",
+   "Topic :: Software Development :: Libraries",
+   "License :: OSI Approved :: Apache Software License",
+   "Programming Language :: Python :: 3",
+   "Programming Language :: Python :: 3.6",
+   "Programming Language :: Python :: 3.7",
+   "Programming Language :: Python :: 3.8",
+   "Programming Language :: Python :: 3.9",
+]
+
+[tool.poetry.dependencies]
+python = "^3.6.1"
+
+[tool.poetry.dev-dependencies]
+black = "^20.8b1"
+flake8 = "^3.8.4"
+flake8-black = "^0.2.1"
+flake8-bugbear = "^21.3.1"
+flake8-isort = "^4.0.0"
+flake8-pyi = "^20.10.0"
+isort = "^5.7.0"
+mypy = "^0.812"
+pytest = "^6.2.2"
+pytest-cov = "^2.11.1"
+pytest-mock = "^3.5.1"
+Sphinx = "^3.5.2"
+sphinx-rtd-theme = "^0.5.1"
+tox = "^3.23.0"
 
 [tool.black]
 target-version = ["py36", "py37", "py38"]
 
 [tool.isort]
 profile = "black"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
