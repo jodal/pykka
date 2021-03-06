@@ -9,6 +9,10 @@ v3.0.0 (UNRELEASED)
 
 - Remove support for Python 3.5. (PR: :issue:`89`)
 
+- Remove PyPy from the test matrix. There are no known changes that should
+  cause Pykka to stop working on PyPy, but we will no longer spend any effort
+  on maintaining CI for PyPy. (PR: :issue:`113`)
+
 - Remove support for running actors on top of eventlet. (PR: :issue:`111`)
 
 - Remove support for running actors on top of gevent. (PR: :issue:`111`)

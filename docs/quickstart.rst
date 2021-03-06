@@ -52,9 +52,6 @@ removed in Pykka 3:
 - Eventlet: Each actor was executed by an `Eventlet <https://eventlet.net/>`_
   greenlet.
 
-Pykka has an extensive test suite, and is tested on CPython 3.6+
-as well as PyPy.
-
 
 A basic actor
 =============
