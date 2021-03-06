@@ -5,7 +5,6 @@ import uuid
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
-
 __all__ = ["Actor"]
 
 logger = logging.getLogger("pykka")

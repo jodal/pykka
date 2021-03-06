@@ -2,7 +2,6 @@ import pytest
 
 from pykka import ActorRegistry
 
-
 pytestmark = pytest.mark.usefixtures("stop_all")
 
 

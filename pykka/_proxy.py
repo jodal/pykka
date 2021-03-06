@@ -4,7 +4,6 @@ from typing import NamedTuple
 
 from pykka import ActorDeadError, messages
 
-
 __all__ = ["ActorProxy"]
 
 logger = logging.getLogger("pykka")

@@ -1,6 +1,5 @@
 import functools
 
-
 __all__ = ["Future", "get_all"]
 
 

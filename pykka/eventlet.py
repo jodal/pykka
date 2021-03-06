@@ -7,7 +7,6 @@ import eventlet.queue
 
 from pykka import Actor, Future, Timeout
 
-
 __all__ = ["EventletActor", "EventletEvent", "EventletFuture"]
 
 

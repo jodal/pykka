@@ -4,7 +4,6 @@ import pytest
 
 from pykka import ActorDeadError, ActorRegistry
 
-
 pytestmark = pytest.mark.usefixtures("stop_all")
 
 

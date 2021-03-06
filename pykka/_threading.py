@@ -6,7 +6,6 @@ from typing import Any, NamedTuple, Optional
 from pykka import Actor, Future, Timeout
 from pykka._types import OptExcInfo
 
-
 __all__ = ["ThreadingActor", "ThreadingFuture"]
 
 

@@ -5,7 +5,6 @@ import traceback
 import pytest
 
 from pykka import Future, Timeout, get_all
-
 from tests import has_gevent
 
 

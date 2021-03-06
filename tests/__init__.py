@@ -1,6 +1,5 @@
 import pytest
 
-
 try:
     import eventlet  # noqa
 except ImportError:

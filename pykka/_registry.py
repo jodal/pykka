@@ -1,7 +1,6 @@
 import logging
 import threading
 
-
 logger = logging.getLogger("pykka")
 
 

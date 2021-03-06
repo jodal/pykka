@@ -1,7 +1,5 @@
-from producer import ProducerActor
-
-
 import pytest
+from producer import ProducerActor
 
 
 @pytest.fixture

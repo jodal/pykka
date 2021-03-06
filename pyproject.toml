@@ -4,3 +4,6 @@ requires = ["setuptools", "wheel"]
 [tool.black]
 target-version = ["py36", "py37", "py38"]
 line-length = 80
+
+[tool.isort]
+profile = "black"

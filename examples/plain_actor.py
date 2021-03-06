@@ -2,7 +2,6 @@
 
 import pykka
 
-
 GetMessages = object()
 
 

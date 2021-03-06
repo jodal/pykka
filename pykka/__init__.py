@@ -7,8 +7,10 @@ from pykka._future import Future, get_all
 from pykka._proxy import ActorProxy, CallableProxy, traversable
 from pykka._ref import ActorRef
 from pykka._registry import ActorRegistry
-from pykka._actor import Actor  # noqa: Must be imported late
-from pykka._threading import ThreadingActor, ThreadingFuture
+
+# The following must be imported late, in this specific order.
+from pykka._actor import Actor  # isort:skip
+from pykka._threading import ThreadingActor, ThreadingFuture  # isort:skip
 
 
 __all__ = [

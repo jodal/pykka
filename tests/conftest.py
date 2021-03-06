@@ -6,9 +6,7 @@ from collections import namedtuple
 import pytest
 
 from pykka import ActorRegistry, ThreadingActor, ThreadingFuture
-
 from tests.log_handler import PykkaTestLogHandler
-
 
 Runtime = namedtuple(
     "Runtime",
@@ -32,6 +30,7 @@ RUNTIMES = {
 try:
     import gevent
     import gevent.event
+
     from pykka.gevent import GeventActor, GeventFuture
 except ImportError:
     RUNTIMES["gevent"] = pytest.param(
@@ -53,6 +52,7 @@ else:
 
 try:
     import eventlet
+
     from pykka.eventlet import EventletActor, EventletEvent, EventletFuture
 except ImportError:
     RUNTIMES["eventlet"] = pytest.param(
