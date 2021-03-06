@@ -75,9 +75,7 @@ def test_exception_is_logged_when_returned_to_caller(actor_ref, log_handler):
     assert str(log_record.exc_info[1]) == "foo"
 
 
-def test_exception_is_logged_when_not_reply_requested(
-    actor_ref, events, log_handler
-):
+def test_exception_is_logged_when_not_reply_requested(actor_ref, events, log_handler):
     events.on_failure_was_called.clear()
     actor_ref.tell({"command": "raise exception"})
 
@@ -127,9 +125,7 @@ def test_exception_in_on_start_is_logged(
     assert log_record.getMessage() == f"Unhandled exception in {actor_ref}:"
 
 
-def test_exception_in_on_stop_is_logged(
-    late_failing_actor_class, events, log_handler
-):
+def test_exception_in_on_stop_is_logged(late_failing_actor_class, events, log_handler):
     log_handler.reset()
     actor_ref = late_failing_actor_class.start(events)
     events.on_stop_was_called.wait(5)

@@ -97,9 +97,7 @@ class ActorRegistry:
         :returns: :class:`pykka.ActorRef` or :class:`None` if not found
         """
         with cls._actor_refs_lock:
-            refs = [
-                ref for ref in cls._actor_refs if ref.actor_urn == actor_urn
-            ]
+            refs = [ref for ref in cls._actor_refs if ref.actor_urn == actor_urn]
             if refs:
                 return refs[0]
 

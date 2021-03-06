@@ -69,9 +69,7 @@ def early_stopping_actor_class(runtime):
     return EarlyStoppingActor
 
 
-def test_messages_left_in_queue_after_actor_stops_receive_an_error(
-    runtime, actor_ref
-):
+def test_messages_left_in_queue_after_actor_stops_receive_an_error(runtime, actor_ref):
     event = runtime.event_class()
 
     actor_ref.tell({"command": "callback", "callback": event.wait})
@@ -83,9 +81,7 @@ def test_messages_left_in_queue_after_actor_stops_receive_an_error(
         response.get(timeout=0.5)
 
 
-def test_stop_requests_left_in_queue_after_actor_stops_are_handled(
-    runtime, actor_ref
-):
+def test_stop_requests_left_in_queue_after_actor_stops_are_handled(runtime, actor_ref):
     event = runtime.event_class()
 
     actor_ref.tell({"command": "callback", "callback": event.wait})
@@ -124,9 +120,7 @@ def test_init_can_be_called_with_arbitrary_arguments(runtime):
     runtime.actor_class(1, 2, 3, foo="bar")
 
 
-def test_on_start_is_called_before_first_message_is_processed(
-    actor_ref, events
-):
+def test_on_start_is_called_before_first_message_is_processed(actor_ref, events):
     events.on_start_was_called.wait(5)
     assert events.on_start_was_called.is_set()
 
@@ -159,9 +153,7 @@ def test_on_start_can_stop_actor_before_receive_loop_is_started(
     assert not actor_ref.is_alive()
 
 
-def test_on_start_failure_causes_actor_to_stop(
-    early_failing_actor_class, events
-):
+def test_on_start_failure_causes_actor_to_stop(early_failing_actor_class, events):
     # Actor should not be alive if on_start fails.
 
     actor_ref = early_failing_actor_class.start(events)
@@ -187,9 +179,7 @@ def test_on_stop_failure_causes_actor_to_stop(late_failing_actor_class, events):
     assert not actor_ref.is_alive()
 
 
-def test_on_failure_is_called_when_exception_cannot_be_returned(
-    actor_ref, events
-):
+def test_on_failure_is_called_when_exception_cannot_be_returned(actor_ref, events):
     assert not events.on_failure_was_called.is_set()
 
     actor_ref.tell({"command": "raise exception"})
@@ -210,9 +200,7 @@ def test_on_failure_failure_causes_actor_to_stop(
     assert not actor_ref.is_alive()
 
 
-def test_actor_is_stopped_when_unhandled_exceptions_are_raised(
-    actor_ref, events
-):
+def test_actor_is_stopped_when_unhandled_exceptions_are_raised(actor_ref, events):
     assert not events.on_failure_was_called.is_set()
 
     actor_ref.tell({"command": "raise exception"})
@@ -241,9 +229,7 @@ def test_actor_can_call_stop_on_self_multiple_times(actor_ref):
     actor_ref.ask({"command": "stop twice"})
 
 
-def test_actor_processes_all_messages_before_stop_on_self_stops_it(
-    actor_ref, events
-):
+def test_actor_processes_all_messages_before_stop_on_self_stops_it(actor_ref, events):
     actor_ref.ask({"command": "message self then stop"})
 
     events.greetings_was_received.wait(5)
