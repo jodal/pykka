@@ -21,9 +21,6 @@ jobs:
             python: "3.9"
             tox: py39
             coverage: true
-          - name: "Test: PyPy 3.7"
-            python: "pypy-3.7"
-            tox: pypy3
           - name: "Lint: check-manifest"
             python: "3.9"
             tox: check-manifest
