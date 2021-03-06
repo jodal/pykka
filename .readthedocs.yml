@@ -8,6 +8,8 @@ python:
   install:
     - method: pip
       path: .
+    - method: pip
+      path: toml
 
 sphinx:
   builder: htmldir
