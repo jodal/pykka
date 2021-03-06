@@ -5,8 +5,6 @@ Changes
 v3.0.0 (UNRELEASED)
 ===================
 
-- Include Python 3.9 in the test matrix. (PR: :issue:`98`)
-
 - Remove support for Python 2.7. (PR: :issue:`87`)
 
 - Remove support for Python 3.5. (PR: :issue:`89`)
@@ -16,11 +14,6 @@ v3.0.0 (UNRELEASED)
 
 - Remove ``isSet()`` method from :class:`~pykka.eventlet.EventletEvent`, as
   this method is not part of the :class:`~threading.Event` API in Python 3.
-  (PR: :issue:`91`)
-
-- Add missing :class:`None` default value for the ``timeout`` keyword argument to
-  :meth:`~pykka.eventlet.EventletEvent.wait`, so that it matches the
-  :class:`~threading.Event` API.
   (PR: :issue:`91`)
 
 - Include complete type hint stubs for all public APIs in the PyPI distribution.
