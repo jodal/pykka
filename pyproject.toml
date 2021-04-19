@@ -23,7 +23,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
-importlib_metadata = {version = ">=1.6,<4.0", python = "<3.8"}
+importlib_metadata = {version = ">=1.6,<5.0", python = "<3.8"}
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
