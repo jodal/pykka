@@ -174,7 +174,7 @@ pyflakes = ">=2.1.1"
 
 [[package]]
 name = "importlib-metadata"
-version = "4.0.0"
+version = "4.0.1"
 description = "Read metadata from Python packages"
 category = "main"
 optional = false
@@ -596,8 +596,8 @@ flake8-pyi = [
     {file = "flake8_pyi-20.10.0-py2.py3-none-any.whl", hash = "sha256:ff5dfc40bffa878f6ce95bcfd9a6ad14c44b85cbe99c4864e729301bf54267f0"},
 ]
 importlib-metadata = [
-    {file = "importlib_metadata-4.0.0-py3-none-any.whl", hash = "sha256:19192b88d959336bfa6bdaaaef99aeafec179eca19c47c804e555703ee5f07ef"},
-    {file = "importlib_metadata-4.0.0.tar.gz", hash = "sha256:2e881981c9748d7282b374b68e759c87745c25427b67ecf0cc67fb6637a1bff9"},
+    {file = "importlib_metadata-4.0.1-py3-none-any.whl", hash = "sha256:d7eb1dea6d6a6086f8be21784cc9e3bcfa55872b52309bc5fad53a8ea444465d"},
+    {file = "importlib_metadata-4.0.1.tar.gz", hash = "sha256:8c501196e49fb9df5df43833bdb1e4328f64847763ec8a50703148b73784d581"},
 ]
 importlib-resources = [
     {file = "importlib_resources-5.1.2-py3-none-any.whl", hash = "sha256:ebab3efe74d83b04d6bf5cd9a17f0c5c93e60fb60f30c90f56265fce4682a469"},
