@@ -37,7 +37,7 @@ mypy = "^0.812"
 pytest = "^6.2.4"
 pytest-cov = "^2.11.1"
 pytest-mock = "^3.6.0"
-tox = "^3.23.0"
+tox = "^3.23.1"
 
 [tool.black]
 target-version = ["py36", "py37", "py38"]
