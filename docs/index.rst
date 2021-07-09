@@ -18,6 +18,17 @@ Pykka works with Python 3.6+. If you need support for Python 2.7 or 3.5, you
 can use Pykka 2.x.
 
 
+Project resources
+=================
+
+- `Documentation <https://pykka.readthedocs.io/>`_
+- `Source code <https://github.com/jodal/pykka>`_
+- `Releases <https://github.com/jodal/pykka/releases>`_
+- `Issue tracker <https://github.com/jodal/pykka/issues>`_
+- `Contributors <https://github.com/jodal/pykka/graphs/contributors>`_
+- `Users <https://github.com/jodal/pykka/wiki/Users>`_
+
+
 .. toctree::
     :maxdepth: 2
     :caption: Usage

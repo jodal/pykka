@@ -30,6 +30,15 @@ python3 -m pip install pykka
 
 If you need support for Python 2.7 or 3.5, you can use Pykka 2.
 
+## Project resources
+
+- [Documentation](https://pykka.readthedocs.io/)
+- [Source code](https://github.com/jodal/pykka)
+- [Releases](https://github.com/jodal/pykka/releases)
+- [Issue tracker](https://github.com/jodal/pykka/issues)
+- [Contributors](https://github.com/jodal/pykka/graphs/contributors)
+- [Users](https://github.com/jodal/pykka/wiki/Users)
+
 ## License
 
 Pykka is copyright 2010-2021 Stein Magnus Jodal and contributors.
