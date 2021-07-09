@@ -44,7 +44,6 @@ Project resources
     :maxdepth: 2
     :caption: About
 
-    changes
     inspiration
 
 
