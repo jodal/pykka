@@ -52,9 +52,23 @@ Project resources
 
     quickstart
     examples
-    api/index
     runtimes/index
     testing
+
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Reference
+
+    api/module
+    api/actors
+    api/proxies
+    api/futures
+    api/registry
+    api/exceptions
+    api/messages
+    api/logging
+    api/debug
 
 
 License
