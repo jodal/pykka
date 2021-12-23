@@ -13,11 +13,10 @@ classifiers = [
    "Development Status :: 5 - Production/Stable",
    "Intended Audience :: Developers",
    "Topic :: Software Development :: Libraries",
-   "Programming Language :: Python :: 3.6",  # Not automatically added because we require >= 3.6.2
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6.2"
+python = "^3.7.0"
 importlib_metadata = {version = ">=1.6", python = "<3.8"}
 
 [tool.poetry.dev-dependencies]
@@ -35,7 +34,7 @@ pytest-mock = "^3.6.1"
 tox = "^3.23.1"
 
 [tool.black]
-target-version = ["py36", "py37", "py38", "py39"]
+target-version = ["py37", "py38", "py39"]
 
 [tool.isort]
 profile = "black"
