@@ -20,15 +20,13 @@ see the [documentation](https://pykka.readthedocs.io/).
 
 ## Installation
 
-Pykka requires Python 3.6 or newer.
+Pykka requires Python 3.7 or newer.
 
 Pykka is available from [PyPI](https://pypi.org/project/pykka/):
 
 ```
 python3 -m pip install pykka
 ```
-
-If you need support for Python 2.7 or 3.5, you can use Pykka 2.
 
 ## Project resources
 
