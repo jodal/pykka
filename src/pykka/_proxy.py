@@ -140,12 +140,10 @@ class ActorProxy:
 
             if self._is_self_proxy(attr):
                 logger.warning(
-                    (
-                        f"{self._actor} attribute {'.'.join(attr_path)!r} "
-                        f"is a proxy to itself. "
-                        f"Consider making it private "
-                        f"by renaming it to {'_' + attr_path[-1]!r}."
-                    )
+                    f"{self._actor} attribute {'.'.join(attr_path)!r} "
+                    f"is a proxy to itself. "
+                    f"Consider making it private "
+                    f"by renaming it to {'_' + attr_path[-1]!r}."
                 )
                 continue
 
