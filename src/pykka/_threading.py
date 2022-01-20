@@ -95,6 +95,10 @@ class ThreadingActor(Actor):
         return queue.Queue()
 
     @staticmethod
+    def _queue_empty_exception():
+        return queue.Empty
+
+    @staticmethod
     def _create_future():
         return ThreadingFuture()
 

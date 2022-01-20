@@ -1,6 +1,8 @@
+import bisect
 import logging
 import sys
 import threading
+import time
 import uuid
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
@@ -8,6 +10,30 @@ from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 __all__ = ["Actor"]
 
 logger = logging.getLogger("pykka")
+
+
+class TimedInbox:
+    def __init__(self):
+        self.timestamps = []
+        self.envelopes = []
+
+    def empty(self):
+        return len(self.timestamps) == 0
+
+    def add(self, envelope):
+        idx = bisect.bisect(self.timestamps, envelope.timestamp)
+        self.timestamps.insert(idx, envelope.timestamp)
+        self.envelopes.insert(idx, envelope)
+
+    def pop(self):
+        self.timestamps.pop(0)
+        return self.envelopes.pop(0)
+
+    def next_event_in(self):
+        if len(self.timestamps) == 0:
+            return None
+        else:
+            return max(self.timestamps[0] - time.monotonic(), 0)
 
 
 class Actor:
@@ -99,6 +125,11 @@ class Actor:
         raise NotImplementedError("Use a subclass of Actor")
 
     @staticmethod
+    def _queue_empty_exception():
+        """Internal method for implementors of new actor types."""
+        raise NotImplementedError("Use a subclass of Actor")
+
+    @staticmethod
     def _create_future():
         """Internal method for implementors of new actor types."""
         raise NotImplementedError("Use a subclass of Actor")
@@ -146,6 +177,9 @@ class Actor:
 
         self.actor_ref = ActorRef(self)
 
+        self.__timed_inbox = TimedInbox()
+        self.__queue_empty_exception = self._queue_empty_exception()
+
     def __str__(self):
         return f"{self.__class__.__name__} ({self.actor_urn})"
 
@@ -180,8 +214,38 @@ class Actor:
         except Exception:
             self._handle_failure(*sys.exc_info())
 
+        next_event_in = None
+
         while not self.actor_stopped.is_set():
-            envelope = self.actor_inbox.get()
+
+            next_event_in = self.__timed_inbox.next_event_in()
+
+            # Take all the messages out of the inbox and put them
+            # in our internal inbox where they're sorted by timestamps
+            try:
+                envelope = self.actor_inbox.get(timeout=next_event_in)
+                self.__timed_inbox.add(envelope)
+            except self.__queue_empty_exception:
+                # Raised if we waited for a non-None timeout,
+                # but the queue is still empty.
+                # This implies that there was something in the internal inbox
+                # that is now ready to be processed.
+                pass
+            else:
+                while not self.actor_inbox.empty():
+                    envelope = self.actor_inbox.get()
+                    self.__timed_inbox.add(envelope)
+
+                # Update the time of the next event,
+                # since we received at least one new envelope.
+                next_event_in = self.__timed_inbox.next_event_in()
+
+            # Check if there's something to be processed right now.
+            if next_event_in > 0:
+                continue
+
+            envelope = self.__timed_inbox.pop()
+
             try:
                 response = self._handle_receive(envelope.message)
                 if envelope.reply_to is not None:
@@ -207,6 +271,10 @@ class Actor:
 
         while not self.actor_inbox.empty():
             envelope = self.actor_inbox.get()
+            self.__timed_inbox.add(envelope)
+
+        while not self.__timed_inbox.empty():
+            envelope = self.__timed_inbox.pop()
             if envelope.reply_to is not None:
                 if isinstance(envelope.message, messages._ActorStop):
                     envelope.reply_to.set(None)

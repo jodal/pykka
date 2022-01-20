@@ -1,5 +1,5 @@
-from pykka import ActorDeadError, ActorProxy
 from pykka._envelope import Envelope
+from pykka._proxy import ActorDeadError, ActorProxy, ExtendedActorProxy
 from pykka.messages import _ActorStop
 
 __all__ = ["ActorRef"]
@@ -55,7 +55,7 @@ class ActorRef:
         """
         return not self.actor_stopped.is_set()
 
-    def tell(self, message):
+    def tell(self, message, delay=0):
         """
         Send message to actor without waiting for any response.
 
@@ -70,9 +70,9 @@ class ActorRef:
         """
         if not self.is_alive():
             raise ActorDeadError(f"{self} not found")
-        self.actor_inbox.put(Envelope(message))
+        self.actor_inbox.put(Envelope(message, delay=delay))
 
-    def ask(self, message, block=True, timeout=None):
+    def ask(self, message, block=True, timeout=None, delay=0):
         """
         Send message to actor and wait for the reply.
 
@@ -107,7 +107,7 @@ class ActorRef:
         except ActorDeadError:
             future.set_exception()
         else:
-            self.actor_inbox.put(Envelope(message, reply_to=future))
+            self.actor_inbox.put(Envelope(message, reply_to=future, delay=delay))
 
         if block:
             return future.get(timeout=timeout)
@@ -151,7 +151,7 @@ class ActorRef:
         else:
             return converted_future
 
-    def proxy(self):
+    def proxy(self, extended=False):
         """
         Wraps the :class:`ActorRef` in an :class:`ActorProxy
         <pykka.ActorProxy>`.
@@ -167,4 +167,7 @@ class ActorRef:
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.ActorProxy`
         """
-        return ActorProxy(self)
+        if extended:
+            return ExtendedActorProxy(self)
+        else:
+            return ActorProxy.from_actor_ref(self)
