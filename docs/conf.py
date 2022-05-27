@@ -4,7 +4,7 @@ import toml
 
 project = "Pykka"
 author = "Stein Magnus Jodal and contributors"
-copyright = f"2010-2021, {author}"
+copyright = f"2010-2022, {author}"
 
 release = toml.load("../pyproject.toml")["tool"]["poetry"]["version"]
 version = ".".join(release.split(".")[:2])
