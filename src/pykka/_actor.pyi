@@ -1,6 +1,7 @@
 import threading
+from collections.abc import Sequence
 from types import TracebackType
-from typing import Any, Dict, Sequence, Type
+from typing import Any, Dict, Type
 
 from typing_extensions import Protocol  # Py38+: Available in ``typing``
 

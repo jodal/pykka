@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, NamedTuple, Sequence, Tuple, TypeVar
+from collections.abc import Callable, Sequence
+from typing import Any, Dict, NamedTuple, Tuple, TypeVar
 
 from pykka import Actor, ActorRef, Future
 

@@ -1,4 +1,5 @@
-from typing import Any, Callable, Generator, Generic, Iterable, TypeVar
+from collections.abc import Callable, Generator, Iterable
+from typing import Any, Generic, TypeVar
 
 from pykka._types import OptExcInfo
 
