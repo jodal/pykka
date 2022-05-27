@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pykka"
-version = "3.0.2"
+version = "3.0.3"
 description = "Pykka is a Python implementation of the actor model"
 authors = ["Stein Magnus Jodal <stein.magnus@jodal.no>"]
 license = "Apache-2.0"
@@ -14,10 +14,11 @@ classifiers = [
    "Intended Audience :: Developers",
    "Topic :: Software Development :: Libraries",
 ]
+include = ["docs", "examples", "setup.cfg", "tests", "tox.ini"]
 
 [tool.poetry.dependencies]
 python = "^3.7.0"
-importlib_metadata = {version = ">=1.6", python = "<3.8"}
+importlib_metadata = { version = ">=1.6", python = "<3.8" }
 
 [tool.poetry.dev-dependencies]
 black = "^22.1"
