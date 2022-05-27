@@ -1,5 +1,5 @@
 import threading
-from typing import Any, Type, overload
+from typing import Any, overload
 
 from typing_extensions import Literal
 
@@ -8,7 +8,7 @@ from pykka._actor import Actor, ActorInbox
 
 class ActorRef:
     _actor: Actor
-    actor_class: Type[Actor]
+    actor_class: type[Actor]
     actor_urn: str
     actor_inbox: ActorInbox
     actor_stopped: threading.Event

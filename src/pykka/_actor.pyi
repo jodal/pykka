@@ -1,7 +1,7 @@
 import threading
 from collections.abc import Sequence
 from types import TracebackType
-from typing import Any, Dict, Type
+from typing import Any
 
 from typing_extensions import Protocol  # Py38+: Available in ``typing``
 
@@ -32,13 +32,13 @@ class Actor:
     def on_stop(self) -> None: ...
     def _handle_failure(
         self,
-        exception_type: Type[BaseException],
+        exception_type: type[BaseException],
         exception_value: BaseException,
         traceback: TracebackType,
     ) -> None: ...
     def on_failure(
         self,
-        exception_type: Type[BaseException],
+        exception_type: type[BaseException],
         exception_value: BaseException,
         traceback: TracebackType,
     ) -> None: ...
@@ -47,5 +47,5 @@ class Actor:
     def _get_attribute_from_path(self, attr_path: Sequence[str]) -> Any: ...
     def _introspect_attribute_from_path(
         self, attr_path: Sequence[str]
-    ) -> Dict[str, Any]: ...
-    def _introspect_attributes(self, obj: Any) -> Dict[str, Any]: ...
+    ) -> dict[str, Any]: ...
+    def _introspect_attributes(self, obj: Any) -> dict[str, Any]: ...
