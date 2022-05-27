@@ -1,9 +1,7 @@
 import threading
 from collections.abc import Sequence
 from types import TracebackType
-from typing import Any
-
-from typing_extensions import Protocol  # Py38+: Available in ``typing``
+from typing import Any, Protocol
 
 from pykka import ActorRef, Future
 from pykka._envelope import Envelope
