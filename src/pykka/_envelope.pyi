@@ -1,8 +1,8 @@
-from typing import Any, Optional
+from typing import Any
 
 from pykka import Future
 
 class Envelope:
     message: Any
-    reply_to: Optional[Future]
-    def __init__(self, message: Any, reply_to: Optional[Future] = ...) -> None: ...
+    reply_to: Future | None
+    def __init__(self, message: Any, reply_to: Future | None = ...) -> None: ...
