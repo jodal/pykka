@@ -14,7 +14,7 @@ classifiers = [
    "Intended Audience :: Developers",
    "Topic :: Software Development :: Libraries",
 ]
-include = ["docs", "examples", "setup.cfg", "tests", "tox.ini"]
+include = ["docs", "examples", "tests"]
 
 [tool.poetry.dependencies]
 python = "^3.7.0"
