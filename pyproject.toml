@@ -40,6 +40,26 @@ target-version = ["py37", "py38", "py39"]
 [tool.isort]
 profile = "black"
 
+[tool.mypy]
+no_implicit_optional = true
+strict_equality = true
+warn_return_any = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+# Options that only applies to src, and not tests
+module = "pykka.*"
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = [
+   "importlib.*", # importlib types are missing when running mypy on Python 3.7
+   "pytest.*",
+]
+ignore_missing_imports = true
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
