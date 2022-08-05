@@ -22,7 +22,7 @@ importlib_metadata = { version = ">=1.6", python = "<3.8" }
 
 [tool.poetry.dev-dependencies]
 black = "^22.1"
-flake8 = "^4.0.1"
+flake8 = "^5.0.4"
 flake8-black = "^0.3.2"
 flake8-bugbear = "^22.1.11"
 flake8-isort = "^4.0.0"
