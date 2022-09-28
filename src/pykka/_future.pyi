@@ -1,6 +1,8 @@
 from collections.abc import Callable, Generator, Iterable
 from typing import Any, Generic, TypeVar
 
+from typing_extensions import TypeAlias
+
 from pykka._types import OptExcInfo
 
 _T = TypeVar("_T")
@@ -9,7 +11,7 @@ J = TypeVar("J")  # For when T is Iterable[J]  # noqa
 _M = TypeVar("_M")  # For Future.map()
 _R = TypeVar("_R")  # For Future.reduce()
 
-GetHookFunc = Callable[[float | None], _T]
+GetHookFunc: TypeAlias = Callable[[float | None], _T]
 
 class Future(Generic[_T]):
     _get_hook: GetHookFunc | None

@@ -1,9 +1,11 @@
 from collections.abc import Callable, Sequence
 from typing import Any, NamedTuple, TypeVar
 
+from typing_extensions import TypeAlias
+
 from pykka import Actor, ActorRef, Future
 
-AttrPath = Sequence[str]
+AttrPath: TypeAlias = Sequence[str]
 
 class AttrInfo(NamedTuple):
     callable: bool
@@ -37,7 +39,7 @@ class CallableProxy:
     def __call__(self, *args: tuple[Any], **kwargs: dict[str, Any]) -> Future[Any]: ...
     def defer(self, *args: tuple[Any], **kwargs: dict[str, Any]) -> None: ...
 
-FuncType = Callable[..., Any]
+FuncType: TypeAlias = Callable[..., Any]
 _F = TypeVar("_F", bound=FuncType)
 
 def traversable(obj: _F) -> _F: ...
