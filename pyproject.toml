@@ -35,7 +35,7 @@ pytest-mock = "^3.6.1"
 tox = "^3.23.1"
 
 [tool.black]
-target-version = ["py37", "py38", "py39"]
+target-version = ["py37", "py38", "py39", "py310", "py311"]
 
 [tool.isort]
 profile = "black"
