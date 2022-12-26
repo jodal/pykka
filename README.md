@@ -2,7 +2,7 @@
 
 _Pykka makes it easier to build concurrent applications._
 
-[![CI](https://img.shields.io/github/workflow/status/jodal/pykka/CI)](https://github.com/jodal/pykka/actions?workflow=CI)
+[![CI](https://img.shields.io/github/actions/workflow/status/jodal/pykka/ci.yml?branch=main)](https://github.com/jodal/pykka/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/readthedocs/pykka)](https://pykka.readthedocs.io/en/latest/)
 [![Coverage](https://img.shields.io/codecov/c/gh/jodal/pykka)](https://codecov.io/gh/jodal/pykka)
 [![PyPI](https://img.shields.io/pypi/v/pykka)](https://pypi.org/project/pykka/)
