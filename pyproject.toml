@@ -30,7 +30,7 @@ flake8-pyi = "^22.8.2"
 isort = "^5.9.2"
 mypy = "^0.971"
 pytest = "^7.0.0"
-pytest-cov = "^3.0.0"
+pytest-cov = ">=3,<5"
 pytest-mock = "^3.6.1"
 tox = "^3.23.1"
 
