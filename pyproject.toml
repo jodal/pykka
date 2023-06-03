@@ -31,7 +31,7 @@ mypy = "^0.971"
 pytest = "^7.0.0"
 pytest-cov = "^3.0.0"
 pytest-mock = "^3.6.1"
-tox = "^3.23.1"
+tox = "^4.5.2"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^6.2.1"
