@@ -134,9 +134,10 @@ class ActorRef:
         def _stop_result_converter(timeout):
             try:
                 ask_future.get(timeout=timeout)
-                return True
             except ActorDeadError:
                 return False
+            else:
+                return True
 
         converted_future = ask_future.__class__()
         converted_future.set_get_hook(_stop_result_converter)
