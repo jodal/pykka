@@ -107,8 +107,8 @@ class ActorRef:
 
         if block:
             return future.get(timeout=timeout)
-        else:
-            return future
+
+        return future
 
     def stop(self, block=True, timeout=None):
         """Send a message to the actor, asking it to stop.
@@ -144,8 +144,8 @@ class ActorRef:
 
         if block:
             return converted_future.get(timeout=timeout)
-        else:
-            return converted_future
+
+        return converted_future
 
     def proxy(self):
         """Wraps the :class:`ActorRef` in an :class:`ActorProxy

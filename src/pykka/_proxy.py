@@ -223,13 +223,14 @@ class ActorProxy:
                     self.actor_ref, attr_path
                 )
             return self._callable_proxies[attr_path]
-        elif attr_info.traversable:
+
+        if attr_info.traversable:
             if attr_path not in self._actor_proxies:
                 self._actor_proxies[attr_path] = ActorProxy(self.actor_ref, attr_path)
             return self._actor_proxies[attr_path]
-        else:
-            message = messages.ProxyGetAttr(attr_path=attr_path)
-            return self.actor_ref.ask(message, block=False)
+
+        message = messages.ProxyGetAttr(attr_path=attr_path)
+        return self.actor_ref.ask(message, block=False)
 
     def __setattr__(self, name, value):
         """Set a field on the actor.
@@ -241,6 +242,7 @@ class ActorProxy:
         attr_path = self._attr_path + (name,)
         message = messages.ProxySetAttr(attr_path=attr_path, value=value)
         self.actor_ref.ask(message)
+        return None
 
 
 class CallableProxy:

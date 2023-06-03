@@ -16,8 +16,9 @@ def actor_class(runtime):
             if isinstance(message, dict) and message.get("command") == "ping":
                 runtime.sleep_func(0.01)
                 return "pong"
-            else:
-                self.received_message.set(message)
+
+            self.received_message.set(message)
+            return None
 
     return ActorA
 

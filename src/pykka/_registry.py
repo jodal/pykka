@@ -92,8 +92,9 @@ class ActorRegistry:
         """
         with cls._actor_refs_lock:
             refs = [ref for ref in cls._actor_refs if ref.actor_urn == actor_urn]
-            if refs:
-                return refs[0]
+            if not refs:
+                return None
+            return refs[0]
 
     @classmethod
     def register(cls, actor_ref):

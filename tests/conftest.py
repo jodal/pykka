@@ -111,8 +111,7 @@ def failing_on_failure_actor_class(runtime):
         def on_receive(self, message):
             if message.get("command") == "raise exception":
                 raise Exception("on_receive failure")
-            else:
-                super().on_receive(message)
+            return super().on_receive(message)
 
         def on_failure(self, *args):
             try:

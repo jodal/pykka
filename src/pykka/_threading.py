@@ -45,6 +45,7 @@ class ThreadingFuture(Future):
         try:
             if self._result is None:
                 self._result = self._queue.get(True, timeout)
+
             if self._result.exc_info is not None:
                 (exc_type, exc_value, exc_traceback) = self._result.exc_info
                 if exc_value is None:
@@ -52,10 +53,10 @@ class ThreadingFuture(Future):
                 if exc_value.__traceback__ is not exc_traceback:
                     raise exc_value.with_traceback(exc_traceback)
                 raise exc_value
-            else:
-                return self._result.value
         except queue.Empty:
             raise Timeout(f"{timeout} seconds")
+        else:
+            return self._result.value
 
     def set(self, value=None):
         self._queue.put(ThreadingFutureResult(value=value), block=False)

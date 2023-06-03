@@ -28,9 +28,11 @@ def actor_class(runtime):
         def on_receive(self, message):
             if message.get("command") == "raise exception":
                 raise Exception("foo")
-            elif message.get("command") == "raise base exception":
+
+            if message.get("command") == "raise base exception":
                 raise BaseException()
-            elif message.get("command") == "stop twice":
+
+            if message.get("command") == "stop twice":
                 self.stop()
                 self.stop()
             elif message.get("command") == "message self then stop":

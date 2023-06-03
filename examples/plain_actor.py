@@ -13,8 +13,8 @@ class PlainActor(pykka.ThreadingActor):
     def on_receive(self, message):
         if message is GetMessages:
             return self.stored_messages
-        else:
-            self.stored_messages.append(message)
+        self.stored_messages.append(message)
+        return None
 
 
 if __name__ == "__main__":
