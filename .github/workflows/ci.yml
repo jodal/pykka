@@ -25,12 +25,15 @@ jobs:
             python: "3.11"
             tox: py311
             coverage: true
-          - name: "Lint: flake8"
+          - name: "Lint: black"
             python: "3.11"
-            tox: flake8
+            tox: black
           - name: "Lint: mypy"
             python: "3.11"
             tox: mypy
+          - name: "Lint: ruff"
+            python: "3.11"
+            tox: ruff
           - name: "Docs"
             python: "3.11"
             tox: docs
