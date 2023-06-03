@@ -1,7 +1,5 @@
 import threading
-from typing import Any, ClassVar, overload
-
-from typing_extensions import Literal  # Py38+: Available in ``typing``
+from typing import Any, ClassVar, Literal, overload
 
 from pykka import Actor, ActorRef, Future
 

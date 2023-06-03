@@ -12,9 +12,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "Test: Python 3.7"
-            python: "3.7"
-            tox: py37
           - name: "Test: Python 3.8"
             python: "3.8"
             tox: py38

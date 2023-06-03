@@ -17,8 +17,7 @@ classifiers = [
 include = ["docs", "examples", "tests"]
 
 [tool.poetry.dependencies]
-python = "^3.7.0"
-importlib_metadata = { version = ">=1.6", python = "<3.8" }
+python = "^3.8.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.1"
@@ -40,7 +39,7 @@ sphinx_rtd_theme = "^1.2.1"
 toml = "^0.10.2"
 
 [tool.black]
-target-version = ["py37", "py38", "py39", "py310", "py311"]
+target-version = ["py38", "py39", "py310", "py311"]
 
 [tool.isort]
 profile = "black"
@@ -59,10 +58,7 @@ module = "pykka.*"
 disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
-module = [
-   "importlib.*", # importlib types are missing when running mypy on Python 3.7
-   "pytest.*",
-]
+module = ["pytest.*"]
 ignore_missing_imports = true
 
 [build-system]

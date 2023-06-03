@@ -14,7 +14,7 @@ Pykka is available from PyPI. To install it, run::
 
     pip install pykka
 
-Pykka works with Python 3.7 or newer.
+Pykka works with Python 3.8 or newer.
 
 
 Inpiration
