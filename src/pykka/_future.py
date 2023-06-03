@@ -134,9 +134,7 @@ class Future:
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(
-            lambda timeout: [f.get(timeout) for f in [self] + list(futures)]
-        )
+        future.set_get_hook(lambda timeout: [f.get(timeout) for f in [self, *futures]])
         return future
 
     def map(self, func):

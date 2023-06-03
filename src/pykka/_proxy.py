@@ -157,7 +157,7 @@ class ActorProxy:
 
             if attr_info.traversable:
                 for attr_name in dir(attr):
-                    attr_paths_to_visit.append(attr_path + [attr_name])
+                    attr_paths_to_visit.append([*attr_path, attr_name])
 
         return result
 
@@ -208,7 +208,7 @@ class ActorProxy:
 
     def __getattr__(self, name):
         """Get a field or callable from the actor."""
-        attr_path = self._attr_path + (name,)
+        attr_path = (*self._attr_path, name)
 
         if attr_path not in self._known_attrs:
             self._known_attrs = self._introspect_attributes()
@@ -239,7 +239,7 @@ class ActorProxy:
         """
         if name == "actor_ref" or name.startswith("_"):
             return super().__setattr__(name, value)
-        attr_path = self._attr_path + (name,)
+        attr_path = (*self._attr_path, name)
         message = messages.ProxySetAttr(attr_path=attr_path, value=value)
         self.actor_ref.ask(message)
         return None
