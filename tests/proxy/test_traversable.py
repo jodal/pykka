@@ -33,7 +33,7 @@ class NestedWithAttrMarkerAndSlots:
         self.inner = "nested_with_attr_marker_and_slots.inner"
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_class(runtime):
     class ActorWithTraversableObjects(runtime.actor_class):
         nested_with_no_marker = NestedWithNoMarker()
@@ -49,7 +49,7 @@ def actor_class(runtime):
     return ActorWithTraversableObjects
 
 
-@pytest.fixture
+@pytest.fixture()
 def proxy(actor_class):
     proxy = actor_class.start().proxy()
     yield proxy

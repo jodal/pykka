@@ -2,12 +2,12 @@ import pytest
 from producer import ProducerActor
 
 
-@pytest.fixture
+@pytest.fixture()
 def consumer_mock(mocker):
     yield mocker.Mock()
 
 
-@pytest.fixture
+@pytest.fixture()
 def producer(consumer_mock):
     # Step 1: The actor under test is wired up with
     # its dependencies and is started.

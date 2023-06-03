@@ -22,12 +22,12 @@ def actor_class(runtime):
     return ActorA
 
 
-@pytest.fixture
+@pytest.fixture()
 def received_messages(runtime):
     return runtime.future_class()
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_ref(actor_class, received_messages):
     ref = actor_class.start(received_messages)
     yield ref

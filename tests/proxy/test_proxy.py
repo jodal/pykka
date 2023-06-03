@@ -24,7 +24,7 @@ def actor_class(runtime):
     return ActorForProxying
 
 
-@pytest.fixture
+@pytest.fixture()
 def proxy(actor_class):
     proxy = ActorProxy(actor_class.start())
     yield proxy

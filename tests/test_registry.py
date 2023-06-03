@@ -32,17 +32,17 @@ def actor_b_class(runtime):
     return ActorB
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_ref(actor_a_class):
     return actor_a_class.start()
 
 
-@pytest.fixture
+@pytest.fixture()
 def a_actor_refs(actor_a_class):
     return [actor_a_class.start() for _ in range(3)]
 
 
-@pytest.fixture
+@pytest.fixture()
 def b_actor_refs(actor_b_class):
     return [actor_b_class.start() for _ in range(5)]
 

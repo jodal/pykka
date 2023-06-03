@@ -3,7 +3,7 @@ from collections.abc import Callable
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_class(runtime):
     class ActorForMocking(runtime.actor_class):
         _a_rw_property = "a_rw_property"
@@ -22,7 +22,7 @@ def actor_class(runtime):
     return ActorForMocking
 
 
-@pytest.fixture
+@pytest.fixture()
 def proxy(actor_class):
     proxy = actor_class.start().proxy()
     yield proxy

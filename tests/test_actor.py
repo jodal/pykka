@@ -46,7 +46,7 @@ def actor_class(runtime):
     return ActorA
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_ref(actor_class, events):
     ref = actor_class.start(events)
     yield ref

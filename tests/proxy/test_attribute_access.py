@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_class(runtime):
     class ActorWithProperties(runtime.actor_class):
         an_attr = "an_attr"
@@ -24,7 +24,7 @@ def actor_class(runtime):
     return ActorWithProperties
 
 
-@pytest.fixture
+@pytest.fixture()
 def proxy(actor_class):
     proxy = actor_class.start().proxy()
     yield proxy
