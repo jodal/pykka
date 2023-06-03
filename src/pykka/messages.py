@@ -30,8 +30,6 @@ from typing import Any, Dict, NamedTuple, Sequence, Tuple
 class _ActorStop(NamedTuple):
     """Internal message."""
 
-    pass
-
 
 class ProxyCall(NamedTuple):
     """Message to ask the actor to call the method with the arguments."""

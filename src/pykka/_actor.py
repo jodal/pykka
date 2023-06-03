@@ -226,7 +226,6 @@ class Actor:
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
         """
-        pass
 
     def on_stop(self):
         """Hook for doing any cleanup that should be done *after* the actor has
@@ -241,7 +240,6 @@ class Actor:
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
         """
-        pass
 
     def _handle_failure(self, exception_type, exception_value, traceback):
         """Logs unexpected failures, unregisters and stops the actor."""
@@ -265,7 +263,6 @@ class Actor:
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
         """
-        pass
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
