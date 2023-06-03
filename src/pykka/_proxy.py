@@ -120,7 +120,7 @@ class ActorProxy:
             raise ActorDeadError(f"{actor_ref} not found")
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor
-        self._attr_path = attr_path or tuple()
+        self._attr_path = attr_path or ()
         self._known_attrs = self._introspect_attributes()
         self._actor_proxies = {}
         self._callable_proxies = {}
