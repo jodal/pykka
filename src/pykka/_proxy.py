@@ -119,7 +119,7 @@ class ActorProxy:
         if not actor_ref.is_alive():
             raise ActorDeadError(f"{actor_ref} not found")
         self.actor_ref = actor_ref
-        self._actor = actor_ref._actor
+        self._actor = actor_ref._actor  # noqa: SLF001
         self._attr_path = attr_path or ()
         self._known_attrs = self._introspect_attributes()
         self._actor_proxies = {}
@@ -136,7 +136,9 @@ class ActorProxy:
             if not self._is_exposable_attribute(attr_path[-1]):
                 continue
 
-            attr = self._actor._introspect_attribute_from_path(attr_path)
+            attr = self._actor._introspect_attribute_from_path(  # noqa: SLF001
+                attr_path
+            )
 
             if self._is_self_proxy(attr):
                 logger.warning(
@@ -185,9 +187,9 @@ class ActorProxy:
     def __eq__(self, other):
         if not isinstance(other, ActorProxy):
             return False
-        if self._actor != other._actor:
+        if self._actor != other._actor:  # noqa: SLF001
             return False
-        if self._attr_path != other._attr_path:
+        if self._attr_path != other._attr_path:  # noqa: SLF001
             return False
         return True
 
@@ -347,5 +349,5 @@ def traversable(obj):
             "pykka.traversable() cannot be used to mark "
             "an object using slots as traversable."
         )
-    obj._pykka_traversable = True
+    obj._pykka_traversable = True  # noqa: SLF001
     return obj

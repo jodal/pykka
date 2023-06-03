@@ -88,7 +88,7 @@ class Actor:
         )
         ActorRegistry.register(obj.actor_ref)
         logger.debug(f"Starting {obj}")
-        obj._start_actor_loop()
+        obj._start_actor_loop()  # noqa: SLF001
         return obj.actor_ref
 
     @staticmethod
@@ -151,7 +151,7 @@ class Actor:
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
-        self.actor_ref.tell(messages._ActorStop())
+        self.actor_ref.tell(messages._ActorStop())  # noqa: SLF001
 
     def _stop(self):
         """Stops the actor immediately without processing the rest of the inbox."""
@@ -201,7 +201,7 @@ class Actor:
         while not self.actor_inbox.empty():
             envelope = self.actor_inbox.get()
             if envelope.reply_to is not None:
-                if isinstance(envelope.message, messages._ActorStop):
+                if isinstance(envelope.message, messages._ActorStop):  # noqa: SLF001
                     envelope.reply_to.set(None)
                 else:
                     envelope.reply_to.set_exception(
@@ -266,7 +266,7 @@ class Actor:
 
     def _handle_receive(self, message):
         """Handles messages sent to the actor."""
-        if isinstance(message, messages._ActorStop):
+        if isinstance(message, messages._ActorStop):  # noqa: SLF001
             return self._stop()
         if isinstance(message, messages.ProxyCall):
             callee = self._get_attribute_from_path(message.attr_path)

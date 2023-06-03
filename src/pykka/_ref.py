@@ -95,7 +95,7 @@ class ActorRef:
         :raise: any exception returned by the receiving actor if blocking
         :return: :class:`pykka.Future`, or response if blocking
         """
-        future = self.actor_class._create_future()
+        future = self.actor_class._create_future()  # noqa: SLF001
 
         try:
             if not self.is_alive():

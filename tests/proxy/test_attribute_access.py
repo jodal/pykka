@@ -45,7 +45,7 @@ def test_attr_can_be_set_using_assignment(proxy):
 
 def test_private_attr_access_raises_exception(proxy):
     with pytest.raises(AttributeError) as exc_info:
-        proxy._private_attr.get()
+        proxy._private_attr.get()  # noqa: SLF001
 
     assert "has no attribute '_private_attr'" in str(exc_info.value)
 

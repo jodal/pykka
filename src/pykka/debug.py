@@ -55,7 +55,7 @@ def log_thread_tracebacks(*args, **kwargs):
     """
     thread_names = {t.ident: t.name for t in threading.enumerate()}
 
-    for ident, frame in sys._current_frames().items():
+    for ident, frame in sys._current_frames().items():  # noqa: SLF001
         name = thread_names.get(ident, "?")
         stack = "".join(traceback.format_stack(frame))
         logger.critical(f"Current state of {name} (ident: {ident}):\n{stack}")
