@@ -54,7 +54,7 @@ class ThreadingFuture(Future):
                     raise exc_value.with_traceback(exc_traceback)
                 raise exc_value
         except queue.Empty:
-            raise Timeout(f"{timeout} seconds")
+            raise Timeout(f"{timeout} seconds") from None
         else:
             return self._result.value
 

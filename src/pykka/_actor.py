@@ -312,7 +312,7 @@ class Actor:
             raise AttributeError(
                 f"type object {parent.__class__.__name__!r} "
                 f"has no attribute {attr_name!r}"
-            )
+            ) from None
 
     def _introspect_attributes(self, obj):
         """Combine ``__dict__`` from ``obj`` and all its superclasses."""
