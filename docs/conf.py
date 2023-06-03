@@ -25,6 +25,10 @@ modindex_common_prefix = ["pykka."]
 
 autodoc_member_order = "bysource"
 
-extlinks = {"issue": ("https://github.com/jodal/pykka/issues/%s", "#")}
+extlinks = {
+    "issue": ("https://github.com/jodal/pykka/issues/%s", "#%s"),
+}
 
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}

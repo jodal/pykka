@@ -34,6 +34,11 @@ pytest-cov = "^3.0.0"
 pytest-mock = "^3.6.1"
 tox = "^3.23.1"
 
+[tool.poetry.group.docs.dependencies]
+sphinx = "^6.2.1"
+sphinx_rtd_theme = "^1.2.1"
+toml = "^0.10.2"
+
 [tool.black]
 target-version = ["py37", "py38", "py39", "py310", "py311"]
 
