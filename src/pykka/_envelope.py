@@ -1,6 +1,5 @@
 class Envelope:
-    """
-    Envelope to add metadata to a message.
+    """Envelope to add metadata to a message.
 
     This is an internal type and is not part of the public API.
 

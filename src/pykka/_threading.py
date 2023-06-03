@@ -15,8 +15,7 @@ class ThreadingFutureResult(NamedTuple):
 
 
 class ThreadingFuture(Future):
-    """
-    :class:`ThreadingFuture` implements :class:`Future` for use with
+    """:class:`ThreadingFuture` implements :class:`Future` for use with
     :class:`ThreadingActor <pykka.ThreadingActor>`.
 
     The future is implemented using a :class:`queue.Queue`.
@@ -69,8 +68,7 @@ class ThreadingFuture(Future):
 
 
 class ThreadingActor(Actor):
-    """
-    :class:`ThreadingActor` implements :class:`Actor` using regular Python
+    """:class:`ThreadingActor` implements :class:`Actor` using regular Python
     threads.
     """
 

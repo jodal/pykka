@@ -1,4 +1,4 @@
-"""Pykka documentation build configuration file"""
+"""Pykka documentation build configuration file."""
 
 import toml
 

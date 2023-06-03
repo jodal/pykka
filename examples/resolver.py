@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
-"""
-Resolve a bunch of IP addresses using a pool of resolver actors.
+"""Resolve a bunch of IP addresses using a pool of resolver actors.
 
 Based on example contributed by Kristian Klette <klette@klette.us>.
 

@@ -53,7 +53,6 @@ def log_thread_tracebacks(*args, **kwargs):
 
     .. versionadded:: 1.1
     """
-
     thread_names = {t.ident: t.name for t in threading.enumerate()}
 
     for ident, frame in sys._current_frames().items():

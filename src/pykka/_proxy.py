@@ -15,9 +15,9 @@ class AttrInfo(NamedTuple):
 
 
 class ActorProxy:
-    """
-    An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>`
-    instance. The proxy allows the referenced actor to be used through regular
+    """An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>` instance.
+
+    The proxy allows the referenced actor to be used through regular
     method calls and field access.
 
     You can create an :class:`ActorProxy` from any :class:`ActorRef
@@ -160,23 +160,21 @@ class ActorProxy:
         return result
 
     def _is_exposable_attribute(self, attr_name):
-        """
-        Returns true for any attribute name that may be exposed through
+        """Return true for any attribute name that may be exposed through
         :class:`ActorProxy`.
         """
         return not attr_name.startswith("_")
 
     def _is_self_proxy(self, attr):
-        """Returns true if attribute is an equivalent actor proxy."""
+        """Return true if attribute is an equivalent actor proxy."""
         return attr == self
 
     def _is_callable_attribute(self, attr):
-        """Returns true for any attribute that is callable."""
+        """Return true for any attribute that is callable."""
         return isinstance(attr, Callable)
 
     def _is_traversable_attribute(self, attr):
-        """
-        Returns true for any attribute that may be traversed from another
+        """Return true for any attribute that may be traversed from another
         actor through a proxy.
         """
         return (
@@ -232,8 +230,7 @@ class ActorProxy:
             return self.actor_ref.ask(message, block=False)
 
     def __setattr__(self, name, value):
-        """
-        Set a field on the actor.
+        """Set a field on the actor.
 
         Blocks until the field is set to check if any exceptions was raised.
         """
@@ -298,7 +295,7 @@ class CallableProxy:
 
 
 def traversable(obj):
-    """Marks an actor attribute as traversable.
+    """Mark an actor attribute as traversable.
 
     The traversable marker makes the actor attribute's own methods and
     attributes available to users of the actor through an

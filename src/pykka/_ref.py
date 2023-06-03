@@ -6,8 +6,7 @@ __all__ = ["ActorRef"]
 
 
 class ActorRef:
-    """
-    Reference to a running actor which may safely be passed around.
+    """Reference to a running actor which may safely be passed around.
 
     :class:`ActorRef` instances are returned by :meth:`Actor.start` and the
     lookup methods in :class:`ActorRegistry <pykka.ActorRegistry>`. You should
@@ -43,8 +42,7 @@ class ActorRef:
         return f"{self.actor_class.__name__} ({self.actor_urn})"
 
     def is_alive(self):
-        """
-        Check if actor is alive.
+        """Check if actor is alive.
 
         This is based on the actor's stopped flag. The actor is not guaranteed
         to be alive and responding even though :meth:`is_alive` returns
@@ -56,8 +54,7 @@ class ActorRef:
         return not self.actor_stopped.is_set()
 
     def tell(self, message):
-        """
-        Send message to actor without waiting for any response.
+        """Send message to actor without waiting for any response.
 
         Will generally not block, but if the underlying queue is full it will
         block until a free slot is available.
@@ -73,8 +70,7 @@ class ActorRef:
         self.actor_inbox.put(Envelope(message))
 
     def ask(self, message, block=True, timeout=None):
-        """
-        Send message to actor and wait for the reply.
+        """Send message to actor and wait for the reply.
 
         The message can be of any type.
         If ``block`` is :class:`False`, it will immediately return a
@@ -115,8 +111,7 @@ class ActorRef:
             return future
 
     def stop(self, block=True, timeout=None):
-        """
-        Send a message to the actor, asking it to stop.
+        """Send a message to the actor, asking it to stop.
 
         Returns :class:`True` if actor is stopped or was being stopped at the
         time of the call. :class:`False` if actor was already dead. If
@@ -152,8 +147,7 @@ class ActorRef:
             return converted_future
 
     def proxy(self):
-        """
-        Wraps the :class:`ActorRef` in an :class:`ActorProxy
+        """Wraps the :class:`ActorRef` in an :class:`ActorProxy
         <pykka.ActorProxy>`.
 
         Using this method like this::

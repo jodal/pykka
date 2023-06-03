@@ -11,8 +11,7 @@ logger = logging.getLogger("pykka")
 
 
 class Actor:
-    """
-    To create an actor:
+    """To create an actor:
 
     1. subclass one of the :class:`Actor` implementations:
 
@@ -54,8 +53,7 @@ class Actor:
 
     @classmethod
     def start(cls, *args, **kwargs):
-        """
-        Start an actor and register it in the
+        """Start an actor and register it in the
         :class:`ActorRegistry <pykka.ActorRegistry>`.
 
         Any arguments passed to :meth:`start` will be passed on to the class
@@ -124,8 +122,7 @@ class Actor:
     actor_stopped = None
 
     def __init__(self, *args, **kwargs):
-        """
-        Your are free to override :meth:`__init__`, but you must call your
+        """Your are free to override :meth:`__init__`, but you must call your
         superclass' :meth:`__init__` to ensure that fields :attr:`actor_urn`,
         :attr:`actor_inbox`, and :attr:`actor_ref` are initialized.
 
@@ -150,17 +147,14 @@ class Actor:
         return f"{self.__class__.__name__} ({self.actor_urn})"
 
     def stop(self):
-        """
-        Stop the actor.
+        """Stop the actor.
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
         self.actor_ref.tell(messages._ActorStop())
 
     def _stop(self):
-        """
-        Stops the actor immediately without processing the rest of the inbox.
-        """
+        """Stops the actor immediately without processing the rest of the inbox."""
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
         logger.debug(f"Stopped {self}")
@@ -170,8 +164,7 @@ class Actor:
             self._handle_failure(*sys.exc_info())
 
     def _actor_loop(self):
-        """
-        The actor's event loop.
+        """The actor's event loop.
 
         This is the method that will be executed by the thread or greenlet.
         """
@@ -223,8 +216,7 @@ class Actor:
                     )
 
     def on_start(self):
-        """
-        Hook for doing any setup that should be done *after* the actor is
+        """Hook for doing any setup that should be done *after* the actor is
         started, but *before* it starts processing messages.
 
         For :class:`ThreadingActor`, this method is executed in the actor's own
@@ -237,8 +229,7 @@ class Actor:
         pass
 
     def on_stop(self):
-        """
-        Hook for doing any cleanup that should be done *after* the actor has
+        """Hook for doing any cleanup that should be done *after* the actor has
         processed the last message, and *before* the actor stops.
 
         This hook is *not* called when the actor stops because of an unhandled
@@ -262,8 +253,7 @@ class Actor:
         self.actor_stopped.set()
 
     def on_failure(self, exception_type, exception_value, traceback):
-        """
-        Hook for doing any cleanup *after* an unhandled exception is raised,
+        """Hook for doing any cleanup *after* an unhandled exception is raised,
         and *before* the actor stops.
 
         For :class:`ThreadingActor` this method is executed in the actor's own
@@ -294,8 +284,7 @@ class Actor:
         return self.on_receive(message)
 
     def on_receive(self, message):
-        """
-        May be implemented for the actor to handle regular non-proxy messages.
+        """May be implemented for the actor to handle regular non-proxy messages.
 
         :param message: the message to handle
         :type message: any
@@ -305,9 +294,7 @@ class Actor:
         logger.warning(f"Unexpected message received by {self}: {message}")
 
     def _get_attribute_from_path(self, attr_path):
-        """
-        Traverses the path and returns the attribute at the end of the path.
-        """
+        """Traverses the path and returns the attribute at the end of the path."""
         attr = self
         for attr_name in attr_path:
             attr = getattr(attr, attr_name)
