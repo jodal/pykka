@@ -102,6 +102,7 @@ ignore = [
    "ANN102",  # missing-type-cls
    "D203",    # one-blank-line-before-class
    "D213",    # multi-line-summary-second-line
+   "FBT",     # boolean-trap  # FIXME Make keywords only in 4.0
    "PLR2004", # magic-value-comparison
    "RET504",  # unnecessary-assign
    "TRY003",  # raise-vanilla-args
