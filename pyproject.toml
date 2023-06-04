@@ -37,9 +37,9 @@ mypy = "^0.971"
 ruff = "^0.0.270"
 
 [tool.poetry.group.tests.dependencies]
-pytest = "^7.0.0"
-pytest-cov = "^3.0.0"
-pytest-mock = "^3.6.1"
+pytest = "^7.3.1"
+pytest-cov = "^4.1.0"
+pytest-mock = "^3.10.0"
 
 [tool.black]
 target-version = ["py38", "py39", "py310", "py311"]
