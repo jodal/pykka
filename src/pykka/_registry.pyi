@@ -1,7 +1,5 @@
 import threading
-from typing import Any, ClassVar, overload
-
-from typing_extensions import Literal  # Py38+: Available in ``typing``
+from typing import Any, ClassVar, Literal, overload
 
 from pykka import Actor, ActorRef, Future
 
@@ -27,12 +25,12 @@ class ActorRegistry:
     def stop_all(
         cls, block: Literal[True], timeout: float | None = ...
     ) -> list[bool]: ...
-    @overload  # noqa: Allow redefinition
+    @overload
     @classmethod
     def stop_all(
         cls, block: Literal[False], timeout: float | None = ...
     ) -> list[Future[bool]]: ...
-    @overload  # noqa: Allow redefinition
+    @overload
     @classmethod
     def stop_all(
         cls, block: bool = ..., timeout: float | None = ...

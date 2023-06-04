@@ -16,18 +16,19 @@ def actor_class(runtime):
             if isinstance(message, dict) and message.get("command") == "ping":
                 runtime.sleep_func(0.01)
                 return "pong"
-            else:
-                self.received_message.set(message)
+
+            self.received_message.set(message)
+            return None
 
     return ActorA
 
 
-@pytest.fixture
+@pytest.fixture()
 def received_messages(runtime):
     return runtime.future_class()
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_ref(actor_class, received_messages):
     ref = actor_class.start(received_messages)
     yield ref

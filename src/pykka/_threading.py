@@ -15,9 +15,7 @@ class ThreadingFutureResult(NamedTuple):
 
 
 class ThreadingFuture(Future):
-    """
-    :class:`ThreadingFuture` implements :class:`Future` for use with
-    :class:`ThreadingActor <pykka.ThreadingActor>`.
+    """Implementation of :class:`Future` for use with regular Python threads`.
 
     The future is implemented using a :class:`queue.Queue`.
 
@@ -46,17 +44,18 @@ class ThreadingFuture(Future):
         try:
             if self._result is None:
                 self._result = self._queue.get(True, timeout)
+
             if self._result.exc_info is not None:
                 (exc_type, exc_value, exc_traceback) = self._result.exc_info
                 if exc_value is None:
                     exc_value = exc_type()
                 if exc_value.__traceback__ is not exc_traceback:
-                    raise exc_value.with_traceback(exc_traceback)
-                raise exc_value
-            else:
-                return self._result.value
+                    raise exc_value.with_traceback(exc_traceback)  # noqa: TRY301
+                raise exc_value  # noqa: TRY301
         except queue.Empty:
-            raise Timeout(f"{timeout} seconds")
+            raise Timeout(f"{timeout} seconds") from None
+        else:
+            return self._result.value
 
     def set(self, value=None):
         self._queue.put(ThreadingFutureResult(value=value), block=False)
@@ -69,10 +68,7 @@ class ThreadingFuture(Future):
 
 
 class ThreadingActor(Actor):
-    """
-    :class:`ThreadingActor` implements :class:`Actor` using regular Python
-    threads.
-    """
+    """Implementation of :class:`Actor` using regular Python threads."""
 
     use_daemon_thread = False
     """

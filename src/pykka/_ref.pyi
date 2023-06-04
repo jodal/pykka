@@ -1,7 +1,5 @@
 import threading
-from typing import Any, overload
-
-from typing_extensions import Literal  # Py38+: Available in ``typing``
+from typing import Any, Literal, overload
 
 from pykka import ActorProxy, Future
 from pykka._actor import Actor, ActorInbox
@@ -22,23 +20,23 @@ class ActorRef:
         block: Literal[False],
         timeout: float | None = ...,
     ) -> Future[Any]: ...
-    @overload  # noqa: Allow redefinition
+    @overload
     def ask(
         self,
         message: Any,
         block: Literal[True],
         timeout: float | None = ...,
     ) -> Any: ...
-    @overload  # noqa: Allow redefinition
+    @overload
     def ask(
         self, message: Any, block: bool = ..., timeout: float | None = ...
     ) -> Future[Any] | Any: ...
     @overload
     def stop(self, block: Literal[True], timeout: float | None) -> bool: ...
-    @overload  # noqa: Allow redefinition
+    @overload
     def stop(
         self, block: Literal[False], timeout: float | None = ...
     ) -> Future[bool]: ...
-    @overload  # noqa: Allow redefinition
+    @overload
     def stop(self, block: bool, timeout: float | None = ...) -> Future[bool] | bool: ...
     def proxy(self) -> ActorProxy: ...

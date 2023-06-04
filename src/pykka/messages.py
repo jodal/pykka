@@ -1,5 +1,4 @@
-"""
-The :mod:`pykka.messages` module contains Pykka's own actor messages.
+"""The :mod:`pykka.messages` module contains Pykka's own actor messages.
 
 In general, you should not need to use any of these classes. However, they have
 been made part of the public API so that certain optimizations can be done
@@ -30,8 +29,6 @@ from typing import Any, Dict, NamedTuple, Sequence, Tuple
 
 class _ActorStop(NamedTuple):
     """Internal message."""
-
-    pass
 
 
 class ProxyCall(NamedTuple):

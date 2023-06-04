@@ -33,7 +33,7 @@ class NestedWithAttrMarkerAndSlots:
         self.inner = "nested_with_attr_marker_and_slots.inner"
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_class(runtime):
     class ActorWithTraversableObjects(runtime.actor_class):
         nested_with_no_marker = NestedWithNoMarker()
@@ -49,7 +49,7 @@ def actor_class(runtime):
     return ActorWithTraversableObjects
 
 
-@pytest.fixture
+@pytest.fixture()
 def proxy(actor_class):
     proxy = actor_class.start().proxy()
     yield proxy
@@ -64,7 +64,7 @@ def test_attr_without_marker_cannot_be_traversed(proxy):
 
 
 @pytest.mark.parametrize(
-    "attr_name, expected",
+    ("attr_name", "expected"),
     [
         ("nested_with_function_marker", "nested_with_no_marker.inner"),
         ("nested_with_decorator_marker", "nested_with_decorator_marker.inner"),
@@ -83,14 +83,14 @@ def test_attr_of_traversable_attr_can_be_read(proxy, attr_name, expected):
 
 def test_traversable_object_returned_from_property_is_not_traversed(proxy):
     # In Pykka < 2, it worked like this:
-    # assert proxy.nested_object_property.inner.get() == 'nested.inner'
+    # assert proxy.nested_object_property.inner.get() == 'nested.inner'  # noqa: ERA001
 
     # In Pykka >= 2, the property getter always returns a future:
     assert proxy.nested_object_property.get().inner == "nested_with_attr_marker.inner"
 
 
 def test_traversable_cannot_mark_object_using_slots():
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(Exception, match="cannot be used to mark") as exc_info:
         pykka.traversable(NestedWithNoMarkerAndSlots())
 
     assert "cannot be used to mark an object using slots" in str(exc_info.value)

@@ -1,10 +1,10 @@
-"""Pykka documentation build configuration file"""
+"""Pykka documentation build configuration file."""
 
 import toml
 
 project = "Pykka"
 author = "Stein Magnus Jodal and contributors"
-copyright = f"2010-2022, {author}"
+copyright = f"2010-2023, {author}"  # noqa: A001
 
 release = toml.load("../pyproject.toml")["tool"]["poetry"]["version"]
 version = ".".join(release.split(".")[:2])
@@ -25,6 +25,10 @@ modindex_common_prefix = ["pykka."]
 
 autodoc_member_order = "bysource"
 
-extlinks = {"issue": ("https://github.com/jodal/pykka/issues/%s", "#")}
+extlinks = {
+    "issue": ("https://github.com/jodal/pykka/issues/%s", "#%s"),
+}
 
-intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}

@@ -1,3 +1,5 @@
+"""Debug helpers."""
+
 import logging
 import sys
 import threading
@@ -9,9 +11,8 @@ logger = logging.getLogger("pykka")
 __all__ = ["log_thread_tracebacks"]
 
 
-def log_thread_tracebacks(*args, **kwargs):
-    """Logs at :attr:`logging.CRITICAL` level a traceback for each running
-    thread.
+def log_thread_tracebacks(*_args, **_kwargs):
+    """Log a traceback for each running thread at :attr:`logging.CRITICAL` level.
 
     This can be a convenient tool for debugging deadlocks.
 
@@ -53,10 +54,9 @@ def log_thread_tracebacks(*args, **kwargs):
 
     .. versionadded:: 1.1
     """
-
     thread_names = {t.ident: t.name for t in threading.enumerate()}
 
-    for ident, frame in sys._current_frames().items():
+    for ident, frame in sys._current_frames().items():  # noqa: SLF001
         name = thread_names.get(ident, "?")
         stack = "".join(traceback.format_stack(frame))
         logger.critical(f"Current state of {name} (ident: {ident}):\n{stack}")

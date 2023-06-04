@@ -4,11 +4,11 @@ import pytest
 
 from pykka import ActorDeadError, ActorRegistry
 
-pytestmark = pytest.mark.usefixtures("stop_all")
+pytestmark = pytest.mark.usefixtures("_stop_all")
 
 
 @pytest.fixture(scope="module")
-def actor_class(runtime):
+def actor_class(runtime):  # noqa: C901
     class ActorA(runtime.actor_class):
         def __init__(self, events):
             super().__init__()
@@ -28,9 +28,11 @@ def actor_class(runtime):
         def on_receive(self, message):
             if message.get("command") == "raise exception":
                 raise Exception("foo")
-            elif message.get("command") == "raise base exception":
-                raise BaseException()
-            elif message.get("command") == "stop twice":
+
+            if message.get("command") == "raise base exception":
+                raise BaseException
+
+            if message.get("command") == "stop twice":
                 self.stop()
                 self.stop()
             elif message.get("command") == "message self then stop":
@@ -46,7 +48,7 @@ def actor_class(runtime):
     return ActorA
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_ref(actor_class, events):
     ref = actor_class.start(events)
     yield ref

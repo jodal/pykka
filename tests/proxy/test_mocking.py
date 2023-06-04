@@ -2,8 +2,10 @@ from collections.abc import Callable
 
 import pytest
 
+pytestmark = pytest.mark.usefixtures("_stop_all")
 
-@pytest.fixture
+
+@pytest.fixture()
 def actor_class(runtime):
     class ActorForMocking(runtime.actor_class):
         _a_rw_property = "a_rw_property"
@@ -22,14 +24,14 @@ def actor_class(runtime):
     return ActorForMocking
 
 
-@pytest.fixture
+@pytest.fixture()
 def proxy(actor_class):
     proxy = actor_class.start().proxy()
     yield proxy
     proxy.stop()
 
 
-def test_actor_with_noncallable_mock_property_works(actor_class, stop_all, mocker):
+def test_actor_with_noncallable_mock_property_works(actor_class, mocker):
     mock = mocker.NonCallableMock()
     mock.__get__ = mocker.Mock(return_value="mocked property value")
     assert not isinstance(mock, Callable)
@@ -44,7 +46,7 @@ def test_actor_with_noncallable_mock_property_works(actor_class, stop_all, mocke
     assert mock.__get__.call_count == 1
 
 
-def test_actor_with_callable_mock_property_does_not_work(actor_class, stop_all, mocker):
+def test_actor_with_callable_mock_property_does_not_work(actor_class, mocker):
     mock = mocker.Mock()
     mock.__get__ = mocker.Mock(return_value="mocked property value")
     assert isinstance(mock, Callable)
@@ -61,7 +63,7 @@ def test_actor_with_callable_mock_property_does_not_work(actor_class, stop_all, 
     assert "'CallableProxy' object has no attribute 'get'" in str(exc_info.value)
 
 
-def test_actor_with_mocked_method_works(actor_class, stop_all, mocker):
+def test_actor_with_mocked_method_works(actor_class, mocker):
     mock = mocker.MagicMock(return_value="mocked method return")
     mocker.patch.object(actor_class, "a_method", new=mock)
     proxy = actor_class.start().proxy()

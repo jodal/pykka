@@ -13,7 +13,7 @@ def actor_class(runtime):
     return ActorA
 
 
-@pytest.fixture
+@pytest.fixture()
 def proxy(actor_class):
     proxy = actor_class.start().proxy()
     yield proxy

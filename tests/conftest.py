@@ -33,13 +33,13 @@ def runtime(request):
     return request.param
 
 
-@pytest.fixture
-def stop_all():
+@pytest.fixture()
+def _stop_all():
     yield
     ActorRegistry.stop_all()
 
 
-@pytest.fixture
+@pytest.fixture()
 def log_handler():
     log_handler = PykkaTestLogHandler()
 
@@ -54,7 +54,7 @@ def log_handler():
     log_handler.close()
 
 
-@pytest.fixture
+@pytest.fixture()
 def events(runtime):
     class Events:
         on_start_was_called = runtime.event_class()
@@ -111,8 +111,7 @@ def failing_on_failure_actor_class(runtime):
         def on_receive(self, message):
             if message.get("command") == "raise exception":
                 raise Exception("on_receive failure")
-            else:
-                super().on_receive(message)
+            return super().on_receive(message)
 
         def on_failure(self, *args):
             try:
@@ -123,11 +122,11 @@ def failing_on_failure_actor_class(runtime):
     return FailingOnFailureActor
 
 
-@pytest.fixture
+@pytest.fixture()
 def future(runtime):
     return runtime.future_class()
 
 
-@pytest.fixture
+@pytest.fixture()
 def futures(runtime):
     return [runtime.future_class() for _ in range(3)]

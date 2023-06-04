@@ -13,14 +13,14 @@ class DaemonActor(ThreadingActor):
     use_daemon_thread = True
 
 
-@pytest.fixture
+@pytest.fixture()
 def regular_actor_ref():
     ref = RegularActor.start()
     yield ref
     ref.stop()
 
 
-@pytest.fixture
+@pytest.fixture()
 def daemon_actor_ref():
     ref = DaemonActor.start()
     yield ref

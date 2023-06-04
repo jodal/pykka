@@ -37,7 +37,7 @@ def test_base_future_set_exception_is_not_implemented():
 def test_set_multiple_times_fails(future):
     future.set(0)
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception):  # noqa: B017, PT011
         future.set(0)
 
 
@@ -54,7 +54,7 @@ def test_get_all_blocks_until_all_futures_are_available(futures):
 def test_get_all_raises_timeout_if_not_all_futures_are_available(futures):
     futures[0].set(0)
     futures[1].set(1)
-    # futures[2] is unset
+    # futures[2] has not been set
 
     with pytest.raises(Timeout):
         get_all(futures, timeout=0)
@@ -91,7 +91,7 @@ def test_get_raises_exception_with_full_traceback(runtime):
     future = runtime.future_class()
 
     try:
-        raise NameError("foo")
+        raise NameError("foo")  # noqa: TRY301
     except NameError:
         exc_class_set, exc_instance_set, exc_traceback_set = sys.exc_info()
         future.set_exception()
@@ -179,7 +179,7 @@ def test_join_preserves_timeout_kwarg(futures):
     joined = futures[0].join(futures[1], futures[2])
     futures[0].set(0)
     futures[1].set(1)
-    # futures[2] is unset
+    # futures[2] has not been set
 
     with pytest.raises(Timeout):
         joined.get(timeout=0)

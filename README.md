@@ -20,7 +20,7 @@ see the [documentation](https://pykka.readthedocs.io/).
 
 ## Installation
 
-Pykka requires Python 3.7 or newer.
+Pykka requires Python 3.8 or newer.
 
 Pykka is available from [PyPI](https://pypi.org/project/pykka/):
 
@@ -39,6 +39,6 @@ python3 -m pip install pykka
 
 ## License
 
-Pykka is copyright 2010-2022 Stein Magnus Jodal and contributors.
+Pykka is copyright 2010-2023 Stein Magnus Jodal and contributors.
 Pykka is licensed under the
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).

@@ -1,3 +1,5 @@
+# ruff: noqa: T201
+
 import time
 
 from pykka import ActorRegistry, ThreadingActor

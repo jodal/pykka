@@ -1,3 +1,6 @@
+"""Pykka is a Python implementation of the actor model."""
+
+import importlib.metadata as _importlib_metadata
 import logging as _logging
 
 from pykka._exceptions import ActorDeadError, Timeout
@@ -9,11 +12,6 @@ from pykka._registry import ActorRegistry
 # The following must be imported late, in this specific order.
 from pykka._actor import Actor  # isort:skip
 from pykka._threading import ThreadingActor, ThreadingFuture  # isort:skip
-
-try:
-    import importlib.metadata as _importlib_metadata
-except ImportError:
-    import importlib_metadata as _importlib_metadata  # type: ignore
 
 
 __all__ = [

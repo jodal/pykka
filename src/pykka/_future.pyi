@@ -6,7 +6,7 @@ from typing_extensions import TypeAlias
 from pykka._types import OptExcInfo
 
 _T = TypeVar("_T")
-J = TypeVar("J")  # For when T is Iterable[J]  # noqa
+J = TypeVar("J")  # For when T is Iterable[J]
 
 _M = TypeVar("_M")  # For Future.map()
 _R = TypeVar("_R")  # For Future.reduce()

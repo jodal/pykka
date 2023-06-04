@@ -2,7 +2,7 @@ import logging
 
 import pytest
 
-pytestmark = pytest.mark.usefixtures("stop_all")
+pytestmark = pytest.mark.usefixtures("_stop_all")
 
 
 @pytest.fixture(scope="module")
@@ -21,10 +21,9 @@ def actor_class(runtime):
         def on_receive(self, message):
             if message.get("command") == "raise exception":
                 return self.raise_exception()
-            elif message.get("command") == "raise base exception":
-                raise BaseException()
-            else:
-                super().on_receive(message)
+            if message.get("command") == "raise base exception":
+                raise BaseException
+            return super().on_receive(message)
 
         def raise_exception(self):
             raise Exception("foo")
@@ -32,7 +31,7 @@ def actor_class(runtime):
     return ActorA
 
 
-@pytest.fixture
+@pytest.fixture()
 def actor_ref(actor_class, events):
     ref = actor_class.start(events)
     yield ref
@@ -60,7 +59,7 @@ def test_unexpected_messages_are_logged(actor_ref, log_handler):
 
 
 def test_exception_is_logged_when_returned_to_caller(actor_ref, log_handler):
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="foo"):
         actor_ref.proxy().raise_exception().get()
 
     log_handler.wait_for_message("info")

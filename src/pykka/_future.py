@@ -4,9 +4,7 @@ __all__ = ["Future", "get_all"]
 
 
 class Future:
-    """
-    A :class:`Future` is a handle to a value which is available or will be
-    available in the future.
+    """A handle to a value which is available now or in the future.
 
     Typically returned by calls to actor methods or accesses to actor fields.
 
@@ -20,8 +18,7 @@ class Future:
         self._get_hook_result = None
 
     def get(self, timeout=None):
-        """
-        Get the value encapsulated by the future.
+        """Get the value encapsulated by the future.
 
         If the encapsulated value is an exception, it is raised instead of
         returned.
@@ -48,8 +45,7 @@ class Future:
         raise NotImplementedError
 
     def set(self, value=None):
-        """
-        Set the encapsulated value.
+        """Set the encapsulated value.
 
         :param value: the encapsulated value or nothing
         :type value: any object or :class:`None`
@@ -58,8 +54,7 @@ class Future:
         raise NotImplementedError
 
     def set_exception(self, exc_info=None):
-        """
-        Set an exception as the encapsulated value.
+        """Set an exception as the encapsulated value.
 
         You can pass an ``exc_info`` three-tuple, as returned by
         :func:`sys.exc_info`. If you don't pass ``exc_info``,
@@ -75,8 +70,7 @@ class Future:
         raise NotImplementedError
 
     def set_get_hook(self, func):
-        """
-        Set a function to be executed when :meth:`get` is called.
+        """Set a function to be executed when :meth:`get` is called.
 
         The function will be called when :meth:`get` is called, with the
         ``timeout`` value as the only argument. The function's return value
@@ -90,8 +84,7 @@ class Future:
         self._get_hook = func
 
     def filter(self, func):
-        """
-        Return a new future with only the items passing the predicate function.
+        """Return a new future with only the items passing the predicate function.
 
         If the future's value is an iterable, :meth:`filter` will return a new
         future whose value is another iterable with only the items from the
@@ -119,8 +112,7 @@ class Future:
         return future
 
     def join(self, *futures):
-        """
-        Return a new future with a list of the result of multiple futures.
+        """Return a new future with a list of the result of multiple futures.
 
         One or more futures can be passed as arguments to :meth:`join`. The new
         future returns a list with the results from all the joined futures.
@@ -141,15 +133,11 @@ class Future:
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(
-            lambda timeout: [f.get(timeout) for f in [self] + list(futures)]
-        )
+        future.set_get_hook(lambda timeout: [f.get(timeout) for f in [self, *futures]])
         return future
 
     def map(self, func):
-        """
-        Return a new future with the result of the future passed through a
-        function.
+        """Pass the result of the future through a function.
 
         Example::
 
@@ -181,11 +169,7 @@ class Future:
         return future
 
     def reduce(self, func, *args):
-        """
-        reduce(func[, initial])
-
-        Return a new future with the result of reducing the future's iterable
-        into a single value.
+        """Reduce a future's iterable result to a single value.
 
         The function of two arguments is applied cumulatively to the items of
         the iterable, from left to right. The result of the first function call
@@ -245,8 +229,7 @@ class Future:
 
 
 def get_all(futures, timeout=None):
-    """
-    Collect all values encapsulated in the list of futures.
+    """Collect all values encapsulated in the list of futures.
 
     If ``timeout`` is not :class:`None`, the method will wait for a reply for
     ``timeout`` seconds, and then raise :exc:`pykka.Timeout`.
