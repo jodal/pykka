@@ -83,7 +83,7 @@ def test_attr_of_traversable_attr_can_be_read(proxy, attr_name, expected):
 
 def test_traversable_object_returned_from_property_is_not_traversed(proxy):
     # In Pykka < 2, it worked like this:
-    # assert proxy.nested_object_property.inner.get() == 'nested.inner'
+    # assert proxy.nested_object_property.inner.get() == 'nested.inner'  # noqa: ERA001
 
     # In Pykka >= 2, the property getter always returns a future:
     assert proxy.nested_object_property.get().inner == "nested_with_attr_marker.inner"

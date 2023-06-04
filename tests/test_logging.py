@@ -22,7 +22,7 @@ def actor_class(runtime):
             if message.get("command") == "raise exception":
                 return self.raise_exception()
             if message.get("command") == "raise base exception":
-                raise BaseException()
+                raise BaseException
             return super().on_receive(message)
 
         def raise_exception(self):

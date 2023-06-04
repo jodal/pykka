@@ -8,7 +8,7 @@ pytestmark = pytest.mark.usefixtures("_stop_all")
 
 
 @pytest.fixture(scope="module")
-def actor_class(runtime):
+def actor_class(runtime):  # noqa: C901
     class ActorA(runtime.actor_class):
         def __init__(self, events):
             super().__init__()
@@ -30,7 +30,7 @@ def actor_class(runtime):
                 raise Exception("foo")
 
             if message.get("command") == "raise base exception":
-                raise BaseException()
+                raise BaseException
 
             if message.get("command") == "stop twice":
                 self.stop()

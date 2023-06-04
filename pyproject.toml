@@ -123,9 +123,10 @@ target-version = "py38"
    "T20",    # flake8-print
 ]
 "tests/*" = [
-   "ANN", # flake8-annotations
-   "ARG", # flake8-unused-arguments
-   "D",   # pydocstyle
+   "ANN",    # flake8-annotations
+   "ARG",    # flake8-unused-arguments
+   "D",      # pydocstyle
+   "TRY002", # raise-vanilla-class
 ]
 
 [tool.ruff.isort]
