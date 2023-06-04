@@ -46,6 +46,9 @@ class Future(Generic[T]):
         self._get_hook = None
         self._get_hook_result = None
 
+    def __repr__(self) -> str:
+        return "<pykka.Future>"
+
     def get(
         self,
         timeout: Optional[float] = None,

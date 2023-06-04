@@ -1,17 +1,23 @@
+from __future__ import annotations
+
 import logging
 import threading
 import time
-from collections import namedtuple
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Iterator,
+    cast,
+)
 
 import pytest
 
 from pykka import ActorRegistry, ThreadingActor, ThreadingFuture
 from tests.log_handler import PykkaTestLogHandler
+from tests.types import Events, Runtime
 
-Runtime = namedtuple(
-    "Runtime",
-    ["name", "actor_class", "event_class", "future_class", "sleep_func"],
-)
+if TYPE_CHECKING:
+    from pykka import Actor, Future
 
 
 RUNTIMES = {
@@ -29,18 +35,18 @@ RUNTIMES = {
 
 
 @pytest.fixture(scope="session", params=RUNTIMES.values())
-def runtime(request):
-    return request.param
+def runtime(request: pytest.FixtureRequest) -> Runtime:
+    return cast(Runtime, request.param)
 
 
 @pytest.fixture()
-def _stop_all():
+def _stop_all() -> Iterator[None]:  # pyright: ignore[reportUnusedFunction]
     yield
     ActorRegistry.stop_all()
 
 
 @pytest.fixture()
-def log_handler():
+def log_handler() -> Iterator[logging.Handler]:
     log_handler = PykkaTestLogHandler()
 
     root_logger = logging.getLogger()
@@ -55,25 +61,24 @@ def log_handler():
 
 
 @pytest.fixture()
-def events(runtime):
-    class Events:
-        on_start_was_called = runtime.event_class()
-        on_stop_was_called = runtime.event_class()
-        on_failure_was_called = runtime.event_class()
-        greetings_was_received = runtime.event_class()
-        actor_registered_before_on_start_was_called = runtime.event_class()
-
-    return Events()
+def events(runtime: Runtime) -> Events:
+    return Events(
+        on_start_was_called=runtime.event_class(),
+        on_stop_was_called=runtime.event_class(),
+        on_failure_was_called=runtime.event_class(),
+        greetings_was_received=runtime.event_class(),
+        actor_registered_before_on_start_was_called=runtime.event_class(),
+    )
 
 
 @pytest.fixture(scope="module")
-def early_failing_actor_class(runtime):
-    class EarlyFailingActor(runtime.actor_class):
-        def __init__(self, events):
+def early_failing_actor_class(runtime: Runtime) -> type[Actor]:
+    class EarlyFailingActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+        def __init__(self, events: Events) -> None:
             super().__init__()
             self.events = events
 
-        def on_start(self):
+        def on_start(self) -> None:
             try:
                 raise RuntimeError("on_start failure")
             finally:
@@ -83,16 +88,16 @@ def early_failing_actor_class(runtime):
 
 
 @pytest.fixture(scope="module")
-def late_failing_actor_class(runtime):
-    class LateFailingActor(runtime.actor_class):
-        def __init__(self, events):
+def late_failing_actor_class(runtime: Runtime) -> type[Actor]:
+    class LateFailingActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+        def __init__(self, events: Events) -> None:
             super().__init__()
             self.events = events
 
-        def on_start(self):
+        def on_start(self) -> None:
             self.stop()
 
-        def on_stop(self):
+        def on_stop(self) -> None:
             try:
                 raise RuntimeError("on_stop failure")
             finally:
@@ -102,18 +107,18 @@ def late_failing_actor_class(runtime):
 
 
 @pytest.fixture(scope="module")
-def failing_on_failure_actor_class(runtime):
-    class FailingOnFailureActor(runtime.actor_class):
-        def __init__(self, events):
+def failing_on_failure_actor_class(runtime: Runtime) -> type[Actor]:
+    class FailingOnFailureActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+        def __init__(self, events: Events) -> None:
             super().__init__()
             self.events = events
 
-        def on_receive(self, message):
+        def on_receive(self, message: Any) -> Any:
             if message.get("command") == "raise exception":
                 raise Exception("on_receive failure")
             return super().on_receive(message)
 
-        def on_failure(self, *args):
+        def on_failure(self, *args: Any) -> None:
             try:
                 raise RuntimeError("on_failure failure")
             finally:
@@ -123,10 +128,10 @@ def failing_on_failure_actor_class(runtime):
 
 
 @pytest.fixture()
-def future(runtime):
+def future(runtime: Runtime) -> Future[Any]:
     return runtime.future_class()
 
 
 @pytest.fixture()
-def futures(runtime):
+def futures(runtime: Runtime) -> list[Future[Any]]:
     return [runtime.future_class() for _ in range(3)]
