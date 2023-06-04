@@ -57,10 +57,6 @@ warn_unused_configs = true
 module = "pykka.*"
 disallow_untyped_defs = true
 
-[[tool.mypy.overrides]]
-module = ["pytest.*"]
-ignore_missing_imports = true
-
 [tool.ruff]
 select = [
    "A", # flake8-builtins
