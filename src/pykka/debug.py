@@ -11,7 +11,7 @@ logger = logging.getLogger("pykka")
 __all__ = ["log_thread_tracebacks"]
 
 
-def log_thread_tracebacks(*args, **kwargs):
+def log_thread_tracebacks(*_args, **_kwargs):
     """Log a traceback for each running thread at :attr:`logging.CRITICAL` level.
 
     This can be a convenient tool for debugging deadlocks.

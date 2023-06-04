@@ -134,7 +134,7 @@ class Actor:
     #: continue processing messages. Use :meth:`stop` to change it.
     actor_stopped = None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *_args, **_kwargs):
         """Create actor.
 
         Your are free to override :meth:`__init__`, but you must call your
