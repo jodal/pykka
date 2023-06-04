@@ -23,7 +23,7 @@ __all__ = ["ActorProxy"]
 logger = logging.getLogger("pykka")
 
 
-_T = TypeVar("_T")
+T = TypeVar("T")
 
 AttrPath: TypeAlias = Sequence[str]
 
@@ -362,7 +362,7 @@ class CallableProxy:
         self.actor_ref.tell(message)
 
 
-def traversable(obj: _T) -> _T:
+def traversable(obj: T) -> T:
     """Mark an actor attribute as traversable.
 
     The traversable marker makes the actor attribute's own methods and

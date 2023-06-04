@@ -23,9 +23,8 @@ __all__ = ["Future", "get_all"]
 
 T = TypeVar("T")
 J = TypeVar("J")  # For when T is Iterable[J]
-
-M = TypeVar("M")  # For Future.map()
-R = TypeVar("R")  # For Future.reduce()
+M = TypeVar("M")  # Result of Future.map()
+R = TypeVar("R")  # Result of Future.reduce()
 
 GetHookFunc: TypeAlias = Callable[[Optional[float]], T]
 
