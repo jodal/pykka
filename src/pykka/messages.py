@@ -38,7 +38,7 @@ class ProxyCall(NamedTuple):
     attr_path: Sequence[str]
 
     #: List with positional arguments.
-    args: Tuple[Any]
+    args: Tuple[Any, ...]
 
     #: Dict with keyword arguments.
     kwargs: Dict[str, Any]
