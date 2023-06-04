@@ -4,7 +4,7 @@ from producer import ProducerActor
 
 @pytest.fixture()
 def consumer_mock(mocker):
-    yield mocker.Mock()
+    return mocker.Mock()
 
 
 @pytest.fixture()

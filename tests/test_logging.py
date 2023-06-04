@@ -2,7 +2,7 @@ import logging
 
 import pytest
 
-pytestmark = pytest.mark.usefixtures("stop_all")
+pytestmark = pytest.mark.usefixtures("_stop_all")
 
 
 @pytest.fixture(scope="module")
@@ -59,7 +59,7 @@ def test_unexpected_messages_are_logged(actor_ref, log_handler):
 
 
 def test_exception_is_logged_when_returned_to_caller(actor_ref, log_handler):
-    with pytest.raises(Exception):
+    with pytest.raises(Exception, match="foo"):
         actor_ref.proxy().raise_exception().get()
 
     log_handler.wait_for_message("info")

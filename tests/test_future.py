@@ -37,7 +37,7 @@ def test_base_future_set_exception_is_not_implemented():
 def test_set_multiple_times_fails(future):
     future.set(0)
 
-    with pytest.raises(Exception):
+    with pytest.raises(Exception):  # noqa: B017, PT011
         future.set(0)
 
 

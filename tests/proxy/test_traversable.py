@@ -64,7 +64,7 @@ def test_attr_without_marker_cannot_be_traversed(proxy):
 
 
 @pytest.mark.parametrize(
-    "attr_name, expected",
+    ("attr_name", "expected"),
     [
         ("nested_with_function_marker", "nested_with_no_marker.inner"),
         ("nested_with_decorator_marker", "nested_with_decorator_marker.inner"),
@@ -90,7 +90,7 @@ def test_traversable_object_returned_from_property_is_not_traversed(proxy):
 
 
 def test_traversable_cannot_mark_object_using_slots():
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(Exception, match="cannot be used to mark") as exc_info:
         pykka.traversable(NestedWithNoMarkerAndSlots())
 
     assert "cannot be used to mark an object using slots" in str(exc_info.value)

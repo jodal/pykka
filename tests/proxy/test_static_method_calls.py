@@ -65,7 +65,7 @@ def test_exception_in_method_reraised_by_future(proxy, events):
     assert not events.on_failure_was_called.is_set()
 
     future = proxy.raise_exception()
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(Exception, match="boom!") as exc_info:
         future.get()
 
     assert str(exc_info.value) == "boom!"

@@ -34,7 +34,7 @@ def runtime(request):
 
 
 @pytest.fixture()
-def stop_all():
+def _stop_all():
     yield
     ActorRegistry.stop_all()
 
