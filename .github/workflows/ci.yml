@@ -31,6 +31,9 @@ jobs:
           - name: "Lint: mypy"
             python: "3.11"
             tox: mypy
+          - name: "Lint: pyright"
+            python: "3.11"
+            tox: pyright
           - name: "Lint: ruff"
             python: "3.11"
             tox: ruff

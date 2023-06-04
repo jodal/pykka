@@ -4,7 +4,7 @@ import logging
 import sys
 import threading
 import uuid
-from typing import TYPE_CHECKING, Any, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Optional, Protocol, Sequence
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
@@ -20,10 +20,10 @@ logger = logging.getLogger("pykka")
 
 
 class ActorInbox(Protocol):
-    def put(self, envelope: Envelope) -> None:
+    def put(self, envelope: Envelope[Any], /) -> None:
         ...
 
-    def get(self) -> Envelope:
+    def get(self) -> Envelope[Any]:
         ...
 
     def empty(self) -> bool:
@@ -128,7 +128,7 @@ class Actor:
         raise NotImplementedError("Use a subclass of Actor")
 
     @staticmethod
-    def _create_future() -> Future:
+    def _create_future() -> Future[Any]:
         """Create a future for the actor.
 
         Internal method for implementors of new actor types.
@@ -297,23 +297,23 @@ class Actor:
 
     def _handle_failure(
         self,
-        exception_type: type[BaseException],
-        exception_value: BaseException,
-        traceback: TracebackType,
+        exception_type: Optional[type[BaseException]],
+        exception_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
     ) -> None:
         """Log unexpected failures, unregisters and stops the actor."""
         logger.error(
             f"Unhandled exception in {self}:",
-            exc_info=(exception_type, exception_value, traceback),
+            exc_info=(exception_type, exception_value, traceback),  # type: ignore[arg-type]  # noqa: E501
         )
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
 
     def on_failure(
         self,
-        exception_type: type[BaseException],
-        exception_value: BaseException,
-        traceback: TracebackType,
+        exception_type: Optional[type[BaseException]],
+        exception_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
     ) -> None:
         """Run code when an unhandled exception is raised.
 
@@ -391,7 +391,7 @@ class Actor:
         obj: Any,
     ) -> dict[str, Any]:
         """Combine ``__dict__`` from ``obj`` and all its superclasses."""
-        result = {}
+        result: dict[str, Any] = {}
         for cls in reversed(obj.__class__.mro()):
             result.update(cls.__dict__)
         if hasattr(obj, "__dict__"):

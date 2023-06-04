@@ -21,16 +21,16 @@ if TYPE_CHECKING:
 
 __all__ = ["Future", "get_all"]
 
-_T = TypeVar("_T")
+T = TypeVar("T")
 J = TypeVar("J")  # For when T is Iterable[J]
 
-_M = TypeVar("_M")  # For Future.map()
-_R = TypeVar("_R")  # For Future.reduce()
+M = TypeVar("M")  # For Future.map()
+R = TypeVar("R")  # For Future.reduce()
 
-GetHookFunc: TypeAlias = Callable[[Optional[float]], _T]
+GetHookFunc: TypeAlias = Callable[[Optional[float]], T]
 
 
-class Future(Generic[_T]):
+class Future(Generic[T]):
     """A handle to a value which is available now or in the future.
 
     Typically returned by calls to actor methods or accesses to actor fields.
@@ -39,15 +39,18 @@ class Future(Generic[_T]):
     ``await`` the future.
     """
 
+    _get_hook: Optional[GetHookFunc[T]]
+    _get_hook_result: Optional[T]
+
     def __init__(self) -> None:
         super().__init__()
-        self._get_hook: Optional[GetHookFunc] = None
-        self._get_hook_result: Optional[_T] = None
+        self._get_hook = None
+        self._get_hook_result = None
 
     def get(
         self,
         timeout: Optional[float] = None,
-    ) -> _T:
+    ) -> T:
         """Get the value encapsulated by the future.
 
         If the encapsulated value is an exception, it is raised instead of
@@ -76,7 +79,7 @@ class Future(Generic[_T]):
 
     def set(
         self,
-        value: Optional[_T] = None,
+        value: Optional[T] = None,
     ) -> None:
         """Set the encapsulated value.
 
@@ -107,7 +110,7 @@ class Future(Generic[_T]):
 
     def set_get_hook(
         self,
-        func: GetHookFunc,
+        func: GetHookFunc[T],
     ) -> None:
         """Set a function to be executed when :meth:`get` is called.
 
@@ -154,7 +157,7 @@ class Future(Generic[_T]):
         return future
 
     def join(
-        self,
+        self: Future[Any],
         *futures: Future[Any],
     ) -> Future[Iterable[Any]]:
         """Return a new future with a list of the result of multiple futures.
@@ -177,14 +180,14 @@ class Future(Generic[_T]):
 
         .. versionadded:: 1.2
         """
-        future = self.__class__()
+        future = cast(Future[Iterable[Any]], self.__class__())
         future.set_get_hook(lambda timeout: [f.get(timeout) for f in [self, *futures]])
-        return cast(Future[Iterable[Any]], future)
+        return future
 
     def map(
         self,
-        func: Callable[[_T], _M],
-    ) -> Future[_M]:
+        func: Callable[[T], M],
+    ) -> Future[M]:
         """Pass the result of the future through a function.
 
         Example::
@@ -212,15 +215,15 @@ class Future(Generic[_T]):
             behavior has been simplified. Now, the entire result value is
             passed to the function.
         """
-        future = self.__class__()
+        future = cast(Future[M], self.__class__())
         future.set_get_hook(lambda timeout: func(self.get(timeout)))
-        return cast(Future[_M], future)
+        return future
 
     def reduce(
         self: Future[Iterable[J]],
-        func: Callable[[_R, J], _R],
-        *args: _R,
-    ) -> Future[_R]:
+        func: Callable[[R, J], R],
+        *args: R,
+    ) -> Future[R]:
         """Reduce a future's iterable result to a single value.
 
         The function of two arguments is applied cumulatively to the items of
@@ -266,13 +269,13 @@ class Future(Generic[_T]):
 
         .. versionadded:: 1.2
         """
-        future = self.__class__()
+        future = cast(Future[R], self.__class__())
         future.set_get_hook(
             lambda timeout: functools.reduce(func, self.get(timeout), *args)
         )
-        return cast(Future[_R], future)
+        return future
 
-    def __await__(self) -> Generator[None, None, _T]:
+    def __await__(self) -> Generator[None, None, T]:
         yield
         value = self.get()
         return value

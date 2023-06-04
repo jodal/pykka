@@ -26,7 +26,7 @@ class ActorRegistry:
     def broadcast(
         cls,
         message: Any,
-        target_class: Optional[type[Actor]] = None,
+        target_class: Union[str, type[Actor], None] = None,
     ) -> None:
         """Broadcast ``message`` to all actors of the specified ``target_class``.
 
@@ -158,7 +158,11 @@ class ActorRegistry:
         ...
 
     @classmethod
-    def stop_all(cls, block=True, timeout=None):  # type: ignore[no-untyped-def]
+    def stop_all(
+        cls,
+        block: bool = True,
+        timeout: Optional[float] = None,
+    ) -> Union[list[bool], list[Future[bool]]]:
         """Stop all running actors.
 
         ``block`` and ``timeout`` works as for

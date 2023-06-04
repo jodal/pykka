@@ -27,7 +27,7 @@ special circumstances.
 from typing import Any, Dict, NamedTuple, Sequence, Tuple
 
 
-class _ActorStop(NamedTuple):
+class _ActorStop(NamedTuple):  # pyright: ignore[reportUnusedClass]
     """Internal message."""
 
 
