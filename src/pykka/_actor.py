@@ -1,13 +1,33 @@
+from __future__ import annotations
+
 import logging
 import sys
 import threading
 import uuid
+from typing import TYPE_CHECKING, Any, Protocol, Sequence
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
+
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from pykka import Future
+    from pykka._envelope import Envelope
 
 __all__ = ["Actor"]
 
 logger = logging.getLogger("pykka")
+
+
+class ActorInbox(Protocol):
+    def put(self, envelope: Envelope) -> None:
+        ...
+
+    def get(self) -> Envelope:
+        ...
+
+    def empty(self) -> bool:
+        ...
 
 
 class Actor:
@@ -54,7 +74,11 @@ class Actor:
     """
 
     @classmethod
-    def start(cls, *args, **kwargs):
+    def start(
+        cls,
+        *args: Any,
+        **kwargs: Any,
+    ) -> ActorRef:
         """Start an actor.
 
         Starting an actor also registers it in the
@@ -96,7 +120,7 @@ class Actor:
         return obj.actor_ref
 
     @staticmethod
-    def _create_actor_inbox():
+    def _create_actor_inbox() -> ActorInbox:
         """Create an inbox for the actor.
 
         Internal method for implementors of new actor types.
@@ -104,14 +128,14 @@ class Actor:
         raise NotImplementedError("Use a subclass of Actor")
 
     @staticmethod
-    def _create_future():
+    def _create_future() -> Future:
         """Create a future for the actor.
 
         Internal method for implementors of new actor types.
         """
         raise NotImplementedError("Use a subclass of Actor")
 
-    def _start_actor_loop(self):
+    def _start_actor_loop(self) -> None:
         """Create and start the actor's event loop.
 
         Internal method for implementors of new actor types.
@@ -121,20 +145,24 @@ class Actor:
     #: The actor URN string is a universally unique identifier for the actor.
     #: It may be used for looking up a specific actor using
     #: :meth:`ActorRegistry.get_by_urn`.
-    actor_urn = None
+    actor_urn: str
 
     #: The actor's inbox. Use :meth:`ActorRef.tell`, :meth:`ActorRef.ask`, and
     #: friends to put messages in the inbox.
-    actor_inbox = None
+    actor_inbox: ActorInbox
 
     #: The actor's :class:`ActorRef` instance.
-    actor_ref = None
+    actor_ref: ActorRef
 
     #: A :class:`threading.Event` representing whether or not the actor should
     #: continue processing messages. Use :meth:`stop` to change it.
-    actor_stopped = None
+    actor_stopped: threading.Event
 
-    def __init__(self, *_args, **_kwargs):
+    def __init__(
+        self,
+        *_args: Any,
+        **_kwargs: Any,
+    ) -> None:
         """Create actor.
 
         Your are free to override :meth:`__init__`, but you must call your
@@ -158,17 +186,17 @@ class Actor:
 
         self.actor_ref = ActorRef(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.__class__.__name__} ({self.actor_urn})"
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop the actor.
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
         self.actor_ref.tell(messages._ActorStop())  # noqa: SLF001
 
-    def _stop(self):
+    def _stop(self) -> None:
         """Stop the actor immediately without processing the rest of the inbox."""
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
@@ -178,7 +206,7 @@ class Actor:
         except Exception:
             self._handle_failure(*sys.exc_info())
 
-    def _actor_loop(self):
+    def _actor_loop(self) -> None:
         """Run the actor's core loop.
 
         This is the method that will be executed by the thread or greenlet.
@@ -187,13 +215,13 @@ class Actor:
         self._actor_loop_running()
         self._actor_loop_teardown()
 
-    def _actor_loop_setup(self):
+    def _actor_loop_setup(self) -> None:
         try:
             self.on_start()
         except Exception:
             self._handle_failure(*sys.exc_info())
 
-    def _actor_loop_running(self):
+    def _actor_loop_running(self) -> None:
         while not self.actor_stopped.is_set():
             envelope = self.actor_inbox.get()
             try:
@@ -219,7 +247,7 @@ class Actor:
                 self._stop()
                 ActorRegistry.stop_all()
 
-    def _actor_loop_teardown(self):
+    def _actor_loop_teardown(self) -> None:
         while not self.actor_inbox.empty():
             envelope = self.actor_inbox.get()
             if envelope.reply_to is not None:
@@ -237,7 +265,7 @@ class Actor:
                         )
                     )
 
-    def on_start(self):
+    def on_start(self) -> None:
         """Run code at the beginning of the actor's life.
 
         Hook for doing any setup that should be done *after* the actor is
@@ -251,7 +279,7 @@ class Actor:
         logged, and the actor will stop.
         """
 
-    def on_stop(self):
+    def on_stop(self) -> None:
         """Run code at the end of the actor's life.
 
         Hook for doing any cleanup that should be done *after* the actor has
@@ -267,7 +295,12 @@ class Actor:
         logged, and the actor will stop.
         """
 
-    def _handle_failure(self, exception_type, exception_value, traceback):
+    def _handle_failure(
+        self,
+        exception_type: type[BaseException],
+        exception_value: BaseException,
+        traceback: TracebackType,
+    ) -> None:
         """Log unexpected failures, unregisters and stops the actor."""
         logger.error(
             f"Unhandled exception in {self}:",
@@ -276,7 +309,12 @@ class Actor:
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
 
-    def on_failure(self, exception_type, exception_value, traceback):
+    def on_failure(
+        self,
+        exception_type: type[BaseException],
+        exception_value: BaseException,
+        traceback: TracebackType,
+    ) -> None:
         """Run code when an unhandled exception is raised.
 
         Hook for doing any cleanup *after* an unhandled exception is raised,
@@ -292,7 +330,7 @@ class Actor:
         logged, and the actor will stop.
         """
 
-    def _handle_receive(self, message):
+    def _handle_receive(self, message: Any) -> Any:
         """Handle messages sent to the actor."""
         if isinstance(message, messages._ActorStop):  # noqa: SLF001
             return self._stop()
@@ -308,7 +346,7 @@ class Actor:
             return setattr(parent_attr, attr_name, message.value)
         return self.on_receive(message)
 
-    def on_receive(self, message):
+    def on_receive(self, message: Any) -> Any:
         """May be implemented for the actor to handle regular non-proxy messages.
 
         :param message: the message to handle
@@ -318,14 +356,20 @@ class Actor:
         """
         logger.warning(f"Unexpected message received by {self}: {message}")
 
-    def _get_attribute_from_path(self, attr_path):
+    def _get_attribute_from_path(
+        self,
+        attr_path: Sequence[str],
+    ) -> Any:
         """Traverses the path and returns the attribute at the end of the path."""
         attr = self
         for attr_name in attr_path:
             attr = getattr(attr, attr_name)
         return attr
 
-    def _introspect_attribute_from_path(self, attr_path):
+    def _introspect_attribute_from_path(
+        self,
+        attr_path: Sequence[str],
+    ) -> Any:
         """Get attribute information from ``__dict__`` on the container."""
         if not attr_path:
             return self
@@ -342,7 +386,10 @@ class Actor:
                 f"has no attribute {attr_name!r}"
             ) from None
 
-    def _introspect_attributes(self, obj):
+    def _introspect_attributes(
+        self,
+        obj: Any,
+    ) -> dict[str, Any]:
         """Combine ``__dict__`` from ``obj`` and all its superclasses."""
         result = {}
         for cls in reversed(obj.__class__.mro()):
