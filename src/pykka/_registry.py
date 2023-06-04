@@ -26,7 +26,7 @@ class ActorRegistry:
     def broadcast(
         cls,
         message: Any,
-        target_class: Optional[type[Actor]] = None,
+        target_class: Union[str, type[Actor], None] = None,
     ) -> None:
         """Broadcast ``message`` to all actors of the specified ``target_class``.
 
