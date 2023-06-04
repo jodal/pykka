@@ -1,6 +1,15 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Literal,
+    Optional,
+    TypeVar,
+    Union,
+    overload,
+)
 
 from pykka import ActorDeadError, ActorProxy
 from pykka._envelope import Envelope
@@ -9,13 +18,16 @@ from pykka.messages import _ActorStop
 if TYPE_CHECKING:
     from threading import Event
 
-    from pykka import Future
-    from pykka._actor import Actor, ActorInbox
+    from pykka import Actor, Future
+    from pykka._actor import ActorInbox
 
 __all__ = ["ActorRef"]
 
 
-class ActorRef:
+A = TypeVar("A", bound="Actor")
+
+
+class ActorRef(Generic[A]):
     """Reference to a running actor which may safely be passed around.
 
     :class:`ActorRef` instances are returned by :meth:`Actor.start` and the
@@ -27,7 +39,7 @@ class ActorRef:
     """
 
     #: The class of the referenced actor.
-    actor_class: type[Actor]
+    actor_class: type[A]
 
     #: See :attr:`Actor.actor_urn`.
     actor_urn: str
@@ -39,8 +51,8 @@ class ActorRef:
     actor_stopped: Event
 
     def __init__(
-        self,
-        actor: Actor,
+        self: ActorRef[A],
+        actor: A,
     ) -> None:
         self._actor = actor
         self.actor_class = actor.__class__
@@ -223,7 +235,7 @@ class ActorRef:
 
         return converted_future
 
-    def proxy(self) -> ActorProxy:
+    def proxy(self: ActorRef[A]) -> ActorProxy[A]:
         """Wrap the :class:`ActorRef` in an :class:`ActorProxy <pykka.ActorProxy>`.
 
         Using this method like this::

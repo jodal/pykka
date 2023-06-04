@@ -4,6 +4,7 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
+    Generic,
     NamedTuple,
     Optional,
     Sequence,
@@ -24,6 +25,7 @@ logger = logging.getLogger("pykka")
 
 
 T = TypeVar("T")
+A = TypeVar("A", bound="Actor")
 
 AttrPath: TypeAlias = Sequence[str]
 
@@ -33,7 +35,7 @@ class AttrInfo(NamedTuple):
     traversable: bool
 
 
-class ActorProxy:
+class ActorProxy(Generic[A]):
     """An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>` instance.
 
     The proxy allows the referenced actor to be used through regular
@@ -132,17 +134,17 @@ class ActorProxy:
     """
 
     #: The actor's :class:`pykka.ActorRef` instance.
-    actor_ref: ActorRef
+    actor_ref: ActorRef[A]
 
-    _actor: Actor
+    _actor: A
     _attr_path: AttrPath
     _known_attrs: dict[AttrPath, AttrInfo]
-    _actor_proxies: dict[AttrPath, ActorProxy]
-    _callable_proxies: dict[AttrPath, CallableProxy]
+    _actor_proxies: dict[AttrPath, ActorProxy[A]]
+    _callable_proxies: dict[AttrPath, CallableProxy[A]]
 
     def __init__(
         self,
-        actor_ref: ActorRef,
+        actor_ref: ActorRef[A],
         attr_path: Optional[AttrPath] = None,
     ) -> None:
         if not actor_ref.is_alive():
@@ -229,7 +231,10 @@ class ActorProxy:
     ) -> bool:
         if not isinstance(other, ActorProxy):
             return False
-        if self._actor != other._actor:  # noqa: SLF001
+        if (
+            self._actor
+            != other._actor  # noqa: SLF001  # pyright: ignore[reportUnknownMemberType]
+        ):
             return False
         if self._attr_path != other._attr_path:  # noqa: SLF001
             return False
@@ -251,7 +256,7 @@ class ActorProxy:
     def __getattr__(
         self,
         name: str,
-    ) -> Union[CallableProxy, ActorProxy, Future[Any]]:
+    ) -> Union[CallableProxy[A], ActorProxy[A], Future[Any]]:
         """Get a field or callable from the actor."""
         attr_path: AttrPath = (*self._attr_path, name)
 
@@ -294,7 +299,7 @@ class ActorProxy:
         return None
 
 
-class CallableProxy:
+class CallableProxy(Generic[A]):
     """Proxy to a single method.
 
     :class:`CallableProxy` instances are returned when accessing methods on a
@@ -311,12 +316,12 @@ class CallableProxy:
         proxy.do_work.defer()
     """
 
-    actor_ref: ActorRef
+    actor_ref: ActorRef[A]
     _attr_path: AttrPath
 
     def __init__(
         self,
-        actor_ref: ActorRef,
+        actor_ref: ActorRef[A],
         attr_path: AttrPath,
     ) -> None:
         self.actor_ref = actor_ref

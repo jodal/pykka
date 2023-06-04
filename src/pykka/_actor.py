@@ -4,7 +4,7 @@ import logging
 import sys
 import threading
 import uuid
-from typing import TYPE_CHECKING, Any, Optional, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Optional, Protocol, Sequence, TypeVar
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
@@ -17,6 +17,9 @@ if TYPE_CHECKING:
 __all__ = ["Actor"]
 
 logger = logging.getLogger("pykka")
+
+
+A = TypeVar("A", bound="Actor")
 
 
 class ActorInbox(Protocol):
@@ -75,10 +78,10 @@ class Actor:
 
     @classmethod
     def start(
-        cls,
+        cls: type[A],
         *args: Any,
         **kwargs: Any,
-    ) -> ActorRef:
+    ) -> ActorRef[A]:
         """Start an actor.
 
         Starting an actor also registers it in the
@@ -152,7 +155,7 @@ class Actor:
     actor_inbox: ActorInbox
 
     #: The actor's :class:`ActorRef` instance.
-    actor_ref: ActorRef
+    actor_ref: ActorRef[Any]
 
     #: A :class:`threading.Event` representing whether or not the actor should
     #: continue processing messages. Use :meth:`stop` to change it.
