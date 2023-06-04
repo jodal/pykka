@@ -23,10 +23,6 @@ python = "^3.8.0"
 black = "^23.3.0"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^0.971"
-pytest = "^7.0.0"
-pytest-cov = "^3.0.0"
-pytest-mock = "^3.6.1"
 tox = "^4.5.2"
 
 [tool.poetry.group.docs.dependencies]
@@ -34,8 +30,16 @@ sphinx = "^6.2.1"
 sphinx_rtd_theme = "^1.2.1"
 toml = "^0.10.2"
 
+[tool.poetry.group.mypy.dependencies]
+mypy = "^0.971"
+
 [tool.poetry.group.ruff.dependencies]
 ruff = "^0.0.270"
+
+[tool.poetry.group.tests.dependencies]
+pytest = "^7.0.0"
+pytest-cov = "^3.0.0"
+pytest-mock = "^3.6.1"
 
 [tool.black]
 target-version = ["py38", "py39", "py310", "py311"]
