@@ -4,6 +4,7 @@ import logging
 import sys
 import threading
 import traceback
+from typing import Any
 
 logger = logging.getLogger("pykka")
 
@@ -11,7 +12,7 @@ logger = logging.getLogger("pykka")
 __all__ = ["log_thread_tracebacks"]
 
 
-def log_thread_tracebacks(*_args, **_kwargs):
+def log_thread_tracebacks(*_args: Any, **_kwargs: Any) -> None:
     """Log a traceback for each running thread at :attr:`logging.CRITICAL` level.
 
     This can be a convenient tool for debugging deadlocks.

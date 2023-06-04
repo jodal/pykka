@@ -1,5 +1,11 @@
+from __future__ import annotations
+
 import logging
 import threading
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, Optional, Union, overload
+
+if TYPE_CHECKING:
+    from pykka import Actor, ActorRef, Future
 
 logger = logging.getLogger("pykka")
 
@@ -13,11 +19,15 @@ class ActorRegistry:
     Contains global state, but should be thread-safe.
     """
 
-    _actor_refs = []
-    _actor_refs_lock = threading.RLock()
+    _actor_refs: ClassVar[list[ActorRef]] = []
+    _actor_refs_lock: ClassVar[threading.RLock] = threading.RLock()
 
     @classmethod
-    def broadcast(cls, message, target_class=None):
+    def broadcast(
+        cls,
+        message: Any,
+        target_class: Optional[type[Actor]] = None,
+    ) -> None:
         """Broadcast ``message`` to all actors of the specified ``target_class``.
 
         If no ``target_class`` is specified, the message is broadcasted to all
@@ -39,7 +49,7 @@ class ActorRegistry:
             ref.tell(message)
 
     @classmethod
-    def get_all(cls):
+    def get_all(cls) -> list[ActorRef]:
         """Get all running actors.
 
         :returns: list of :class:`pykka.ActorRef`
@@ -48,7 +58,10 @@ class ActorRegistry:
             return cls._actor_refs[:]
 
     @classmethod
-    def get_by_class(cls, actor_class):
+    def get_by_class(
+        cls,
+        actor_class: type[Actor],
+    ) -> list[ActorRef]:
         """Get all running actors of the given class or a subclass.
 
         :param actor_class: actor class, or any superclass of the actor
@@ -64,7 +77,10 @@ class ActorRegistry:
             ]
 
     @classmethod
-    def get_by_class_name(cls, actor_class_name):
+    def get_by_class_name(
+        cls,
+        actor_class_name: str,
+    ) -> list[ActorRef]:
         """Get all running actors of the given class name.
 
         :param actor_class_name: actor class name
@@ -80,7 +96,10 @@ class ActorRegistry:
             ]
 
     @classmethod
-    def get_by_urn(cls, actor_urn):
+    def get_by_urn(
+        cls,
+        actor_urn: str,
+    ) -> Optional[ActorRef]:
         """Get an actor by its universally unique URN.
 
         :param actor_urn: actor URN
@@ -95,7 +114,10 @@ class ActorRegistry:
             return refs[0]
 
     @classmethod
-    def register(cls, actor_ref):
+    def register(
+        cls,
+        actor_ref: ActorRef,
+    ) -> None:
         """Register an :class:`ActorRef` in the registry.
 
         This is done automatically when an actor is started, e.g. by calling
@@ -108,8 +130,35 @@ class ActorRegistry:
             cls._actor_refs.append(actor_ref)
         logger.debug(f"Registered {actor_ref}")
 
+    @overload
     @classmethod
-    def stop_all(cls, block=True, timeout=None):
+    def stop_all(
+        cls,
+        block: Literal[True],
+        timeout: float | None = ...,
+    ) -> list[bool]:
+        ...
+
+    @overload
+    @classmethod
+    def stop_all(
+        cls,
+        block: Literal[False],
+        timeout: float | None = ...,
+    ) -> list[Future[bool]]:
+        ...
+
+    @overload
+    @classmethod
+    def stop_all(
+        cls,
+        block: bool = True,
+        timeout: Optional[float] = None,
+    ) -> Union[list[bool], list[Future[bool]]]:
+        ...
+
+    @classmethod
+    def stop_all(cls, block=True, timeout=None):  # type: ignore[no-untyped-def]
         """Stop all running actors.
 
         ``block`` and ``timeout`` works as for
@@ -133,7 +182,10 @@ class ActorRegistry:
         return [ref.stop(block, timeout) for ref in reversed(cls.get_all())]
 
     @classmethod
-    def unregister(cls, actor_ref):
+    def unregister(
+        cls,
+        actor_ref: ActorRef,
+    ) -> None:
         """Remove an :class:`ActorRef <pykka.ActorRef>` from the registry.
 
         This is done automatically when an actor is stopped, e.g. by calling

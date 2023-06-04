@@ -1,6 +1,16 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Literal, Optional, Union, overload
+
 from pykka import ActorDeadError, ActorProxy
 from pykka._envelope import Envelope
 from pykka.messages import _ActorStop
+
+if TYPE_CHECKING:
+    from threading import Event
+
+    from pykka import Future
+    from pykka._actor import Actor, ActorInbox
 
 __all__ = ["ActorRef"]
 
@@ -17,31 +27,34 @@ class ActorRef:
     """
 
     #: The class of the referenced actor.
-    actor_class = None
+    actor_class: type[Actor]
 
     #: See :attr:`Actor.actor_urn`.
-    actor_urn = None
+    actor_urn: str
 
     #: See :attr:`Actor.actor_inbox`.
-    actor_inbox = None
+    actor_inbox: ActorInbox
 
     #: See :attr:`Actor.actor_stopped`.
-    actor_stopped = None
+    actor_stopped: Event
 
-    def __init__(self, actor):
+    def __init__(
+        self,
+        actor: Actor,
+    ) -> None:
         self._actor = actor
         self.actor_class = actor.__class__
         self.actor_urn = actor.actor_urn
         self.actor_inbox = actor.actor_inbox
         self.actor_stopped = actor.actor_stopped
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<ActorRef for {self}>"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.actor_class.__name__} ({self.actor_urn})"
 
-    def is_alive(self):
+    def is_alive(self) -> bool:
         """Check if actor is alive.
 
         This is based on the actor's stopped flag. The actor is not guaranteed
@@ -53,7 +66,10 @@ class ActorRef:
         """
         return not self.actor_stopped.is_set()
 
-    def tell(self, message):
+    def tell(
+        self,
+        message: Any,
+    ) -> None:
         """Send message to actor without waiting for any response.
 
         Will generally not block, but if the underlying queue is full it will
@@ -69,7 +85,39 @@ class ActorRef:
             raise ActorDeadError(f"{self} not found")
         self.actor_inbox.put(Envelope(message))
 
-    def ask(self, message, block=True, timeout=None):
+    @overload
+    def ask(
+        self,
+        message: Any,
+        block: Literal[False],
+        timeout: Optional[float] = None,
+    ) -> Future[Any]:
+        ...
+
+    @overload
+    def ask(
+        self,
+        message: Any,
+        block: Literal[True],
+        timeout: Optional[float] = None,
+    ) -> Any:
+        ...
+
+    @overload
+    def ask(
+        self,
+        message: Any,
+        block: bool = True,
+        timeout: Optional[float] = None,
+    ) -> Union[Any, Future[Any]]:
+        ...
+
+    def ask(
+        self,
+        message: Any,
+        block: bool = True,
+        timeout: Optional[float] = None,
+    ) -> Union[Any, Future[Any]]:
         """Send message to actor and wait for the reply.
 
         The message can be of any type.
@@ -110,7 +158,35 @@ class ActorRef:
 
         return future
 
-    def stop(self, block=True, timeout=None):
+    @overload
+    def stop(
+        self,
+        block: Literal[True],
+        timeout: Optional[float] = None,
+    ) -> bool:
+        ...
+
+    @overload
+    def stop(
+        self,
+        block: Literal[False],
+        timeout: Optional[float] = None,
+    ) -> Future[bool]:
+        ...
+
+    @overload
+    def stop(
+        self,
+        block: bool = True,
+        timeout: Optional[float] = None,
+    ) -> Union[Any, Future[Any]]:
+        ...
+
+    def stop(
+        self,
+        block: bool = True,
+        timeout: Optional[float] = None,
+    ) -> Union[Any, Future[Any]]:
         """Send a message to the actor, asking it to stop.
 
         Returns :class:`True` if actor is stopped or was being stopped at the
@@ -131,7 +207,7 @@ class ActorRef:
         """
         ask_future = self.ask(_ActorStop(), block=False)
 
-        def _stop_result_converter(timeout):
+        def _stop_result_converter(timeout: Optional[float]) -> bool:
             try:
                 ask_future.get(timeout=timeout)
             except ActorDeadError:
@@ -147,7 +223,7 @@ class ActorRef:
 
         return converted_future
 
-    def proxy(self):
+    def proxy(self) -> ActorProxy:
         """Wrap the :class:`ActorRef` in an :class:`ActorProxy <pykka.ActorProxy>`.
 
         Using this method like this::
