@@ -183,11 +183,17 @@ class Actor:
 
         This is the method that will be executed by the thread or greenlet.
         """
+        self._actor_loop_setup()
+        self._actor_loop_running()
+        self._actor_loop_teardown()
+
+    def _actor_loop_setup(self):
         try:
             self.on_start()
         except Exception:
             self._handle_failure(*sys.exc_info())
 
+    def _actor_loop_running(self):
         while not self.actor_stopped.is_set():
             envelope = self.actor_inbox.get()
             try:
@@ -213,6 +219,7 @@ class Actor:
                 self._stop()
                 ActorRegistry.stop_all()
 
+    def _actor_loop_teardown(self):
         while not self.actor_inbox.empty():
             envelope = self.actor_inbox.get()
             if envelope.reply_to is not None:
