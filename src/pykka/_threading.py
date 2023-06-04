@@ -50,8 +50,8 @@ class ThreadingFuture(Future):
                 if exc_value is None:
                     exc_value = exc_type()
                 if exc_value.__traceback__ is not exc_traceback:
-                    raise exc_value.with_traceback(exc_traceback)
-                raise exc_value
+                    raise exc_value.with_traceback(exc_traceback)  # noqa: TRY301
+                raise exc_value  # noqa: TRY301
         except queue.Empty:
             raise Timeout(f"{timeout} seconds") from None
         else:

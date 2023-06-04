@@ -343,7 +343,7 @@ def traversable(obj):
     .. versionadded:: 2.0
     """
     if hasattr(obj, "__slots__"):
-        raise Exception(
+        raise ValueError(
             "pykka.traversable() cannot be used to mark "
             "an object using slots as traversable."
         )

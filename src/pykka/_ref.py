@@ -99,7 +99,7 @@ class ActorRef:
 
         try:
             if not self.is_alive():
-                raise ActorDeadError(f"{self} not found")
+                raise ActorDeadError(f"{self} not found")  # noqa: TRY301
         except ActorDeadError:
             future.set_exception()
         else:
