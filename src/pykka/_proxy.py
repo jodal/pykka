@@ -4,7 +4,6 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     NamedTuple,
     Optional,
     Sequence,
@@ -23,6 +22,8 @@ __all__ = ["ActorProxy"]
 
 logger = logging.getLogger("pykka")
 
+
+_T = TypeVar("_T")
 
 AttrPath: TypeAlias = Sequence[str]
 
@@ -361,11 +362,7 @@ class CallableProxy:
         self.actor_ref.tell(message)
 
 
-FuncType: TypeAlias = Callable[..., Any]
-_F = TypeVar("_F", bound=FuncType)
-
-
-def traversable(obj: _F) -> _F:
+def traversable(obj: _T) -> _T:
     """Mark an actor attribute as traversable.
 
     The traversable marker makes the actor attribute's own methods and
