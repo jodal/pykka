@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 import queue
 import sys
 import threading
-from typing import Any, NamedTuple, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Optional
 
 from pykka import Actor, Future, Timeout
-from pykka._types import OptExcInfo
+
+if TYPE_CHECKING:
+    from pykka._types import OptExcInfo
 
 __all__ = ["ThreadingActor", "ThreadingFuture"]
 
@@ -30,12 +34,15 @@ class ThreadingFuture(Future):
         which case the original future was encapsulated.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self._queue = queue.Queue(maxsize=1)
-        self._result = None
+        self._queue: queue.Queue[ThreadingFutureResult] = queue.Queue(maxsize=1)
+        self._result: Optional[ThreadingFutureResult] = None
 
-    def get(self, timeout=None):
+    def get(
+        self,
+        timeout: Optional[float] = None,
+    ) -> Any:
         try:
             return super().get(timeout=timeout)
         except NotImplementedError:
@@ -47,6 +54,7 @@ class ThreadingFuture(Future):
 
             if self._result.exc_info is not None:
                 (exc_type, exc_value, exc_traceback) = self._result.exc_info
+                assert exc_type is not None
                 if exc_value is None:
                     exc_value = exc_type()
                 if exc_value.__traceback__ is not exc_traceback:
@@ -57,10 +65,16 @@ class ThreadingFuture(Future):
         else:
             return self._result.value
 
-    def set(self, value=None):
+    def set(
+        self,
+        value: Optional[Any] = None,
+    ) -> None:
         self._queue.put(ThreadingFutureResult(value=value), block=False)
 
-    def set_exception(self, exc_info=None):
+    def set_exception(
+        self,
+        exc_info: Optional[OptExcInfo] = None,
+    ) -> None:
         assert exc_info is None or len(exc_info) == 3
         if exc_info is None:
             exc_info = sys.exc_info()
@@ -70,7 +84,7 @@ class ThreadingFuture(Future):
 class ThreadingActor(Actor):
     """Implementation of :class:`Actor` using regular Python threads."""
 
-    use_daemon_thread = False
+    use_daemon_thread: ClassVar[bool] = False
     """
     A boolean value indicating whether this actor is executed on a thread that
     is a daemon thread (:class:`True`) or not (:class:`False`). This must be
@@ -87,14 +101,14 @@ class ThreadingActor(Actor):
     """
 
     @staticmethod
-    def _create_actor_inbox():
+    def _create_actor_inbox() -> queue.Queue:
         return queue.Queue()
 
     @staticmethod
-    def _create_future():
+    def _create_future() -> ThreadingFuture:
         return ThreadingFuture()
 
-    def _start_actor_loop(self):
+    def _start_actor_loop(self) -> None:
         thread = threading.Thread(target=self._actor_loop)
         thread.name = thread.name.replace("Thread", self.__class__.__name__)
         thread.daemon = self.use_daemon_thread
