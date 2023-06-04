@@ -40,7 +40,7 @@ class ActorRegistry:
 
     @classmethod
     def get_all(cls):
-        """Get :class:`ActorRef <pykka.ActorRef>` for all running actors.
+        """Get all running actors.
 
         :returns: list of :class:`pykka.ActorRef`
         """
@@ -49,8 +49,7 @@ class ActorRegistry:
 
     @classmethod
     def get_by_class(cls, actor_class):
-        """Get :class:`ActorRef` for all running actors of the given class, or of
-        any subclass of the given class.
+        """Get all running actors of the given class or a subclass.
 
         :param actor_class: actor class, or any superclass of the actor
         :type actor_class: class
@@ -66,8 +65,7 @@ class ActorRegistry:
 
     @classmethod
     def get_by_class_name(cls, actor_class_name):
-        """Get :class:`ActorRef` for all running actors of the given class
-        name.
+        """Get all running actors of the given class name.
 
         :param actor_class_name: actor class name
         :type actor_class_name: string

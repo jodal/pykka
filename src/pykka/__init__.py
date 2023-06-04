@@ -1,3 +1,5 @@
+"""Pykka is a Python implementation of the actor model."""
+
 import importlib.metadata as _importlib_metadata
 import logging as _logging
 

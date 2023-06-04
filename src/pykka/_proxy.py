@@ -162,23 +162,19 @@ class ActorProxy:
         return result
 
     def _is_exposable_attribute(self, attr_name):
-        """Return true for any attribute name that may be exposed through
-        :class:`ActorProxy`.
-        """
+        """Whether attribute name may be exposed through :class:`ActorProxy`."""
         return not attr_name.startswith("_")
 
     def _is_self_proxy(self, attr):
-        """Return true if attribute is an equivalent actor proxy."""
+        """Whether attribute is an equivalent actor proxy."""
         return attr == self
 
     def _is_callable_attribute(self, attr):
-        """Return true for any attribute that is callable."""
+        """Whether attribute is callable."""
         return isinstance(attr, Callable)
 
     def _is_traversable_attribute(self, attr):
-        """Return true for any attribute that may be traversed from another
-        actor through a proxy.
-        """
+        """Whether attribute may be traversed from another actor through a proxy."""
         return (
             getattr(attr, "_pykka_traversable", False) is True
             or getattr(attr, "pykka_traversable", False) is True

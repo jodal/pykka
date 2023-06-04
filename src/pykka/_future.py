@@ -4,8 +4,7 @@ __all__ = ["Future", "get_all"]
 
 
 class Future:
-    """A :class:`Future` is a handle to a value which is available or will be
-    available in the future.
+    """A handle to a value which is available now or in the future.
 
     Typically returned by calls to actor methods or accesses to actor fields.
 
@@ -138,8 +137,7 @@ class Future:
         return future
 
     def map(self, func):
-        """Return a new future with the result of the future passed through a
-        function.
+        """Pass the result of the future through a function.
 
         Example::
 
@@ -171,10 +169,7 @@ class Future:
         return future
 
     def reduce(self, func, *args):
-        """reduce(func[, initial]).
-
-        Return a new future with the result of reducing the future's iterable
-        into a single value.
+        """Reduce a future's iterable result to a single value.
 
         The function of two arguments is applied cumulatively to the items of
         the iterable, from left to right. The result of the first function call

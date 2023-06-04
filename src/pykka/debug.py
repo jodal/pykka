@@ -1,3 +1,5 @@
+"""Debug helpers."""
+
 import logging
 import sys
 import threading
@@ -10,8 +12,7 @@ __all__ = ["log_thread_tracebacks"]
 
 
 def log_thread_tracebacks(*args, **kwargs):
-    """Logs at :attr:`logging.CRITICAL` level a traceback for each running
-    thread.
+    """Log a traceback for each running thread at :attr:`logging.CRITICAL` level.
 
     This can be a convenient tool for debugging deadlocks.
 

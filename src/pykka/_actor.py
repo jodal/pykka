@@ -11,7 +11,9 @@ logger = logging.getLogger("pykka")
 
 
 class Actor:
-    """To create an actor:
+    """An actor is an execution unit that executes concurrently with other actors.
+
+    To create an actor:
 
     1. subclass one of the :class:`Actor` implementations:
 
@@ -53,7 +55,9 @@ class Actor:
 
     @classmethod
     def start(cls, *args, **kwargs):
-        """Start an actor and register it in the
+        """Start an actor.
+
+        Starting an actor also registers it in the
         :class:`ActorRegistry <pykka.ActorRegistry>`.
 
         Any arguments passed to :meth:`start` will be passed on to the class
@@ -93,16 +97,25 @@ class Actor:
 
     @staticmethod
     def _create_actor_inbox():
-        """Internal method for implementors of new actor types."""
+        """Create an inbox for the actor.
+
+        Internal method for implementors of new actor types.
+        """
         raise NotImplementedError("Use a subclass of Actor")
 
     @staticmethod
     def _create_future():
-        """Internal method for implementors of new actor types."""
+        """Create a future for the actor.
+
+        Internal method for implementors of new actor types.
+        """
         raise NotImplementedError("Use a subclass of Actor")
 
     def _start_actor_loop(self):
-        """Internal method for implementors of new actor types."""
+        """Create and start the actor's event loop.
+
+        Internal method for implementors of new actor types.
+        """
         raise NotImplementedError("Use a subclass of Actor")
 
     #: The actor URN string is a universally unique identifier for the actor.
@@ -122,7 +135,9 @@ class Actor:
     actor_stopped = None
 
     def __init__(self, *args, **kwargs):
-        """Your are free to override :meth:`__init__`, but you must call your
+        """Create actor.
+
+        Your are free to override :meth:`__init__`, but you must call your
         superclass' :meth:`__init__` to ensure that fields :attr:`actor_urn`,
         :attr:`actor_inbox`, and :attr:`actor_ref` are initialized.
 
@@ -154,7 +169,7 @@ class Actor:
         self.actor_ref.tell(messages._ActorStop())  # noqa: SLF001
 
     def _stop(self):
-        """Stops the actor immediately without processing the rest of the inbox."""
+        """Stop the actor immediately without processing the rest of the inbox."""
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
         logger.debug(f"Stopped {self}")
@@ -164,7 +179,7 @@ class Actor:
             self._handle_failure(*sys.exc_info())
 
     def _actor_loop(self):
-        """The actor's event loop.
+        """Run the actor's core loop.
 
         This is the method that will be executed by the thread or greenlet.
         """
@@ -216,7 +231,9 @@ class Actor:
                     )
 
     def on_start(self):
-        """Hook for doing any setup that should be done *after* the actor is
+        """Run code at the beginning of the actor's life.
+
+        Hook for doing any setup that should be done *after* the actor is
         started, but *before* it starts processing messages.
 
         For :class:`ThreadingActor`, this method is executed in the actor's own
@@ -228,7 +245,9 @@ class Actor:
         """
 
     def on_stop(self):
-        """Hook for doing any cleanup that should be done *after* the actor has
+        """Run code at the end of the actor's life.
+
+        Hook for doing any cleanup that should be done *after* the actor has
         processed the last message, and *before* the actor stops.
 
         This hook is *not* called when the actor stops because of an unhandled
@@ -242,7 +261,7 @@ class Actor:
         """
 
     def _handle_failure(self, exception_type, exception_value, traceback):
-        """Logs unexpected failures, unregisters and stops the actor."""
+        """Log unexpected failures, unregisters and stops the actor."""
         logger.error(
             f"Unhandled exception in {self}:",
             exc_info=(exception_type, exception_value, traceback),
@@ -251,7 +270,9 @@ class Actor:
         self.actor_stopped.set()
 
     def on_failure(self, exception_type, exception_value, traceback):
-        """Hook for doing any cleanup *after* an unhandled exception is raised,
+        """Run code when an unhandled exception is raised.
+
+        Hook for doing any cleanup *after* an unhandled exception is raised,
         and *before* the actor stops.
 
         For :class:`ThreadingActor` this method is executed in the actor's own
@@ -265,7 +286,7 @@ class Actor:
         """
 
     def _handle_receive(self, message):
-        """Handles messages sent to the actor."""
+        """Handle messages sent to the actor."""
         if isinstance(message, messages._ActorStop):  # noqa: SLF001
             return self._stop()
         if isinstance(message, messages.ProxyCall):

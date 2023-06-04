@@ -148,8 +148,7 @@ class ActorRef:
         return converted_future
 
     def proxy(self):
-        """Wraps the :class:`ActorRef` in an :class:`ActorProxy
-        <pykka.ActorProxy>`.
+        """Wrap the :class:`ActorRef` in an :class:`ActorProxy <pykka.ActorProxy>`.
 
         Using this method like this::
 
