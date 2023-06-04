@@ -3,11 +3,13 @@ from __future__ import annotations
 import queue
 import sys
 import threading
-from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Optional, TypeVar
 
 from pykka import Actor, Future, Timeout
 
 if TYPE_CHECKING:
+    from pykka._actor import ActorInbox
+    from pykka._envelope import Envelope
     from pykka._types import OptExcInfo
 
 __all__ = ["ThreadingActor", "ThreadingFuture"]
@@ -18,7 +20,10 @@ class ThreadingFutureResult(NamedTuple):
     exc_info: Optional[OptExcInfo] = None
 
 
-class ThreadingFuture(Future):
+F = TypeVar("F")
+
+
+class ThreadingFuture(Future[F]):
     """Implementation of :class:`Future` for use with regular Python threads`.
 
     The future is implemented using a :class:`queue.Queue`.
@@ -101,11 +106,12 @@ class ThreadingActor(Actor):
     """
 
     @staticmethod
-    def _create_actor_inbox() -> queue.Queue:
-        return queue.Queue()
+    def _create_actor_inbox() -> ActorInbox:
+        inbox: queue.Queue[Envelope[Any]] = queue.Queue()
+        return inbox
 
     @staticmethod
-    def _create_future() -> ThreadingFuture:
+    def _create_future() -> Future[Any]:
         return ThreadingFuture()
 
     def _start_actor_loop(self) -> None:

@@ -158,7 +158,11 @@ class ActorRegistry:
         ...
 
     @classmethod
-    def stop_all(cls, block=True, timeout=None):  # type: ignore[no-untyped-def]
+    def stop_all(
+        cls,
+        block: bool = True,
+        timeout: Optional[float] = None,
+    ) -> Union[list[bool], list[Future[bool]]]:
         """Stop all running actors.
 
         ``block`` and ``timeout`` works as for
