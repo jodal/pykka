@@ -9,7 +9,6 @@ from typing import (
     Optional,
     Sequence,
     TypeVar,
-    Union,
 )
 
 from pykka import ActorDeadError, messages
@@ -253,10 +252,7 @@ class ActorProxy(Generic[A]):
         result += [attr_path[0] for attr_path in list(self._known_attrs.keys())]
         return sorted(result)
 
-    def __getattr__(
-        self,
-        name: str,
-    ) -> Union[CallableProxy[A], ActorProxy[A], Future[Any]]:
+    def __getattr__(self, name: str) -> Any:
         """Get a field or callable from the actor."""
         attr_path: AttrPath = (*self._attr_path, name)
 
