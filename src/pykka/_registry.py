@@ -2,15 +2,25 @@ from __future__ import annotations
 
 import logging
 import threading
-from typing import TYPE_CHECKING, Any, ClassVar, Literal, Optional, Union, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Literal,
+    Optional,
+    TypeVar,
+    Union,
+    overload,
+)
 
 if TYPE_CHECKING:
     from pykka import Actor, ActorRef, Future
 
+__all__ = ["ActorRegistry"]
+
 logger = logging.getLogger("pykka")
 
-
-__all__ = ["ActorRegistry"]
+A = TypeVar("A", bound="Actor")
 
 
 class ActorRegistry:
@@ -19,7 +29,7 @@ class ActorRegistry:
     Contains global state, but should be thread-safe.
     """
 
-    _actor_refs: ClassVar[list[ActorRef]] = []
+    _actor_refs: ClassVar[list[ActorRef[Any]]] = []
     _actor_refs_lock: ClassVar[threading.RLock] = threading.RLock()
 
     @classmethod
@@ -49,7 +59,7 @@ class ActorRegistry:
             ref.tell(message)
 
     @classmethod
-    def get_all(cls) -> list[ActorRef]:
+    def get_all(cls) -> list[ActorRef[Any]]:
         """Get all running actors.
 
         :returns: list of :class:`pykka.ActorRef`
@@ -60,8 +70,8 @@ class ActorRegistry:
     @classmethod
     def get_by_class(
         cls,
-        actor_class: type[Actor],
-    ) -> list[ActorRef]:
+        actor_class: type[A],
+    ) -> list[ActorRef[A]]:
         """Get all running actors of the given class or a subclass.
 
         :param actor_class: actor class, or any superclass of the actor
@@ -80,7 +90,7 @@ class ActorRegistry:
     def get_by_class_name(
         cls,
         actor_class_name: str,
-    ) -> list[ActorRef]:
+    ) -> list[ActorRef[Any]]:
         """Get all running actors of the given class name.
 
         :param actor_class_name: actor class name
@@ -99,7 +109,7 @@ class ActorRegistry:
     def get_by_urn(
         cls,
         actor_urn: str,
-    ) -> Optional[ActorRef]:
+    ) -> Optional[ActorRef[Any]]:
         """Get an actor by its universally unique URN.
 
         :param actor_urn: actor URN
@@ -116,7 +126,7 @@ class ActorRegistry:
     @classmethod
     def register(
         cls,
-        actor_ref: ActorRef,
+        actor_ref: ActorRef[Any],
     ) -> None:
         """Register an :class:`ActorRef` in the registry.
 
@@ -188,7 +198,7 @@ class ActorRegistry:
     @classmethod
     def unregister(
         cls,
-        actor_ref: ActorRef,
+        actor_ref: ActorRef[A],
     ) -> None:
         """Remove an :class:`ActorRef <pykka.ActorRef>` from the registry.
 

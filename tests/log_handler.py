@@ -2,30 +2,48 @@ import collections
 import logging
 import threading
 import time
+from enum import Enum
+from typing import Any, Dict, List
+
+
+class LogLevel(str, Enum):
+    DEBUG = "debug"
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+    CRITICAL = "critical"
 
 
 class PykkaTestLogHandler(logging.Handler):
-    def __init__(self, *args, **kwargs):
-        self.lock = threading.RLock()
+    lock: threading.RLock  # type: ignore[assignment]
+    events: Dict[str, threading.Event]
+    messages: Dict[LogLevel, List[logging.LogRecord]]
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self.lock = (  # pyright: ignore[reportIncompatibleVariableOverride]
+            threading.RLock()
+        )
         with self.lock:
             self.events = collections.defaultdict(threading.Event)
             self.messages = {}
             self.reset()
         logging.Handler.__init__(self, *args, **kwargs)
 
-    def emit(self, record):
+    def emit(self, record: logging.LogRecord) -> None:
         with self.lock:
-            level = record.levelname.lower()
+            level = LogLevel(record.levelname.lower())
             self.messages[level].append(record)
             self.events[level].set()
 
-    def reset(self):
+    def reset(self) -> None:
         with self.lock:
-            for level in ("debug", "info", "warning", "error", "critical"):
+            for level in LogLevel:
                 self.events[level].clear()
                 self.messages[level] = []
 
-    def wait_for_message(self, level, num_messages=1, timeout=5):
+    def wait_for_message(
+        self, level: LogLevel, num_messages: int = 1, timeout: float = 5
+    ) -> None:
         """Wait until at least ``num_messages`` log messages have been emitted
         to the given log level."""
         deadline = time.time() + timeout

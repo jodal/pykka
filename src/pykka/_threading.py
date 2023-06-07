@@ -20,10 +20,10 @@ class ThreadingFutureResult(NamedTuple):
     exc_info: Optional[OptExcInfo] = None
 
 
-F = TypeVar("F")
+T = TypeVar("T")
 
 
-class ThreadingFuture(Future[F]):
+class ThreadingFuture(Future[T]):
     """Implementation of :class:`Future` for use with regular Python threads`.
 
     The future is implemented using a :class:`queue.Queue`.

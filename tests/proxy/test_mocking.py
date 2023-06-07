@@ -1,42 +1,61 @@
-from collections.abc import Callable
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Iterator, NoReturn
 
 import pytest
+
+from pykka import Actor
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
+
+    from pykka import ActorProxy
+    from tests.types import Runtime
 
 pytestmark = pytest.mark.usefixtures("_stop_all")
 
 
-@pytest.fixture()
-def actor_class(runtime):
-    class ActorForMocking(runtime.actor_class):
-        _a_rw_property = "a_rw_property"
+class ActorForMocking(Actor):
+    _a_rw_property: str = "a_rw_property"
 
-        @property
-        def a_rw_property(self):
-            return self._a_rw_property
+    @property
+    def a_rw_property(self) -> str:
+        return self._a_rw_property
 
-        @a_rw_property.setter
-        def a_rw_property(self, value):
-            self._a_rw_property = value
+    @a_rw_property.setter
+    def a_rw_property(self, value: str) -> None:
+        self._a_rw_property = value
 
-        def a_method(self):
-            raise Exception("This method should be mocked")
-
-    return ActorForMocking
+    def a_method(self) -> NoReturn:
+        raise Exception("This method should be mocked")
 
 
 @pytest.fixture()
-def proxy(actor_class):
+def actor_class(runtime: Runtime) -> type[ActorForMocking]:
+    class ActorForMockingImpl(ActorForMocking, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+        pass
+
+    return ActorForMockingImpl
+
+
+@pytest.fixture()
+def proxy(
+    actor_class: ActorForMocking,
+) -> Iterator[ActorProxy[ActorForMocking]]:
     proxy = actor_class.start().proxy()
     yield proxy
     proxy.stop()
 
 
-def test_actor_with_noncallable_mock_property_works(actor_class, mocker):
+def test_actor_with_noncallable_mock_property_works(
+    actor_class: type[ActorForMocking],
+    mocker: MockerFixture,
+) -> None:
     mock = mocker.NonCallableMock()
     mock.__get__ = mocker.Mock(return_value="mocked property value")
-    assert not isinstance(mock, Callable)
+    assert not callable(mock)
 
-    actor_class.a_rw_property = mock
+    actor_class.a_rw_property = mock  # type: ignore[method-assign]
     proxy = actor_class.start().proxy()
 
     # When using NonCallableMock to fake the property, the value still behaves
@@ -46,12 +65,15 @@ def test_actor_with_noncallable_mock_property_works(actor_class, mocker):
     assert mock.__get__.call_count == 1
 
 
-def test_actor_with_callable_mock_property_does_not_work(actor_class, mocker):
+def test_actor_with_callable_mock_property_does_not_work(
+    actor_class: type[ActorForMocking],
+    mocker: MockerFixture,
+) -> None:
     mock = mocker.Mock()
     mock.__get__ = mocker.Mock(return_value="mocked property value")
-    assert isinstance(mock, Callable)
+    assert callable(mock)
 
-    actor_class.a_rw_property = mock
+    actor_class.a_rw_property = mock  # type: ignore[method-assign]
     proxy = actor_class.start().proxy()
 
     # XXX Because Mock and MagicMock are callable by default, they cause the
@@ -63,7 +85,10 @@ def test_actor_with_callable_mock_property_does_not_work(actor_class, mocker):
     assert "'CallableProxy' object has no attribute 'get'" in str(exc_info.value)
 
 
-def test_actor_with_mocked_method_works(actor_class, mocker):
+def test_actor_with_mocked_method_works(
+    actor_class: type[ActorForMocking],
+    mocker: MockerFixture,
+) -> None:
     mock = mocker.MagicMock(return_value="mocked method return")
     mocker.patch.object(actor_class, "a_method", new=mock)
     proxy = actor_class.start().proxy()
