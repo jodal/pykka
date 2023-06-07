@@ -154,8 +154,13 @@ class Actor:
     #: friends to put messages in the inbox.
     actor_inbox: ActorInbox
 
-    #: The actor's :class:`ActorRef` instance.
-    actor_ref: ActorRef[Any]
+    _actor_ref: ActorRef[Any]
+
+    @property
+    def actor_ref(self: A) -> ActorRef[A]:
+        """The actor's :class:`ActorRef` instance."""
+        # This property only exists to improve the typing of the ActorRef.
+        return self._actor_ref
 
     #: A :class:`threading.Event` representing whether or not the actor should
     #: continue processing messages. Use :meth:`stop` to change it.
@@ -187,7 +192,7 @@ class Actor:
         self.actor_inbox = self._create_actor_inbox()
         self.actor_stopped = threading.Event()
 
-        self.actor_ref = ActorRef(self)
+        self._actor_ref = ActorRef(self)
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__} ({self.actor_urn})"
