@@ -46,6 +46,7 @@ class ThreadingFuture(Future[T]):
 
     def get(
         self,
+        *,
         timeout: Optional[float] = None,
     ) -> Any:
         try:

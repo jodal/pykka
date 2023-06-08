@@ -51,6 +51,7 @@ class Future(Generic[T]):
 
     def get(
         self,
+        *,
         timeout: Optional[float] = None,
     ) -> T:
         """Get the value encapsulated by the future.
@@ -155,7 +156,9 @@ class Future(Generic[T]):
         .. versionadded:: 1.2
         """
         future = self.__class__()
-        future.set_get_hook(lambda timeout: list(filter(func, self.get(timeout))))
+        future.set_get_hook(
+            lambda timeout: list(filter(func, self.get(timeout=timeout)))
+        )
         return future
 
     def join(
@@ -183,7 +186,9 @@ class Future(Generic[T]):
         .. versionadded:: 1.2
         """
         future = cast(Future[Iterable[Any]], self.__class__())
-        future.set_get_hook(lambda timeout: [f.get(timeout) for f in [self, *futures]])
+        future.set_get_hook(
+            lambda timeout: [f.get(timeout=timeout) for f in [self, *futures]]
+        )
         return future
 
     def map(
@@ -218,7 +223,7 @@ class Future(Generic[T]):
             passed to the function.
         """
         future = cast(Future[M], self.__class__())
-        future.set_get_hook(lambda timeout: func(self.get(timeout)))
+        future.set_get_hook(lambda timeout: func(self.get(timeout=timeout)))
         return future
 
     def reduce(
@@ -273,7 +278,7 @@ class Future(Generic[T]):
         """
         future = cast(Future[R], self.__class__())
         future.set_get_hook(
-            lambda timeout: functools.reduce(func, self.get(timeout), *args)
+            lambda timeout: functools.reduce(func, self.get(timeout=timeout), *args)
         )
         return future
 
@@ -287,6 +292,7 @@ class Future(Generic[T]):
 
 def get_all(
     futures: Iterable[Future[Any]],
+    *,
     timeout: Optional[float] = None,
 ) -> Iterable[Any]:
     """Collect all values encapsulated in the list of futures.

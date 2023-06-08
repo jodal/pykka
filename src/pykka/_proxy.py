@@ -129,6 +129,7 @@ class ActorProxy(Generic[A]):
 
     def __init__(
         self,
+        *,
         actor_ref: ActorRef[A],
         attr_path: Optional[AttrPath] = None,
     ) -> None:
@@ -183,13 +184,17 @@ class ActorProxy(Generic[A]):
         if attr_info.callable:
             if attr_path not in self._callable_proxies:
                 self._callable_proxies[attr_path] = CallableProxy(
-                    self.actor_ref, attr_path
+                    actor_ref=self.actor_ref,
+                    attr_path=attr_path,
                 )
             return self._callable_proxies[attr_path]
 
         if attr_info.traversable:
             if attr_path not in self._actor_proxies:
-                self._actor_proxies[attr_path] = ActorProxy(self.actor_ref, attr_path)
+                self._actor_proxies[attr_path] = ActorProxy(
+                    actor_ref=self.actor_ref,
+                    attr_path=attr_path,
+                )
             return self._actor_proxies[attr_path]
 
         message = messages.ProxyGetAttr(attr_path=attr_path)
@@ -234,6 +239,7 @@ class CallableProxy(Generic[A]):
 
     def __init__(
         self,
+        *,
         actor_ref: ActorRef[A],
         attr_path: AttrPath,
     ) -> None:

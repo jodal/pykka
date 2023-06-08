@@ -40,7 +40,7 @@ def actor_class(runtime: Runtime) -> type[ActorForProxying]:
 def proxy(
     actor_class: type[ActorForProxying],
 ) -> Iterator[ActorProxy[ActorForProxying]]:
-    proxy = ActorProxy(actor_class.start())
+    proxy = ActorProxy(actor_ref=actor_class.start())
     yield proxy
     proxy.stop()
 
@@ -136,7 +136,7 @@ def test_proxy_constructor_raises_exception_if_actor_is_dead(
     actor_ref.stop()
 
     with pytest.raises(ActorDeadError) as exc_info:
-        ActorProxy(actor_ref)
+        ActorProxy(actor_ref=actor_ref)
 
     assert str(exc_info.value) == f"{actor_ref} not found"
 
