@@ -47,6 +47,16 @@ pytest-mock = "^3.10.0"
 [tool.black]
 target-version = ["py38", "py39", "py310", "py311"]
 
+[tool.coverage.paths]
+source = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["pykka"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING"]
+
 [tool.mypy]
 disallow_untyped_defs = true
 no_implicit_optional = true
