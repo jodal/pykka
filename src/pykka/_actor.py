@@ -4,7 +4,7 @@ import logging
 import sys
 import threading
 import uuid
-from typing import TYPE_CHECKING, Any, Optional, Protocol, Sequence, TypeVar
+from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 
@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
     from pykka import Future
     from pykka._envelope import Envelope
+    from pykka._types import AttrPath
 
 __all__ = ["Actor"]
 
@@ -367,7 +368,7 @@ class Actor:
 
     def _get_attribute_from_path(
         self,
-        attr_path: Sequence[str],
+        attr_path: AttrPath,
     ) -> Any:
         """Traverses the path and returns the attribute at the end of the path."""
         attr = self
@@ -377,7 +378,7 @@ class Actor:
 
     def _introspect_attribute_from_path(
         self,
-        attr_path: Sequence[str],
+        attr_path: AttrPath,
     ) -> Any:
         """Get attribute information from ``__dict__`` on the container."""
         if not attr_path:

@@ -7,16 +7,14 @@ from typing import (
     Generic,
     NamedTuple,
     Optional,
-    Sequence,
     TypeVar,
 )
 
 from pykka import ActorDeadError, messages
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
-
     from pykka import Actor, ActorRef, Future
+    from pykka._types import AttrPath
 
 __all__ = ["ActorProxy"]
 
@@ -26,8 +24,6 @@ logger = logging.getLogger("pykka")
 
 T = TypeVar("T")
 A = TypeVar("A", bound="Actor")
-
-AttrPath: TypeAlias = Sequence[str]
 
 
 class AttrInfo(NamedTuple):
