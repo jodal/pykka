@@ -146,6 +146,7 @@ class ActorRegistry:
     @classmethod
     def stop_all(
         cls,
+        *,
         block: Literal[True],
         timeout: float | None = ...,
     ) -> list[bool]:
@@ -155,6 +156,7 @@ class ActorRegistry:
     @classmethod
     def stop_all(
         cls,
+        *,
         block: Literal[False],
         timeout: float | None = ...,
     ) -> list[Future[bool]]:
@@ -164,6 +166,7 @@ class ActorRegistry:
     @classmethod
     def stop_all(
         cls,
+        *,
         block: bool = True,
         timeout: Optional[float] = None,
     ) -> Union[list[bool], list[Future[bool]]]:
@@ -172,6 +175,7 @@ class ActorRegistry:
     @classmethod
     def stop_all(
         cls,
+        *,
         block: bool = True,
         timeout: Optional[float] = None,
     ) -> Union[list[bool], list[Future[bool]]]:
@@ -195,7 +199,9 @@ class ActorRegistry:
             If blocking, a list of return values from
             :meth:`pykka.ActorRef.stop`.
         """
-        return [ref.stop(block, timeout) for ref in reversed(cls.get_all())]
+        return [
+            ref.stop(block=block, timeout=timeout) for ref in reversed(cls.get_all())
+        ]
 
     @classmethod
     def unregister(
