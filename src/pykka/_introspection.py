@@ -22,7 +22,7 @@ def introspect_attrs(
 ) -> dict[AttrPath, AttrInfo]:
     """Introspects the actor's attributes."""
     result: dict[AttrPath, AttrInfo] = {}
-    attr_paths_to_visit: list[AttrPath] = [[attr_name] for attr_name in dir(root)]
+    attr_paths_to_visit: list[AttrPath] = [(attr_name,) for attr_name in dir(root)]
 
     while attr_paths_to_visit:
         attr_path = attr_paths_to_visit.pop(0)
@@ -50,11 +50,11 @@ def introspect_attrs(
                 or getattr(attr, "pykka_traversable", False) is True
             ),
         )
-        result[tuple(attr_path)] = attr_info
+        result[attr_path] = attr_info
 
         if attr_info.traversable:
             for attr_name in dir(attr):
-                attr_paths_to_visit.append([*attr_path, attr_name])
+                attr_paths_to_visit.append((*attr_path, attr_name))
 
     return result
 
