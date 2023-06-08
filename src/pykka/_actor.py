@@ -4,9 +4,10 @@ import logging
 import sys
 import threading
 import uuid
-from typing import TYPE_CHECKING, Any, Optional, Protocol, Sequence, TypeVar
+from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
+from pykka._introspection import get_attr_directly
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from pykka._envelope import Envelope
 
 __all__ = ["Actor"]
+
 
 logger = logging.getLogger("pykka")
 
@@ -343,13 +345,13 @@ class Actor:
         if isinstance(message, messages._ActorStop):  # noqa: SLF001
             return self._stop()
         if isinstance(message, messages.ProxyCall):
-            callee = self._get_attribute_from_path(message.attr_path)
+            callee = get_attr_directly(self, message.attr_path)
             return callee(*message.args, **message.kwargs)
         if isinstance(message, messages.ProxyGetAttr):
-            attr = self._get_attribute_from_path(message.attr_path)
+            attr = get_attr_directly(self, message.attr_path)
             return attr
         if isinstance(message, messages.ProxySetAttr):
-            parent_attr = self._get_attribute_from_path(message.attr_path[:-1])
+            parent_attr = get_attr_directly(self, message.attr_path[:-1])
             attr_name = message.attr_path[-1]
             return setattr(parent_attr, attr_name, message.value)
         return self.on_receive(message)
@@ -363,45 +365,3 @@ class Actor:
         :returns: anything that should be sent as a reply to the sender
         """
         logger.warning(f"Unexpected message received by {self}: {message}")
-
-    def _get_attribute_from_path(
-        self,
-        attr_path: Sequence[str],
-    ) -> Any:
-        """Traverses the path and returns the attribute at the end of the path."""
-        attr = self
-        for attr_name in attr_path:
-            attr = getattr(attr, attr_name)
-        return attr
-
-    def _introspect_attribute_from_path(
-        self,
-        attr_path: Sequence[str],
-    ) -> Any:
-        """Get attribute information from ``__dict__`` on the container."""
-        if not attr_path:
-            return self
-
-        parent = self._get_attribute_from_path(attr_path[:-1])
-        parent_attrs = self._introspect_attributes(parent)
-        attr_name = attr_path[-1]
-
-        try:
-            return parent_attrs[attr_name]
-        except KeyError:
-            raise AttributeError(
-                f"type object {parent.__class__.__name__!r} "
-                f"has no attribute {attr_name!r}"
-            ) from None
-
-    def _introspect_attributes(
-        self,
-        obj: Any,
-    ) -> dict[str, Any]:
-        """Combine ``__dict__`` from ``obj`` and all its superclasses."""
-        result: dict[str, Any] = {}
-        for cls in reversed(obj.__class__.mro()):
-            result.update(cls.__dict__)
-        if hasattr(obj, "__dict__"):
-            result.update(obj.__dict__)
-        return result

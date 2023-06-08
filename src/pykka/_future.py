@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 
     from pykka._types import OptExcInfo
 
-
 __all__ = ["Future", "get_all"]
+
 
 T = TypeVar("T")
 J = TypeVar("J")  # For when T is Iterable[J]

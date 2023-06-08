@@ -1,37 +1,23 @@
 from __future__ import annotations
 
 import logging
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Generic,
-    NamedTuple,
-    Optional,
-    Sequence,
-    TypeVar,
-)
+from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from pykka import ActorDeadError, messages
+from pykka._introspection import AttrInfo, introspect_attrs
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
-
     from pykka import Actor, ActorRef, Future
+    from pykka._types import AttrPath
 
 __all__ = ["ActorProxy"]
+
 
 logger = logging.getLogger("pykka")
 
 
 T = TypeVar("T")
 A = TypeVar("A", bound="Actor")
-
-AttrPath: TypeAlias = Sequence[str]
-
-
-class AttrInfo(NamedTuple):
-    callable: bool
-    traversable: bool
 
 
 class ActorProxy(Generic[A]):
@@ -151,78 +137,9 @@ class ActorProxy(Generic[A]):
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor  # noqa: SLF001
         self._attr_path = attr_path or ()
-        self._known_attrs = self._introspect_attributes()
+        self._known_attrs = introspect_attrs(root=self._actor, proxy=self)
         self._actor_proxies = {}
         self._callable_proxies = {}
-
-    def _introspect_attributes(self) -> dict[AttrPath, AttrInfo]:
-        """Introspects the actor's attributes."""
-        result: dict[AttrPath, AttrInfo] = {}
-        attr_paths_to_visit: list[AttrPath] = [
-            [attr_name] for attr_name in dir(self._actor)
-        ]
-
-        while attr_paths_to_visit:
-            attr_path = attr_paths_to_visit.pop(0)
-
-            if not self._is_exposable_attribute(attr_path[-1]):
-                continue
-
-            attr = self._actor._introspect_attribute_from_path(  # noqa: SLF001
-                attr_path
-            )
-
-            if self._is_self_proxy(attr):
-                logger.warning(
-                    f"{self._actor} attribute {'.'.join(attr_path)!r} "
-                    f"is a proxy to itself. "
-                    f"Consider making it private "
-                    f"by renaming it to {'_' + attr_path[-1]!r}."
-                )
-                continue
-
-            attr_info = AttrInfo(
-                callable=self._is_callable_attribute(attr),
-                traversable=self._is_traversable_attribute(attr),
-            )
-            result[tuple(attr_path)] = attr_info
-
-            if attr_info.traversable:
-                for attr_name in dir(attr):
-                    attr_paths_to_visit.append([*attr_path, attr_name])
-
-        return result
-
-    def _is_exposable_attribute(
-        self,
-        attr_name: str,
-    ) -> bool:
-        """Whether attribute name may be exposed through :class:`ActorProxy`."""
-        return not attr_name.startswith("_")
-
-    def _is_self_proxy(
-        self,
-        attr: Any,
-    ) -> bool:
-        """Whether attribute is an equivalent actor proxy."""
-        return bool(attr == self)
-
-    def _is_callable_attribute(
-        self,
-        attr: Any,
-    ) -> bool:
-        """Whether attribute is callable."""
-        return callable(attr)
-
-    def _is_traversable_attribute(
-        self,
-        attr: Any,
-    ) -> bool:
-        """Whether attribute may be traversed from another actor through a proxy."""
-        return (
-            getattr(attr, "_pykka_traversable", False) is True
-            or getattr(attr, "pykka_traversable", False) is True
-        )
 
     def __eq__(
         self,
@@ -257,7 +174,7 @@ class ActorProxy(Generic[A]):
         attr_path: AttrPath = (*self._attr_path, name)
 
         if attr_path not in self._known_attrs:
-            self._known_attrs = self._introspect_attributes()
+            self._known_attrs = introspect_attrs(root=self._actor, proxy=self)
 
         attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:

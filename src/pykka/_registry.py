@@ -18,7 +18,9 @@ if TYPE_CHECKING:
 
 __all__ = ["ActorRegistry"]
 
+
 logger = logging.getLogger("pykka")
+
 
 A = TypeVar("A", bound="Actor")
 

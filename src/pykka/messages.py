@@ -24,7 +24,12 @@ It should be noted that these optimizations should only be necessary in very
 special circumstances.
 """
 
-from typing import Any, Dict, NamedTuple, Sequence, Tuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Tuple
+
+if TYPE_CHECKING:
+    from pykka._types import AttrPath
 
 
 class _ActorStop(NamedTuple):  # pyright: ignore[reportUnusedClass]
@@ -35,7 +40,7 @@ class ProxyCall(NamedTuple):
     """Message to ask the actor to call the method with the arguments."""
 
     #: List with the path from the actor to the method.
-    attr_path: Sequence[str]
+    attr_path: AttrPath
 
     #: List with positional arguments.
     args: Tuple[Any, ...]
@@ -48,14 +53,14 @@ class ProxyGetAttr(NamedTuple):
     """Message to ask the actor to return the value of the attribute."""
 
     #: List with the path from the actor to the attribute.
-    attr_path: Sequence[str]
+    attr_path: AttrPath
 
 
 class ProxySetAttr(NamedTuple):
     """Message to ask the actor to set the attribute to the value."""
 
     #: List with the path from the actor to the attribute.
-    attr_path: Sequence[str]
+    attr_path: AttrPath
 
     #: The value to set the attribute to.
     value: Any

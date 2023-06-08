@@ -6,10 +6,10 @@ import threading
 import traceback
 from typing import Any
 
-logger = logging.getLogger("pykka")
-
-
 __all__ = ["log_thread_tracebacks"]
+
+
+logger = logging.getLogger("pykka")
 
 
 def log_thread_tracebacks(*_args: Any, **_kwargs: Any) -> None:
