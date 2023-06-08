@@ -257,4 +257,4 @@ class ActorRef(Generic[A]):
         :raise: :exc:`pykka.ActorDeadError` if actor is not available
         :return: :class:`pykka.ActorProxy`
         """
-        return ActorProxy(self)
+        return ActorProxy(actor_ref=self)
