@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 
 __all__ = ["ActorProxy"]
 
+
 logger = logging.getLogger("pykka")
 
 

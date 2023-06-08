@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 if TYPE_CHECKING:
     from pykka import Future
 
+
 T = TypeVar("T")
 
 

@@ -15,12 +15,12 @@ if TYPE_CHECKING:
 __all__ = ["ThreadingActor", "ThreadingFuture"]
 
 
+T = TypeVar("T")
+
+
 class ThreadingFutureResult(NamedTuple):
     value: Optional[Any] = None
     exc_info: Optional[OptExcInfo] = None
-
-
-T = TypeVar("T")
 
 
 class ThreadingFuture(Future[T]):
