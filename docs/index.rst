@@ -68,6 +68,7 @@ Project resources
     api/messages
     api/logging
     api/debug
+    api/typing
 
 
 License
