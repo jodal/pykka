@@ -72,14 +72,14 @@ __all__ = [
 
 T = TypeVar("T")
 P = ParamSpec("P")
-R = TypeVar("R", covariant=True)
+R_co = TypeVar("R_co", covariant=True)
 
 
-class Method(Protocol, Generic[P, R]):
-    def __get__(self, instance: Any, owner: type | None = None) -> Callable[P, R]:
+class Method(Protocol, Generic[P, R_co]):
+    def __get__(self, instance: Any, owner: type | None = None) -> Callable[P, R_co]:
         ...
 
-    def __call__(self, obj: Any, *args: P.args, **kwargs: P.kwargs) -> R:
+    def __call__(self, obj: Any, *args: P.args, **kwargs: P.kwargs) -> R_co:
         ...
 
 

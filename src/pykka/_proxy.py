@@ -148,12 +148,9 @@ class ActorProxy(Generic[A]):
     ) -> bool:
         if not isinstance(other, ActorProxy):
             return False
-        if (
-            self._actor
-            != other._actor  # noqa: SLF001  # pyright: ignore[reportUnknownMemberType]
-        ):
+        if self._actor != other._actor:  # pyright: ignore[reportUnknownMemberType]
             return False
-        if self._attr_path != other._attr_path:  # noqa: SLF001
+        if self._attr_path != other._attr_path:
             return False
         return True
 
