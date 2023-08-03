@@ -46,7 +46,7 @@ def proxy(
 
 
 def test_eq_to_self(proxy: ActorProxy[ActorForProxying]) -> None:
-    assert proxy == proxy
+    assert proxy == proxy  # noqa: PLR0124
 
 
 def test_is_hashable(proxy: ActorProxy[ActorForProxying]) -> None:
