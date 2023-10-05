@@ -24,21 +24,24 @@ jobs:
           - name: "Test: Python 3.11"
             python: "3.11"
             tox: py311
+          - name: "Test: Python 3.12"
+            python: "3.12"
+            tox: py312
             coverage: true
           - name: "Lint: black"
-            python: "3.11"
+            python: "3.12"
             tox: black
           - name: "Lint: mypy"
-            python: "3.11"
+            python: "3.12"
             tox: mypy
           - name: "Lint: pyright"
-            python: "3.11"
+            python: "3.12"
             tox: pyright
           - name: "Lint: ruff"
-            python: "3.11"
+            python: "3.12"
             tox: ruff
           - name: "Docs"
-            python: "3.11"
+            python: "3.12"
             tox: docs
 
     name: ${{ matrix.name }}
