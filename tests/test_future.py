@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import sys
 import traceback
+import types
 from typing import TYPE_CHECKING, Any, Generator, Iterable, List
 
 import pytest
@@ -145,6 +146,7 @@ def test_future_supports_await_syntax(
 def test_future_supports_yield_from_syntax(
     future: Future[int],
 ) -> None:
+    @types.coroutine
     def get_value() -> Generator[None, None, int]:
         val = yield from future
         return val
