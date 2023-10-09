@@ -18,7 +18,7 @@ Pykka works with Python 3.8 or newer.
 
 
 Inspiration
-==========
+===========
 
 Much of the naming of concepts and methods in Pykka is taken from the `Akka
 <https://akka.io/>`_ project which implements actors on the JVM. Though, Pykka
