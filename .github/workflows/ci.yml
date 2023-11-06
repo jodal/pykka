@@ -28,18 +28,18 @@ jobs:
             python: "3.12"
             tox: py312
             coverage: true
-          - name: "Lint: black"
-            python: "3.12"
-            tox: black
           - name: "Lint: mypy"
             python: "3.12"
             tox: mypy
           - name: "Lint: pyright"
             python: "3.12"
             tox: pyright
-          - name: "Lint: ruff"
+          - name: "Lint: ruff-format"
             python: "3.12"
-            tox: ruff
+            tox: ruff-format
+          - name: "Lint: ruff-lint"
+            python: "3.12"
+            tox: ruff-lint
           - name: "Docs"
             python: "3.12"
             tox: docs

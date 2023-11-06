@@ -21,7 +21,7 @@ class DynamicMethodActor(Actor):
 
 @pytest.fixture(scope="module")
 def actor_class(runtime: Runtime) -> type[DynamicMethodActor]:
-    class DynamicMethodActorImpl(DynamicMethodActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class DynamicMethodActorImpl(DynamicMethodActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return DynamicMethodActorImpl

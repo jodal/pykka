@@ -32,7 +32,7 @@ class ActorForMocking(Actor):
 
 @pytest.fixture()
 def actor_class(runtime: Runtime) -> type[ActorForMocking]:
-    class ActorForMockingImpl(ActorForMocking, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class ActorForMockingImpl(ActorForMocking, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return ActorForMockingImpl

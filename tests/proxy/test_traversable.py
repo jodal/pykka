@@ -56,7 +56,7 @@ class TraversableObjectsActor(Actor):
 
 @pytest.fixture()
 def actor_class(runtime: Runtime) -> type[Actor]:
-    class TraversableObjectsActorImpl(TraversableObjectsActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class TraversableObjectsActorImpl(TraversableObjectsActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return TraversableObjectsActorImpl
