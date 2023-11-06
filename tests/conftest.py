@@ -73,7 +73,7 @@ def events(runtime: Runtime) -> Events:
 
 @pytest.fixture(scope="module")
 def early_failing_actor_class(runtime: Runtime) -> type[Actor]:
-    class EarlyFailingActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class EarlyFailingActor(runtime.actor_class):  # type: ignore[name-defined]
         def __init__(self, events: Events) -> None:
             super().__init__()
             self.events = events
@@ -89,7 +89,7 @@ def early_failing_actor_class(runtime: Runtime) -> type[Actor]:
 
 @pytest.fixture(scope="module")
 def late_failing_actor_class(runtime: Runtime) -> type[Actor]:
-    class LateFailingActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class LateFailingActor(runtime.actor_class):  # type: ignore[name-defined]
         def __init__(self, events: Events) -> None:
             super().__init__()
             self.events = events
@@ -108,7 +108,7 @@ def late_failing_actor_class(runtime: Runtime) -> type[Actor]:
 
 @pytest.fixture(scope="module")
 def failing_on_failure_actor_class(runtime: Runtime) -> type[Actor]:
-    class FailingOnFailureActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class FailingOnFailureActor(runtime.actor_class):  # type: ignore[name-defined]
         def __init__(self, events: Events) -> None:
             super().__init__()
             self.events = events

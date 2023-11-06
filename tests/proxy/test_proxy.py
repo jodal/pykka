@@ -30,7 +30,7 @@ class ActorForProxying(Actor):
 
 @pytest.fixture(scope="module")
 def actor_class(runtime: Runtime) -> type[ActorForProxying]:
-    class ActorForProxyingImpl(ActorForProxying, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class ActorForProxyingImpl(ActorForProxying, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return ActorForProxyingImpl
@@ -153,7 +153,7 @@ def test_actor_proxy_does_not_expose_proxy_to_self(
     runtime: Runtime,
     log_handler: PykkaTestLogHandler,
 ) -> None:
-    class SelfReferencingActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class SelfReferencingActor(runtime.actor_class):  # type: ignore[name-defined]
         def __init__(self) -> None:
             super().__init__()
             self.self_proxy = self.actor_ref.proxy()

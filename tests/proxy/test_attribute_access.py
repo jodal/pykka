@@ -32,7 +32,7 @@ class PropertyActor(Actor):
 
 @pytest.fixture()
 def actor_class(runtime: Runtime) -> type[PropertyActor]:
-    class PropertyActorImpl(PropertyActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class PropertyActorImpl(PropertyActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return PropertyActorImpl
@@ -67,7 +67,7 @@ def test_private_attr_access_raises_exception(
     proxy: ActorProxy[PropertyActor],
 ) -> None:
     with pytest.raises(AttributeError) as exc_info:
-        proxy._private_attr.get()  # pyright: ignore[reportUnknownMemberType]  # noqa: E501, SLF001
+        proxy._private_attr.get()  # pyright: ignore[reportUnknownMemberType]  # noqa: SLF001
 
     assert "has no attribute '_private_attr'" in str(exc_info.value)
 
@@ -104,7 +104,7 @@ def test_read_only_property_cannot_be_set(
 
 
 def test_property_is_not_accessed_when_creating_proxy(runtime: Runtime) -> None:
-    class ExpensiveSideEffectActor(runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class ExpensiveSideEffectActor(runtime.actor_class):  # type: ignore[name-defined]
         @property
         def a_property(self) -> NoReturn:
             # Imagine code with side effects or heavy resource usage here

@@ -34,7 +34,7 @@ class ReferencableActor(Actor):
 
 @pytest.fixture(scope="module")
 def actor_class(runtime: Runtime) -> type[ReferencableActor]:
-    class ReferencableActorImpl(ReferencableActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class ReferencableActorImpl(ReferencableActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return ReferencableActorImpl

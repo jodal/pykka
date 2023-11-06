@@ -36,7 +36,7 @@ class ActorB(ActorBase):
 
 @pytest.fixture(scope="module")
 def actor_a_class(runtime: Runtime) -> type[ActorA]:
-    class ActorAImpl(ActorA, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class ActorAImpl(ActorA, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return ActorAImpl
@@ -44,7 +44,7 @@ def actor_a_class(runtime: Runtime) -> type[ActorA]:
 
 @pytest.fixture(scope="module")
 def actor_b_class(runtime: Runtime) -> type[ActorB]:
-    class ActorBImpl(ActorB, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class ActorBImpl(ActorB, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return ActorBImpl
@@ -123,22 +123,16 @@ def test_stop_all_stops_last_started_actor_first_if_blocking(
 
     stopped_actors = []
     started_actors = [mocker.Mock(name=f"{i}") for i in range(3)]
-    started_actors[
-        0
-    ].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]  # noqa: E501
+    started_actors[0].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]
         started_actors[0]
     )
-    started_actors[
-        1
-    ].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]  # noqa: E501
+    started_actors[1].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]
         started_actors[1]
     )
-    started_actors[
-        2
-    ].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]  # noqa: E501
+    started_actors[2].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]
         started_actors[2]
     )
-    ActorRegistry.get_all.return_value = (  # type: ignore[attr-defined]  # pyright: ignore[reportFunctionMemberAccess]  # noqa: E501
+    ActorRegistry.get_all.return_value = (  # type: ignore[attr-defined]  # pyright: ignore[reportFunctionMemberAccess]
         started_actors
     )
 

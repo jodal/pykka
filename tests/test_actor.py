@@ -65,7 +65,7 @@ class EarlyStoppingActor(Actor):
 
 @pytest.fixture(scope="module")
 def actor_class(runtime: Runtime) -> type[AnActor]:
-    class ActorAImpl(AnActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class ActorAImpl(AnActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return ActorAImpl
@@ -83,7 +83,7 @@ def actor_ref(
 
 @pytest.fixture(scope="module")
 def early_stopping_actor_class(runtime: Runtime) -> type[EarlyStoppingActor]:
-    class EarlyStoppingActorImpl(EarlyStoppingActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class EarlyStoppingActorImpl(EarlyStoppingActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return EarlyStoppingActorImpl

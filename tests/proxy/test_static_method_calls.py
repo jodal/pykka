@@ -34,12 +34,12 @@ class StaticMethodActor(Actor):
         raise Exception("boom!")
 
     def talk_with_self(self) -> Future[str]:
-        return self.actor_ref.proxy().functional_hello("from the future")  # type: ignore[no-any-return]  # noqa: E501
+        return self.actor_ref.proxy().functional_hello("from the future")  # type: ignore[no-any-return]
 
 
 @pytest.fixture(scope="module")
 def actor_class(runtime: Runtime) -> type[StaticMethodActor]:
-    class StaticMethodActorImpl(StaticMethodActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class StaticMethodActorImpl(StaticMethodActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return StaticMethodActorImpl

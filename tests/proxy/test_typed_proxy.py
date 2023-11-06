@@ -38,7 +38,7 @@ class FooProxy(ActorMemberMixin, ActorProxy[CircleActor]):
 
 @pytest.fixture(scope="module")
 def actor_class(runtime: Runtime) -> type[CircleActor]:
-    class FooActorImpl(CircleActor, runtime.actor_class):  # type: ignore[name-defined]  # noqa: E501
+    class FooActorImpl(CircleActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
 
     return FooActorImpl
