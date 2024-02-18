@@ -291,10 +291,10 @@ class Future(Generic[T]):
 
 
 def get_all(
-    futures: Iterable[Future[Any]],
+    futures: Iterable[Future[T]],
     *,
     timeout: Optional[float] = None,
-) -> Iterable[Any]:
+) -> Iterable[T]:
     """Collect all values encapsulated in the list of futures.
 
     If ``timeout`` is not :class:`None`, the method will wait for a reply for
