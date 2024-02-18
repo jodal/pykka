@@ -171,7 +171,7 @@ def test_filter_on_noniterable(
     future.set(1)
 
     with pytest.raises(TypeError):
-        filtered.get(timeout=0)
+        filtered.get(timeout=0)  # pyright: ignore[reportUnknownMemberType]
 
 
 def test_filter_preserves_the_timeout_kwarg(
@@ -301,7 +301,7 @@ def test_reduce_on_noniterable(
     future.set(1)
 
     with pytest.raises(TypeError):
-        reduced.get(timeout=0)
+        reduced.get(timeout=0)  # pyright: ignore[reportUnknownMemberType]
 
 
 def test_reduce_preserves_the_timeout_kwarg(
