@@ -127,7 +127,8 @@ class Actor:
 
         Internal method for implementors of new actor types.
         """
-        raise NotImplementedError("Use a subclass of Actor")
+        msg = "Use a subclass of Actor"
+        raise NotImplementedError(msg)
 
     @staticmethod
     def _create_future() -> Future[Any]:
@@ -135,14 +136,16 @@ class Actor:
 
         Internal method for implementors of new actor types.
         """
-        raise NotImplementedError("Use a subclass of Actor")
+        msg = "Use a subclass of Actor"
+        raise NotImplementedError(msg)
 
     def _start_actor_loop(self) -> None:
         """Create and start the actor's event loop.
 
         Internal method for implementors of new actor types.
         """
-        raise NotImplementedError("Use a subclass of Actor")
+        msg = "Use a subclass of Actor"
+        raise NotImplementedError(msg)
 
     #: The actor URN string is a universally unique identifier for the actor.
     #: It may be used for looking up a specific actor using
@@ -210,7 +213,7 @@ class Actor:
         logger.debug(f"Stopped {self}")
         try:
             self.on_stop()
-        except Exception:
+        except Exception:  # noqa: BLE001
             self._handle_failure(*sys.exc_info())
 
     def _actor_loop(self) -> None:
@@ -225,7 +228,7 @@ class Actor:
     def _actor_loop_setup(self) -> None:
         try:
             self.on_start()
-        except Exception:
+        except Exception:  # noqa: BLE001
             self._handle_failure(*sys.exc_info())
 
     def _actor_loop_running(self) -> None:
@@ -235,7 +238,7 @@ class Actor:
                 response = self._handle_receive(envelope.message)
                 if envelope.reply_to is not None:
                     envelope.reply_to.set(response)
-            except Exception:
+            except Exception:  # noqa: BLE001
                 if envelope.reply_to is not None:
                     logger.info(
                         f"Exception returned from {self} to caller:",
@@ -246,9 +249,9 @@ class Actor:
                     self._handle_failure(*sys.exc_info())
                     try:
                         self.on_failure(*sys.exc_info())
-                    except Exception:
+                    except Exception:  # noqa: BLE001
                         self._handle_failure(*sys.exc_info())
-            except BaseException:
+            except BaseException:  # noqa: BLE001
                 exception_value = sys.exc_info()[1]
                 logger.debug(f"{exception_value!r} in {self}. Stopping all actors.")
                 self._stop()

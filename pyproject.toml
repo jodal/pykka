@@ -65,44 +65,7 @@ warn_unused_configs = true
 target-version = "py38"
 
 [tool.ruff.lint]
-select = [
-   "A",   # flake8-builtins
-   "ANN", # flake8-annotations
-   "ARG", # flake8-unused-arguments
-   "B",   # flake8-bugbear
-   "C4",  # flake8-comprehensions
-   "C90", # mccabe
-   "D",   # pydocstyle
-   "DTZ", # flake8-datetimez
-   "E",   # pycodestyle
-   "ERA", # eradicate
-   "F",   # pyflakes
-   "FBT", # flake8-boolean-trap
-   "I",   # isort
-   "INP", # flake8-no-pep420
-   "ISC", # flake8-implicit-str-concat
-   "N",   # pep8-naming
-   "PGH", # pygrep-hooks
-   "PIE", # flake8-pie
-   "PLC", # pylint convention
-   "PLE", # pylint error
-   "PLR", # pylint refactor
-   "PLW", # pylint warning
-   "PT",  # flake8-pytest-style
-   "PTH", # flake8-use-pathlib
-   "Q",   # flake8-quotes
-   "RET", # flake8-return
-   "RSE", # flake8-raise
-   "RUF", # ruff
-   "SIM", # flake8-simplify
-   "SLF", # flake8-self
-   "T20", # flake8-print
-   "TCH", # flake8-type-checking
-   "TID", # flake8-tidy-imports
-   "TRY", # tryceratops
-   "UP",  # pyupgrade
-   "W",   # pycodestyle
-]
+select = ["ALL"]
 ignore = [
    "A003",    # builtin-attribute-shadowing
    "ANN101",  # missing-type-self
@@ -110,36 +73,43 @@ ignore = [
    "ANN401",  # any-type
    "D203",    # one-blank-line-before-class
    "D213",    # multi-line-summary-second-line
-   "ISC001",  # single-line-implicit-string-concatenation
+   "G004",    # logging-f-string
    "PLR2004", # magic-value-comparison
    "RET504",  # unnecessary-assign
+   "S101",    # assert
    "TRY003",  # raise-vanilla-args
+   "UP007",   # typing-union
    #
-   # Equivalent to `pyupgrade --keep-runtime-typing`:
-   "UP006", # deprecated-collection-type
-   "UP007", # typing-union
+   # These rules interfere with `ruff format`
+   "COM812", # missing-trailing-comma
+   "ISC001", # single-line-implicit-string-concatenation
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/*" = [
    "D",      # pydocstyle
-   "INP001", # flake8-no-pep420
+   "INP001", # implicit-namespace-package
 ]
 "examples/*" = [
    "ANN",    # flake8-annotations
+   "BLE001", # blind-except
    "D",      # pydocstyle
-   "INP001", # flake8-no-pep420
+   "INP001", # implicit-namespace-package
    "T20",    # flake8-print
 ]
 "tests/*" = [
    "ANN",    # flake8-annotations
    "ARG",    # flake8-unused-arguments
    "D",      # pydocstyle
+   "EM101",  # raw-string-in-exception
    "TRY002", # raise-vanilla-class
 ]
 
 [tool.ruff.lint.isort]
 known-first-party = ["pykka"]
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
 
 [tool.pyright]
 pythonVersion = "3.8"

@@ -134,7 +134,8 @@ class ActorProxy(Generic[A]):
         attr_path: Optional[AttrPath] = None,
     ) -> None:
         if not actor_ref.is_alive():
-            raise ActorDeadError(f"{actor_ref} not found")
+            msg = f"{actor_ref} not found"
+            raise ActorDeadError(msg)
         self.actor_ref = actor_ref
         self._actor = actor_ref._actor  # noqa: SLF001
         self._attr_path = attr_path or ()
@@ -174,7 +175,8 @@ class ActorProxy(Generic[A]):
 
         attr_info = self._known_attrs.get(attr_path)
         if attr_info is None:
-            raise AttributeError(f"{self} has no attribute {name!r}")
+            msg = f"{self} has no attribute {name!r}"
+            raise AttributeError(msg)
 
         if attr_info.callable:
             if attr_path not in self._callable_proxies:
@@ -330,9 +332,10 @@ def traversable(obj: T) -> T:
     .. versionadded:: 2.0
     """
     if hasattr(obj, "__slots__"):
-        raise ValueError(
+        msg = (
             "pykka.traversable() cannot be used to mark "
             "an object using slots as traversable."
         )
+        raise ValueError(msg)
     obj._pykka_traversable = True  # type: ignore[attr-defined]  # noqa: SLF001
     return obj

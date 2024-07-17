@@ -94,7 +94,8 @@ class ActorRef(Generic[A]):
         :return: nothing
         """
         if not self.is_alive():
-            raise ActorDeadError(f"{self} not found")
+            msg = f"{self} not found"
+            raise ActorDeadError(msg)
         self.actor_inbox.put(Envelope(message))
 
     @overload
@@ -160,7 +161,8 @@ class ActorRef(Generic[A]):
 
         try:
             if not self.is_alive():
-                raise ActorDeadError(f"{self} not found")  # noqa: TRY301
+                msg = f"{self} not found"
+                raise ActorDeadError(msg)  # noqa: TRY301
         except ActorDeadError:
             future.set_exception()
         else:

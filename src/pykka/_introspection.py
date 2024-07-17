@@ -53,8 +53,9 @@ def introspect_attrs(
         result[attr_path] = attr_info
 
         if attr_info.traversable:
-            for attr_name in dir(attr):
-                attr_paths_to_visit.append((*attr_path, attr_name))
+            attr_paths_to_visit.extend(
+                [(*attr_path, attr_name) for attr_name in dir(attr)]
+            )
 
     return result
 
@@ -71,10 +72,11 @@ def get_attr_from_parent(
     try:
         return parent_attrs[attr_name]
     except KeyError:
-        raise AttributeError(
+        msg = (
             f"type object {parent.__class__.__name__!r} "
             f"has no attribute {attr_name!r}"
-        ) from None
+        )
+        raise AttributeError(msg) from None
 
 
 def get_attr_directly(
