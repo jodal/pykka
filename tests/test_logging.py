@@ -101,7 +101,7 @@ def test_exception_is_logged_when_returned_to_caller(
         f"Exception returned from {actor_ref} to caller:"
     )
     assert log_record.exc_info
-    assert log_record.exc_info[0] == Exception
+    assert log_record.exc_info[0] is Exception
     assert str(log_record.exc_info[1]) == "foo"
 
 
@@ -123,7 +123,7 @@ def test_exception_is_logged_when_not_reply_requested(
 
     assert log_record.getMessage() == f"Unhandled exception in {actor_ref}:"
     assert log_record.exc_info
-    assert log_record.exc_info[0] == Exception
+    assert log_record.exc_info[0] is Exception
     assert str(log_record.exc_info[1]) == "foo"
 
 

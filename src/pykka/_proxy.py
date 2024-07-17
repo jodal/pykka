@@ -150,9 +150,7 @@ class ActorProxy(Generic[A]):
             return False
         if self._actor != other._actor:  # pyright: ignore[reportUnknownMemberType]
             return False
-        if self._attr_path != other._attr_path:
-            return False
-        return True
+        return self._attr_path == other._attr_path
 
     def __hash__(self) -> int:
         return hash((self._actor, self._attr_path))
