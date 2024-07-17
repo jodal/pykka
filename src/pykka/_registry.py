@@ -149,8 +149,7 @@ class ActorRegistry:
         *,
         block: Literal[True],
         timeout: float | None = ...,
-    ) -> list[bool]:
-        ...
+    ) -> list[bool]: ...
 
     @overload
     @classmethod
@@ -159,8 +158,7 @@ class ActorRegistry:
         *,
         block: Literal[False],
         timeout: float | None = ...,
-    ) -> list[Future[bool]]:
-        ...
+    ) -> list[Future[bool]]: ...
 
     @overload
     @classmethod
@@ -169,8 +167,7 @@ class ActorRegistry:
         *,
         block: bool = True,
         timeout: Optional[float] = None,
-    ) -> Union[list[bool], list[Future[bool]]]:
-        ...
+    ) -> Union[list[bool], list[Future[bool]]]: ...
 
     @classmethod
     def stop_all(

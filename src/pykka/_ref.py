@@ -104,8 +104,7 @@ class ActorRef(Generic[A]):
         *,
         block: Literal[False],
         timeout: Optional[float] = None,
-    ) -> Future[Any]:
-        ...
+    ) -> Future[Any]: ...
 
     @overload
     def ask(
@@ -114,8 +113,7 @@ class ActorRef(Generic[A]):
         *,
         block: Literal[True],
         timeout: Optional[float] = None,
-    ) -> Any:
-        ...
+    ) -> Any: ...
 
     @overload
     def ask(
@@ -124,8 +122,7 @@ class ActorRef(Generic[A]):
         *,
         block: bool = True,
         timeout: Optional[float] = None,
-    ) -> Union[Any, Future[Any]]:
-        ...
+    ) -> Union[Any, Future[Any]]: ...
 
     def ask(
         self,
@@ -180,8 +177,7 @@ class ActorRef(Generic[A]):
         *,
         block: Literal[True],
         timeout: Optional[float] = None,
-    ) -> bool:
-        ...
+    ) -> bool: ...
 
     @overload
     def stop(
@@ -189,8 +185,7 @@ class ActorRef(Generic[A]):
         *,
         block: Literal[False],
         timeout: Optional[float] = None,
-    ) -> Future[bool]:
-        ...
+    ) -> Future[bool]: ...
 
     @overload
     def stop(
@@ -198,8 +193,7 @@ class ActorRef(Generic[A]):
         *,
         block: bool = True,
         timeout: Optional[float] = None,
-    ) -> Union[Any, Future[Any]]:
-        ...
+    ) -> Union[Any, Future[Any]]: ...
 
     def stop(
         self,
