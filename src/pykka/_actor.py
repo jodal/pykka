@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import abc
 import logging
 import sys
 import threading
@@ -32,7 +33,7 @@ class ActorInbox(Protocol):
     def empty(self) -> bool: ...
 
 
-class Actor:
+class Actor(abc.ABC):
     """An actor is an execution unit that executes concurrently with other actors.
 
     To create an actor:
@@ -122,6 +123,7 @@ class Actor:
         return obj.actor_ref
 
     @staticmethod
+    @abc.abstractmethod
     def _create_actor_inbox() -> ActorInbox:
         """Create an inbox for the actor.
 
@@ -131,6 +133,7 @@ class Actor:
         raise NotImplementedError(msg)
 
     @staticmethod
+    @abc.abstractmethod
     def _create_future() -> Future[Any]:
         """Create a future for the actor.
 
@@ -139,6 +142,7 @@ class Actor:
         msg = "Use a subclass of Actor"
         raise NotImplementedError(msg)
 
+    @abc.abstractmethod
     def _start_actor_loop(self) -> None:
         """Create and start the actor's event loop.
 
@@ -275,7 +279,7 @@ class Actor:
                         )
                     )
 
-    def on_start(self) -> None:
+    def on_start(self) -> None:  # noqa: B027
         """Run code at the beginning of the actor's life.
 
         Hook for doing any setup that should be done *after* the actor is
@@ -289,7 +293,7 @@ class Actor:
         logged, and the actor will stop.
         """
 
-    def on_stop(self) -> None:
+    def on_stop(self) -> None:  # noqa: B027
         """Run code at the end of the actor's life.
 
         Hook for doing any cleanup that should be done *after* the actor has
@@ -319,7 +323,7 @@ class Actor:
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()
 
-    def on_failure(
+    def on_failure(  # noqa: B027
         self,
         exception_type: Optional[type[BaseException]],
         exception_value: Optional[BaseException],
