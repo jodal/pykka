@@ -21,7 +21,7 @@ python = "^3.8.0"
 typing-extensions = { version = "^4.0.0", python = "<3.10" }
 
 [tool.poetry.group.dev.dependencies]
-tox = "^4.11.3"
+tox = "^4.16.0"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = "^6.2.1"
