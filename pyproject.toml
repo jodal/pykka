@@ -32,7 +32,7 @@ toml = "^0.10.2"
 mypy = "^1.5.1"
 
 [tool.poetry.group.pyright.dependencies]
-pyright = "^1.1.350"
+pyright = "^1.1.372"
 
 [tool.poetry.group.ruff.dependencies]
 ruff = "^0.2.2"
