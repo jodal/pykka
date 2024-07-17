@@ -27,7 +27,7 @@ class AnActor(Actor):
     def on_stop(self) -> None:
         self.events.on_stop_was_called.set()
 
-    def on_failure(self, *args: Any) -> None:
+    def on_failure(self, *args: Any) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
         self.events.on_failure_was_called.set()
 
     def on_receive(self, message: Any) -> None:

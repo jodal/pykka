@@ -51,7 +51,7 @@ class ActorRef(Generic[A]):
     actor_stopped: Event
 
     def __init__(
-        self: ActorRef[A],
+        self,
         actor: A,
     ) -> None:
         self._actor = actor

@@ -118,7 +118,7 @@ def failing_on_failure_actor_class(runtime: Runtime) -> type[Actor]:
                 raise Exception("on_receive failure")
             return super().on_receive(message)
 
-        def on_failure(self, *args: Any) -> None:
+        def on_failure(self, *args: Any) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
             try:
                 raise RuntimeError("on_failure failure")
             finally:
