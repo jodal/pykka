@@ -40,7 +40,7 @@ class Actor(abc.ABC):
 
     1. subclass one of the :class:`Actor` implementations:
 
-       - :class:`~pykka.AsyncActor`
+       - :class:`~pykka.AsyncioActor`
 
     2. implement your methods, including :meth:`__init__`, as usual,
     3. call :meth:`Actor.start` on your actor class, passing the method any
@@ -52,7 +52,7 @@ class Actor(abc.ABC):
 
         import pykka
 
-        class MyActor(pykka.AsyncActor):
+        class MyActor(pykka.AsyncioActor):
             def __init__(self, my_arg=None):
                 super().__init__()
                 ... # My optional init code with access to start() arguments
@@ -189,7 +189,7 @@ class Actor(abc.ABC):
 
         Or call you superclass directly::
 
-            pykka.AsyncActor.__init__(self)
+            pykka.AsyncioActor.__init__(self)
 
         :meth:`__init__` is called before the actor is started and registered
         in :class:`ActorRegistry <pykka.ActorRegistry>`.
@@ -285,7 +285,7 @@ class Actor(abc.ABC):
         Hook for doing any setup that should be done *after* the actor is
         started, but *before* it starts processing messages.
 
-        For :class:`AsyncActor`, this method is executed in the actor's own
+        For :class:`AsyncioActor`, this method is executed in the actor's own
         context, while :meth:`__init__` is executed in the thread that created
         the actor.
 
@@ -302,7 +302,7 @@ class Actor(abc.ABC):
         This hook is *not* called when the actor stops because of an unhandled
         exception. In that case, the :meth:`on_failure` hook is called instead.
 
-        For :class:`AsyncActor` this method is executed in the actor's own
+        For :class:`AsyncioActor` this method is executed in the actor's own
         context, immediately before exit.
 
         If an exception is raised by this method the stack trace will be
@@ -334,7 +334,7 @@ class Actor(abc.ABC):
         Hook for doing any cleanup *after* an unhandled exception is raised,
         and *before* the actor stops.
 
-        For :class:`AsyncActor` this method is executed in the actor's own
+        For :class:`AsyncioActor` this method is executed in the actor's own
         context, immediately before exit.
 
         The method's arguments are the relevant information from

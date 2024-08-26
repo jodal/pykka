@@ -11,7 +11,7 @@ from pykka.asyncio._registry import ActorRegistry
 
 # The following must be imported late, in this specific order.
 from pykka.asyncio._actor import Actor  # isort:skip
-from pykka.asyncio._async import AsyncActor, AsyncFuture  # isort:skip
+from pykka.asyncio._asyncio import AsyncioActor, AsyncioFuture  # isort:skip
 
 
 __all__ = [
@@ -22,8 +22,8 @@ __all__ = [
     "ActorRegistry",
     "CallableProxy",
     "Future",
-    "AsyncActor",
-    "AsyncFuture",
+    "AsyncioActor",
+    "AsyncioFuture",
     "Timeout",
     "get_all",
     "traversable",

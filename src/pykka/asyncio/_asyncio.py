@@ -13,12 +13,12 @@ if TYPE_CHECKING:
     from pykka._envelope import Envelope
     from pykka._types import OptExcInfo
 
-__all__ = ["AsyncActor", "AsyncFuture"]
+    __all__ = ["AsyncioActor", "AsyncioFuture"]
 
 
 T = TypeVar("T")
 
-class AsyncFuture(Future[T]):
+class AsyncioFuture(Future[T]):
     """Implementation of :class:`Future` for use with async Python.
 
     The future is implemented using a :class:`asyncio.Future`.
@@ -68,7 +68,7 @@ class AsyncFuture(Future[T]):
         self._future.set_exception(e)
 
 
-class AsyncActor(Actor):
+class AsyncioActor(Actor):
     """Implementation of :class:`Actor` using Python asyncio.
     """
 
@@ -79,7 +79,7 @@ class AsyncActor(Actor):
 
     @staticmethod
     def _create_future() -> Future[Any]:
-        return AsyncFuture()
+        return AsyncioFuture()
 
     async def _start_actor_loop(self) -> None:
         self._task = asyncio.create_task(self._actor_loop(), self.__class__.__name__)
