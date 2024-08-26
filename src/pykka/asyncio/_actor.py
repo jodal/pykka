@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import abc
+import asyncio
 import logging
 import sys
 import uuid
 from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar
 
 from pykka import ActorDeadError, messages
-from pykka.asyncio import ActorRef, ActorRegistry
+from pykka.asyncio import ActorRef, ActorRegistry, AsyncioEvent
 from pykka._introspection import get_attr_directly
 
 if TYPE_CHECKING:
@@ -23,6 +24,7 @@ logger = logging.getLogger("pykka")
 
 
 A = TypeVar("A", bound="Actor")
+
 
 
 class ActorInbox(Protocol):
@@ -117,7 +119,7 @@ class Actor(abc.ABC):
             "Actor.__init__() have not been called. "
             "Did you forget to call super() in your override?"
         )
-        await ActorRegistry.register(obj.actor_ref)
+        ActorRegistry.register(obj.actor_ref)
         logger.debug(f"Starting {obj}")
         obj._start_actor_loop()  # noqa: SLF001
         return obj.actor_ref
@@ -168,9 +170,9 @@ class Actor(abc.ABC):
         # This property only exists to improve the typing of the ActorRef.
         return self._actor_ref
 
-    #: A bool representing whether or not the actor should
+    #: A :class:`asyncio.Event` representing whether or not the actor should
     #: continue processing messages. Use :meth:`stop` to change it.
-    actor_stopped: bool
+    actor_stopped: AsyncioEvent
 
     def __init__(
         self,
@@ -196,7 +198,7 @@ class Actor(abc.ABC):
         """
         self.actor_urn = uuid.uuid4().urn
         self.actor_inbox = self._create_actor_inbox()
-        self.actor_stopped = False
+        self.actor_stopped = AsyncioEvent()
 
         self._actor_ref = ActorRef(self)
 
@@ -212,8 +214,8 @@ class Actor(abc.ABC):
 
     async def _stop(self) -> None:
         """Stop the actor immediately without processing the rest of the inbox."""
-        await ActorRegistry.unregister(self.actor_ref)
-        self.actor_stopped = True
+        ActorRegistry.unregister(self.actor_ref)
+        self.actor_stopped.set()
         logger.debug(f"Stopped {self}")
         try:
             await self.on_stop()
@@ -236,7 +238,7 @@ class Actor(abc.ABC):
             await self._handle_failure(*sys.exc_info())
 
     async def _actor_loop_running(self) -> None:
-        while not self.actor_stopped:
+        while not self.actor_stopped.is_set():
             envelope = await self.actor_inbox.get()
             try:
                 response = await self._handle_receive(envelope.message)
@@ -320,8 +322,8 @@ class Actor(abc.ABC):
             f"Unhandled exception in {self}:",
             exc_info=(exception_type, exception_value, traceback),  # type: ignore[arg-type]
         )
-        await ActorRegistry.unregister(self.actor_ref)
-        self.actor_stopped = True
+        ActorRegistry.unregister(self.actor_ref)
+        self.actor_stopped.set()
 
     async def on_failure(  # noqa: B027
         self,

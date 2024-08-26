@@ -129,7 +129,7 @@ class Future(Generic[T]):
         """
         self._get_hook = func
 
-    async def filter(
+    def filter(
         self: Future[Iterable[J]],
         func: Callable[[J], bool],
     ) -> Future[Iterable[J]]:
@@ -158,13 +158,13 @@ class Future(Generic[T]):
         """
 
         async def _filter(timeout: Optional[float]):
-            return list(filter(func, await self.get(timeout)))
+            return list(filter(func, await self.get(timeout=timeout)))
 
         future = self.__class__()
         future.set_get_hook(_filter)
         return future
 
-    async def join(
+    def join(
         self: Future[Any],
         *futures: Future[Any],
     ) -> Future[Iterable[Any]]:
@@ -190,13 +190,13 @@ class Future(Generic[T]):
         """
 
         async def _join(timeout: Optional[float]):
-            return [await f.get(timeout) for f in [self, *futures]]
+            return [await f.get(timeout=timeout) for f in [self, *futures]]
 
         future = cast(Future[Iterable[Any]], self.__class__())
         future.set_get_hook(_join)
         return future
 
-    async def map(
+    def map(
         self,
         func: Callable[[T], M],
     ) -> Future[M]:
@@ -229,13 +229,13 @@ class Future(Generic[T]):
         """
 
         async def _map(timeout: Optional[float]):
-            return func(await self.get(timeout))
+            return func(await self.get(timeout=timeout))
 
         future = cast(Future[M], self.__class__())
         future.set_get_hook(_map)
         return future
 
-    async def reduce(
+    def reduce(
         self: Future[Iterable[J]],
         func: Callable[[R, J], R],
         *args: R,
@@ -286,14 +286,14 @@ class Future(Generic[T]):
         .. versionadded:: 1.2
         """
         async def _reduce(timeout: Optional[float]):
-            return functools.reduce(func, await self.get(timeout), *args)
+            return functools.reduce(func, await self.get(timeout=timeout), *args)
 
         future = cast(Future[R], self.__class__())
         future.set_get_hook(_reduce)
         return future
 
     def __await__(self) -> Generator[None, None, T]:
-        return self.get()
+        return self.get().__await__()
 
     __iter__ = __await__
 

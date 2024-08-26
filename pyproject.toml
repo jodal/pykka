@@ -62,6 +62,9 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [tool.ruff]
 target-version = "py38"
 

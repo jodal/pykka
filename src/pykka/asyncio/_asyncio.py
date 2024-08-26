@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-import queue
 import sys
 from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Optional, TypeVar
 
-from pykka.asyncio import Actor, Future
+from pykka.asyncio import AsyncioEvent, Actor, Future
 from pykka import Timeout
 
 if TYPE_CHECKING:
@@ -17,6 +16,7 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T")
+
 
 class AsyncioFuture(Future[T]):
     """Implementation of :class:`Future` for use with async Python.
@@ -33,7 +33,6 @@ class AsyncioFuture(Future[T]):
         super().__init__()
         self._future = asyncio.get_running_loop().create_future()
 
-    # TODO
     async def get(
         self,
         *,
@@ -47,11 +46,11 @@ class AsyncioFuture(Future[T]):
         try:
             async with asyncio.timeout(timeout):
                 return await self._future
-        except TimeoutError:
+        except TimeoutError as e:
             msg = f"{timeout} seconds"
-            raise Timeout(msg) from TimeoutError
+            raise Timeout(msg) from None
 
-    async def set(
+    def set(
         self,
         value: Optional[Any] = None,
     ) -> None:
@@ -81,5 +80,5 @@ class AsyncioActor(Actor):
     def _create_future() -> Future[Any]:
         return AsyncioFuture()
 
-    async def _start_actor_loop(self) -> None:
-        self._task = asyncio.create_task(self._actor_loop(), self.__class__.__name__)
+    def _start_actor_loop(self) -> None:
+        self._task = asyncio.create_task(self._actor_loop(), name=self.__class__.__name__)

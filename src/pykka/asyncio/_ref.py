@@ -77,7 +77,7 @@ class ActorRef(Generic[A]):
         :return:
             Returns :class:`True` if actor is alive, :class:`False` otherwise.
         """
-        return not self.actor_stopped
+        return not self.actor_stopped.is_set()
 
     async def tell(
         self,
@@ -223,7 +223,6 @@ class ActorRef(Generic[A]):
         :return: :class:`pykka.asyncio.Future`, or a boolean result if blocking
         """
         ask_future = await self.ask(_ActorStop(), block=False)
-
         async def _stop_result_converter(timeout: Optional[float]) -> bool:
             try:
                 await ask_future.get(timeout=timeout)
