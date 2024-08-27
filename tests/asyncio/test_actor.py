@@ -293,7 +293,7 @@ async def test_actor_can_call_stop_on_self_multiple_times(
     await actor_ref.ask({"command": "stop twice"})
 
 
-    async def test_actor_processes_all_messages_before_stop_on_self_stops_it(
+async def test_actor_processes_all_messages_before_stop_on_self_stops_it(
     actor_ref: ActorRef[AnActor],
     events: Events,
 ) -> None:

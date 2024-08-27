@@ -44,11 +44,11 @@ class AsyncioFuture(Future[T]):
             pass
 
         try:
-            async with asyncio.timeout(timeout):
-                return await self._future
+            return await asyncio.wait_for(asyncio.shield(self._future), timeout)
         except TimeoutError as e:
             msg = f"{timeout} seconds"
             raise Timeout(msg) from None
+
 
     def set(
         self,
