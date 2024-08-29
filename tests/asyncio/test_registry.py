@@ -117,30 +117,24 @@ async def test_all_actors_can_be_stopped_through_registry(
 
 
 async def test_stop_all_stops_last_started_actor_first_if_blocking(
-    mocker: MockerFixture,
+    actor_a_class: type[ActorA],
 ) -> None:
-    mocker.patch.object(ActorRegistry, "get_all")
 
-    stopped_actors = []
-    started_actors = [mocker.Mock(name=f"{i}") for i in range(3)]
-    started_actors[0].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]
-        started_actors[0]
-    )
-    started_actors[1].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]
-        started_actors[1]
-    )
-    started_actors[2].stop.side_effect = lambda *a, **kw: stopped_actors.append(  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]
-        started_actors[2]
-    )
-    ActorRegistry.get_all.return_value = (  # type: ignore[attr-defined]  # pyright: ignore[reportFunctionMemberAccess]
-        started_actors
-    )
+    class TestActor(actor_a_class):
+        started: list[TestActor] = []
+        stopped: list[TestActor] = []
 
-    await ActorRegistry.stop_all(block=True)
+        async def on_start(self) -> None:
+            TestActor.started.append(self)
 
-    assert stopped_actors[0] == started_actors[2]
-    assert stopped_actors[1] == started_actors[1]
-    assert stopped_actors[2] == started_actors[0]
+        async def on_stop(self) -> None:
+            TestActor.stopped.append(self)
+
+    actors = [await TestActor.start() for _ in range(100)]
+    stop_res = await ActorRegistry.stop_all(block=True)
+    assert all(stop_res)
+    assert TestActor.started and TestActor.stopped
+    assert TestActor.stopped == TestActor.started[::-1]
 
 
 def test_actors_may_be_looked_up_by_class(
