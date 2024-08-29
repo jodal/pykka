@@ -22,7 +22,7 @@ class ActorBase(Actor):
         super().__init__()
         self.received_messages = []
 
-    def on_receive(self, message: Any) -> None:
+    async def on_receive(self, message: Any) -> None:
         self.received_messages.append(message)
 
 
@@ -206,38 +206,47 @@ async def test_broadcast_sends_message_to_all_actors_if_no_target(
     assert running_actors
 
     for actor_ref in running_actors:
-        received_messages = actor_ref.proxy().received_messages.get()
-        assert {"command": "foo"} in received_messages
+        received_messages = await actor_ref.proxy().received_messages
+        assert {"command": "foo"} in await received_messages
 
 
 async def test_broadcast_sends_message_to_all_actors_of_given_class(
     actor_a_class: type[ActorA],
     actor_b_class: type[ActorA],
+    a_actor_refs: list[ActorRef[ActorA]],
+    b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
     await ActorRegistry.broadcast({"command": "foo"}, target_class=actor_a_class)
 
-    assert 0
-    for actor_ref in ActorRegistry.get_by_class(actor_a_class):
-        received_messages = actor_ref.proxy().received_messages.get()
-        assert {"command": "foo"} in received_messages
+    class_a_refs = ActorRegistry.get_by_class(actor_a_class)
+    assert set(class_a_refs) == set(a_actor_refs)
+    for actor_ref in class_a_refs:
+        received_messages_fut = await actor_ref.proxy().received_messages
+        assert {"command": "foo"} in await received_messages_fut
 
-    for actor_ref in ActorRegistry.get_by_class(actor_b_class):
-        received_messages = actor_ref.proxy().received_messages.get()
-        assert {"command": "foo"} not in received_messages
+    class_b_refs = ActorRegistry.get_by_class(actor_b_class)
+    assert set(class_b_refs) == set(b_actor_refs)
+    for actor_ref in class_b_refs:
+        received_messages_fut = await actor_ref.proxy().received_messages
+        assert {"command": "foo"} not in await received_messages_fut
 
 
 async def test_broadcast_sends_message_to_all_actors_of_given_class_name(
     actor_a_class: type[ActorA],
     actor_b_class: type[ActorB],
+    a_actor_refs: list[ActorRef[ActorA]],
+    b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
-    assert 0
-    ActorRegistry.broadcast({"command": "foo"}, target_class="ActorA")
+    await ActorRegistry.broadcast({"command": "foo"}, target_class="ActorAImpl")
 
-    for actor_a_ref in ActorRegistry.get_by_class(actor_a_class):
-        received_messages = actor_a_ref.proxy().received_messages.get()
-        assert {"command": "foo"} in received_messages
-        print(received_messages)
+    class_a_refs = ActorRegistry.get_by_class_name("ActorAImpl")
+    assert set(class_a_refs) == set(a_actor_refs)
+    for actor_a_ref in class_a_refs:
+        received_messages_fut = await actor_a_ref.proxy().received_messages
+        assert {"command": "foo"} in await received_messages_fut
 
-    for actor_b_ref in ActorRegistry.get_by_class(actor_b_class):
-        received_messages = actor_b_ref.proxy().received_messages.get()
-        assert {"command": "foo"} not in received_messages
+    class_b_refs = ActorRegistry.get_by_class(actor_b_class)
+    assert set(class_b_refs) == set(b_actor_refs)
+    for actor_b_ref in class_b_refs:
+        received_messages_fut = await actor_b_ref.proxy().received_messages
+        assert {"command": "foo"} not in await received_messages_fut
