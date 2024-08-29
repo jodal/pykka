@@ -213,28 +213,40 @@ def test_broadcast_sends_message_to_all_actors_if_no_target(
 def test_broadcast_sends_message_to_all_actors_of_given_class(
     actor_a_class: type[ActorA],
     actor_b_class: type[ActorA],
+    a_actor_refs: list[ActorRef[ActorA]],
+    b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
     ActorRegistry.broadcast({"command": "foo"}, target_class=actor_a_class)
 
-    for actor_ref in ActorRegistry.get_by_class(actor_a_class):
-        received_messages = actor_ref.proxy().received_messages.get()
+    class_a_refs = ActorRegistry.get_by_class(actor_a_class)
+    assert set(class_a_refs) == set(a_actor_refs)
+    for actor_a_ref in class_a_refs:
+        received_messages = actor_a_ref.proxy().received_messages.get()
         assert {"command": "foo"} in received_messages
 
-    for actor_ref in ActorRegistry.get_by_class(actor_b_class):
-        received_messages = actor_ref.proxy().received_messages.get()
+    class_b_refs = ActorRegistry.get_by_class(actor_b_class)
+    assert set(class_b_refs) == set(b_actor_refs)
+    for actor_b_ref in class_b_refs:
+        received_messages = actor_b_ref.proxy().received_messages.get()
         assert {"command": "foo"} not in received_messages
 
 
 def test_broadcast_sends_message_to_all_actors_of_given_class_name(
     actor_a_class: type[ActorA],
     actor_b_class: type[ActorB],
+    a_actor_refs: list[ActorRef[ActorA]],
+    b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
-    ActorRegistry.broadcast({"command": "foo"}, target_class="ActorA")
+    ActorRegistry.broadcast({"command": "foo"}, target_class="ActorAImpl")
 
-    for actor_a_ref in ActorRegistry.get_by_class(actor_a_class):
+    class_a_refs = ActorRegistry.get_by_class_name("ActorAImpl")
+    assert set(class_a_refs) == set(a_actor_refs)
+    for actor_a_ref in class_a_refs:
         received_messages = actor_a_ref.proxy().received_messages.get()
         assert {"command": "foo"} in received_messages
 
-    for actor_b_ref in ActorRegistry.get_by_class(actor_b_class):
+    class_b_refs = ActorRegistry.get_by_class_name("ActorBImpl")
+    assert set(class_b_refs) == set(b_actor_refs)
+    for actor_b_ref in class_b_refs:
         received_messages = actor_b_ref.proxy().received_messages.get()
         assert {"command": "foo"} not in received_messages
