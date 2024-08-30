@@ -212,7 +212,7 @@ def test_broadcast_sends_message_to_all_actors_if_no_target(
 
 def test_broadcast_sends_message_to_all_actors_of_given_class(
     actor_a_class: type[ActorA],
-    actor_b_class: type[ActorA],
+    actor_b_class: type[ActorB],
     a_actor_refs: list[ActorRef[ActorA]],
     b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
