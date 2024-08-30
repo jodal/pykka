@@ -111,7 +111,7 @@ async def test_all_actors_can_be_stopped_through_registry(
 ) -> None:
     assert len(ActorRegistry.get_all()) == 8
 
-    await ActorRegistry.stop_all(block=True)
+    await ActorRegistry.stop_all()
 
     assert len(ActorRegistry.get_all()) == 0
 
@@ -131,7 +131,7 @@ async def test_stop_all_stops_last_started_actor_first_if_blocking(
             TestActor.stopped.append(self)
 
     actors = [TestActor.start() for _ in range(100)]
-    stop_res = await ActorRegistry.stop_all(block=True)
+    stop_res = await ActorRegistry.stop_all()
     assert all(stop_res)
     assert TestActor.started and TestActor.stopped
     assert TestActor.stopped == TestActor.started[::-1]

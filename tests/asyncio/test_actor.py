@@ -97,8 +97,8 @@ async def test_messages_left_in_queue_after_actor_stops_receive_an_error(
     event = runtime.event_class()
 
     actor_ref.tell({"command": "callback", "callback": event.wait})
-    actor_ref.stop(block=False)
-    response = actor_ref.ask({"command": "irrelevant"}, block=False)
+    actor_ref.stop()
+    response = actor_ref.ask({"command": "irrelevant"})
     event.set()
 
     with pytest.raises(ActorDeadError):
@@ -112,8 +112,8 @@ async def test_stop_requests_left_in_queue_after_actor_stops_are_handled(
     event = runtime.event_class()
 
     actor_ref.tell({"command": "callback", "callback": event.wait})
-    actor_ref.stop(block=False)
-    response = actor_ref.stop(block=False)
+    actor_ref.stop()
+    response = actor_ref.stop()
     event.set()
 
     await response.get(timeout=0.5)

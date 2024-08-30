@@ -38,7 +38,7 @@ class ActorRegistry:
         cls,
         message: Any,
         target_class: Union[str, type[Actor], None] = None,
-    ) -> Awaitable[None]:
+    ) -> None:
         """Broadcast ``message`` to all actors of the specified ``target_class``.
 
         If no ``target_class`` is specified, the message is broadcasted to all
@@ -136,49 +136,16 @@ class ActorRegistry:
         cls._actor_refs.append(actor_ref)
         logger.debug(f"Registered {actor_ref}")
 
-    @overload
     @classmethod
     async def stop_all(
         cls,
-        *,
-        block: Literal[True],
-        timeout: float | None = ...,
-    ) -> list[bool]: ...
-
-    @overload
-    @classmethod
-    async def stop_all(
-        cls,
-        *,
-        block: Literal[False],
-        timeout: float | None = ...,
-    ) -> list[Future[bool]]: ...
-
-    @overload
-    @classmethod
-    async def stop_all(
-        cls,
-        *,
-        block: bool = True,
-        timeout: Optional[float] = None,
-    ) -> Union[list[bool], list[Future[bool]]]: ...
-
-    @classmethod
-    async def stop_all(
-        cls,
-        *,
-        block: bool = True,
-        timeout: Optional[float] = None,
-    ) -> Awaitable[list[bool]]:
+    ) -> [list[bool]]:
         """Stop all running actors.
 
-        ``block`` and ``timeout`` works as for
-        :meth:`ActorRef.stop() <pykka.asyncio.ActorRef.stop>`.
-
-        If ``block`` is :class:`True`, the actors are guaranteed to be stopped
-        in the reverse of the order they were started in. This is helpful if
-        you have simple dependencies in between your actors, where it is
-        sufficient to shut down actors in a LIFO manner: last started, first
+        The actors are guaranteed to be stopped in the reverse of the
+        order they were started in. This is helpful if you have simple
+        dependencies in between your actors, where it is sufficient to
+        shut down actors in a LIFO manner: last started, first
         stopped.
 
         If you have more complex dependencies in between your actors, you
@@ -186,12 +153,16 @@ class ActorRegistry:
         by stopping dependees from a dependency's
         :meth:`on_stop() <pykka.Actor.on_stop>` method.
 
-        :returns: If not blocking, a list with a future for each stop action.
-            If blocking, a list of return values from
+        If order doesn't matter, consider awaiting
+        :meth:`pykka.asyncio.ActorRef.stop` on ActorRefs using
+        `asyncio.gather`.
+
+        :returns: A list of return values from
             :meth:`pykka.asyncio.ActorRef.stop`.
+
         """
         return [
-            await ref.stop(block=block, timeout=timeout) for ref in reversed(cls.get_all())
+            await ref.stop() for ref in reversed(cls.get_all())
         ]
 
     @classmethod

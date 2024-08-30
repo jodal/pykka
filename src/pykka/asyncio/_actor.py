@@ -208,7 +208,7 @@ class Actor(abc.ABC):
     async def stop(self) -> None:
         """Stop the actor.
 
-        It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
+        It's equivalent to calling :meth:`ActorRef.stop` without blocking"
         """
         self.actor_ref.tell(messages._ActorStop())  # noqa: SLF001
 

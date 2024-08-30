@@ -195,7 +195,7 @@ class ActorProxy(Generic[A]):
             return self._actor_proxies[attr_path]
 
         message = messages.ProxyGetAttr(attr_path=attr_path)
-        return self.actor_ref.ask(message, block=False)
+        return self.actor_ref.ask(message)
 
     def set(self, name: str, value: Any) -> Future[None]:
         """Set a field on the actor.
@@ -260,7 +260,7 @@ class CallableProxy(Generic[A]):
         message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
-        return self.actor_ref.ask(message, block=False)
+        return self.actor_ref.ask(message)
 
     def defer(
         self,

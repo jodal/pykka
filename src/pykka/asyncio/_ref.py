@@ -98,40 +98,10 @@ class ActorRef(Generic[A]):
             raise ActorDeadError(msg)
         self.actor_inbox.put_nowait(Envelope(message))
 
-    @overload
     def ask(
         self,
         message: Any,
-        *,
-        block: Literal[False],
-        timeout: Optional[float] = None,
-    ) -> Future[Any]: ...
-
-    @overload
-    def ask(
-        self,
-        message: Any,
-        *,
-        block: Literal[True],
-        timeout: Optional[float] = None,
-    ) -> Awaitable[Any]: ...
-
-    @overload
-    def ask(
-        self,
-        message: Any,
-        *,
-        block: bool = True,
-        timeout: Optional[float] = None,
-    ) -> Union[Awaitable[Any], Future[Any]]: ...
-
-    def ask(
-        self,
-        message: Any,
-        *,
-        block: bool = True,
-        timeout: Optional[float] = None,
-    ) -> Union[Awaitable[Any], Future[Any]]:
+    ) -> Future[Any]:
         """Send message to actor and wait for the reply.
 
         The message can be of any type.
@@ -168,47 +138,16 @@ class ActorRef(Generic[A]):
         else:
             self.actor_inbox.put_nowait(Envelope(message, reply_to=future))
 
-        # assert block is False
-        # if block:
-        #     return await future.get(timeout=timeout)
-
         return future
 
-    @overload
     def stop(
         self,
-        *,
-        block: Literal[True],
-        timeout: Optional[float] = None,
-    ) -> bool: ...
-
-    @overload
-    def stop(
-        self,
-        *,
-        block: Literal[False],
-        timeout: Optional[float] = None,
-    ) -> Future[bool]: ...
-
-    @overload
-    def stop(
-        self,
-        *,
-        block: bool = True,
-        timeout: Optional[float] = None,
-    ) -> Union[Any, Future[Any]]: ...
-
-    def stop(
-        self,
-        *,
-        block: bool = True,
-        timeout: Optional[float] = None,
-    ) -> Union[Any, Future[Any]]:
+    ) -> Future[bool]:
         """Send a message to the actor, asking it to stop.
 
-        Returns :class:`True` if actor is stopped or was being stopped at the
-        time of the call. :class:`False` if actor was already dead. If
-        ``block`` is :class:`False`, it returns a future wrapping the result.
+        The returned future contains :class:`True` if actor is stopped
+        or was being stopped at the time of the call. :class:`False`
+        if actor was already dead.
 
         Messages sent to the actor before the actor is asked to stop will
         be processed normally before it stops.
@@ -218,11 +157,9 @@ class ActorRef(Generic[A]):
 
         The actor may not be restarted.
 
-        ``block`` and ``timeout`` works as for :meth:`ask`.
-
-        :return: :class:`pykka.asyncio.Future`, or a boolean result if blocking
+        :return: :class:`pykka.asyncio.Future` containing a boolean
         """
-        ask_future = self.ask(_ActorStop(), block=False)
+        ask_future = self.ask(_ActorStop())
         async def _stop_result_converter(timeout: Optional[float]) -> bool:
             try:
                 await ask_future.get(timeout=timeout)
@@ -233,10 +170,6 @@ class ActorRef(Generic[A]):
 
         converted_future = ask_future.__class__()
         converted_future.set_get_hook(_stop_result_converter)
-
-        # assert block is False
-        # if block:
-        #     return await converted_future.get(timeout=timeout)
 
         return converted_future
 
