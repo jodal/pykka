@@ -79,7 +79,7 @@ class Actor(abc.ABC):
     """
 
     @classmethod
-    async def start(
+    def start(
         cls: type[A],
         *args: Any,
         **kwargs: Any,
@@ -108,8 +108,8 @@ class Actor(abc.ABC):
 
         2. The actor is registered in :class:`pykka.ActorRegistry`.
 
-        3. The actor receive loop is started by the actor's associated
-           thread/greenlet.
+        3. The actor receive loop is started as a task on the event loop.
+
 
         :returns: a :class:`ActorRef` which can be used to access the actor in
             a safe manner
@@ -210,7 +210,7 @@ class Actor(abc.ABC):
 
         It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
         """
-        await self.actor_ref.tell(messages._ActorStop())  # noqa: SLF001
+        self.actor_ref.tell(messages._ActorStop())  # noqa: SLF001
 
     async def _stop(self) -> None:
         """Stop the actor immediately without processing the rest of the inbox."""
@@ -225,7 +225,7 @@ class Actor(abc.ABC):
     async def _actor_loop(self) -> None:
         """Run the actor's core loop.
 
-        This is the method that will be executed by the thread or greenlet.
+        This is the method that will be executed by the event loop.
         """
         await self._actor_loop_setup()
         await self._actor_loop_running()
@@ -289,7 +289,7 @@ class Actor(abc.ABC):
         started, but *before* it starts processing messages.
 
         For :class:`AsyncioActor`, this method is executed in the actor's own
-        context, while :meth:`__init__` is executed in the thread that created
+        context, while :meth:`__init__` is executed in the context that created
         the actor.
 
         If an exception is raised by this method the stack trace will be
@@ -353,7 +353,10 @@ class Actor(abc.ABC):
             return await self._stop()
         if isinstance(message, messages.ProxyCall):
             callee = get_attr_directly(self, message.attr_path)
-            return await callee(*message.args, **message.kwargs)
+            if asyncio.iscoroutinefunction(callee):
+                return await callee(*message.args, **message.kwargs)
+            else:
+                return callee(*message.args, **message.kwargs)
         if isinstance(message, messages.ProxyGetAttr):
             attr = get_attr_directly(self, message.attr_path)
             return attr

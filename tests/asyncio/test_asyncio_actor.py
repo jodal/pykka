@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @pytest.fixture()
 async def actor_ref() -> Iterator[ActorRef[AsyncioActor]]:
-    ref = await AsyncioActor.start()
+    ref = AsyncioActor.start()
     yield ref
     await ref.stop()
 

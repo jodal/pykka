@@ -4,6 +4,7 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
+    Awaitable,
     ClassVar,
     Literal,
     Optional,
@@ -33,11 +34,11 @@ class ActorRegistry:
     _actor_refs: ClassVar[list[ActorRef[Any]]] = []
 
     @classmethod
-    async def broadcast(
+    def broadcast(
         cls,
         message: Any,
         target_class: Union[str, type[Actor], None] = None,
-    ) -> None:
+    ) -> Awaitable[None]:
         """Broadcast ``message`` to all actors of the specified ``target_class``.
 
         If no ``target_class`` is specified, the message is broadcasted to all
@@ -56,7 +57,7 @@ class ActorRegistry:
         else:
             targets = cls.get_all()
         for ref in targets:
-            await ref.tell(message)
+            ref.tell(message)
 
     @classmethod
     def get_all(cls) -> list[ActorRef[Any]]:
@@ -168,7 +169,7 @@ class ActorRegistry:
         *,
         block: bool = True,
         timeout: Optional[float] = None,
-    ) -> Union[list[bool], list[Future[bool]]]:
+    ) -> Awaitable[list[bool]]:
         """Stop all running actors.
 
         ``block`` and ``timeout`` works as for

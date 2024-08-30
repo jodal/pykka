@@ -57,7 +57,7 @@ async def actor_ref(
     actor_class: type[LoggingActor],
     events: Events,
 ) -> Iterator[ActorRef[LoggingActor]]:
-    ref = await actor_class.start(events)
+    ref = actor_class.start(events)
     yield ref
     await ref.stop()
 
@@ -90,7 +90,7 @@ async def test_exception_is_logged_when_returned_to_caller(
     log_handler: PykkaTestLogHandler,
 ) -> None:
     with pytest.raises(Exception, match="foo"):
-        await (await actor_ref.proxy().raise_exception())
+        await actor_ref.proxy().raise_exception()
 
     log_handler.wait_for_message(LogLevel.INFO)
     with log_handler.lock:
@@ -111,7 +111,7 @@ async def test_exception_is_logged_when_not_reply_requested(
     log_handler: PykkaTestLogHandler,
 ) -> None:
     events.on_failure_was_called.clear()
-    await actor_ref.tell({"command": "raise exception"})
+    actor_ref.tell({"command": "raise exception"})
 
     await events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
@@ -134,7 +134,7 @@ async def test_base_exception_is_logged(
 ) -> None:
     log_handler.reset()
     events.on_stop_was_called.clear()
-    await actor_ref.tell({"command": "raise base exception"})
+    actor_ref.tell({"command": "raise base exception"})
 
     await events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()
@@ -155,7 +155,7 @@ async def test_exception_in_on_start_is_logged(
     log_handler: PykkaTestLogHandler,
 ) -> None:
     log_handler.reset()
-    actor_ref = await early_failing_actor_class.start(events)
+    actor_ref = early_failing_actor_class.start(events)
     await events.on_start_was_called.wait(5)
 
     log_handler.wait_for_message(LogLevel.ERROR)
@@ -172,7 +172,7 @@ async def test_exception_in_on_stop_is_logged(
     log_handler: PykkaTestLogHandler,
 ) -> None:
     log_handler.reset()
-    actor_ref = await late_failing_actor_class.start(events)
+    actor_ref = late_failing_actor_class.start(events)
     await events.on_stop_was_called.wait(5)
 
     log_handler.wait_for_message(LogLevel.ERROR)
@@ -189,8 +189,8 @@ async def test_exception_in_on_failure_is_logged(
     log_handler: PykkaTestLogHandler,
 ) -> None:
     log_handler.reset()
-    actor_ref = await failing_on_failure_actor_class.start(events)
-    await actor_ref.tell({"command": "raise exception"})
+    actor_ref = failing_on_failure_actor_class.start(events)
+    actor_ref.tell({"command": "raise exception"})
     await events.on_failure_was_called.wait(5)
 
     log_handler.wait_for_message(LogLevel.ERROR, num_messages=2)

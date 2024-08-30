@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
+    Awaitable,
     Generic,
     Literal,
     Optional,
@@ -17,9 +18,7 @@ from pykka._envelope import Envelope
 from pykka.messages import _ActorStop
 
 if TYPE_CHECKING:
-    from threading import Event
-
-    from pykka.asyncio import Actor, Future
+    from pykka.asyncio import Actor, AsyncioEvent, Future
     from pykka.asyncio._actor import ActorInbox
 
 __all__ = ["ActorRef"]
@@ -49,7 +48,7 @@ class ActorRef(Generic[A]):
     actor_inbox: ActorInbox
 
     #: See :attr:`Actor.actor_stopped`.
-    actor_stopped: Event
+    actor_stopped: AsyncioEvent
 
     def __init__(
         self,
@@ -79,7 +78,7 @@ class ActorRef(Generic[A]):
         """
         return not self.actor_stopped.is_set()
 
-    async def tell(
+    def tell(
         self,
         message: Any,
     ) -> None:
@@ -97,10 +96,10 @@ class ActorRef(Generic[A]):
         if not self.is_alive():
             msg = f"{self} not found"
             raise ActorDeadError(msg)
-        await self.actor_inbox.put(Envelope(message))
+        self.actor_inbox.put_nowait(Envelope(message))
 
     @overload
-    async def ask(
+    def ask(
         self,
         message: Any,
         *,
@@ -109,30 +108,30 @@ class ActorRef(Generic[A]):
     ) -> Future[Any]: ...
 
     @overload
-    async def ask(
+    def ask(
         self,
         message: Any,
         *,
         block: Literal[True],
         timeout: Optional[float] = None,
-    ) -> Any: ...
+    ) -> Awaitable[Any]: ...
 
     @overload
-    async def ask(
+    def ask(
         self,
         message: Any,
         *,
         block: bool = True,
         timeout: Optional[float] = None,
-    ) -> Union[Any, Future[Any]]: ...
+    ) -> Union[Awaitable[Any], Future[Any]]: ...
 
-    async def ask(
+    def ask(
         self,
         message: Any,
         *,
         block: bool = True,
         timeout: Optional[float] = None,
-    ) -> Union[Any, Future[Any]]:
+    ) -> Union[Awaitable[Any], Future[Any]]:
         """Send message to actor and wait for the reply.
 
         The message can be of any type.
@@ -167,15 +166,16 @@ class ActorRef(Generic[A]):
         except ActorDeadError:
             future.set_exception()
         else:
-            await self.actor_inbox.put(Envelope(message, reply_to=future))
+            self.actor_inbox.put_nowait(Envelope(message, reply_to=future))
 
-        if block:
-            return await future.get(timeout=timeout)
+        # assert block is False
+        # if block:
+        #     return await future.get(timeout=timeout)
 
         return future
 
     @overload
-    async def stop(
+    def stop(
         self,
         *,
         block: Literal[True],
@@ -183,7 +183,7 @@ class ActorRef(Generic[A]):
     ) -> bool: ...
 
     @overload
-    async def stop(
+    def stop(
         self,
         *,
         block: Literal[False],
@@ -191,14 +191,14 @@ class ActorRef(Generic[A]):
     ) -> Future[bool]: ...
 
     @overload
-    async def stop(
+    def stop(
         self,
         *,
         block: bool = True,
         timeout: Optional[float] = None,
     ) -> Union[Any, Future[Any]]: ...
 
-    async def stop(
+    def stop(
         self,
         *,
         block: bool = True,
@@ -222,7 +222,7 @@ class ActorRef(Generic[A]):
 
         :return: :class:`pykka.asyncio.Future`, or a boolean result if blocking
         """
-        ask_future = await self.ask(_ActorStop(), block=False)
+        ask_future = self.ask(_ActorStop(), block=False)
         async def _stop_result_converter(timeout: Optional[float]) -> bool:
             try:
                 await ask_future.get(timeout=timeout)
@@ -234,8 +234,9 @@ class ActorRef(Generic[A]):
         converted_future = ask_future.__class__()
         converted_future.set_get_hook(_stop_result_converter)
 
-        if block:
-            return await converted_future.get(timeout=timeout)
+        # assert block is False
+        # if block:
+        #     return await converted_future.get(timeout=timeout)
 
         return converted_future
 

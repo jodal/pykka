@@ -42,7 +42,7 @@ class AnActor(Actor):
             await self.stop()
             await self.stop()
         elif message.get("command") == "message self then stop":
-            await self.actor_ref.tell({"command": "greetings"})
+            self.actor_ref.tell({"command": "greetings"})
             await self.stop()
         elif message.get("command") == "greetings":
             self.events.greetings_was_received.set()
@@ -77,7 +77,7 @@ async def actor_ref(
     actor_class: type[AnActor],
     events: Events,
 ) -> Iterator[ActorRef[AnActor]]:
-    ref = await actor_class.start(events)
+    ref = actor_class.start(events)
     yield ref
     await ref.stop()
 
@@ -96,9 +96,9 @@ async def test_messages_left_in_queue_after_actor_stops_receive_an_error(
 ) -> None:
     event = runtime.event_class()
 
-    await actor_ref.tell({"command": "callback", "callback": event.wait})
-    await actor_ref.stop(block=False)
-    response = await actor_ref.ask({"command": "irrelevant"}, block=False)
+    actor_ref.tell({"command": "callback", "callback": event.wait})
+    actor_ref.stop(block=False)
+    response = actor_ref.ask({"command": "irrelevant"}, block=False)
     event.set()
 
     with pytest.raises(ActorDeadError):
@@ -111,9 +111,9 @@ async def test_stop_requests_left_in_queue_after_actor_stops_are_handled(
 ) -> None:
     event = runtime.event_class()
 
-    await actor_ref.tell({"command": "callback", "callback": event.wait})
-    await actor_ref.stop(block=False)
-    response = await actor_ref.stop(block=False)
+    actor_ref.tell({"command": "callback", "callback": event.wait})
+    actor_ref.stop(block=False)
+    response = actor_ref.stop(block=False)
     event.set()
 
     await response.get(timeout=0.5)
@@ -127,7 +127,7 @@ async def test_actor_has_unique_uuid(
     actor_class: type[AnActor],
     events: Events,
 ) -> None:
-    actors = [await actor_class.start(events) for _ in range(3)]
+    actors = [actor_class.start(events) for _ in range(3)]
 
     assert actors[0].actor_urn != actors[1].actor_urn
     assert actors[1].actor_urn != actors[2].actor_urn
@@ -189,7 +189,7 @@ async def test_on_start_can_stop_actor_before_receive_loop_is_started(
     # If one made this test specifically for ThreadingActor, one could add
     # an assertFalse(actor_thread.is_alive()), which would cause the test
     # to fail properly.
-    actor_ref = await early_stopping_actor_class.start(events)
+    actor_ref = early_stopping_actor_class.start(events)
 
     await events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()
@@ -202,7 +202,7 @@ async def test_on_start_failure_causes_actor_to_stop(
 ) -> None:
     # Actor should not be alive if on_start fails.
 
-    actor_ref = await early_failing_actor_class.start(events)
+    actor_ref = early_failing_actor_class.start(events)
     await events.on_start_was_called.wait(5)
 
     await actor_ref.actor_stopped.wait(5)
@@ -225,7 +225,7 @@ async def test_on_stop_failure_causes_actor_to_stop(
     late_failing_actor_class: type[AnActor],
     events: Events,
 ) -> None:
-    actor_ref = await late_failing_actor_class.start(events)
+    actor_ref = late_failing_actor_class.start(events)
 
     await events.on_stop_was_called.wait(5)
     assert not actor_ref.is_alive()
@@ -237,7 +237,7 @@ async def test_on_failure_is_called_when_exception_cannot_be_returned(
 ) -> None:
     assert not events.on_failure_was_called.is_set()
 
-    await actor_ref.tell({"command": "raise exception"})
+    actor_ref.tell({"command": "raise exception"})
 
     await events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
@@ -248,9 +248,9 @@ async def test_on_failure_failure_causes_actor_to_stop(
     failing_on_failure_actor_class: type[AnActor],
     events: Events,
 ) -> None:
-    actor_ref = await failing_on_failure_actor_class.start(events)
+    actor_ref = failing_on_failure_actor_class.start(events)
 
-    await actor_ref.tell({"command": "raise exception"})
+    actor_ref.tell({"command": "raise exception"})
 
     await events.on_failure_was_called.wait(5)
     assert not actor_ref.is_alive()
@@ -262,7 +262,7 @@ async def test_actor_is_stopped_when_unhandled_exceptions_are_raised(
 ) -> None:
     assert not events.on_failure_was_called.is_set()
 
-    await actor_ref.tell({"command": "raise exception"})
+    actor_ref.tell({"command": "raise exception"})
 
     await events.on_failure_was_called.wait(5)
     assert events.on_failure_was_called.is_set()
@@ -276,7 +276,7 @@ async def test_all_actors_are_stopped_on_base_exception(
     assert len(ActorRegistry.get_all()) == 1
     assert not events.on_stop_was_called.is_set()
 
-    await actor_ref.tell({"command": "raise base exception"})
+    actor_ref.tell({"command": "raise base exception"})
 
     await events.on_stop_was_called.wait(5)
     assert events.on_stop_was_called.is_set()

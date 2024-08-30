@@ -54,7 +54,7 @@ class Future(Generic[T]):
         self,
         *,
         timeout: Optional[float] = None,
-    ) -> T:
+    ) -> Awaitable[T]:
         """Get the value encapsulated by the future.
 
         If the encapsulated value is an exception, it is raised instead of
@@ -144,10 +144,10 @@ class Future(Generic[T]):
         Example::
 
             >>> import pykka
-            >>> f = pykka.ThreadingFuture()
+            >>> f = pykka.AsyncioFuture()
             >>> g = f.filter(lambda x: x > 10)
             >>> g
-            <pykka.future.ThreadingFuture at ...>
+            <pykka.future.AsyncioFuture at ...>
             >>> f.set(range(5, 15))
             >>> f.get()
             [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -176,9 +176,9 @@ class Future(Generic[T]):
         Example::
 
             >>> import pykka
-            >>> a = pykka.ThreadingFuture()
-            >>> b = pykka.ThreadingFuture()
-            >>> c = pykka.ThreadingFuture()
+            >>> a = pykka.AsyncioFuture()
+            >>> b = pykka.AsyncioFuture()
+            >>> c = pykka.AsyncioFuture()
             >>> f = a.join(b, c)
             >>> a.set('def')
             >>> b.set(123)
@@ -205,13 +205,13 @@ class Future(Generic[T]):
         Example::
 
             >>> import pykka
-            >>> f = pykka.ThreadingFuture()
+            >>> f = pykka.AsyncioFuture()
             >>> g = f.map(lambda x: x + 10)
             >>> f.set(30)
             >>> g.get()
             40
 
-            >>> f = pykka.ThreadingFuture()
+            >>> f = pykka.AsyncioFuture()
             >>> g = f.map(lambda x: x['foo'])
             >>> f.set({'foo': 'bar'}})
             >>> g.get()
@@ -255,13 +255,13 @@ class Future(Generic[T]):
         Example::
 
             >>> import pykka
-            >>> f = pykka.ThreadingFuture()
+            >>> f = pykka.AsyncioFuture()
             >>> g = f.reduce(lambda x, y: x + y)
             >>> f.set(['a', 'b', 'c'])
             >>> g.get()
             'abc'
 
-            >>> f = pykka.ThreadingFuture()
+            >>> f = pykka.AsyncioFuture()
             >>> g = f.reduce(lambda x, y: x + y)
             >>> f.set([1, 2, 3])
             >>> (1 + 2) + 3
@@ -269,7 +269,7 @@ class Future(Generic[T]):
             >>> g.get()
             6
 
-            >>> f = pykka.ThreadingFuture()
+            >>> f = pykka.AsyncioFuture()
             >>> g = f.reduce(lambda x, y: x + y, 5)
             >>> f.set([1, 2, 3])
             >>> ((5 + 1) + 2) + 3
@@ -277,7 +277,7 @@ class Future(Generic[T]):
             >>> g.get()
             11
 
-            >>> f = pykka.ThreadingFuture()
+            >>> f = pykka.AsyncioFuture()
             >>> g = f.reduce(lambda x, y: x + y, 5)
             >>> f.set([])
             >>> g.get()
@@ -302,7 +302,7 @@ async def get_all(
     futures: Iterable[Future[T]],
     *,
     timeout: Optional[float] = None,
-) -> Iterable[T]:
+) -> Awaitable[Iterable[T]]:
     """Collect all values encapsulated in the list of futures.
 
     If ``timeout`` is not :class:`None`, the method will wait for a reply for

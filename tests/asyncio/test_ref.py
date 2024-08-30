@@ -51,7 +51,7 @@ async def actor_ref(
     actor_class: type[ReferencableActor],
     received_message: Future[str],
 ) -> Iterator[ActorRef[ReferencableActor]]:
-    ref = await actor_class.start(
+    ref = actor_class.start(
         runtime.sleep_func,
         received_message,
     )
@@ -129,7 +129,7 @@ async def test_tell_delivers_message_to_actors_custom_on_receive(
     actor_ref: ActorRef[ReferencableActor],
     received_message: Future[str],
 ) -> None:
-    await actor_ref.tell("a custom message")
+    actor_ref.tell("a custom message")
 
     assert await received_message.get(timeout=1) == "a custom message"
 
@@ -150,7 +150,7 @@ async def test_tell_accepts_any_object_as_the_message(
     message: Any,
     received_message: Future[Any],
 ) -> None:
-    await actor_ref.tell(message)
+    actor_ref.tell(message)
 
     assert await received_message.get(timeout=1) == message
 
@@ -161,12 +161,12 @@ async def test_tell_fails_if_actor_is_stopped(
     await actor_ref.stop()
 
     with pytest.raises(ActorDeadError) as exc_info:
-        await actor_ref.tell("a custom message")
+        actor_ref.tell("a custom message")
 
     assert str(exc_info.value) == f"{actor_ref} not found"
 
 
-async def test_ask_blocks_until_response_arrives(
+async def test_await_ask_blocks_until_response_arrives(
     actor_ref: ActorRef[ReferencableActor],
 ) -> None:
     result = await actor_ref.ask("ping")
@@ -174,18 +174,10 @@ async def test_ask_blocks_until_response_arrives(
     assert result == "pong"
 
 
-# TODO
-async def test_ask_can_timeout_if_blocked_too_long(
+async def test_ask_returns_future(
     actor_ref: ActorRef[ReferencableActor],
 ) -> None:
-    with pytest.raises(Timeout):
-        await actor_ref.ask("ping", timeout=0.01)
-
-
-async def test_ask_can_return_future_instead_of_blocking(
-    actor_ref: ActorRef[ReferencableActor],
-) -> None:
-    future = await actor_ref.ask("ping", block=False)
+    future = actor_ref.ask("ping")
 
     assert await future.get() == "pong"
 
@@ -201,11 +193,18 @@ async def test_ask_fails_if_actor_is_stopped(
     assert str(exc_info.value) == f"{actor_ref} not found"
 
 
-async def test_ask_nonblocking_fails_future_if_actor_is_stopped(
+async def test_ask_get_timeout_if_blocked_too_long(
+     actor_ref: ActorRef[ReferencableActor],
+ ) -> None:
+    with pytest.raises(Timeout):
+        await actor_ref.ask("ping").get(timeout=0.01)
+
+
+async def test_ask_fails_future_if_actor_is_stopped(
     actor_ref: ActorRef[ReferencableActor],
 ) -> None:
     await actor_ref.stop()
-    future = await actor_ref.ask("ping", block=False)
+    future = actor_ref.ask("ping")
 
     with pytest.raises(ActorDeadError) as exc_info:
         await future.get()

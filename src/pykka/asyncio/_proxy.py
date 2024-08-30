@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
@@ -24,7 +25,7 @@ class ActorProxy(Generic[A]):
     """An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>` instance.
 
     The proxy allows the referenced actor to be used through regular
-    method calls and field access.
+    method calls and field access (mostly).
 
     You can create an :class:`ActorProxy` from any :class:`ActorRef
     <pykka.ActorRef>`::
@@ -39,28 +40,26 @@ class ActorProxy(Generic[A]):
 
     **Attributes and method calls**
 
-    When reading an attribute or getting a return value from a method, you get
-    a :class:`Future <pykka.Future>` object back. To get the enclosed value
-    from the future, you must call :meth:`get() <pykka.Future.get>` on the
-    returned future::
+    When reading an attribute or getting a return value from a method,
+    you get a :class:`Future <pykka.Future>` object back. To get the
+    enclosed value from the future, you must await the returned future
+    and optionally call :meth:`get() <pykka.Future.get>`::
 
-        print(actor_proxy.string_attribute.get())
-        print(actor_proxy.count().get() + 1)
+        print(await actor_proxy.string_attribute.get())
+        print(await actor_proxy.string_attribute)  # equivalent to above
+        print(await actor_proxy.count() + 1)
 
-    If you call a method just for it's side effects and do not care about the
-    return value, you do not need to accept the returned future or call
-    :meth:`get() <pykka.Future.get>` on the future. Simply call the method, and
-    it will be executed concurrently with your own code::
+    If you call a method just for it's side effects and do not care
+    about the return value or blocking until the method has finished
+    running, you do not need to accept the returned future or call
+    :meth:`get() <pykka.Future.get>` on the future. Simply call the
+    method, and it will be executed concurrently with your own code::
 
         actor_proxy.method_with_side_effect()
 
     If you want to block your own code from continuing while the other method
-    is processing, you can use :meth:`get() <pykka.Future.get>` to block until
+    is processing, you can await the returned future to block until
     it completes::
-
-        actor_proxy.method_with_side_effect().get()
-
-    You can also use the ``await`` keyword to block until the method completes::
 
         await actor_proxy.method_with_side_effect()
 
@@ -113,9 +112,10 @@ class ActorProxy(Generic[A]):
     .. literalinclude:: ../../examples/counter.py
 
     :param actor_ref: reference to the actor to proxy
-    :type actor_ref: :class:`pykka.ActorRef`
+    :type actor_ref: :class:`pykka.asyncio.ActorRef`
 
     :raise: :exc:`pykka.ActorDeadError` if actor is not available
+
     """
 
     #: The actor's :class:`pykka.asyncio.ActorRef` instance.
@@ -166,7 +166,7 @@ class ActorProxy(Generic[A]):
         result += [attr_path[0] for attr_path in list(self._known_attrs.keys())]
         return sorted(result)
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name: str) -> Future[Any]:
         """Get a field or callable from the actor."""
         attr_path: AttrPath = (*self._attr_path, name)
 
@@ -197,22 +197,22 @@ class ActorProxy(Generic[A]):
         message = messages.ProxyGetAttr(attr_path=attr_path)
         return self.actor_ref.ask(message, block=False)
 
-    def __setattr__(
-        self,
-        name: str,
-        value: Any,
-    ) -> None:
+    def set(self, name: str, value: Any) -> Future[None]:
         """Set a field on the actor.
 
-        Blocks until the field is set to check if any exceptions was raised.
+        Returns a future that blocks until field is set.
         """
-        if name == "actor_ref" or name.startswith("_"):
-            return super().__setattr__(name, value)
         attr_path = (*self._attr_path, name)
         message = messages.ProxySetAttr(attr_path=attr_path, value=value)
-        self.actor_ref.ask(message)
-        return None
+        return self.actor_ref.ask(message)
 
+    def get(self, name: str) -> Future[Any]:
+        """Get a field on the actor.
+
+        Only exists to keep parity with `set`. You can simply
+        `await proxy.foo` to access the field with less syntax.
+        """
+        return self.__getattr__(name)
 
 class CallableProxy(Generic[A]):
     """Proxy to a single method.
@@ -243,7 +243,7 @@ class CallableProxy(Generic[A]):
         self.actor_ref = actor_ref
         self._attr_path = attr_path
 
-    async def __call__(
+    def __call__(
         self,
         *args: Any,
         **kwargs: Any,
@@ -260,9 +260,9 @@ class CallableProxy(Generic[A]):
         message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
-        return await self.actor_ref.ask(message, block=False)
+        return self.actor_ref.ask(message, block=False)
 
-    async def defer(
+    def defer(
         self,
         *args: Any,
         **kwargs: Any,
@@ -280,7 +280,7 @@ class CallableProxy(Generic[A]):
         message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
         )
-        await self.actor_ref.tell(message)
+        self.actor_ref.tell(message)
 
 
 def traversable(obj: T) -> T:

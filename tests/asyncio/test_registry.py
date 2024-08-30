@@ -52,17 +52,17 @@ def actor_b_class(runtime: Runtime) -> type[ActorB]:
 
 @pytest.fixture()
 async def actor_ref(actor_a_class: type[ActorA]) -> ActorRef[ActorA]:
-    return await actor_a_class.start()
+    return actor_a_class.start()
 
 
 @pytest.fixture()
 async def a_actor_refs(actor_a_class: type[ActorA]) -> list[ActorRef[ActorA]]:
-    return [await actor_a_class.start() for _ in range(3)]
+    return [actor_a_class.start() for _ in range(3)]
 
 
 @pytest.fixture()
 async def b_actor_refs(actor_b_class: type[ActorB]) -> list[ActorRef[ActorB]]:
-    return [await actor_b_class.start() for _ in range(5)]
+    return [actor_b_class.start() for _ in range(5)]
 
 
 def test_actor_is_registered_when_started(
@@ -130,7 +130,7 @@ async def test_stop_all_stops_last_started_actor_first_if_blocking(
         async def on_stop(self) -> None:
             TestActor.stopped.append(self)
 
-    actors = [await TestActor.start() for _ in range(100)]
+    actors = [TestActor.start() for _ in range(100)]
     stop_res = await ActorRegistry.stop_all(block=True)
     assert all(stop_res)
     assert TestActor.started and TestActor.stopped
@@ -194,14 +194,13 @@ async def test_broadcast_sends_message_to_all_actors_if_no_target(
     a_actor_refs: list[ActorRef[ActorA]],
     b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
-    await ActorRegistry.broadcast({"command": "foo"})
+    ActorRegistry.broadcast({"command": "foo"})
 
     running_actors = ActorRegistry.get_all()
     assert running_actors
 
     for actor_ref in running_actors:
-        received_messages = await actor_ref.proxy().received_messages
-        assert {"command": "foo"} in await received_messages
+        assert {"command": "foo"} in await actor_ref.proxy().received_messages
 
 
 async def test_broadcast_sends_message_to_all_actors_of_given_class(
@@ -210,19 +209,17 @@ async def test_broadcast_sends_message_to_all_actors_of_given_class(
     a_actor_refs: list[ActorRef[ActorA]],
     b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
-    await ActorRegistry.broadcast({"command": "foo"}, target_class=actor_a_class)
+    ActorRegistry.broadcast({"command": "foo"}, target_class=actor_a_class)
 
     class_a_refs = ActorRegistry.get_by_class(actor_a_class)
     assert set(class_a_refs) == set(a_actor_refs)
     for actor_ref in class_a_refs:
-        received_messages_fut = await actor_ref.proxy().received_messages
-        assert {"command": "foo"} in await received_messages_fut
+        assert {"command": "foo"} in await actor_ref.proxy().received_messages
 
     class_b_refs = ActorRegistry.get_by_class(actor_b_class)
     assert set(class_b_refs) == set(b_actor_refs)
     for actor_ref in class_b_refs:
-        received_messages_fut = await actor_ref.proxy().received_messages
-        assert {"command": "foo"} not in await received_messages_fut
+        assert {"command": "foo"} not in await actor_ref.proxy().received_messages
 
 
 async def test_broadcast_sends_message_to_all_actors_of_given_class_name(
@@ -231,16 +228,14 @@ async def test_broadcast_sends_message_to_all_actors_of_given_class_name(
     a_actor_refs: list[ActorRef[ActorA]],
     b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
-    await ActorRegistry.broadcast({"command": "foo"}, target_class="ActorAImpl")
+    ActorRegistry.broadcast({"command": "foo"}, target_class="ActorAImpl")
 
     class_a_refs = ActorRegistry.get_by_class_name("ActorAImpl")
     assert set(class_a_refs) == set(a_actor_refs)
     for actor_a_ref in class_a_refs:
-        received_messages_fut = await actor_a_ref.proxy().received_messages
-        assert {"command": "foo"} in await received_messages_fut
+        assert {"command": "foo"} in await actor_a_ref.proxy().received_messages
 
     class_b_refs = ActorRegistry.get_by_class(actor_b_class)
     assert set(class_b_refs) == set(b_actor_refs)
     for actor_b_ref in class_b_refs:
-        received_messages_fut = await actor_b_ref.proxy().received_messages
-        assert {"command": "foo"} not in await received_messages_fut
+        assert {"command": "foo"} not in await actor_b_ref.proxy().received_messages
