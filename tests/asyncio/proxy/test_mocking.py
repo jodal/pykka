@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator, NoReturn
+from typing import TYPE_CHECKING, AsyncGenerator, NoReturn
 
 import pytest
 
@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
     from pykka.asyncio import ActorProxy
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 pytestmark = pytest.mark.usefixtures("_stop_all")
 
@@ -41,7 +41,7 @@ def actor_class(runtime: Runtime) -> type[ActorForMocking]:
 @pytest.fixture()
 async def proxy(
     actor_class: ActorForMocking,
-) -> Iterator[ActorProxy[ActorForMocking]]:
+) -> AsyncGenerator[ActorProxy[ActorForMocking]]:
     proxy = actor_class.start().proxy()
     yield proxy
     await proxy.stop()

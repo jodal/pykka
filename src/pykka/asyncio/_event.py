@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Awaitable, Optional
+from typing import TYPE_CHECKING, Awaitable, Literal, Optional, overload
 
 if TYPE_CHECKING:
     __all__ = ["AsyncioEvent"]
@@ -9,7 +9,14 @@ if TYPE_CHECKING:
 class AsyncioEvent(asyncio.Event):
     """Same as asyncio.Event but adds a `wait` with timeout.
     """
-    async def wait(self, timeout: Optional[float] = None) -> Awaitable[bool]:
+
+    @overload
+    async def wait(self) -> Literal[True]: ...
+
+    @overload
+    async def wait(self, timeout: Optional[float]) -> bool: ...
+
+    async def wait(self, timeout: Optional[float] = None) -> bool:
         try:
             await asyncio.wait_for(super().wait(), timeout=timeout)
             return True

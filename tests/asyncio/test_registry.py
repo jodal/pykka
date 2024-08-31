@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from pykka.asyncio import Actor, ActorRegistry
+from pykka.asyncio import Actor, AsyncioActor, ActorRegistry
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
     from pykka.asyncio import ActorRef
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 pytestmark = pytest.mark.usefixtures("_stop_all")
 
@@ -120,7 +120,7 @@ async def test_stop_all_stops_last_started_actor_first_if_blocking(
     actor_a_class: type[ActorA],
 ) -> None:
 
-    class TestActor(actor_a_class):
+    class TestActor(AsyncioActor):
         started: list[TestActor] = []
         stopped: list[TestActor] = []
 
@@ -205,7 +205,7 @@ async def test_broadcast_sends_message_to_all_actors_if_no_target(
 
 async def test_broadcast_sends_message_to_all_actors_of_given_class(
     actor_a_class: type[ActorA],
-    actor_b_class: type[ActorA],
+    actor_b_class: type[ActorB],
     a_actor_refs: list[ActorRef[ActorA]],
     b_actor_refs: list[ActorRef[ActorB]],
 ) -> None:
@@ -213,13 +213,13 @@ async def test_broadcast_sends_message_to_all_actors_of_given_class(
 
     class_a_refs = ActorRegistry.get_by_class(actor_a_class)
     assert set(class_a_refs) == set(a_actor_refs)
-    for actor_ref in class_a_refs:
-        assert {"command": "foo"} in await actor_ref.proxy().received_messages
+    for actor_a_ref in class_a_refs:
+        assert {"command": "foo"} in await actor_a_ref.proxy().received_messages
 
     class_b_refs = ActorRegistry.get_by_class(actor_b_class)
     assert set(class_b_refs) == set(b_actor_refs)
-    for actor_ref in class_b_refs:
-        assert {"command": "foo"} not in await actor_ref.proxy().received_messages
+    for actor_b_ref in class_b_refs:
+        assert {"command": "foo"} not in await actor_b_ref.proxy().received_messages
 
 
 async def test_broadcast_sends_message_to_all_actors_of_given_class_name(

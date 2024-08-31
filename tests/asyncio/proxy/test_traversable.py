@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, AsyncGenerator
 
 import pytest
 
@@ -8,7 +8,7 @@ from pykka.asyncio import Actor, traversable
 
 if TYPE_CHECKING:
     from pykka.asyncio import ActorProxy
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 
 class NestedWithNoMarker:
@@ -64,7 +64,7 @@ def actor_class(runtime: Runtime) -> type[Actor]:
 @pytest.fixture()
 async def proxy(
     actor_class: type[TraversableObjectsActor],
-) -> Iterator[ActorProxy[TraversableObjectsActor]]:
+) -> AsyncGenerator[ActorProxy[TraversableObjectsActor]]:
     proxy = actor_class.start().proxy()
     yield proxy
     await proxy.stop()

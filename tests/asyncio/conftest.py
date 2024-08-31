@@ -7,6 +7,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Iterator,
+    AsyncGenerator,
     cast,
 )
 
@@ -14,7 +15,7 @@ import pytest
 
 from pykka.asyncio import ActorRegistry, AsyncioActor, AsyncioEvent, AsyncioFuture
 from tests.log_handler import PykkaTestLogHandler
-from tests.types import Events, Runtime
+from tests.asyncio.types import Events, Runtime
 
 if TYPE_CHECKING:
     from pykka.asyncio import Actor, Future
@@ -40,7 +41,7 @@ def runtime(request: pytest.FixtureRequest) -> Runtime:
 
 
 @pytest.fixture()
-async def _stop_all() -> Iterator[None]:  # pyright: ignore[reportUnusedFunction]
+async def _stop_all() -> AsyncGenerator[None]:  # pyright: ignore[reportUnusedFunction]
     yield
     await ActorRegistry.stop_all()
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterator, cast
+from typing import TYPE_CHECKING, AsyncGenerator, cast
 
 import pytest
 
@@ -9,7 +9,7 @@ from pykka.asyncio import Actor, ActorDeadError, ActorProxy, traversable
 from pykka.typing import ActorMemberMixin, proxy_field, proxy_method
 
 if TYPE_CHECKING:
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 
 @dataclass
@@ -46,7 +46,7 @@ def actor_class(runtime: Runtime) -> type[CircleActor]:
 @pytest.fixture()
 async def proxy(
     actor_class: type[CircleActor],
-) -> Iterator[FooProxy]:
+) -> AsyncGenerator[FooProxy]:
     proxy = cast(FooProxy, actor_class.start().proxy())
     yield proxy
     try:
@@ -56,17 +56,16 @@ async def proxy(
 
 
 async def test_proxy_field(proxy: FooProxy) -> None:
-    assert await proxy.text.get() == "The fox crossed the road."
+    assert await proxy.text == "The fox crossed the road."
 
 
 async def test_proxy_traversable_object_field(proxy: FooProxy) -> None:
-    assert await proxy.constants.pi.get() == 3.14
+    assert await proxy.constants.pi == 3.14
 
 
 async def test_proxy_method(proxy: FooProxy) -> None:
-    assert await proxy.area(2.0).get() == 12.56
+    assert await proxy.area(2.0) == 12.56
 
 
-# TODO
 async def test_proxy_to_actor_methods(proxy: FooProxy) -> None:
-    assert await proxy.stop().get() is None
+    assert await proxy.stop() is None  # type: ignore[func-returns-value]

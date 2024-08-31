@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from types import TracebackType
 
     from pykka.asyncio import Future
-    from pykka._envelope import Envelope
+    from pykka.asyncio._envelope import Envelope
 
 __all__ = ["Actor"]
 
@@ -28,11 +28,11 @@ A = TypeVar("A", bound="Actor")
 
 
 class ActorInbox(Protocol):
-    async def put(self, envelope: Envelope[Any], /) -> None: ...
+    def put(self, envelope: Envelope[Any], /) -> None: ...
 
     async def get(self) -> Envelope[Any]: ...
 
-    async def empty(self) -> bool: ...
+    def empty(self) -> bool: ...
 
 
 class Actor(abc.ABC):

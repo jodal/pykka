@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterator, NoReturn
+from typing import TYPE_CHECKING, Any, Awaitable, AsyncGenerator, Callable, NoReturn
 
 import pytest
 
@@ -8,7 +8,7 @@ from pykka.asyncio import Actor, ActorDeadError
 
 if TYPE_CHECKING:
     from pykka.asyncio import ActorProxy, Future
-    from tests.types import Events, Runtime
+    from tests.asyncio.types import Events, Runtime
 
 
 class StaticMethodActor(Actor):
@@ -52,7 +52,7 @@ def actor_class(runtime: Runtime) -> type[StaticMethodActor]:
 async def proxy(
     actor_class: type[StaticMethodActor],
     events: Events,
-) -> Iterator[ActorProxy[StaticMethodActor]]:
+) -> AsyncGenerator[ActorProxy[StaticMethodActor]]:
     proxy = actor_class.start(events).proxy()
     yield proxy
     try:
@@ -64,38 +64,38 @@ async def proxy(
 async def test_functional_method_call_returns_correct_value(
     proxy: ActorProxy[StaticMethodActor],
 ) -> None:
-    assert await proxy.functional_hello("world").get() == "Hello, world!"
-    assert await proxy.functional_hello("moon").get() == "Hello, moon!"
+    assert await proxy.functional_hello("world") == "Hello, world!"
+    assert await proxy.functional_hello("moon") == "Hello, moon!"
 
 
 async def test_async_method_call_returns_correct_value(
     proxy: ActorProxy[StaticMethodActor],
 ) -> None:
-    assert await proxy.async_hello("world").get() == "Hello, world!"
-    assert await proxy.async_hello("moon").get() == "Hello, moon!"
+    assert await proxy.async_hello("world") == "Hello, world!"
+    assert await proxy.async_hello("moon") == "Hello, moon!"
 
 
 
 async def test_side_effect_of_method_call_is_observable(
     proxy: ActorProxy[StaticMethodActor],
 ) -> None:
-    assert await proxy.cat.get() == "dog"
+    assert await proxy.cat == "dog"
 
     future = proxy.set_cat("eagle")
 
-    assert await future.get() is None
-    assert await proxy.cat.get() == "eagle"
+    assert await future is None
+    assert await proxy.cat == "eagle"
 
 
 async def test_side_effect_of_deferred_method_call_is_observable(
     proxy: ActorProxy[StaticMethodActor],
 ) -> None:
-    assert await proxy.cat.get() == "dog"
+    assert await proxy.cat == "dog"
 
     result = proxy.set_cat.defer("eagle")
 
     assert result is None
-    assert await proxy.cat.get() == "eagle"
+    assert await proxy.cat == "eagle"
 
 
 async def test_exception_in_method_reraised_by_future(
@@ -106,13 +106,12 @@ async def test_exception_in_method_reraised_by_future(
 
     future = proxy.raise_exception()
     with pytest.raises(Exception, match="boom!") as exc_info:
-        await future.get()
+        await future
 
     assert str(exc_info.value) == "boom!"
     assert not events.on_failure_was_called.is_set()
 
 
-# TODO
 async def test_exception_in_deferred_method_call_triggers_on_failure(
     proxy: ActorProxy[StaticMethodActor],
     events: Events,

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Iterator, NoReturn, Optional
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Iterator, NoReturn, Optional
 
 import pytest
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from types import TracebackType
 
     from pykka.asyncio import ActorRef
-    from tests.types import Events, Runtime
+    from tests.asyncio.types import Events, Runtime
 
 pytestmark = pytest.mark.usefixtures("_stop_all")
 
@@ -56,7 +56,7 @@ def actor_class(runtime: Runtime) -> type[LoggingActor]:
 async def actor_ref(
     actor_class: type[LoggingActor],
     events: Events,
-) -> Iterator[ActorRef[LoggingActor]]:
+) -> AsyncGenerator[ActorRef[LoggingActor]]:
     ref = actor_class.start(events)
     yield ref
     await ref.stop()

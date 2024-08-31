@@ -13,7 +13,7 @@ from pykka.asyncio import Future, Timeout, get_all
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 
 def run_async(coroutine: Any) -> Any:

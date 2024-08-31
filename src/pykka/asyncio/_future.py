@@ -54,7 +54,7 @@ class Future(Generic[T]):
         self,
         *,
         timeout: Optional[float] = None,
-    ) -> Awaitable[T]:
+    ) -> T:
         """Get the value encapsulated by the future.
 
         If the encapsulated value is an exception, it is raised instead of
@@ -157,7 +157,7 @@ class Future(Generic[T]):
         .. versionadded:: 1.2
         """
 
-        async def _filter(timeout: Optional[float]):
+        async def _filter(timeout: Optional[float]) -> list[J]:
             return list(filter(func, await self.get(timeout=timeout)))
 
         future = self.__class__()
@@ -189,7 +189,7 @@ class Future(Generic[T]):
         .. versionadded:: 1.2
         """
 
-        async def _join(timeout: Optional[float]):
+        async def _join(timeout: Optional[float]) -> list[Any]:
             return [await f.get(timeout=timeout) for f in [self, *futures]]
 
         future = cast(Future[Iterable[Any]], self.__class__())
@@ -228,7 +228,7 @@ class Future(Generic[T]):
             passed to the function.
         """
 
-        async def _map(timeout: Optional[float]):
+        async def _map(timeout: Optional[float]) -> M:
             return func(await self.get(timeout=timeout))
 
         future = cast(Future[M], self.__class__())
@@ -285,7 +285,7 @@ class Future(Generic[T]):
 
         .. versionadded:: 1.2
         """
-        async def _reduce(timeout: Optional[float]):
+        async def _reduce(timeout: Optional[float]) -> R:
             return functools.reduce(func, await self.get(timeout=timeout), *args)
 
         future = cast(Future[R], self.__class__())
@@ -302,7 +302,7 @@ async def get_all(
     futures: Iterable[Future[T]],
     *,
     timeout: Optional[float] = None,
-) -> Awaitable[Iterable[T]]:
+) -> Iterable[T]:
     """Collect all values encapsulated in the list of futures.
 
     If ``timeout`` is not :class:`None`, the method will wait for a reply for

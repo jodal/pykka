@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterator
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Callable, Iterator
 
 import pytest
 
@@ -8,7 +8,7 @@ from pykka.asyncio import Actor, ActorDeadError, Timeout
 
 if TYPE_CHECKING:
     from pykka.asyncio import ActorRef, Future
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 
 class ReferencableActor(Actor):
@@ -50,7 +50,7 @@ async def actor_ref(
     runtime: Runtime,
     actor_class: type[ReferencableActor],
     received_message: Future[str],
-) -> Iterator[ActorRef[ReferencableActor]]:
+) -> AsyncGenerator[ActorRef[ReferencableActor]]:
     ref = actor_class.start(
         runtime.sleep_func,
         received_message,

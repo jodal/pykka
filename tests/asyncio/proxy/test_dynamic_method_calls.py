@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, AsyncGenerator
 
 import pytest
 
@@ -8,7 +8,7 @@ from pykka.asyncio import Actor
 
 if TYPE_CHECKING:
     from pykka.asyncio import ActorProxy, Future
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 
 class DynamicMethodActor(Actor):
@@ -30,7 +30,7 @@ def actor_class(runtime: Runtime) -> type[DynamicMethodActor]:
 @pytest.fixture()
 async def proxy(
     actor_class: type[DynamicMethodActor],
-) -> Iterator[ActorProxy[DynamicMethodActor]]:
+) -> AsyncGenerator[ActorProxy[DynamicMethodActor]]:
     proxy = actor_class.start().proxy()
     yield proxy
     await proxy.stop()

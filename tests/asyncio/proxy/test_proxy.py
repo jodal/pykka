@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, AsyncGenerator
 
 import pytest
 
@@ -8,7 +8,7 @@ from pykka.asyncio import Actor, ActorDeadError, ActorProxy, traversable
 from tests.log_handler import LogLevel, PykkaTestLogHandler
 
 if TYPE_CHECKING:
-    from tests.types import Runtime
+    from tests.asyncio.types import Runtime
 
 
 class NestedObject:
@@ -38,7 +38,7 @@ def actor_class(runtime: Runtime) -> type[ActorForProxying]:
 @pytest.fixture()
 async def proxy(
     actor_class: type[ActorForProxying],
-) -> Iterator[ActorProxy[ActorForProxying]]:
+) -> AsyncGenerator[ActorProxy[ActorForProxying]]:
     proxy = ActorProxy(actor_ref=actor_class.start())
     yield proxy
     try:
@@ -142,7 +142,6 @@ async def test_proxy_constructor_raises_exception_if_actor_is_dead(
     assert str(exc_info.value) == f"{actor_ref} not found"
 
 
-# TODO
 async def test_actor_ref_may_be_retrieved_from_proxy_if_actor_is_dead(
     proxy: ActorProxy[ActorForProxying],
 ) -> None:

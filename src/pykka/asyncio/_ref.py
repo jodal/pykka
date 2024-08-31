@@ -14,7 +14,7 @@ from typing import (
 
 from pykka import ActorDeadError
 from pykka.asyncio import ActorProxy
-from pykka._envelope import Envelope
+from pykka.asyncio._envelope import Envelope
 from pykka.messages import _ActorStop
 
 if TYPE_CHECKING:
@@ -96,7 +96,7 @@ class ActorRef(Generic[A]):
         if not self.is_alive():
             msg = f"{self} not found"
             raise ActorDeadError(msg)
-        self.actor_inbox.put_nowait(Envelope(message))
+        self.actor_inbox.put(Envelope(message))
 
     def ask(
         self,
@@ -136,7 +136,7 @@ class ActorRef(Generic[A]):
         except ActorDeadError:
             future.set_exception()
         else:
-            self.actor_inbox.put_nowait(Envelope(message, reply_to=future))
+            self.actor_inbox.put(Envelope(message, reply_to=future))
 
         return future
 

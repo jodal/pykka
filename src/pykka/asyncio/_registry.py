@@ -139,7 +139,8 @@ class ActorRegistry:
     @classmethod
     async def stop_all(
         cls,
-    ) -> [list[bool]]:
+        timeout: Optional[float] = None,
+    ) -> list[bool]:
         """Stop all running actors.
 
         The actors are guaranteed to be stopped in the reverse of the
@@ -162,7 +163,7 @@ class ActorRegistry:
 
         """
         return [
-            await ref.stop() for ref in reversed(cls.get_all())
+            await ref.stop().get(timeout=timeout) for ref in reversed(cls.get_all())
         ]
 
     @classmethod

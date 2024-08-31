@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Iterator
 
 import pytest
 
@@ -10,7 +10,7 @@ from pykka.asyncio import Actor, ActorRegistry
 
 if TYPE_CHECKING:
     from pykka.asyncio import ActorRef
-    from tests.types import Events, Runtime
+    from tests.asyncio.types import Events, Runtime
 
 pytestmark = pytest.mark.usefixtures("_stop_all")
 
@@ -76,7 +76,7 @@ def actor_class(runtime: Runtime) -> type[AnActor]:
 async def actor_ref(
     actor_class: type[AnActor],
     events: Events,
-) -> Iterator[ActorRef[AnActor]]:
+) -> AsyncGenerator[ActorRef[AnActor]]:
     ref = actor_class.start(events)
     yield ref
     await ref.stop()

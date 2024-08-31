@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING, AsyncGenerator
 
 import pytest
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture()
-async def actor_ref() -> Iterator[ActorRef[AsyncioActor]]:
+async def actor_ref() -> AsyncGenerator[ActorRef[AsyncioActor]]:
     ref = AsyncioActor.start()
     yield ref
     await ref.stop()
