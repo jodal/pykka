@@ -4,8 +4,8 @@ import logging
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
-    from pykka.asyncio import ActorProxy
     from pykka._types import AttrPath
+    from pykka.asyncio import ActorProxy
 
 logger = logging.getLogger("pykka")
 

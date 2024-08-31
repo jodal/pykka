@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 from typing import TYPE_CHECKING, AsyncGenerator
 
 import pytest
@@ -41,10 +42,8 @@ async def proxy(
 ) -> AsyncGenerator[ActorProxy[ActorForProxying]]:
     proxy = ActorProxy(actor_ref=actor_class.start())
     yield proxy
-    try:
+    with contextlib.suppress(ActorDeadError):
         await proxy.stop()
-    except ActorDeadError:
-        pass
 
 
 def test_eq_to_self(proxy: ActorProxy[ActorForProxying]) -> None:

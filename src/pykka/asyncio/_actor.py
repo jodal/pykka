@@ -8,8 +8,8 @@ import uuid
 from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar
 
 from pykka import ActorDeadError, messages
-from pykka.asyncio import ActorRef, ActorRegistry, AsyncioEvent
 from pykka._introspection import get_attr_directly
+from pykka.asyncio import ActorRef, ActorRegistry, AsyncioEvent
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -24,7 +24,6 @@ logger = logging.getLogger("pykka")
 
 
 A = TypeVar("A", bound="Actor")
-
 
 
 class ActorInbox(Protocol):
@@ -244,8 +243,7 @@ class Actor(abc.ABC):
                 response = await self._handle_receive(envelope.message)
                 if envelope.reply_to is not None:
                     envelope.reply_to.set(response)
-            except Exception as e:  # noqa: BLE001
-                import traceback
+            except Exception:  # noqa: BLE001
                 if envelope.reply_to is not None:
                     logger.info(
                         f"Exception returned from {self} to caller:",
@@ -355,8 +353,7 @@ class Actor(abc.ABC):
             callee = get_attr_directly(self, message.attr_path)
             if asyncio.iscoroutinefunction(callee):
                 return await callee(*message.args, **message.kwargs)
-            else:
-                return callee(*message.args, **message.kwargs)
+            return callee(*message.args, **message.kwargs)
         if isinstance(message, messages.ProxyGetAttr):
             attr = get_attr_directly(self, message.attr_path)
             return attr

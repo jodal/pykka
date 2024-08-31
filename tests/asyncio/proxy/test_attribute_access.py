@@ -54,7 +54,7 @@ async def test_attr_can_be_read_using_get_postfix(
 
 
 async def test_attr_can_be_set_using_set(
-        proxy: ActorProxy[PropertyActor],
+    proxy: ActorProxy[PropertyActor],
 ) -> None:
     assert await proxy.an_attr == "an_attr"
 

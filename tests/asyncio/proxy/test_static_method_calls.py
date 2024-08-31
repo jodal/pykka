@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Awaitable, AsyncGenerator, Callable, NoReturn
+import contextlib
+from typing import TYPE_CHECKING, Any, AsyncGenerator, NoReturn
 
 import pytest
 
@@ -55,10 +56,8 @@ async def proxy(
 ) -> AsyncGenerator[ActorProxy[StaticMethodActor]]:
     proxy = actor_class.start(events).proxy()
     yield proxy
-    try:
+    with contextlib.suppress(ActorDeadError):
         await proxy.stop()
-    except ActorDeadError:
-        pass
 
 
 async def test_functional_method_call_returns_correct_value(
@@ -73,7 +72,6 @@ async def test_async_method_call_returns_correct_value(
 ) -> None:
     assert await proxy.async_hello("world") == "Hello, world!"
     assert await proxy.async_hello("moon") == "Hello, moon!"
-
 
 
 async def test_side_effect_of_method_call_is_observable(

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Iterator, NoReturn, Optional
+from typing import TYPE_CHECKING, Any, AsyncGenerator, NoReturn, Optional
 
 import pytest
 

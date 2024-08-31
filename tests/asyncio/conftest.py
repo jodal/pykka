@@ -2,20 +2,19 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import time
 from typing import (
     TYPE_CHECKING,
     Any,
-    Iterator,
     AsyncGenerator,
+    Iterator,
     cast,
 )
 
 import pytest
 
 from pykka.asyncio import ActorRegistry, AsyncioActor, AsyncioEvent, AsyncioFuture
-from tests.log_handler import PykkaTestLogHandler
 from tests.asyncio.types import Events, Runtime
+from tests.log_handler import PykkaTestLogHandler
 
 if TYPE_CHECKING:
     from pykka.asyncio import Actor, Future

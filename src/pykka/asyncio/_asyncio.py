@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import asyncio
 import sys
-from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Optional, TypeVar
 
-from pykka.asyncio import AsyncioEvent, Actor, Future
 from pykka import Timeout
+from pykka.asyncio import Actor, Future
 
 if TYPE_CHECKING:
+    from pykka._types import OptExcInfo
     from pykka.asyncio._actor import ActorInbox
     from pykka.asyncio._envelope import Envelope
-    from pykka._types import OptExcInfo
 
     __all__ = ["AsyncioActor", "AsyncioFuture"]
 
@@ -45,10 +45,9 @@ class AsyncioFuture(Future[T]):
 
         try:
             return await asyncio.wait_for(asyncio.shield(self._future), timeout)
-        except TimeoutError as e:
+        except TimeoutError:
             msg = f"{timeout} seconds"
             raise Timeout(msg) from None
-
 
     def set(
         self,
@@ -68,7 +67,7 @@ class AsyncioFuture(Future[T]):
         self._future.set_exception(e)
 
 
-class AsyncioActorInbox():
+class AsyncioActorInbox:
     def __init__(self) -> None:
         self.inbox: asyncio.Queue[Envelope[Any]] = asyncio.Queue()
 
@@ -81,9 +80,9 @@ class AsyncioActorInbox():
     def empty(self) -> bool:
         return self.inbox.empty()
 
+
 class AsyncioActor(Actor):
-    """Implementation of :class:`Actor` using Python asyncio.
-    """
+    """Implementation of :class:`Actor` using Python asyncio."""
 
     @staticmethod
     def _create_actor_inbox() -> ActorInbox:
@@ -94,4 +93,6 @@ class AsyncioActor(Actor):
         return AsyncioFuture()
 
     def _start_actor_loop(self) -> None:
-        self._task = asyncio.create_task(self._actor_loop(), name=self.__class__.__name__)
+        self._task = asyncio.create_task(
+            self._actor_loop(), name=self.__class__.__name__
+        )

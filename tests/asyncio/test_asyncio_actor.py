@@ -23,8 +23,6 @@ async def test_asyncio_actor_is_named_after_pykka_actor_class(
 ) -> None:
     tasks = asyncio.all_tasks()
     task_names = [t.get_name() for t in tasks]
-    named_correctly = [
-        name.startswith(AsyncioActor.__name__) for name in task_names
-    ]
+    named_correctly = [name.startswith(AsyncioActor.__name__) for name in task_names]
 
     assert any(named_correctly)

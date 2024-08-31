@@ -285,6 +285,7 @@ class Future(Generic[T]):
 
         .. versionadded:: 1.2
         """
+
         async def _reduce(timeout: Optional[float]) -> R:
             return functools.reduce(func, await self.get(timeout=timeout), *args)
 

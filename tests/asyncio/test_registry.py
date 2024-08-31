@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import pytest
 
-from pykka.asyncio import Actor, AsyncioActor, ActorRegistry
+from pykka.asyncio import Actor, ActorRegistry, AsyncioActor
 
 if TYPE_CHECKING:
-    from pytest_mock import MockerFixture
-
     from pykka.asyncio import ActorRef
     from tests.asyncio.types import Runtime
 
@@ -119,10 +117,9 @@ async def test_all_actors_can_be_stopped_through_registry(
 async def test_stop_all_stops_last_started_actor_first_if_blocking(
     actor_a_class: type[ActorA],
 ) -> None:
-
     class TestActor(AsyncioActor):
-        started: list[TestActor] = []
-        stopped: list[TestActor] = []
+        started: ClassVar[list[TestActor]] = []
+        stopped: ClassVar[list[TestActor]] = []
 
         async def on_start(self) -> None:
             TestActor.started.append(self)
@@ -130,10 +127,11 @@ async def test_stop_all_stops_last_started_actor_first_if_blocking(
         async def on_stop(self) -> None:
             TestActor.stopped.append(self)
 
-    actors = [TestActor.start() for _ in range(100)]
+    _actors = [TestActor.start() for _ in range(100)]
     stop_res = await ActorRegistry.stop_all()
     assert all(stop_res)
-    assert TestActor.started and TestActor.stopped
+    assert TestActor.started
+    assert TestActor.stopped
     assert TestActor.stopped == TestActor.started[::-1]
 
 
@@ -235,7 +233,7 @@ async def test_broadcast_sends_message_to_all_actors_of_given_class_name(
     for actor_a_ref in class_a_refs:
         assert {"command": "foo"} in await actor_a_ref.proxy().received_messages
 
-    class_b_refs = ActorRegistry.get_by_class(actor_b_class)
+    class_b_refs = ActorRegistry.get_by_class_name("ActorBImpl")
     assert set(class_b_refs) == set(b_actor_refs)
     for actor_b_ref in class_b_refs:
         assert {"command": "foo"} not in await actor_b_ref.proxy().received_messages

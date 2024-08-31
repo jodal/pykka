@@ -3,13 +3,9 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
     Generic,
-    Literal,
     Optional,
     TypeVar,
-    Union,
-    overload,
 )
 
 from pykka import ActorDeadError
@@ -160,6 +156,7 @@ class ActorRef(Generic[A]):
         :return: :class:`pykka.asyncio.Future` containing a boolean
         """
         ask_future = self.ask(_ActorStop())
+
         async def _stop_result_converter(timeout: Optional[float]) -> bool:
             try:
                 await ask_future.get(timeout=timeout)
@@ -174,7 +171,7 @@ class ActorRef(Generic[A]):
         return converted_future
 
     def proxy(self: ActorRef[A]) -> ActorProxy[A]:
-        """Wrap the :class:`ActorRef` in an :class:`ActorProxy <pykka.asyncio.ActorProxy>`.
+        """Wrap an :class:`ActorRef` in an :class:`ActorProxy`.
 
         Using this method like this::
 

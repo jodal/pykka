@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, Awaitable, Optional, Protocol
+from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
 if TYPE_CHECKING:
-    from pykka.asyncio import AsyncioActor, AsyncioFuture, AsyncioEvent
+    from pykka.asyncio import AsyncioActor, AsyncioEvent, AsyncioFuture
 
 
 @dataclass

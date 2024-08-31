@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Callable, Iterator
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Callable
 
 import pytest
 
@@ -194,8 +194,8 @@ async def test_ask_fails_if_actor_is_stopped(
 
 
 async def test_ask_get_timeout_if_blocked_too_long(
-     actor_ref: ActorRef[ReferencableActor],
- ) -> None:
+    actor_ref: ActorRef[ReferencableActor],
+) -> None:
     with pytest.raises(Timeout):
         await actor_ref.ask("ping").get(timeout=0.01)
 

@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import asyncio
 import logging
-from typing import TYPE_CHECKING, Any, Awaitable, Generic, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from pykka import ActorDeadError, messages
 from pykka.asyncio._introspection import AttrInfo, introspect_attrs
 
 if TYPE_CHECKING:
-    from pykka.asyncio import Actor, ActorRef, Future
     from pykka._types import AttrPath
+    from pykka.asyncio import Actor, ActorRef, Future
 
 __all__ = ["ActorProxy"]
 
@@ -166,7 +165,7 @@ class ActorProxy(Generic[A]):
         result += [attr_path[0] for attr_path in list(self._known_attrs.keys())]
         return sorted(result)
 
-    def __getattr__(self, name: str) -> Callable[..., Awaitable[Any]]:
+    def __getattr__(self, name: str) -> Any:
         """Get a field or callable from the actor."""
         attr_path: AttrPath = (*self._attr_path, name)
 

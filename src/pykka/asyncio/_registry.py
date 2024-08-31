@@ -4,17 +4,14 @@ import logging
 from typing import (
     TYPE_CHECKING,
     Any,
-    Awaitable,
     ClassVar,
-    Literal,
     Optional,
     TypeVar,
     Union,
-    overload,
 )
 
 if TYPE_CHECKING:
-    from pykka.asyncio import Actor, ActorRef, Future
+    from pykka.asyncio import Actor, ActorRef
 
 __all__ = ["ActorRegistry"]
 
@@ -80,9 +77,7 @@ class ActorRegistry:
         :returns: list of :class:`pykka.asyncio.ActorRef`
         """
         return [
-            ref
-            for ref in cls._actor_refs
-            if issubclass(ref.actor_class, actor_class)
+            ref for ref in cls._actor_refs if issubclass(ref.actor_class, actor_class)
         ]
 
     @classmethod

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, AsyncGenerator, cast
 
@@ -49,10 +50,8 @@ async def proxy(
 ) -> AsyncGenerator[FooProxy]:
     proxy = cast(FooProxy, actor_class.start().proxy())
     yield proxy
-    try:
+    with contextlib.suppress(ActorDeadError):
         await proxy.stop()
-    except ActorDeadError:
-        pass
 
 
 async def test_proxy_field(proxy: FooProxy) -> None:
