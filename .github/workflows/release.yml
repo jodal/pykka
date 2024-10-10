@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
       - run: python -m pip install poetry==1.8.3 tox==4.21.2
       - run: tox --skip-missing-interpreters true
       - run: poetry build
