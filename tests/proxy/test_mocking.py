@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator, NoReturn
+from typing import TYPE_CHECKING, NoReturn
 
 import pytest
 
 from pykka import Actor
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from pytest_mock import MockerFixture
 
     from pykka import ActorProxy

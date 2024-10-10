@@ -4,13 +4,15 @@ import asyncio
 import sys
 import traceback
 import types
-from typing import TYPE_CHECKING, Any, Generator, Iterable, List
+from typing import TYPE_CHECKING, Any, List
 
 import pytest
 
 from pykka import Future, Timeout, get_all
 
 if TYPE_CHECKING:
+    from collections.abc import Generator, Iterable
+
     from pytest_mock import MockerFixture
 
     from tests.types import Runtime

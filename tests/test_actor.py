@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
 from pykka import Actor, ActorDeadError, ActorRegistry
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from pykka import ActorRef
     from tests.types import Events, Runtime
 

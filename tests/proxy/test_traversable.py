@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -8,6 +8,8 @@ import pykka
 from pykka import Actor
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from pykka import ActorProxy
     from tests.types import Runtime
 

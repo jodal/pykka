@@ -6,7 +6,6 @@ import time
 from typing import (
     TYPE_CHECKING,
     Any,
-    Iterator,
     cast,
 )
 
@@ -17,6 +16,8 @@ from tests.log_handler import PykkaTestLogHandler
 from tests.types import Events, Runtime
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from pykka import Actor, Future
 
 
