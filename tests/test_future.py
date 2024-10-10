@@ -4,13 +4,15 @@ import asyncio
 import sys
 import traceback
 import types
-from typing import TYPE_CHECKING, Any, Generator, Iterable, List
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
 from pykka import Future, Timeout, get_all
 
 if TYPE_CHECKING:
+    from collections.abc import Generator, Iterable
+
     from pytest_mock import MockerFixture
 
     from tests.types import Runtime
@@ -198,7 +200,7 @@ def test_filter_reuses_result_if_called_multiple_times(
 
 
 def test_join_combines_multiple_futures_into_one(
-    futures: List[Future[int]],
+    futures: list[Future[int]],
 ) -> None:
     joined = futures[0].join(futures[1], futures[2])
     futures[0].set(0)
@@ -209,7 +211,7 @@ def test_join_combines_multiple_futures_into_one(
 
 
 def test_join_preserves_timeout_kwarg(
-    futures: List[Future[int]],
+    futures: list[Future[int]],
 ) -> None:
     joined = futures[0].join(futures[1], futures[2])
     futures[0].set(0)

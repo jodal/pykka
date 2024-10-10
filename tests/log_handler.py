@@ -3,7 +3,7 @@ import logging
 import threading
 import time
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any
 
 
 class LogLevel(str, Enum):
@@ -16,8 +16,8 @@ class LogLevel(str, Enum):
 
 class PykkaTestLogHandler(logging.Handler):
     lock: threading.RLock  # type: ignore[assignment]
-    events: Dict[str, threading.Event]
-    messages: Dict[LogLevel, List[logging.LogRecord]]
+    events: dict[str, threading.Event]
+    messages: dict[LogLevel, list[logging.LogRecord]]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self.lock = (  # pyright: ignore[reportIncompatibleVariableOverride]

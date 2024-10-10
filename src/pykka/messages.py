@@ -26,7 +26,7 @@ special circumstances.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Tuple
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 if TYPE_CHECKING:
     from pykka._types import AttrPath
@@ -43,10 +43,10 @@ class ProxyCall(NamedTuple):
     attr_path: AttrPath
 
     #: List with positional arguments.
-    args: Tuple[Any, ...]
+    args: tuple[Any, ...]
 
     #: Dict with keyword arguments.
-    kwargs: Dict[str, Any]
+    kwargs: dict[str, Any]
 
 
 class ProxyGetAttr(NamedTuple):

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -9,6 +9,8 @@ from pykka import Actor, ActorDeadError, ActorProxy
 from tests.log_handler import LogLevel, PykkaTestLogHandler
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from tests.types import Runtime
 
 

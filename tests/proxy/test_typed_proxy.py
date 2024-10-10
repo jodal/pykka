@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterator, cast
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
@@ -10,6 +10,8 @@ from pykka import Actor, ActorProxy
 from pykka.typing import ActorMemberMixin, proxy_field, proxy_method
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from tests.types import Runtime
 
 

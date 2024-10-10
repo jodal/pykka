@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Iterator, NoReturn, Optional
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
 
 import pytest
 
@@ -9,6 +9,7 @@ from pykka import Actor
 from tests.log_handler import LogLevel, PykkaTestLogHandler
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
     from types import TracebackType
 
     from pykka import ActorRef
