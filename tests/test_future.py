@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 def run_async(coroutine: Any) -> Any:
-    loop = asyncio.get_event_loop()
+    loop = asyncio.new_event_loop()
     f = asyncio.ensure_future(coroutine, loop=loop)
     return loop.run_until_complete(f)
 
