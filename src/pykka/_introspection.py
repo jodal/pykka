@@ -34,7 +34,9 @@ def introspect_attrs(
 
         attr = get_attr_from_parent(root, attr_path)
 
-        if attr == proxy:
+        # Keep `proxy` first to use it's `__eq__` method instead of `attr`'s
+        # unknown implementation.
+        if proxy == attr:
             logger.warning(
                 f"{root} attribute {'.'.join(attr_path)!r} "
                 f"is a proxy to itself. "

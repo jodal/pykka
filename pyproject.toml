@@ -41,6 +41,7 @@ ruff = "^0.5.2"
 pytest = "^7.4.2"
 pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
+pydantic = "^2.9"
 
 [tool.coverage.paths]
 source = ["src"]
