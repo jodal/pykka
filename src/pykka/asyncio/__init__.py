@@ -4,16 +4,16 @@ import importlib.metadata as _importlib_metadata
 import logging as _logging
 
 from pykka._exceptions import ActorDeadError, Timeout
-from pykka._future import Future, get_all
-from pykka._proxy import ActorProxy, CallableProxy, traversable
-from pykka._ref import ActorRef
-from pykka._registry import ActorRegistry
+from pykka.asyncio._event import AsyncioEvent
+from pykka.asyncio._future import Future, get_all
+from pykka.asyncio._proxy import ActorProxy, CallableProxy, traversable
+from pykka.asyncio._ref import ActorRef
+from pykka.asyncio._registry import ActorRegistry
 
 # The following must be imported late, in this specific order.
-from pykka._actor import Actor  # isort:skip
-from pykka._threading import ThreadingActor, ThreadingFuture  # isort:skip
+from pykka.asyncio._actor import Actor  # isort:skip
+from pykka.asyncio._asyncio import AsyncioActor, AsyncioFuture  # isort:skip
 
-from pykka import asyncio
 
 __all__ = [
     "Actor",
@@ -23,12 +23,12 @@ __all__ = [
     "ActorRegistry",
     "CallableProxy",
     "Future",
-    "ThreadingActor",
-    "ThreadingFuture",
+    "AsyncioActor",
+    "AsyncioEvent",
+    "AsyncioFuture",
     "Timeout",
     "get_all",
     "traversable",
-    "asyncio",
 ]
 
 
