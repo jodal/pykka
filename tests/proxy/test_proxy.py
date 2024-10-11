@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pydantic
 import pytest
 
 import pykka
@@ -18,9 +19,16 @@ class NestedObject:
     pass
 
 
+class PydanticModel(pydantic.BaseModel):
+    foo: str = "bar"
+
+
 class ActorForProxying(Actor):
     a_nested_object = pykka.traversable(NestedObject())
     a_class_attr = "class_attr"
+
+    # Include a pydantic model to test that it doesn't break introspection.
+    a_pydantic_model = PydanticModel()
 
     def __init__(self) -> None:
         super().__init__()
@@ -108,6 +116,7 @@ def test_dir_on_proxy_lists_attributes_of_the_actor(
     assert "a_class_attr" in result
     assert "an_instance_attr" in result
     assert "a_method" in result
+    assert "a_pydantic_model" in result
 
 
 def test_dir_on_proxy_lists_private_attributes_of_the_proxy(
