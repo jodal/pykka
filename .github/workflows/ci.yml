@@ -7,6 +7,13 @@ on:
       - main
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hynek/build-and-inspect-python-package@v2
+
   main:
     strategy:
       fail-fast: false
