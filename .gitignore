@@ -1,6 +1,8 @@
 *.egg-info
 *.pyc
+/*.lock
 /.coverage
+/.jj/
 /.mypy_cache/
 /.pytest_cache/
 /.python-version
@@ -10,4 +12,3 @@
 /build/
 /dist/
 /docs/_build/*
-/poetry.lock

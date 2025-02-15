@@ -11,7 +11,7 @@ copyright = f"2010-2025, {author}"  # noqa: A001
 pyproject_path = pathlib.Path(__file__).parent.parent / "pyproject.toml"
 with pyproject_path.open("rb") as fh:
     pyproject = tomli.load(fh)
-release = pyproject["tool"]["poetry"]["version"]
+release = pyproject["project"]["version"]
 version = ".".join(release.split(".")[:2])
 
 extensions = [
