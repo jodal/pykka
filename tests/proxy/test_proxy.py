@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pydantic
 import pytest
 
 import pykka
@@ -19,16 +18,20 @@ class NestedObject:
     pass
 
 
-class PydanticModel(pydantic.BaseModel):
+class ObjectWithEqImpl:
     foo: str = "bar"
+
+    def __eq__(self, other: object) -> bool:
+        raise Exception("This is a broken __eq__ implementation")
 
 
 class ActorForProxying(Actor):
     a_nested_object = pykka.traversable(NestedObject())
     a_class_attr = "class_attr"
 
-    # Include a pydantic model to test that it doesn't break introspection.
-    a_pydantic_model = PydanticModel()
+    # Include an object with a broken __eq__() implementation to test that it
+    # doesn't break introspection.
+    object_with_eq_impl = ObjectWithEqImpl()
 
     def __init__(self) -> None:
         super().__init__()
@@ -116,7 +119,7 @@ def test_dir_on_proxy_lists_attributes_of_the_actor(
     assert "a_class_attr" in result
     assert "an_instance_attr" in result
     assert "a_method" in result
-    assert "a_pydantic_model" in result
+    assert "object_with_eq_impl" in result
 
 
 def test_dir_on_proxy_lists_private_attributes_of_the_proxy(
