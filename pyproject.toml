@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pykka"
-version = "4.1.1"
+version = "4.1.2"
 description = "Pykka is a Python implementation of the actor model"
 authors = ["Stein Magnus Jodal <stein.magnus@jodal.no>"]
 license = "Apache-2.0"
