@@ -10,9 +10,9 @@ repository = "https://github.com/jodal/pykka"
 documentation = "https://pykka.readthedocs.io/"
 keywords = ["actor", "concurrency", "threading"]
 classifiers = [
-   "Development Status :: 5 - Production/Stable",
-   "Intended Audience :: Developers",
-   "Topic :: Software Development :: Libraries",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
 ]
 include = ["docs", "examples", "tests"]
 
@@ -43,6 +43,7 @@ pytest-cov = "^4.1.0"
 pytest-mock = "^3.11.1"
 pydantic = "^2.9"
 
+
 [tool.coverage.paths]
 source = ["src"]
 
@@ -53,6 +54,7 @@ source = ["pykka"]
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING", '\.\.\.']
 
+
 [tool.mypy]
 disallow_untyped_defs = true
 no_implicit_optional = true
@@ -62,48 +64,49 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
 
+
 [tool.ruff]
 target-version = "py39"
 
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-   "A003",    # builtin-attribute-shadowing
-   "ANN101",  # missing-type-self
-   "ANN102",  # missing-type-cls
-   "ANN401",  # any-type
-   "D203",    # one-blank-line-before-class
-   "D213",    # multi-line-summary-second-line
-   "G004",    # logging-f-string
-   "PLR2004", # magic-value-comparison
-   "RET504",  # unnecessary-assign
-   "S101",    # assert
-   "TRY003",  # raise-vanilla-args
-   "UP007",   # typing-union
-   #
-   # These rules interfere with `ruff format`
-   "COM812", # missing-trailing-comma
-   "ISC001", # single-line-implicit-string-concatenation
+    "A003",    # builtin-attribute-shadowing
+    "ANN101",  # missing-type-self
+    "ANN102",  # missing-type-cls
+    "ANN401",  # any-type
+    "D203",    # one-blank-line-before-class
+    "D213",    # multi-line-summary-second-line
+    "G004",    # logging-f-string
+    "PLR2004", # magic-value-comparison
+    "RET504",  # unnecessary-assign
+    "S101",    # assert
+    "TRY003",  # raise-vanilla-args
+    "UP007",   # typing-union
+    #
+    # These rules interfere with `ruff format`
+    "COM812", # missing-trailing-comma
+    "ISC001", # single-line-implicit-string-concatenation
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "docs/*" = [
-   "D",      # pydocstyle
-   "INP001", # implicit-namespace-package
+    "D",      # pydocstyle
+    "INP001", # implicit-namespace-package
 ]
 "examples/*" = [
-   "ANN",    # flake8-annotations
-   "BLE001", # blind-except
-   "D",      # pydocstyle
-   "INP001", # implicit-namespace-package
-   "T20",    # flake8-print
+    "ANN",    # flake8-annotations
+    "BLE001", # blind-except
+    "D",      # pydocstyle
+    "INP001", # implicit-namespace-package
+    "T20",    # flake8-print
 ]
 "tests/*" = [
-   "ANN",    # flake8-annotations
-   "ARG",    # flake8-unused-arguments
-   "D",      # pydocstyle
-   "EM101",  # raw-string-in-exception
-   "TRY002", # raise-vanilla-class
+    "ANN",    # flake8-annotations
+    "ARG",    # flake8-unused-arguments
+    "D",      # pydocstyle
+    "EM101",  # raw-string-in-exception
+    "TRY002", # raise-vanilla-class
 ]
 
 [tool.ruff.lint.isort]
@@ -111,6 +114,7 @@ known-first-party = ["pykka"]
 
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = true
+
 
 [tool.pyright]
 pythonVersion = "3.9"
