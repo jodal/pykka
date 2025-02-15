@@ -126,6 +126,128 @@ reportImportCycles = false
 # Already covered by flake8-self:
 reportPrivateUsage = false
 
+
+[tool.tox]
+requires = ["tox >= 4.21"]
+env_list = [
+    "3.9",
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13",
+    "docs",
+    "mypy",
+    "pyright",
+    "ruff-format",
+    "ruff-lint",
+]
+
+[tool.tox.env_run_base]
+allowlist_externals = ["poetry"]
+commands = [
+    [
+        "poetry",
+        "install",
+        "--only=main,tests",
+    ],
+    [
+        "poetry",
+        "run",
+        "python",
+        "-m",
+        "pytest",
+        "--basetemp={envtmpdir}",
+        "--cov=pykka",
+        "--cov-report=term-missing",
+        "{posargs}",
+    ],
+]
+
+[tool.tox.env.docs]
+commands = [
+    [
+        "poetry",
+        "install",
+        "--only=main,docs",
+    ],
+    [
+        "poetry",
+        "run",
+        "sphinx-build",
+        "-b",
+        "html",
+        "-d",
+        "{envtmpdir}/doctrees",
+        "docs",
+        "{envtmpdir}/html",
+    ],
+]
+
+[tool.tox.env.mypy]
+commands = [
+    [
+        "poetry",
+        "install",
+        "--only=main,dev,docs,tests,mypy",
+    ],
+    [
+        "poetry",
+        "run",
+        "mypy",
+        "src",
+        "tests",
+    ],
+]
+
+[tool.tox.env.pyright]
+commands = [
+    [
+        "poetry",
+        "install",
+        "--only=main,dev,docs,tests,mypy",
+    ],
+    [
+        "poetry",
+        "run",
+        "pyright",
+        "src",
+        "tests",
+    ],
+]
+
+[tool.tox.env.ruff-format]
+commands = [
+    [
+        "poetry",
+        "install",
+        "--only=ruff",
+    ],
+    [
+        "poetry",
+        "run",
+        "ruff",
+        "format",
+        "--check",
+        "{posargs:.}",
+    ],
+]
+
+[tool.tox.env.ruff-lint]
+commands = [
+    [
+        "poetry",
+        "install",
+        "--only=ruff",
+    ],
+    [
+        "poetry",
+        "run",
+        "ruff",
+        "check",
+        "{posargs:.}",
+    ],
+]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
