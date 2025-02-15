@@ -35,6 +35,9 @@ jobs:
             python: "3.13"
             tox: py313
             coverage: true
+          - name: "Test: Python 3.14"
+            python: "3.14-dev"
+            tox: py314
           - name: "Lint: mypy"
             python: "3.13"
             tox: mypy
