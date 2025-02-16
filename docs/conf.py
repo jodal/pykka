@@ -1,12 +1,17 @@
 """Pykka documentation build configuration file."""
 
-import toml
+import pathlib
+
+import tomli
 
 project = "Pykka"
 author = "Stein Magnus Jodal and contributors"
 copyright = f"2010-2025, {author}"  # noqa: A001
 
-release = toml.load("../pyproject.toml")["tool"]["poetry"]["version"]
+pyproject_path = pathlib.Path(__file__).parent.parent / "pyproject.toml"
+with pyproject_path.open("rb") as fh:
+    pyproject = tomli.load(fh)
+release = pyproject["tool"]["poetry"]["version"]
 version = ".".join(release.split(".")[:2])
 
 extensions = [
