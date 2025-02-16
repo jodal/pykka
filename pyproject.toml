@@ -1,6 +1,6 @@
 [project]
 name = "pykka"
-version = "4.1.2"
+version = "4.2.0"
 description = "Pykka is a Python implementation of the actor model"
 authors = [{ name = "Stein Magnus Jodal", email = "stein.magnus@jodal.no" }]
 requires-python = ">=3.9"
