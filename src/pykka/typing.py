@@ -1,3 +1,5 @@
+# noqa: A005
+
 """The :mod:`pykka.typing` module contains helpers to improve type hints.
 
 Since Pykka 4.0, Pykka has complete type hints for the public API, tested using

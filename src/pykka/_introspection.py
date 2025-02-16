@@ -75,8 +75,7 @@ def get_attr_from_parent(
         return parent_attrs[attr_name]
     except KeyError:
         msg = (
-            f"type object {parent.__class__.__name__!r} "
-            f"has no attribute {attr_name!r}"
+            f"type object {parent.__class__.__name__!r} has no attribute {attr_name!r}"
         )
         raise AttributeError(msg) from None
 

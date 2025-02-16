@@ -49,7 +49,7 @@ def actor_class(runtime: Runtime) -> type[ActorForProxying]:
     return ActorForProxyingImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def proxy(
     actor_class: type[ActorForProxying],
 ) -> Iterator[ActorProxy[ActorForProxying]]:

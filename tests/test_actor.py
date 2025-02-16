@@ -73,7 +73,7 @@ def actor_class(runtime: Runtime) -> type[AnActor]:
     return ActorAImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def actor_ref(
     actor_class: type[AnActor],
     events: Events,

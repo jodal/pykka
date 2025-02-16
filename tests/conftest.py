@@ -40,13 +40,13 @@ def runtime(request: pytest.FixtureRequest) -> Runtime:
     return cast(Runtime, request.param)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _stop_all() -> Iterator[None]:  # pyright: ignore[reportUnusedFunction]
     yield
     ActorRegistry.stop_all()
 
 
-@pytest.fixture()
+@pytest.fixture
 def log_handler() -> Iterator[logging.Handler]:
     log_handler = PykkaTestLogHandler()
 
@@ -61,7 +61,7 @@ def log_handler() -> Iterator[logging.Handler]:
     log_handler.close()
 
 
-@pytest.fixture()
+@pytest.fixture
 def events(runtime: Runtime) -> Events:
     return Events(
         on_start_was_called=runtime.event_class(),
@@ -128,11 +128,11 @@ def failing_on_failure_actor_class(runtime: Runtime) -> type[Actor]:
     return FailingOnFailureActor
 
 
-@pytest.fixture()
+@pytest.fixture
 def future(runtime: Runtime) -> Future[Any]:
     return runtime.future_class()
 
 
-@pytest.fixture()
+@pytest.fixture
 def futures(runtime: Runtime) -> list[Future[Any]]:
     return [runtime.future_class() for _ in range(3)]

@@ -50,17 +50,17 @@ def actor_b_class(runtime: Runtime) -> type[ActorB]:
     return ActorBImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def actor_ref(actor_a_class: type[ActorA]) -> ActorRef[ActorA]:
     return actor_a_class.start()
 
 
-@pytest.fixture()
+@pytest.fixture
 def a_actor_refs(actor_a_class: type[ActorA]) -> list[ActorRef[ActorA]]:
     return [actor_a_class.start() for _ in range(3)]
 
 
-@pytest.fixture()
+@pytest.fixture
 def b_actor_refs(actor_b_class: type[ActorB]) -> list[ActorRef[ActorB]]:
     return [actor_b_class.start() for _ in range(5)]
 

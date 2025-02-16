@@ -32,7 +32,7 @@ class PropertyActor(Actor):
         self._a_rw_property = value
 
 
-@pytest.fixture()
+@pytest.fixture
 def actor_class(runtime: Runtime) -> type[PropertyActor]:
     class PropertyActorImpl(PropertyActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
@@ -40,7 +40,7 @@ def actor_class(runtime: Runtime) -> type[PropertyActor]:
     return PropertyActorImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def proxy(
     actor_class: type[PropertyActor],
 ) -> Iterator[ActorProxy[PropertyActor]]:
