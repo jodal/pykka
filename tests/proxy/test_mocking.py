@@ -32,7 +32,7 @@ class ActorForMocking(Actor):
         raise Exception("This method should be mocked")
 
 
-@pytest.fixture()
+@pytest.fixture
 def actor_class(runtime: Runtime) -> type[ActorForMocking]:
     class ActorForMockingImpl(ActorForMocking, runtime.actor_class):  # type: ignore[name-defined]
         pass
@@ -40,7 +40,7 @@ def actor_class(runtime: Runtime) -> type[ActorForMocking]:
     return ActorForMockingImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def proxy(
     actor_class: ActorForMocking,
 ) -> Iterator[ActorProxy[ActorForMocking]]:

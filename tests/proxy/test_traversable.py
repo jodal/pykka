@@ -36,7 +36,7 @@ class NestedWithAttrMarker:
 
 
 class NestedWithAttrMarkerAndSlots:
-    __slots__ = ["pykka_traversable", "inner"]
+    __slots__ = ["inner", "pykka_traversable"]
 
     def __init__(self) -> None:
         # Objects using '__slots__' cannot have class attributes.
@@ -56,7 +56,7 @@ class TraversableObjectsActor(Actor):
         return NestedWithAttrMarker()
 
 
-@pytest.fixture()
+@pytest.fixture
 def actor_class(runtime: Runtime) -> type[Actor]:
     class TraversableObjectsActorImpl(TraversableObjectsActor, runtime.actor_class):  # type: ignore[name-defined]
         pass
@@ -64,7 +64,7 @@ def actor_class(runtime: Runtime) -> type[Actor]:
     return TraversableObjectsActorImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def proxy(
     actor_class: type[TraversableObjectsActor],
 ) -> Iterator[ActorProxy[TraversableObjectsActor]]:

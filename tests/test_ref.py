@@ -42,12 +42,12 @@ def actor_class(runtime: Runtime) -> type[ReferencableActor]:
     return ReferencableActorImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def received_message(runtime: Runtime) -> Future[str]:
     return runtime.future_class()
 
 
-@pytest.fixture()
+@pytest.fixture
 def actor_ref(
     runtime: Runtime,
     actor_class: type[ReferencableActor],

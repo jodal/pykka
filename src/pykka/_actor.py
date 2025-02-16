@@ -272,8 +272,7 @@ class Actor(abc.ABC):
                         exc_info=(
                             ActorDeadError,
                             ActorDeadError(
-                                f"{self.actor_ref} stopped before "
-                                f"handling the message"
+                                f"{self.actor_ref} stopped before handling the message"
                             ),
                             None,
                         )

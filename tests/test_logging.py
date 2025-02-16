@@ -53,7 +53,7 @@ def actor_class(runtime: Runtime) -> type[LoggingActor]:
     return LoggingActorImpl
 
 
-@pytest.fixture()
+@pytest.fixture
 def actor_ref(
     actor_class: type[LoggingActor],
     events: Events,
