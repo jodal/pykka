@@ -19,35 +19,35 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "Test: Python 3.9"
+          - name: "pytest (3.9)"
             python: "3.9"
-            tox: py39
-          - name: "Test: Python 3.10"
+            tox: "3.9"
+          - name: "pytest (3.10)"
             python: "3.10"
-            tox: py310
-          - name: "Test: Python 3.11"
+            tox: "3.10"
+          - name: "pytest (3.11)"
             python: "3.11"
-            tox: py311
-          - name: "Test: Python 3.12"
+            tox: "3.11"
+          - name: "pytest (3.12)"
             python: "3.12"
-            tox: py312
-          - name: "Test: Python 3.13"
+            tox: "3.12"
+          - name: "pytest (3.13)"
             python: "3.13"
-            tox: py313
+            tox: "3.13"
             coverage: true
-          - name: "Test: Python 3.14"
-            python: "3.14-dev"
-            tox: py314
-          - name: "Lint: mypy"
+          - name: "pytest (3.14)"
+            python: "3.14"
+            tox: "3.14"
+          - name: "mypy"
             python: "3.13"
             tox: mypy
-          - name: "Lint: pyright"
+          - name: "pyright"
             python: "3.13"
             tox: pyright
-          - name: "Lint: ruff-format"
+          - name: "ruff format"
             python: "3.13"
             tox: ruff-format
-          - name: "Lint: ruff-lint"
+          - name: "ruff lint"
             python: "3.13"
             tox: ruff-lint
           - name: "Docs"
@@ -59,20 +59,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v5
         with:
           python-version: ${{ matrix.python }}
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-${{ matrix.python }}-${{ matrix.tox }}-pip-${{ hashFiles('pyproject.toml', 'tox.ini') }} }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.python }}-${{ matrix.tox }}-pip-
-      - run: python -m pip install poetry==1.8.3 tox==4.21.2
-      - run: python -m tox -e ${{ matrix.tox }}
+      - run: uv pip install tox tox-uv
+      - run: tox -e ${{ matrix.tox }}
         if: ${{ ! matrix.coverage }}
-      - run: python -m tox -e ${{ matrix.tox }} -- --cov-report=xml
+      - run: tox -e ${{ matrix.tox }} -- --cov-report=xml
         if: ${{ matrix.coverage }}
       - uses: codecov/codecov-action@v5
         if: ${{ matrix.coverage }}
