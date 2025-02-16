@@ -107,8 +107,6 @@ keep-runtime-typing = true
 
 [tool.pyright]
 pythonVersion = "3.9"
-venvPath = "."
-venv = ".venv"
 typeCheckingMode = "strict"
 # Already coverd by tests and careful import ordering:
 reportImportCycles = false
@@ -132,18 +130,9 @@ env_list = [
 ]
 
 [tool.tox.env_run_base]
-allowlist_externals = ["poetry"]
+dependency_groups = ["tests"]
 commands = [
     [
-        "poetry",
-        "install",
-        "--only=main,tests",
-    ],
-    [
-        "poetry",
-        "run",
-        "python",
-        "-m",
         "pytest",
         "--basetemp={envtmpdir}",
         "--cov=pykka",
@@ -153,89 +142,54 @@ commands = [
 ]
 
 [tool.tox.env.docs]
+dependency_groups = ["docs"]
 commands = [
     [
-        "poetry",
-        "install",
-        "--only=main,docs",
-    ],
-    [
-        "poetry",
-        "run",
         "sphinx-build",
-        "-b",
+        "--builder",
         "html",
-        "-d",
-        "{envtmpdir}/doctrees",
+        "--doctree-dir",
+        "{envtmpdir}{/}doctrees",
         "docs",
-        "{envtmpdir}/html",
+        "{envtmpdir}{/}html",
     ],
 ]
 
 [tool.tox.env.mypy]
+skip_install = true
+dependency_groups = ["tests", "mypy"]
 commands = [
     [
-        "poetry",
-        "install",
-        "--only=main,dev,docs,tests,mypy",
-    ],
-    [
-        "poetry",
-        "run",
         "mypy",
-        "src",
-        "tests",
+        { replace = "posargs", default = [
+            "src",
+            "tests",
+        ], extend = true },
     ],
 ]
 
 [tool.tox.env.pyright]
+skip_install = true
+dependency_groups = ["tests", "pyright"]
 commands = [
     [
-        "poetry",
-        "install",
-        "--only=main,dev,docs,tests,pyright",
-    ],
-    [
-        "poetry",
-        "run",
         "pyright",
-        "src",
-        "tests",
+        { replace = "posargs", default = [
+            "src",
+            "tests",
+        ], extend = true },
     ],
 ]
 
 [tool.tox.env.ruff-format]
-commands = [
-    [
-        "poetry",
-        "install",
-        "--only=ruff",
-    ],
-    [
-        "poetry",
-        "run",
-        "ruff",
-        "format",
-        "--check",
-        "{posargs:.}",
-    ],
-]
+skip_install = true
+dependency_groups = ["ruff"]
+commands = [["ruff", "format", "--check", "{posargs:.}"]]
 
 [tool.tox.env.ruff-lint]
-commands = [
-    [
-        "poetry",
-        "install",
-        "--only=ruff",
-    ],
-    [
-        "poetry",
-        "run",
-        "ruff",
-        "check",
-        "{posargs:.}",
-    ],
-]
+skip_install = true
+dependency_groups = ["ruff"]
+commands = [["ruff", "check", "{posargs:.}"]]
 
 
 [build-system]
