@@ -155,7 +155,6 @@ commands = [
 ]
 
 [tool.tox.env.mypy]
-skip_install = true
 dependency_groups = ["tests", "mypy"]
 commands = [
     [
@@ -168,7 +167,6 @@ commands = [
 ]
 
 [tool.tox.env.pyright]
-skip_install = true
 dependency_groups = ["tests", "pyright"]
 commands = [
     [
