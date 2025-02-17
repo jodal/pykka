@@ -115,7 +115,6 @@ reportPrivateUsage = false
 
 
 [tool.tox]
-requires = ["tox >= 4.21"]
 env_list = [
     "3.9",
     "3.10",
