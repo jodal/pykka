@@ -98,9 +98,6 @@ ignore = [
     "TRY002", # raise-vanilla-class
 ]
 
-[tool.ruff.lint.isort]
-known-first-party = ["pykka"]
-
 [tool.ruff.lint.pyupgrade]
 keep-runtime-typing = true
 
