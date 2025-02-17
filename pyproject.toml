@@ -127,6 +127,8 @@ env_list = [
 ]
 
 [tool.tox.env_run_base]
+package = "wheel"
+wheel_build_env = ".pkg"
 dependency_groups = ["tests"]
 commands = [
     [
