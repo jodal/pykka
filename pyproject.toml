@@ -18,6 +18,12 @@ dependencies = ["typing-extensions>=4.0.0 ; python_version < '3.10'"]
 "Source code" = "https://github.com/jodal/pykka"
 Documentation = "https://pykka.readthedocs.io/"
 
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
 [dependency-groups]
 dev = [
     "tox>=4.21.2",
@@ -54,6 +60,15 @@ warn_return_any = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
+
+
+[tool.pyright]
+pythonVersion = "3.9"
+typeCheckingMode = "strict"
+# Already coverd by tests and careful import ordering:
+reportImportCycles = false
+# Already covered by flake8-self:
+reportPrivateUsage = false
 
 
 [tool.ruff]
@@ -102,15 +117,6 @@ ignore = [
 keep-runtime-typing = true
 
 
-[tool.pyright]
-pythonVersion = "3.9"
-typeCheckingMode = "strict"
-# Already coverd by tests and careful import ordering:
-reportImportCycles = false
-# Already covered by flake8-self:
-reportPrivateUsage = false
-
-
 [tool.tox]
 env_list = [
     "3.9",
@@ -119,11 +125,11 @@ env_list = [
     "3.12",
     "3.13",
     "3.14",
-    "docs",
     "mypy",
     "pyright",
     "ruff-format",
     "ruff-lint",
+    "docs",
 ]
 
 [tool.tox.env_run_base]
@@ -137,20 +143,6 @@ commands = [
         "--cov=pykka",
         "--cov-report=term-missing",
         "{posargs}",
-    ],
-]
-
-[tool.tox.env.docs]
-dependency_groups = ["docs"]
-commands = [
-    [
-        "sphinx-build",
-        "--builder",
-        "html",
-        "--doctree-dir",
-        "{envtmpdir}{/}doctrees",
-        "docs",
-        "{envtmpdir}{/}html",
     ],
 ]
 
@@ -188,7 +180,16 @@ skip_install = true
 dependency_groups = ["ruff"]
 commands = [["ruff", "check", "{posargs:.}"]]
 
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.tox.env.docs]
+dependency_groups = ["docs"]
+commands = [
+    [
+        "sphinx-build",
+        "--builder",
+        "html",
+        "--doctree-dir",
+        "{envtmpdir}{/}doctrees",
+        "docs",
+        "{envtmpdir}{/}html",
+    ],
+]
