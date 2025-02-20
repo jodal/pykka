@@ -42,11 +42,11 @@ tests = ["pytest>=7.4.2", "pytest-cov>=4.1.0", "pytest-mock>=3.11.1"]
 
 
 [tool.coverage.paths]
-source = ["src"]
+source = ["src/", "*/site-packages/"]
 
 [tool.coverage.run]
 branch = true
-source = ["pykka"]
+source_pkgs = ["pykka"]
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING", '\.\.\.']
@@ -139,10 +139,9 @@ dependency_groups = ["tests"]
 commands = [
     [
         "pytest",
+        "--cov",
         "--basetemp={envtmpdir}",
-        "--cov=pykka",
-        "--cov-report=term-missing",
-        "{posargs}",
+        { replace = "posargs", extend = true },
     ],
 ]
 
