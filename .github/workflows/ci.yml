@@ -59,9 +59,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python }}
+          activate-environment: true
       - run: uv pip install tox tox-uv
       - run: tox -e ${{ matrix.tox }}
         if: ${{ ! matrix.coverage }}
