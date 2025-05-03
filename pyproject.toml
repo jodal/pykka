@@ -83,6 +83,7 @@ ignore = [
     "D213",    # multi-line-summary-second-line
     "G004",    # logging-f-string
     "PLR2004", # magic-value-comparison
+    "PYI019",  # custom-type-var-for-self -- Remove when requiring Python 3.11
     "RET504",  # unnecessary-assign
     "S101",    # assert
     "TRY003",  # raise-vanilla-args
