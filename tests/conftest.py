@@ -37,7 +37,7 @@ RUNTIMES = {
 
 @pytest.fixture(scope="session", params=RUNTIMES.values())
 def runtime(request: pytest.FixtureRequest) -> Runtime:
-    return cast(Runtime, request.param)
+    return cast("Runtime", request.param)
 
 
 @pytest.fixture

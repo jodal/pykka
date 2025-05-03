@@ -119,7 +119,7 @@ class Actor(abc.ABC):
         )
         ActorRegistry.register(obj.actor_ref)
         logger.debug(f"Starting {obj}")
-        obj._start_actor_loop()  # noqa: SLF001
+        obj._start_actor_loop()
         return obj.actor_ref
 
     @staticmethod

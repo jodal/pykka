@@ -8,10 +8,12 @@ import time
 import pykka
 import pykka.debug
 
+log = logging.getLogger(__name__)
+
 
 class DeadlockActorA(pykka.ThreadingActor):
     def foo(self, b):
-        logging.debug("This is foo calling bar")
+        log.debug("This is foo calling bar")
         return b.bar().get()
 
 
@@ -21,7 +23,7 @@ class DeadlockActorB(pykka.ThreadingActor):
         self.a = a
 
     def bar(self):
-        logging.debug("This is bar calling foo; BOOM!")
+        log.debug("This is bar calling foo; BOOM!")
         return self.a.foo().get()
 
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import functools
-from collections.abc import Generator, Iterable
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -13,6 +12,8 @@ from typing import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Generator, Iterable
+
     from typing_extensions import TypeAlias
 
     from pykka._types import OptExcInfo
@@ -184,7 +185,7 @@ class Future(Generic[T]):
 
         .. versionadded:: 1.2
         """
-        future = cast(Future[Iterable[Any]], self.__class__())
+        future = cast("Future[Iterable[Any]]", self.__class__())
         future.set_get_hook(
             lambda timeout: [f.get(timeout=timeout) for f in [self, *futures]]
         )
@@ -221,7 +222,7 @@ class Future(Generic[T]):
             behavior has been simplified. Now, the entire result value is
             passed to the function.
         """
-        future = cast(Future[M], self.__class__())
+        future = cast("Future[M]", self.__class__())
         future.set_get_hook(lambda timeout: func(self.get(timeout=timeout)))
         return future
 
@@ -275,7 +276,7 @@ class Future(Generic[T]):
 
         .. versionadded:: 1.2
         """
-        future = cast(Future[R], self.__class__())
+        future = cast("Future[R]", self.__class__())
         future.set_get_hook(
             lambda timeout: functools.reduce(func, self.get(timeout=timeout), *args)
         )

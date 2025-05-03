@@ -50,7 +50,7 @@ def actor_class(runtime: Runtime) -> type[CircleActor]:
 def proxy(
     actor_class: type[CircleActor],
 ) -> Iterator[FooProxy]:
-    proxy = cast(FooProxy, actor_class.start().proxy())
+    proxy = cast("FooProxy", actor_class.start().proxy())
     yield proxy
     proxy.stop()
 
