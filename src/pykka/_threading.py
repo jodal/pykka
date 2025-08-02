@@ -3,6 +3,7 @@ from __future__ import annotations
 import queue
 import sys
 import threading
+import time
 from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, TypeVar
 
 from pykka import Actor, Future, Timeout
@@ -40,9 +41,11 @@ class ThreadingFuture(Future[T]):
     """
 
     def __init__(self) -> None:
-        super().__init__()
-        self._queue: queue.Queue[ThreadingFutureResult] = queue.Queue(maxsize=1)
+        rlock = threading.RLock()
+        super().__init__(context_manager=rlock)
+        self._condition: threading.Condition = threading.Condition(lock=rlock)
         self._result: ThreadingFutureResult | None = None
+        self._waiter_count: int = 0
 
     def get(
         self,
@@ -54,9 +57,21 @@ class ThreadingFuture(Future[T]):
         except NotImplementedError:
             pass
 
-        try:
-            if self._result is None:
-                self._result = self._queue.get(True, timeout)
+        deadline: float | None = None if timeout is None else time.monotonic() + timeout
+
+        with self._condition:
+            while self._result is None:
+                rem = None if deadline is None else deadline - time.monotonic()
+
+                if rem is not None and rem <= 0.0:
+                    msg = f"{timeout} seconds"
+                    raise Timeout(msg)
+
+                self._waiter_count += 1
+                try:
+                    self._condition.wait(timeout=rem)
+                finally:
+                    self._waiter_count -= 1
 
             if self._result.exc_info is not None:
                 (exc_type, exc_value, exc_traceback) = self._result.exc_info
@@ -66,17 +81,19 @@ class ThreadingFuture(Future[T]):
                 if exc_value.__traceback__ is not exc_traceback:
                     raise exc_value.with_traceback(exc_traceback)
                 raise exc_value
-        except queue.Empty:
-            msg = f"{timeout} seconds"
-            raise Timeout(msg) from None
-        else:
+
             return self._result.value
 
     def set(
         self,
         value: Any | None = None,
     ) -> None:
-        self._queue.put(ThreadingFutureResult(value=value), block=False)
+        with self._condition:
+            if self._result is not None:
+                raise queue.Full
+            self._result = ThreadingFutureResult(value=value)
+            if self._waiter_count != 0:
+                self._condition.notify_all()
 
     def set_exception(
         self,
@@ -85,7 +102,13 @@ class ThreadingFuture(Future[T]):
         assert exc_info is None or len(exc_info) == 3
         if exc_info is None:
             exc_info = sys.exc_info()
-        self._queue.put(ThreadingFutureResult(exc_info=exc_info))
+
+        with self._condition:
+            if self._result is not None:
+                raise queue.Full
+            self._result = ThreadingFutureResult(exc_info=exc_info)
+            if self._waiter_count != 0:
+                self._condition.notify_all()
 
 
 class ThreadingActor(Actor):
