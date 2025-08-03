@@ -85,13 +85,6 @@ class Future(Generic[T]):
         :raise: encapsulated value if it is an exception
         :return: encapsulated value if it is not an exception
         """
-        if isinstance(self._context_manager, contextlib.nullcontext):
-            if self._get_hook is not None:
-                if self._get_hook_result is None:
-                    self._get_hook_result = self._get_hook(timeout)
-                return self._get_hook_result
-            raise NotImplementedError
-
         hook: GetHookFunc[T]
         hook_result: T
 
@@ -105,12 +98,10 @@ class Future(Generic[T]):
         hook_result = hook(timeout)
 
         with self._context_manager:
-            if self._get_hook is not None:
-                if self._get_hook_result is None:
-                    self._get_hook_result = hook_result
-                return self._get_hook_result
-
-        raise NotImplementedError
+            assert self._get_hook is not None
+            if self._get_hook_result is None:
+                self._get_hook_result = hook_result
+            return hook_result
 
     def set(
         self,
