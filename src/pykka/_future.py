@@ -49,9 +49,8 @@ class Future(Generic[T]):
     _get_hook_result: Optional[T]
 
     def __init__(
-            self,
-            context_manager: contextlib.AbstractContextManager[bool] = _NULL_CONTEXT
-        ) -> None:
+        self, context_manager: contextlib.AbstractContextManager[bool] = _NULL_CONTEXT
+    ) -> None:
         super().__init__()
         self._context_manager = context_manager
         self._get_hook = None
@@ -86,7 +85,6 @@ class Future(Generic[T]):
         :return: encapsulated value if it is not an exception
         """
         hook: GetHookFunc[T]
-        hook_result: T
 
         with self._context_manager:
             if self._get_hook is None:
@@ -101,7 +99,7 @@ class Future(Generic[T]):
             assert self._get_hook is not None
             if self._get_hook_result is None:
                 self._get_hook_result = hook_result
-            return hook_result
+            return self._get_hook_result
 
     def set(
         self,

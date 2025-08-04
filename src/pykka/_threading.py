@@ -86,7 +86,6 @@ class ThreadingFuture(Future[T]):
 
             return self._result.value
 
-
     def set(
         self,
         value: Optional[Any] = None,
