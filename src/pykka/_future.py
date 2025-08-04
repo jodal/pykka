@@ -81,7 +81,6 @@ class Future(Generic[T]):
         :return: encapsulated value if it is not an exception
         """
         hook: GetHookFunc[T]
-        hook_result: T
 
         with self._context_manager:
             if self._get_hook is None:
@@ -96,7 +95,7 @@ class Future(Generic[T]):
             assert self._get_hook is not None
             if self._get_hook_result is None:
                 self._get_hook_result = hook_result
-            return hook_result
+            return self._get_hook_result
 
     def set(
         self,
