@@ -3,15 +3,7 @@ from __future__ import annotations
 import contextlib
 import functools
 from collections.abc import Callable, Generator, Iterable
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    ClassVar,
-    Generic,
-    TypeAlias,
-    TypeVar,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, cast
 
 if TYPE_CHECKING:
     from pykka._types import OptExcInfo
@@ -36,19 +28,21 @@ class Future(Generic[T]):
     ``await`` the future.
     """
 
-    _NULL_CONTEXT: ClassVar[contextlib.AbstractContextManager[bool]] = (
-        contextlib.nullcontext(enter_result=True)
-    )
-
     _context_manager: contextlib.AbstractContextManager[bool]
     _get_hook: GetHookFunc[T] | None
     _get_hook_result: T | None
 
     def __init__(
-        self, context_manager: contextlib.AbstractContextManager[bool] = _NULL_CONTEXT
+        self,
+        *,
+        context_manager: contextlib.AbstractContextManager[bool] | None = None,
     ) -> None:
         super().__init__()
-        self._context_manager = context_manager
+        self._context_manager = (
+            context_manager
+            if context_manager is not None
+            else contextlib.nullcontext(enter_result=True)
+        )
         self._get_hook = None
         self._get_hook_result = None
 
