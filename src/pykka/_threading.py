@@ -60,11 +60,13 @@ class ThreadingFuture(Future[T]):
 
         with self._condition:
             while self._result is None:
-                rem = None if deadline is None else deadline - time.monotonic()
-                if rem is not None and rem <= 0.0:
+                remaining = (
+                    deadline - time.monotonic() if deadline is not None else None
+                )
+                if remaining is not None and remaining <= 0.0:
                     msg = f"{timeout} seconds"
                     raise Timeout(msg)
-                self._condition.wait(timeout=rem)
+                self._condition.wait(timeout=remaining)
 
             if self._result.exc_info is not None:
                 (exc_type, exc_value, exc_traceback) = self._result.exc_info
