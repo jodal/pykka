@@ -41,9 +41,8 @@ class ThreadingFuture(Future[T]):
     """
 
     def __init__(self) -> None:
-        rlock = threading.RLock()
-        super().__init__(context_manager=rlock)
-        self._condition: threading.Condition = threading.Condition(lock=rlock)
+        self._condition: threading.Condition = threading.Condition()
+        super().__init__(context_manager=self._condition)
         self._result: Optional[ThreadingFutureResult] = None
 
     def get(
