@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import functools
 from collections.abc import Callable, Generator, Iterable
 from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, cast
@@ -28,21 +27,11 @@ class Future(Generic[T]):
     ``await`` the future.
     """
 
-    _context_manager: contextlib.AbstractContextManager[bool]
     _get_hook: GetHookFunc[T] | None
     _get_hook_result: T | None
 
-    def __init__(
-        self,
-        *,
-        context_manager: contextlib.AbstractContextManager[bool] | None = None,
-    ) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self._context_manager = (
-            context_manager
-            if context_manager is not None
-            else contextlib.nullcontext(enter_result=True)
-        )
         self._get_hook = None
         self._get_hook_result = None
 
@@ -74,22 +63,11 @@ class Future(Generic[T]):
         :raise: encapsulated value if it is an exception
         :return: encapsulated value if it is not an exception
         """
-        hook: GetHookFunc[T]
-
-        with self._context_manager:
-            if self._get_hook is None:
-                raise NotImplementedError
-            if self._get_hook_result is not None:
-                return self._get_hook_result
-            hook = self._get_hook
-
-        hook_result = hook(timeout)
-
-        with self._context_manager:
-            assert self._get_hook is not None
+        if self._get_hook is not None:
             if self._get_hook_result is None:
-                self._get_hook_result = hook_result
+                self._get_hook_result = self._get_hook(timeout)
             return self._get_hook_result
+        raise NotImplementedError
 
     def set(
         self,
@@ -137,8 +115,7 @@ class Future(Generic[T]):
         :param func: called to produce return value of :meth:`get`
         :type func: function accepting a timeout value
         """
-        with self._context_manager:
-            self._get_hook = func
+        self._get_hook = func
 
     def filter(
         self: Future[Iterable[J]],

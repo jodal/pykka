@@ -11,6 +11,7 @@ from pykka import Actor, Future, Timeout
 if TYPE_CHECKING:
     from pykka._actor import ActorInbox
     from pykka._envelope import Envelope
+    from pykka._future import GetHookFunc
     from pykka._types import OptExcInfo
 
 __all__ = ["ThreadingActor", "ThreadingFuture"]
@@ -41,8 +42,8 @@ class ThreadingFuture(Future[T]):
     """
 
     def __init__(self) -> None:
+        super().__init__()
         self._condition: threading.Condition = threading.Condition()
-        super().__init__(context_manager=self._condition)
         self._result: ThreadingFutureResult | None = None
 
     def get(
@@ -50,14 +51,14 @@ class ThreadingFuture(Future[T]):
         *,
         timeout: float | None = None,
     ) -> Any:
-        try:
-            return super().get(timeout=timeout)
-        except NotImplementedError:
-            pass
-
         deadline: float | None = None if timeout is None else time.monotonic() + timeout
 
         with self._condition:
+            try:
+                return super().get(timeout=timeout)
+            except NotImplementedError:
+                pass
+
             while self._result is None:
                 remaining = (
                     deadline - time.monotonic() if deadline is not None else None
@@ -100,6 +101,14 @@ class ThreadingFuture(Future[T]):
             if self._result is not None:
                 raise queue.Full
             self._result = ThreadingFutureResult(exc_info=exc_info)
+            self._condition.notify_all()
+
+    def set_get_hook(
+        self,
+        func: GetHookFunc[T],
+    ) -> None:
+        with self._condition:
+            super().set_get_hook(func)
             self._condition.notify_all()
 
 
