@@ -18,7 +18,7 @@ class NestedObject:
     pass
 
 
-class ObjectWithEqImpl:
+class ObjectWithEqImpl:  # noqa: PLW1641
     foo: str = "bar"
 
     def __eq__(self, other: object) -> bool:
