@@ -62,7 +62,7 @@ def test_attr_can_be_set_using_assignment(
 
     proxy.an_attr = "an_attr_2"
 
-    assert proxy.an_attr.get() == "an_attr_2"  # type: ignore[attr-defined]
+    assert proxy.an_attr.get() == "an_attr_2"  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
 
 
 def test_private_attr_access_raises_exception(
@@ -95,7 +95,7 @@ def test_property_can_be_set_using_assignment(
 ) -> None:
     proxy.a_rw_property = "a_rw_property_2"
 
-    assert proxy.a_rw_property.get() == "a_rw_property_2"  # type: ignore[attr-defined]
+    assert proxy.a_rw_property.get() == "a_rw_property_2"  # pyright: ignore[reportUnknownMemberType,reportAttributeAccessIssue]
 
 
 def test_read_only_property_cannot_be_set(
