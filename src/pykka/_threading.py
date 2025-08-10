@@ -24,7 +24,7 @@ class ThreadingFutureResult(NamedTuple):
 
 
 class ThreadingFuture(Future[T]):
-    """Implementation of :class:`Future` for use with regular Python threads`.
+    """Implementation of :class:`Future` for use with regular Python threads.
 
     The future is implemented using a :class:`queue.Queue`.
 
