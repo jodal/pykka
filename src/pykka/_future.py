@@ -6,7 +6,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    ClassVar,
     Generic,
     Optional,
     TypeVar,
@@ -40,19 +39,21 @@ class Future(Generic[T]):
     ``await`` the future.
     """
 
-    _NULL_CONTEXT: ClassVar[contextlib.AbstractContextManager[bool]] = (
-        contextlib.nullcontext(enter_result=True)
-    )
-
     _context_manager: contextlib.AbstractContextManager[bool]
     _get_hook: Optional[GetHookFunc[T]]
     _get_hook_result: Optional[T]
 
     def __init__(
-        self, context_manager: contextlib.AbstractContextManager[bool] = _NULL_CONTEXT
+        self,
+        *,
+        context_manager: contextlib.AbstractContextManager[bool] | None = None,
     ) -> None:
         super().__init__()
-        self._context_manager = context_manager
+        self._context_manager = (
+            context_manager
+            if context_manager is not None
+            else contextlib.nullcontext(enter_result=True)
+        )
         self._get_hook = None
         self._get_hook_result = None
 
