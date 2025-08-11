@@ -55,18 +55,21 @@ class ThreadingFuture(Future[T]):
             None if timeout is None else time.monotonic() + timeout
         )
 
+        def get_remaining() -> Optional[float]:
+            if deadline is None:
+                return None
+            remaining = deadline - time.monotonic()
+            if remaining <= 0.0:
+                msg = f"{timeout} seconds"
+                raise Timeout(msg)
+            return remaining
+
         def wait_result() -> Optional[ThreadingFutureResult]:
             with self._condition:
                 while self._result is None:
                     if super().is_completed():
                         return None
-                    remaining = (
-                        deadline - time.monotonic() if deadline is not None else None
-                    )
-                    if remaining is not None and remaining <= 0.0:
-                        msg = f"{timeout} seconds"
-                        raise Timeout(msg)
-                    self._condition.wait(timeout=remaining)
+                    self._condition.wait(timeout=get_remaining())
 
                 if self._result.exc_info is not None:
                     (exc_type, exc_value, exc_traceback) = self._result.exc_info
@@ -84,9 +87,7 @@ class ThreadingFuture(Future[T]):
         if result is not None:
             return result.value
 
-        remaining = deadline - time.monotonic() if deadline is not None else None
-
-        return super().get(timeout=remaining)
+        return super().get(timeout=get_remaining())
 
     def set(
         self,
