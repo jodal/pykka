@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import functools
+import queue
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -41,7 +42,7 @@ class Future(Generic[T]):
 
     _context_manager: contextlib.AbstractContextManager[bool]
     _get_hook: Optional[GetHookFunc[T]]
-    _get_hook_result: Optional[T]
+    _get_hook_result: Optional[tuple[T]]
 
     def __init__(
         self,
@@ -91,16 +92,16 @@ class Future(Generic[T]):
             if self._get_hook is None:
                 raise NotImplementedError
             if self._get_hook_result is not None:
-                return self._get_hook_result
+                return self._get_hook_result[0]
             hook = self._get_hook
 
-        hook_result = hook(timeout)
+        hook_result = (hook(timeout),)
 
         with self._context_manager:
             assert self._get_hook is not None
             if self._get_hook_result is None:
                 self._get_hook_result = hook_result
-            return self._get_hook_result
+            return self._get_hook_result[0]
 
     def set(
         self,
@@ -149,7 +150,18 @@ class Future(Generic[T]):
         :type func: function accepting a timeout value
         """
         with self._context_manager:
+            if self.is_completed():
+                raise queue.Full
             self._get_hook = func
+
+    def is_completed(self) -> bool:
+        """Check if the future is completed.
+
+        Returns `True` if :meth:`set`, :meth:`set_exception`,
+        or :meth:`set_get_hook` has been called. False Otherwise.
+        """
+        with self._context_manager:
+            return self._get_hook is not None
 
     def filter(
         self: Future[Iterable[J]],
