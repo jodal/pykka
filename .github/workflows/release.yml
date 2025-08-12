@@ -13,7 +13,7 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hynek/build-and-inspect-python-package@v2
         id: build
       - uses: actions/download-artifact@v5
