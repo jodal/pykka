@@ -3,6 +3,7 @@ from __future__ import annotations
 import queue
 import sys
 import threading
+import time
 from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Optional, TypeVar
 
 from pykka import Actor, Future, Timeout
@@ -10,6 +11,7 @@ from pykka import Actor, Future, Timeout
 if TYPE_CHECKING:
     from pykka._actor import ActorInbox
     from pykka._envelope import Envelope
+    from pykka._future import GetHookFunc
     from pykka._types import OptExcInfo
 
 __all__ = ["ThreadingActor", "ThreadingFuture"]
@@ -40,8 +42,8 @@ class ThreadingFuture(Future[T]):
     """
 
     def __init__(self) -> None:
-        super().__init__()
-        self._queue: queue.Queue[ThreadingFutureResult] = queue.Queue(maxsize=1)
+        self._condition: threading.Condition = threading.Condition()
+        super().__init__(context_manager=self._condition)
         self._result: Optional[ThreadingFutureResult] = None
 
     def get(
@@ -49,34 +51,53 @@ class ThreadingFuture(Future[T]):
         *,
         timeout: Optional[float] = None,
     ) -> Any:
-        try:
-            return super().get(timeout=timeout)
-        except NotImplementedError:
-            pass
+        deadline: Optional[float] = (
+            None if timeout is None else time.monotonic() + timeout
+        )
 
-        try:
-            if self._result is None:
-                self._result = self._queue.get(True, timeout)
+        def get_remaining() -> Optional[float]:
+            if deadline is None:
+                return None
+            remaining = deadline - time.monotonic()
+            if remaining <= 0.0:
+                msg = f"{timeout} seconds"
+                raise Timeout(msg)
+            return remaining
 
-            if self._result.exc_info is not None:
-                (exc_type, exc_value, exc_traceback) = self._result.exc_info
-                assert exc_type is not None
-                if exc_value is None:
-                    exc_value = exc_type()
-                if exc_value.__traceback__ is not exc_traceback:
-                    raise exc_value.with_traceback(exc_traceback)
-                raise exc_value
-        except queue.Empty:
-            msg = f"{timeout} seconds"
-            raise Timeout(msg) from None
-        else:
-            return self._result.value
+        def wait_result() -> Optional[ThreadingFutureResult]:
+            with self._condition:
+                while self._result is None:
+                    if super().is_completed():
+                        return None
+                    self._condition.wait(timeout=get_remaining())
+
+                if self._result.exc_info is not None:
+                    (exc_type, exc_value, exc_traceback) = self._result.exc_info
+                    assert exc_type is not None
+                    if exc_value is None:
+                        exc_value = exc_type()
+                    if exc_value.__traceback__ is not exc_traceback:
+                        raise exc_value.with_traceback(exc_traceback)
+                    raise exc_value
+
+                return self._result
+
+        result = wait_result()
+
+        if result is not None:
+            return result.value
+
+        return super().get(timeout=get_remaining())
 
     def set(
         self,
         value: Optional[Any] = None,
     ) -> None:
-        self._queue.put(ThreadingFutureResult(value=value), block=False)
+        with self._condition:
+            if self.is_completed():
+                raise queue.Full
+            self._result = ThreadingFutureResult(value=value)
+            self._condition.notify_all()
 
     def set_exception(
         self,
@@ -85,7 +106,21 @@ class ThreadingFuture(Future[T]):
         assert exc_info is None or len(exc_info) == 3
         if exc_info is None:
             exc_info = sys.exc_info()
-        self._queue.put(ThreadingFutureResult(exc_info=exc_info))
+
+        with self._condition:
+            if self.is_completed():
+                raise queue.Full
+            self._result = ThreadingFutureResult(exc_info=exc_info)
+            self._condition.notify_all()
+
+    def set_get_hook(self, func: GetHookFunc[T]) -> None:
+        with self._condition:
+            super().set_get_hook(func)
+            self._condition.notify_all()
+
+    def is_completed(self) -> bool:
+        with self._condition:
+            return super().is_completed() or self._result is not None
 
 
 class ThreadingActor(Actor):

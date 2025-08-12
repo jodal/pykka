@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import contextlib
 import functools
+import queue
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -38,11 +40,21 @@ class Future(Generic[T]):
     ``await`` the future.
     """
 
+    _context_manager: contextlib.AbstractContextManager[bool]
     _get_hook: Optional[GetHookFunc[T]]
-    _get_hook_result: Optional[T]
+    _get_hook_result: Optional[tuple[T]]
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        *,
+        context_manager: contextlib.AbstractContextManager[bool] | None = None,
+    ) -> None:
         super().__init__()
+        self._context_manager = (
+            context_manager
+            if context_manager is not None
+            else contextlib.nullcontext(enter_result=True)
+        )
         self._get_hook = None
         self._get_hook_result = None
 
@@ -74,11 +86,22 @@ class Future(Generic[T]):
         :raise: encapsulated value if it is an exception
         :return: encapsulated value if it is not an exception
         """
-        if self._get_hook is not None:
+        hook: GetHookFunc[T]
+
+        with self._context_manager:
+            if self._get_hook is None:
+                raise NotImplementedError
+            if self._get_hook_result is not None:
+                return self._get_hook_result[0]
+            hook = self._get_hook
+
+        hook_result = (hook(timeout),)
+
+        with self._context_manager:
+            assert self._get_hook is not None
             if self._get_hook_result is None:
-                self._get_hook_result = self._get_hook(timeout)
-            return self._get_hook_result
-        raise NotImplementedError
+                self._get_hook_result = hook_result
+            return self._get_hook_result[0]
 
     def set(
         self,
@@ -126,7 +149,19 @@ class Future(Generic[T]):
         :param func: called to produce return value of :meth:`get`
         :type func: function accepting a timeout value
         """
-        self._get_hook = func
+        with self._context_manager:
+            if self.is_completed():
+                raise queue.Full
+            self._get_hook = func
+
+    def is_completed(self) -> bool:
+        """Check if the future is completed.
+
+        Returns `True` if :meth:`set`, :meth:`set_exception`,
+        or :meth:`set_get_hook` has been called. False Otherwise.
+        """
+        with self._context_manager:
+            return self._get_hook is not None
 
     def filter(
         self: Future[Iterable[J]],
