@@ -1,8 +1,12 @@
 """Pykka documentation build configuration file."""
 
 import pathlib
+import sys
 
-import tomli
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 project = "Pykka"
 author = "Stein Magnus Jodal and contributors"
@@ -10,7 +14,7 @@ copyright = f"2010-2025, {author}"  # noqa: A001
 
 pyproject_path = pathlib.Path(__file__).parent.parent / "pyproject.toml"
 with pyproject_path.open("rb") as fh:
-    pyproject = tomli.load(fh)
+    pyproject = tomllib.load(fh)
 release = pyproject["project"]["version"]
 version = ".".join(release.split(".")[:2])
 
