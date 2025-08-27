@@ -3,7 +3,7 @@ from __future__ import annotations
 import queue
 import sys
 import threading
-from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, TypeVar
 
 from pykka import Actor, Future, Timeout
 
@@ -19,8 +19,8 @@ T = TypeVar("T")
 
 
 class ThreadingFutureResult(NamedTuple):
-    value: Optional[Any] = None
-    exc_info: Optional[OptExcInfo] = None
+    value: Any | None = None
+    exc_info: OptExcInfo | None = None
 
 
 class ThreadingFuture(Future[T]):
@@ -42,12 +42,12 @@ class ThreadingFuture(Future[T]):
     def __init__(self) -> None:
         super().__init__()
         self._queue: queue.Queue[ThreadingFutureResult] = queue.Queue(maxsize=1)
-        self._result: Optional[ThreadingFutureResult] = None
+        self._result: ThreadingFutureResult | None = None
 
     def get(
         self,
         *,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Any:
         try:
             return super().get(timeout=timeout)
@@ -74,13 +74,13 @@ class ThreadingFuture(Future[T]):
 
     def set(
         self,
-        value: Optional[Any] = None,
+        value: Any | None = None,
     ) -> None:
         self._queue.put(ThreadingFutureResult(value=value), block=False)
 
     def set_exception(
         self,
-        exc_info: Optional[OptExcInfo] = None,
+        exc_info: OptExcInfo | None = None,
     ) -> None:
         assert exc_info is None or len(exc_info) == 3
         if exc_info is None:

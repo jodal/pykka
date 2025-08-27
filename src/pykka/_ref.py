@@ -5,7 +5,6 @@ from typing import (
     Any,
     Generic,
     Literal,
-    Optional,
     TypeVar,
     Union,
     overload,
@@ -104,7 +103,7 @@ class ActorRef(Generic[A]):
         message: Any,
         *,
         block: Literal[False],
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Future[Any]: ...
 
     @overload
@@ -113,7 +112,7 @@ class ActorRef(Generic[A]):
         message: Any,
         *,
         block: Literal[True],
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Any: ...
 
     @overload
@@ -122,7 +121,7 @@ class ActorRef(Generic[A]):
         message: Any,
         *,
         block: bool = True,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Union[Any, Future[Any]]: ...
 
     def ask(
@@ -130,7 +129,7 @@ class ActorRef(Generic[A]):
         message: Any,
         *,
         block: bool = True,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Union[Any, Future[Any]]:
         """Send message to actor and wait for the reply.
 
@@ -178,7 +177,7 @@ class ActorRef(Generic[A]):
         self,
         *,
         block: Literal[True],
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> bool: ...
 
     @overload
@@ -186,7 +185,7 @@ class ActorRef(Generic[A]):
         self,
         *,
         block: Literal[False],
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Future[bool]: ...
 
     @overload
@@ -194,14 +193,14 @@ class ActorRef(Generic[A]):
         self,
         *,
         block: bool = True,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Union[Any, Future[Any]]: ...
 
     def stop(
         self,
         *,
         block: bool = True,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Union[Any, Future[Any]]:
         """Send a message to the actor, asking it to stop.
 
@@ -223,7 +222,7 @@ class ActorRef(Generic[A]):
         """
         ask_future = self.ask(_ActorStop(), block=False)
 
-        def _stop_result_converter(timeout: Optional[float]) -> bool:
+        def _stop_result_converter(timeout: float | None) -> bool:
             try:
                 ask_future.get(timeout=timeout)
             except ActorDeadError:

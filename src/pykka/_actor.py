@@ -5,7 +5,7 @@ import logging
 import sys
 import threading
 import uuid
-from typing import TYPE_CHECKING, Any, Optional, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 from pykka._introspection import get_attr_directly
@@ -310,9 +310,9 @@ class Actor(abc.ABC):
 
     def _handle_failure(
         self,
-        exception_type: Optional[type[BaseException]],
-        exception_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exception_type: type[BaseException] | None,
+        exception_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> None:
         """Log unexpected failures, unregisters and stops the actor."""
         logger.error(
@@ -324,9 +324,9 @@ class Actor(abc.ABC):
 
     def on_failure(  # noqa: B027
         self,
-        exception_type: Optional[type[BaseException]],
-        exception_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exception_type: type[BaseException] | None,
+        exception_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> None:
         """Run code when an unhandled exception is raised.
 

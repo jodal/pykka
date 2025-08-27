@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, Optional, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from pykka import Actor, Future
 
 
@@ -14,7 +16,7 @@ class Event(Protocol):
 
     def set(self) -> None: ...
 
-    def wait(self, timeout: Optional[float] = None) -> bool: ...
+    def wait(self, timeout: float | None = None) -> bool: ...
 
 
 @dataclass

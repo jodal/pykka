@@ -7,7 +7,6 @@ from typing import (
     Any,
     ClassVar,
     Literal,
-    Optional,
     TypeVar,
     Union,
     overload,
@@ -111,7 +110,7 @@ class ActorRegistry:
     def get_by_urn(
         cls,
         actor_urn: str,
-    ) -> Optional[ActorRef[Any]]:
+    ) -> ActorRef[Any] | None:
         """Get an actor by its universally unique URN.
 
         :param actor_urn: actor URN
@@ -166,7 +165,7 @@ class ActorRegistry:
         cls,
         *,
         block: bool = True,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Union[list[bool], list[Future[bool]]]: ...
 
     @classmethod
@@ -174,7 +173,7 @@ class ActorRegistry:
         cls,
         *,
         block: bool = True,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> Union[list[bool], list[Future[bool]]]:
         """Stop all running actors.
 
