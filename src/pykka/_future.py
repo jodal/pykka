@@ -1,21 +1,17 @@
 from __future__ import annotations
 
 import functools
+from collections.abc import Callable, Generator, Iterable
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     Generic,
-    Optional,
+    TypeAlias,
     TypeVar,
     cast,
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Generator, Iterable
-
-    from typing_extensions import TypeAlias
-
     from pykka._types import OptExcInfo
 
 __all__ = ["Future", "get_all"]
@@ -26,7 +22,7 @@ J = TypeVar("J")  # For when T is Iterable[J]
 M = TypeVar("M")  # Result of Future.map()
 R = TypeVar("R")  # Result of Future.reduce()
 
-GetHookFunc: TypeAlias = Callable[[Optional[float]], T]
+GetHookFunc: TypeAlias = Callable[[float | None], T]
 
 
 class Future(Generic[T]):
@@ -38,8 +34,8 @@ class Future(Generic[T]):
     ``await`` the future.
     """
 
-    _get_hook: Optional[GetHookFunc[T]]
-    _get_hook_result: Optional[T]
+    _get_hook: GetHookFunc[T] | None
+    _get_hook_result: T | None
 
     def __init__(self) -> None:
         super().__init__()
@@ -52,7 +48,7 @@ class Future(Generic[T]):
     def get(
         self,
         *,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
     ) -> T:
         """Get the value encapsulated by the future.
 
@@ -82,7 +78,7 @@ class Future(Generic[T]):
 
     def set(
         self,
-        value: Optional[T] = None,
+        value: T | None = None,
     ) -> None:
         """Set the encapsulated value.
 
@@ -94,7 +90,7 @@ class Future(Generic[T]):
 
     def set_exception(
         self,
-        exc_info: Optional[OptExcInfo] = None,
+        exc_info: OptExcInfo | None = None,
     ) -> None:
         """Set an exception as the encapsulated value.
 
@@ -293,7 +289,7 @@ class Future(Generic[T]):
 def get_all(
     futures: Iterable[Future[T]],
     *,
-    timeout: Optional[float] = None,
+    timeout: float | None = None,
 ) -> Iterable[T]:
     """Collect all values encapsulated in the list of futures.
 

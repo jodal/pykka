@@ -41,7 +41,7 @@ def run(pool_size, *ips):
         hosts.append(resolvers[i % len(resolvers)].resolve(ip))
 
     # Gather results (blocking)
-    ip_to_host = zip(ips, pykka.get_all(hosts))
+    ip_to_host = zip(ips, pykka.get_all(hosts), strict=True)
     pprint.pprint(list(ip_to_host))
 
     # Clean up

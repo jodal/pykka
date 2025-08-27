@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from pykka import ActorDeadError, messages
 from pykka._introspection import AttrInfo, introspect_attrs
@@ -131,7 +131,7 @@ class ActorProxy(Generic[A]):
         self,
         *,
         actor_ref: ActorRef[A],
-        attr_path: Optional[AttrPath] = None,
+        attr_path: AttrPath | None = None,
     ) -> None:
         if not actor_ref.is_alive():
             msg = f"{actor_ref} not found"

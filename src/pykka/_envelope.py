@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 if TYPE_CHECKING:
     from pykka import Future
@@ -24,9 +24,9 @@ class Envelope(Generic[T]):
     __slots__ = ["message", "reply_to"]
 
     message: T
-    reply_to: Optional[Future[Any]]
+    reply_to: Future[Any] | None
 
-    def __init__(self, message: T, reply_to: Optional[Future[Any]] = None) -> None:
+    def __init__(self, message: T, reply_to: Future[Any] | None = None) -> None:
         self.message = message
         self.reply_to = reply_to
 

@@ -19,9 +19,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "pytest (3.9)"
-            python: "3.9"
-            tox: "3.9"
           - name: "pytest (3.10)"
             python: "3.10"
             tox: "3.10"
