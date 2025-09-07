@@ -7,6 +7,7 @@ from typing import (
     Literal,
     TypeVar,
     Union,
+    cast,
     overload,
 )
 
@@ -194,14 +195,14 @@ class ActorRef(Generic[A]):
         *,
         block: bool = True,
         timeout: float | None = None,
-    ) -> Union[Any, Future[Any]]: ...
+    ) -> Union[bool, Future[bool]]: ...
 
     def stop(
         self,
         *,
         block: bool = True,
         timeout: float | None = None,
-    ) -> Union[Any, Future[Any]]:
+    ) -> Union[bool, Future[bool]]:
         """Send a message to the actor, asking it to stop.
 
         Returns :class:`True` if actor is stopped or was being stopped at the
@@ -232,6 +233,7 @@ class ActorRef(Generic[A]):
 
         converted_future = ask_future.__class__()
         converted_future.set_get_hook(_stop_result_converter)
+        converted_future = cast("Future[bool]", converted_future)
 
         if block:
             return converted_future.get(timeout=timeout)
