@@ -24,8 +24,8 @@ Pykka requires Python 3.10 or newer.
 
 Pykka is available from [PyPI](https://pypi.org/project/pykka/):
 
-```
-python3 -m pip install pykka
+```sh
+pip install pykka
 ```
 
 ## Project resources
