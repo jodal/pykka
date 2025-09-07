@@ -2,14 +2,7 @@ from __future__ import annotations
 
 import functools
 from collections.abc import Callable, Generator, Iterable
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Generic,
-    TypeAlias,
-    TypeVar,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias, TypeVar, cast
 
 if TYPE_CHECKING:
     from pykka._types import OptExcInfo
