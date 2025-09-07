@@ -79,6 +79,10 @@ class Future(Generic[T]):
     ) -> None:
         """Set the encapsulated value.
 
+        .. versionchanged:: 4.3
+            Calling :meth:`set` on a future that already has a get hook set now
+            raises an exception.
+
         :param value: the encapsulated value or nothing
         :type value: any object or :class:`None`
         :raise: an exception if set is called multiple times
@@ -98,6 +102,10 @@ class Future(Generic[T]):
         In other words, if you're calling :meth:`set_exception`, without any
         arguments, from an except block, the exception you're currently
         handling will automatically be set on the future.
+
+        .. versionchanged:: 4.3
+            Calling :meth:`set_exception` on a future that already has a
+            get hook set now raises an exception.
 
         :param exc_info: the encapsulated exception
         :type exc_info: three-tuple of (exc_class, exc_instance, traceback)

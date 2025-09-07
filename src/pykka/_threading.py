@@ -84,7 +84,7 @@ class ThreadingFuture(Future[T]):
         value: Any | None = None,
     ) -> None:
         with self._condition:
-            if self._result is not None:
+            if self._result is not None or self._get_hook is not None:
                 raise queue.Full
             self._result = ThreadingFutureResult(value=value)
             self._condition.notify_all()
@@ -98,7 +98,7 @@ class ThreadingFuture(Future[T]):
             exc_info = sys.exc_info()
 
         with self._condition:
-            if self._result is not None:
+            if self._result is not None or self._get_hook is not None:
                 raise queue.Full
             self._result = ThreadingFutureResult(exc_info=exc_info)
             self._condition.notify_all()

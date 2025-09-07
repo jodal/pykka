@@ -170,6 +170,37 @@ def test_get_hook_is_only_called_once_even_if_result_is_none(
     assert hook_func.call_count == 1
 
 
+def test_set_is_not_alloed_on_future_with_get_hook(
+    future: Future[int],
+    mocker: MockerFixture,
+) -> None:
+    hook_func = mocker.Mock(return_value=123)
+    future.set_get_hook(hook_func)
+
+    with pytest.raises(queue.Full):
+        future.set(456)
+
+    assert future.get(timeout=0) == 123
+    assert hook_func.call_count == 1
+
+
+def test_set_exception_is_not_allowed_on_future_with_get_hook(
+    future: Future[int],
+    mocker: MockerFixture,
+) -> None:
+    hook_func = mocker.Mock(return_value=123)
+    future.set_get_hook(hook_func)
+
+    try:
+        raise RuntimeError("failure")  # noqa: TRY301
+    except RuntimeError:
+        with pytest.raises(queue.Full):
+            future.set_exception()
+
+    assert future.get(timeout=0) == 123
+    assert hook_func.call_count == 1
+
+
 def test_set_hook_is_not_allowed_on_future_with_result(
     future: Future[int],
 ) -> None:
