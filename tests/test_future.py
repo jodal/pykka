@@ -157,6 +157,18 @@ def test_future_supports_yield_from_syntax(
     assert run_async(get_value()) == 1
 
 
+def test_get_hook_is_only_called_once_even_if_result_is_none(
+    future: Future[int],
+    mocker: MockerFixture,
+) -> None:
+    hook_func = mocker.Mock(return_value=None)
+    future.set_get_hook(hook_func)
+
+    assert future.get(timeout=0) is None
+    assert future.get(timeout=0) is None
+    assert hook_func.call_count == 1
+
+
 def test_filter_excludes_items_not_matching_predicate(
     future: Future[Iterable[int]],
 ) -> None:
