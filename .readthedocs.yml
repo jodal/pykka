@@ -10,8 +10,5 @@ build:
     post_install:
       - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --all-extras --group docs --link-mode copy
 
-sphinx:
-  configuration: docs/conf.py
-  builder: dirhtml
-
-formats: all
+mkdocs:
+  configuration: mkdocs.yml

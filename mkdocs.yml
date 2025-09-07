@@ -1,0 +1,111 @@
+site_name: Pykka
+site_description: Pykka makes it easier to build concurrent applications.
+site_url: !ENV READTHEDOCS_CANONICAL_URL
+
+copyright: Copyright © 2010-2025 Stein Magnus Jodal
+repo_name: jodal/pykka
+repo_url: https://github.com/jodal/pykka
+edit_uri: edit/main/docs/
+
+nav:
+  - index.md
+  - quickstart.md
+  - examples.md
+  - Reference:
+      - api/actors.md
+      - api/proxies.md
+      - api/futures.md
+      - api/registry.md
+      - api/exceptions.md
+      - api/messages.md
+      - api/logging.md
+      - api/debug.md
+      - api/typing.md
+  - Runtimes:
+      - runtimes/index.md
+      - runtimes/threading.md
+  - testing.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jodal/pykka
+
+extra_javascript:
+  - javascript/readthedocs.js
+
+markdown_extensions:
+  - admonition
+  - def_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+      default_lang: python
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: jodal
+      repo: pykka
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          inventories:
+            - https://docs.python.org/3/objects.inv
+          options:
+            docstring_style: google
+            docstring_section_style: list
+            filters:
+              - "!^_[^_]"
+              - "!^__post_init__"
+              - "!^__len__"
+              - "!^__repr__"
+              - "!^__str__"
+            separate_signature: true
+            show_docstring_examples: true
+            show_root_heading: true
+            show_root_toc_entry: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_signature_annotations: true
+  - search
+
+theme:
+  name: material
+  features:
+    - content.action.edit
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+  icon:
+    logo: fontawesome/solid/spiral
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+watch:
+  - docs
+  - src
