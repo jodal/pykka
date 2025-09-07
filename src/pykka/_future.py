@@ -18,6 +18,10 @@ R = TypeVar("R")  # Result of Future.reduce()
 GetHookFunc: TypeAlias = Callable[[float | None], T]
 
 
+class _Unset:
+    pass
+
+
 class Future(Generic[T]):
     """A handle to a value which is available now or in the future.
 
@@ -28,12 +32,12 @@ class Future(Generic[T]):
     """
 
     _get_hook: GetHookFunc[T] | None
-    _get_hook_result: T | None
+    _get_hook_result: T | _Unset
 
     def __init__(self) -> None:
         super().__init__()
         self._get_hook = None
-        self._get_hook_result = None
+        self._get_hook_result = _Unset()
 
     def __repr__(self) -> str:
         return "<pykka.Future>"
@@ -64,7 +68,7 @@ class Future(Generic[T]):
         :return: encapsulated value if it is not an exception
         """
         if self._get_hook is not None:
-            if self._get_hook_result is None:
+            if isinstance(self._get_hook_result, _Unset):
                 self._get_hook_result = self._get_hook(timeout)
             return self._get_hook_result
         raise NotImplementedError
