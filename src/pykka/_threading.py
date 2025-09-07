@@ -108,6 +108,8 @@ class ThreadingFuture(Future[T]):
         func: GetHookFunc[T],
     ) -> None:
         with self._condition:
+            if self._result is not None:
+                raise queue.Full
             super().set_get_hook(func)
             self._condition.notify_all()
 

@@ -116,6 +116,10 @@ class Future(Generic[T]):
 
         .. versionadded:: 1.2
 
+        .. versionchanged:: 4.3
+            Calling :meth:`set_get_hook` on a future that already has a
+            result set now raises an exception.
+
         :param func: called to produce return value of :meth:`get`
         :type func: function accepting a timeout value
         """

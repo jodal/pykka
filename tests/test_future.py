@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import queue
 import sys
 import traceback
 import types
@@ -167,6 +168,17 @@ def test_get_hook_is_only_called_once_even_if_result_is_none(
     assert future.get(timeout=0) is None
     assert future.get(timeout=0) is None
     assert hook_func.call_count == 1
+
+
+def test_set_hook_is_not_allowed_on_future_with_result(
+    future: Future[int],
+) -> None:
+    future.set(123)
+
+    with pytest.raises(queue.Full):
+        future.set_get_hook(lambda timeout: 456)
+
+    assert future.get(timeout=0) == 123
 
 
 def test_filter_excludes_items_not_matching_predicate(
