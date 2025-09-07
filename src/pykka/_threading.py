@@ -28,8 +28,6 @@ class ThreadingFutureResult(NamedTuple):
 class ThreadingFuture(Future[T]):
     """Implementation of :class:`Future` for use with regular Python threads.
 
-    The future is implemented using a :class:`queue.Queue`.
-
     The future does *not* make a copy of the object which is :meth:`set()
     <pykka.Future.set>` on it. It is the setters responsibility to only pass
     immutable objects or make a copy of the object before setting it on the
