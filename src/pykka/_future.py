@@ -27,8 +27,8 @@ class Future(Generic[T]):
 
     Typically returned by calls to actor methods or accesses to actor fields.
 
-    To get hold of the encapsulated value, call :meth:`Future.get` or
-    ``await`` the future.
+    To get hold of the encapsulated value, call
+    [`Future.get()`][pykka.Future.get] or `await` the future.
     """
 
     _get_hook: GetHookFunc[T] | None
@@ -52,20 +52,24 @@ class Future(Generic[T]):
         If the encapsulated value is an exception, it is raised instead of
         returned.
 
-        If ``timeout`` is :class:`None`, as default, the method will block
-        until it gets a reply, potentially forever. If ``timeout`` is an
-        integer or float, the method will wait for a reply for ``timeout``
-        seconds, and then raise :exc:`pykka.Timeout`.
+        If `timeout` is `None`, as default, the method will block until it gets
+        a reply, potentially forever. If `timeout` is an integer or float, the
+        method will wait for a reply for `timeout` seconds, and then raise
+        [`Timeout`][pykka.Timeout].
 
         The encapsulated value can be retrieved multiple times. The future will
         only block the first time the value is accessed.
 
-        :param timeout: seconds to wait before timeout
-        :type timeout: float or :class:`None`
+        Args:
+            timeout: seconds to wait before timeout
 
-        :raise: :exc:`pykka.Timeout` if timeout is reached
-        :raise: encapsulated value if it is an exception
-        :return: encapsulated value if it is not an exception
+        Raises:
+            pykka.Timeout: if timeout is reached
+            Exception: encapsulated value if it is an exception
+
+        Returns:
+            encapsulated value if it is not an exception
+
         """
         if self._get_hook is not None:
             if isinstance(self._get_hook_result, _Unset):
@@ -79,13 +83,17 @@ class Future(Generic[T]):
     ) -> None:
         """Set the encapsulated value.
 
-        .. versionchanged:: 4.3
-            Calling :meth:`set` on a future that already has a get hook set now
+        Args:
+            value: the encapsulated value or nothing
+
+        Raises:
+            Exception: an exception if `set()` is called multiple times
+
+        !!! note "Version changed: Pykka 4.3"
+
+            Calling `set()` on a future that already has a get hook set now
             raises an exception.
 
-        :param value: the encapsulated value or nothing
-        :type value: any object or :class:`None`
-        :raise: an exception if set is called multiple times
         """
         raise NotImplementedError
 
@@ -95,20 +103,22 @@ class Future(Generic[T]):
     ) -> None:
         """Set an exception as the encapsulated value.
 
-        You can pass an ``exc_info`` three-tuple, as returned by
-        :func:`sys.exc_info`. If you don't pass ``exc_info``,
-        :func:`sys.exc_info` will be called and the value returned by it used.
+        You can pass an `exc_info` three-tuple, as returned by
+        [`sys.exc_info()`][sys.exc_info]. If you don't pass `exc_info`,
+        [`sys.exc_info()`][sys.exc_info] will be called and the value returned
+        by it used.
 
-        In other words, if you're calling :meth:`set_exception`, without any
-        arguments, from an except block, the exception you're currently
-        handling will automatically be set on the future.
+        In other words, if you're calling `set_exception()`, without any
+        arguments, from an except block, the exception you're currently handling
+        will automatically be set on the future.
 
-        .. versionchanged:: 4.3
-            Calling :meth:`set_exception` on a future that already has a
-            get hook set now raises an exception.
+        Args:
+            exc_info: the encapsulated exception
 
-        :param exc_info: the encapsulated exception
-        :type exc_info: three-tuple of (exc_class, exc_instance, traceback)
+        !!! note "Version changed: Pykka 4.3"
+            Calling `set_exception()` on a future that already has a get hook
+            set now raises an exception.
+
         """
         raise NotImplementedError
 
@@ -116,20 +126,22 @@ class Future(Generic[T]):
         self,
         func: GetHookFunc[T],
     ) -> None:
-        """Set a function to be executed when :meth:`get` is called.
+        """Set a function to be executed when [`get()`][pykka.Future.get] is called.
 
-        The function will be called when :meth:`get` is called, with the
-        ``timeout`` value as the only argument. The function's return value
-        will be returned from :meth:`get`.
+        The function will be called when [`get()`][pykka.Future.get] is called, with the
+        `timeout` value as the only argument. The function's return value will
+        be returned from [`get()`][pykka.Future.get].
 
-        .. versionadded:: 1.2
+        Args:
+            func: callable accepting a timeout value, to produce return value of
+                `get()`
 
-        .. versionchanged:: 4.3
-            Calling :meth:`set_get_hook` on a future that already has a
-            result set now raises an exception.
+        !!! note "Version added: Pykka 1.2"
 
-        :param func: called to produce return value of :meth:`get`
-        :type func: function accepting a timeout value
+        !!! note "Version changed: Pykka 4.3"
+            Calling `set_get_hook()` on a future that already has a result set
+            now raises an exception.
+
         """
         self._get_hook = func
 
@@ -139,14 +151,14 @@ class Future(Generic[T]):
     ) -> Future[Iterable[J]]:
         """Return a new future with only the items passing the predicate function.
 
-        If the future's value is an iterable, :meth:`filter` will return a new
+        If the future's value is an iterable, `filter()` will return a new
         future whose value is another iterable with only the items from the
-        first iterable for which ``func(item)`` is true. If the future's value
-        isn't an iterable, a :exc:`TypeError` will be raised when :meth:`get`
-        is called.
+        first iterable for which `func(item)` is true. If the future's value
+        isn't an iterable, a [`TypeError`][TypeError] will be raised when
+        [`get()`][pykka.Future.get] is called.
 
-        Example::
-
+        Example:
+            ```pycon
             >>> import pykka
             >>> f = pykka.ThreadingFuture()
             >>> g = f.filter(lambda x: x > 10)
@@ -157,8 +169,10 @@ class Future(Generic[T]):
             [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
             >>> g.get()
             [11, 12, 13, 14]
+            ```
 
-        .. versionadded:: 1.2
+        !!! note "Version added: Pykka 1.2"
+
         """
         future = self.__class__()
         future.set_get_hook(
@@ -172,23 +186,25 @@ class Future(Generic[T]):
     ) -> Future[Iterable[Any]]:
         """Return a new future with a list of the result of multiple futures.
 
-        One or more futures can be passed as arguments to :meth:`join`. The new
+        One or more futures can be passed as arguments to `join()`. The new
         future returns a list with the results from all the joined futures.
 
-        Example::
-
+        Example:
+            ```pycon
             >>> import pykka
-            >>> a = pykka.ThreadingFuture()
-            >>> b = pykka.ThreadingFuture()
-            >>> c = pykka.ThreadingFuture()
-            >>> f = a.join(b, c)
-            >>> a.set('def')
-            >>> b.set(123)
-            >>> c.set(False)
+            >>> f1 = pykka.ThreadingFuture()
+            >>> f2 = pykka.ThreadingFuture()
+            >>> f3 = pykka.ThreadingFuture()
+            >>> f = f1.join(f2, f3)
+            >>> f1.set('abc')
+            >>> f2.set(123)
+            >>> f3.set(False)
             >>> f.get()
-            ['def', 123, False]
+            ['abc', 123, False]
+            ```
 
-        .. versionadded:: 1.2
+        !!! note "Version added: Pykka 1.2"
+
         """
         future = cast("Future[Iterable[Any]]", self.__class__())
         future.set_get_hook(
@@ -202,9 +218,10 @@ class Future(Generic[T]):
     ) -> Future[M]:
         """Pass the result of the future through a function.
 
-        Example::
-
+        Example:
+            ```pycon
             >>> import pykka
+
             >>> f = pykka.ThreadingFuture()
             >>> g = f.map(lambda x: x + 10)
             >>> f.set(30)
@@ -216,16 +233,18 @@ class Future(Generic[T]):
             >>> f.set({'foo': 'bar'}})
             >>> g.get()
             'bar'
+            ```
 
-        .. versionadded:: 1.2
+        !!! note "Version added: Pykka 1.2"
 
-        .. versionchanged:: 2.0
+        !!! note "Version changed: Pykka 2.0"
             Previously, if the future's result was an iterable (except a
             string), the function was applied to each item in the iterable.
-            This behavior is unpredictable and makes regular use cases like
+            This behavior was unpredictable and made regular use cases like
             extracting a single field from a dict difficult, thus the
-            behavior has been simplified. Now, the entire result value is
-            passed to the function.
+            behavior has been simplified. Since Pykka 2.0, the entire result
+            value is passed to the function.
+
         """
         future = cast("Future[M]", self.__class__())
         future.set_get_hook(lambda timeout: func(self.get(timeout=timeout)))
@@ -242,15 +261,16 @@ class Future(Generic[T]):
         the iterable, from left to right. The result of the first function call
         is used as the first argument to the second function call, and so on,
         until the end of the iterable. If the future's value isn't an iterable,
-        a :exc:`TypeError` is raised.
+        a [`TypeError`][TypeError] is raised.
 
-        :meth:`reduce` accepts an optional second argument, which will be used
-        as an initial value in the first function call. If the iterable is
-        empty, the initial value is returned.
+        `reduce()` accepts an optional second argument, which will be used as an
+        initial value in the first function call. If the iterable is empty, the
+        initial value is returned.
 
-        Example::
-
+        Example:
+            ```pycon
             >>> import pykka
+
             >>> f = pykka.ThreadingFuture()
             >>> g = f.reduce(lambda x, y: x + y)
             >>> f.set(['a', 'b', 'c'])
@@ -278,8 +298,10 @@ class Future(Generic[T]):
             >>> f.set([])
             >>> g.get()
             5
+            ```
 
-        .. versionadded:: 1.2
+        !!! note "Version added: Pykka 1.2"
+
         """
         future = cast("Future[R]", self.__class__())
         future.set_get_hook(
@@ -302,16 +324,18 @@ def get_all(
 ) -> Iterable[T]:
     """Collect all values encapsulated in the list of futures.
 
-    If ``timeout`` is not :class:`None`, the method will wait for a reply for
-    ``timeout`` seconds, and then raise :exc:`pykka.Timeout`.
+    If `timeout` is not `None`, the method will wait for a reply for
+    `timeout` seconds, and then raise [`pykka.Timeout`][pykka.Timeout].
 
-    :param futures: futures for the results to collect
-    :type futures: list of :class:`pykka.Future`
+    Args:
+        futures: futures for the results to collect
+        timeout: seconds to wait before timeout
 
-    :param timeout: seconds to wait before timeout
-    :type timeout: float or :class:`None`
+    Raises:
+        pykka.Timeout: if timeout is reached
 
-    :raise: :exc:`pykka.Timeout` if timeout is reached
-    :returns: list of results
+    Returns:
+        list of results
+
     """
     return [future.get(timeout=timeout) for future in futures]

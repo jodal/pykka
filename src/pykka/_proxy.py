@@ -21,53 +21,54 @@ A = TypeVar("A", bound="Actor")
 
 
 class ActorProxy(Generic[A]):
-    """An :class:`ActorProxy` wraps an :class:`ActorRef <pykka.ActorRef>` instance.
+    """A proxy object for an actor's attributes and methods, via an `ActorRef`.
 
     The proxy allows the referenced actor to be used through regular
     method calls and field access.
 
-    You can create an :class:`ActorProxy` from any :class:`ActorRef
-    <pykka.ActorRef>`::
+    # Creating a proxy
+
+    You can create an [`ActorProxy`][pykka.ActorProxy] from any
+    [`ActorRef`][pykka.ActorRef]:
 
         actor_ref = MyActor.start()
         actor_proxy = ActorProxy(actor_ref)
 
-    You can also get an :class:`ActorProxy` by using :meth:`proxy()
-    <pykka.ActorRef.proxy>`::
+    You can also get an [`ActorProxy`][pykka.ActorProxy] by using
+    [`proxy()`][pykka.ActorRef.proxy]:
 
         actor_proxy = MyActor.start().proxy()
 
-    **Attributes and method calls**
+    # Attributes and method calls
 
-    When reading an attribute or getting a return value from a method, you get
-    a :class:`Future <pykka.Future>` object back. To get the enclosed value
-    from the future, you must call :meth:`get() <pykka.Future.get>` on the
-    returned future::
+    When reading an attribute or getting a return value from a method, you get a
+    [`Future`][pykka.Future] object back. To get the enclosed value from the
+    future, you must call [`get()`][pykka.Future.get] on the returned future:
 
         print(actor_proxy.string_attribute.get())
         print(actor_proxy.count().get() + 1)
 
     If you call a method just for it's side effects and do not care about the
     return value, you do not need to accept the returned future or call
-    :meth:`get() <pykka.Future.get>` on the future. Simply call the method, and
-    it will be executed concurrently with your own code::
+    [`get()`][pykka.Future.get] on the future. Simply call the method, and it
+    will be executed concurrently with your own code:
 
         actor_proxy.method_with_side_effect()
 
     If you want to block your own code from continuing while the other method
-    is processing, you can use :meth:`get() <pykka.Future.get>` to block until
-    it completes::
+    is processing, you can use [`get()`][pykka.Future.get] to block until it
+    completes::
 
         actor_proxy.method_with_side_effect().get()
 
-    You can also use the ``await`` keyword to block until the method completes::
+    You can also use the `await` keyword to block until the method completes:
 
         await actor_proxy.method_with_side_effect()
 
     If you access a proxied method as an attribute, without calling it, you
-    get an :class:`CallableProxy`.
+    get an [`CallableProxy`][pykka.CallableProxy].
 
-    **Proxy to itself**
+    # Proxy to itself
 
     An actor can use a proxy to itself to schedule work for itself. The
     scheduled work will only be done after the current message and all messages
@@ -80,14 +81,14 @@ class ActorProxy(Generic[A]):
     time consuming task. This is especially useful for being able to stop the
     actor in the middle of a time consuming task.
 
-    To create a proxy to yourself, use the actor's :attr:`actor_ref
-    <pykka.Actor.actor_ref>` attribute::
+    To create a proxy to yourself, use the actor's
+    [`actor_ref`][pykka.Actor.actor_ref] attribute:
 
         proxy_to_myself_in_the_future = self.actor_ref.proxy()
 
-    If you create a proxy in your actor's constructor or :meth:`on_start
-    <pykka.Actor.on_start>` method, you can create a nice API for deferring
-    work to yourself in the future::
+    If you create a proxy in your actor's constructor or
+    [`on_start()`][pykka.Actor.on_start] method, you can create a nice API for
+    deferring work to yourself in the future:
 
         def __init__(self):
             ...
@@ -104,18 +105,19 @@ class ActorProxy(Generic[A]):
 
     To avoid infinite loops during proxy introspection, proxies to self
     should be kept as private instance attributes by prefixing the attribute
-    name with ``_``.
+    name with `_`.
 
-    **Examples**
+    Example:
+        ```title="examples/counter.py"
+        --8<-- "examples/counter.py"
+        ```
 
-    An example of :class:`ActorProxy` usage:
+    Args:
+        actor_ref: reference to the actor to proxy
 
-    .. literalinclude:: ../../examples/counter.py
+    Raises:
+        pykka.ActorDeadError: if the actor is not alive
 
-    :param actor_ref: reference to the actor to proxy
-    :type actor_ref: :class:`pykka.ActorRef`
-
-    :raise: :exc:`pykka.ActorDeadError` if actor is not available
     """
 
     #: The actor's :class:`pykka.ActorRef` instance.
@@ -217,11 +219,11 @@ class ActorProxy(Generic[A]):
 class CallableProxy(Generic[A]):
     """Proxy to a single method.
 
-    :class:`CallableProxy` instances are returned when accessing methods on a
-    :class:`ActorProxy` without calling them.
+    [`CallableProxy`][pykka.CallableProxy] instances are returned when accessing
+    methods on a [`ActorProxy`][pykka.ActorProxy] without calling them.
 
-    Example::
-
+    Example:
+        ```py
         proxy = AnActor.start().proxy()
 
         # Ask semantics returns a future. See `__call__()` docs.
@@ -229,6 +231,8 @@ class CallableProxy(Generic[A]):
 
         # Tell semantics are fire and forget. See `defer()` docs.
         proxy.do_work.defer()
+        ```
+
     """
 
     actor_ref: ActorRef[A]
@@ -248,14 +252,14 @@ class CallableProxy(Generic[A]):
         *args: Any,
         **kwargs: Any,
     ) -> Future[Any]:
-        """Call with :meth:`~pykka.ActorRef.ask` semantics.
+        """Call with [`ask()`][pykka.ActorRef.ask] semantics.
 
         Returns a future which will yield the called method's return value.
 
-        If the call raises an exception is set on the future, and will be
-        reraised by :meth:`~pykka.Future.get`. If the future is left unused,
+        If the call raises an exception it is set on the future, and the exception is
+        reraised by [`get()`][pykka.Future.get]. If the future is left unused,
         the exception will not be reraised. Either way, the exception will
-        also be logged. See :ref:`logging` for details.
+        also be logged. See the logging section in the docs for details.
         """
         message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
@@ -267,15 +271,15 @@ class CallableProxy(Generic[A]):
         *args: Any,
         **kwargs: Any,
     ) -> None:
-        """Call with :meth:`~pykka.ActorRef.tell` semantics.
+        """Call with [`tell()`][pykka.ActorRef.tell] semantics.
 
         Does not create or return a future.
 
         If the call raises an exception, there is no future to set the
-        exception on. Thus, the actor's :meth:`~pykka.Actor.on_failure` hook
-        is called instead.
+        exception on. Thus, the actor's [`on_failure()`][pykka.Actor.on_failure]
+        hook is called instead.
 
-        .. versionadded:: 2.0
+        !!! note "Version added: Pykka 2.0"
         """
         message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
@@ -288,9 +292,9 @@ def traversable(obj: T) -> T:
 
     The traversable marker makes the actor attribute's own methods and
     attributes available to users of the actor through an
-    :class:`~pykka.ActorProxy`.
+    [`ActorProxy`][pykka.ActorProxy].
 
-    Used as a function to mark a single attribute::
+    Used as a function to mark a single attribute:
 
         class AnActor(pykka.ThreadingActor):
             playback = pykka.traversable(Playback())
@@ -300,7 +304,7 @@ def traversable(obj: T) -> T:
                 return True
 
     This function can also be used as a class decorator, making all instances
-    of the class traversable::
+    of the class traversable:
 
         class AnActor(pykka.ThreadingActor):
             playback = Playback()
@@ -312,7 +316,7 @@ def traversable(obj: T) -> T:
 
     The third alternative, and the only way in Pykka < 2.0, is to manually
     mark a class as traversable by setting the ``pykka_traversable`` attribute
-    to :class:`True`::
+    to :class:`True`:
 
         class AnActor(pykka.ThreadingActor):
             playback = Playback()
@@ -329,7 +333,7 @@ def traversable(obj: T) -> T:
         proxy = AnActor.start().proxy()
         assert proxy.playback.play().get() is True
 
-    .. versionadded:: 2.0
+    !!! note "Version added: Pykka 2.0"
     """
     if hasattr(obj, "__slots__"):
         msg = (

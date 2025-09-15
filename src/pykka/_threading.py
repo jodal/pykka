@@ -26,17 +26,18 @@ class ThreadingFutureResult(NamedTuple):
 
 
 class ThreadingFuture(Future[T]):
-    """Implementation of :class:`Future` for use with regular Python threads.
+    """Implementation of [`Future`][pykka.Future] for use with regular Python threads.
 
-    The future does *not* make a copy of the object which is :meth:`set()
-    <pykka.Future.set>` on it. It is the setters responsibility to only pass
-    immutable objects or make a copy of the object before setting it on the
-    future.
+    !!! warning "Mutable messages"
+        The future *does not* make a copy of the object which is
+        [`set()`][pykka.Future.set] on it. It is the setters responsibility to
+        only pass immutable objects or make a copy of the object before setting
+        it on the future.
 
-    .. versionchanged:: 0.14
+    !!! note "Version changed: Pykka 0.14"
         Previously, the encapsulated value was a copy made with
-        :func:`copy.deepcopy`, unless the encapsulated value was a future, in
-        which case the original future was encapsulated.
+        [`copy.deepcopy()`][copy.deepcopy], unless the encapsulated value was a
+        future, in which case the original future was encapsulated.
     """
 
     def __init__(self) -> None:
@@ -113,19 +114,19 @@ class ThreadingFuture(Future[T]):
 
 
 class ThreadingActor(Actor):
-    """Implementation of :class:`Actor` using regular Python threads."""
+    """Implementation of [`Actor`][pykka.Actor] using regular Python threads."""
 
     use_daemon_thread: ClassVar[bool] = False
     """
     A boolean value indicating whether this actor is executed on a thread that
-    is a daemon thread (:class:`True`) or not (:class:`False`). This must be
-    set before :meth:`pykka.Actor.start` is called, otherwise
-    :exc:`RuntimeError` is raised.
+    is a daemon thread (`True`) or not (`False`). This must be set before
+    [`Actor.start()`][pykka.Actor.start] is called, otherwise
+    [`RuntimeError`][RuntimeError] is raised.
 
     The entire Python program exits when no alive non-daemon threads are left.
     This means that an actor running on a daemon thread may be interrupted at
     any time, and there is no guarantee that cleanup will be done or that
-    :meth:`pykka.Actor.on_stop` will be called.
+    [`Actor.on_stop()`][pykka.Actor.on_stop] will be called.
 
     Actors do not inherit the daemon flag from the actor that made it. It
     always has to be set explicitly for the actor to run on a daemonic thread.

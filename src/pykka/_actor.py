@@ -38,18 +38,19 @@ class Actor(abc.ABC):
 
     To create an actor:
 
-    1. subclass one of the :class:`Actor` implementations:
+    1.  subclass one of the [`Actor`][pykka.Actor] implementations:
 
-       - :class:`~pykka.ThreadingActor`
+        - [`ThreadingActor`][pykka.ThreadingActor]
 
-    2. implement your methods, including :meth:`__init__`, as usual,
-    3. call :meth:`Actor.start` on your actor class, passing the method any
-       arguments for your constructor.
+    2.  implement your methods, including `__init__()`, as usual,
+    3.  call [`Actor.start()`][pykka.Actor.start] on your actor class,
+        passing the method any arguments for your constructor.
 
-    To stop an actor, call :meth:`Actor.stop()` or :meth:`ActorRef.stop()`.
+    To stop an actor, call [`Actor.stop()`][pykka.Actor.stop] or
+    [`ActorRef.stop()`][pykka.ActorRef.stop].
 
-    For example::
-
+    Example:
+        ```py
         import pykka
 
         class MyActor(pykka.ThreadingActor):
@@ -74,6 +75,8 @@ class Actor(abc.ABC):
 
         my_actor_ref = MyActor.start(my_arg=...)
         my_actor_ref.stop()
+        ```
+
     """
 
     @classmethod
@@ -85,32 +88,32 @@ class Actor(abc.ABC):
         """Start an actor.
 
         Starting an actor also registers it in the
-        :class:`ActorRegistry <pykka.ActorRegistry>`.
+        [`ActorRegistry`][pykka.ActorRegistry].
 
-        Any arguments passed to :meth:`start` will be passed on to the class
-        constructor.
+        Any arguments passed to [`start()`][pykka.Actor.start] will be passed on
+        to the class constructor.
 
         Behind the scenes, the following is happening when you call
-        :meth:`start`:
+        [`start()`][pykka.Actor.start]:
 
-        1. The actor is created:
+        1.  The actor is created:
 
-           1. :attr:`actor_urn` is initialized with the assigned URN.
+            1.  [`actor_urn`][pykka.Actor.actor_urn] is initialized with the
+                assigned URN.
+            2.  [`actor_inbox`][pykka.Actor.actor_inbox] is initialized with a
+                new actor inbox.
+            3.  [`actor_ref`][pykka.Actor.actor_ref] is initialized with a
+                [`pykka.ActorRef`][pykka.ActorRef] object for safely
+                communicating with the actor.
+            4.  At this point, your `__init__()` code can run.
 
-           2. :attr:`actor_inbox` is initialized with a new actor inbox.
+        2.  The actor is registered in [`pykka.ActorRegistry`][pykka.ActorRegistry].
 
-           3. :attr:`actor_ref` is initialized with a :class:`pykka.ActorRef`
-              object for safely communicating with the actor.
+        3.  The actor's receive loop is started.
 
-           4. At this point, your :meth:`__init__()` code can run.
+        Returns:
+            A ref which can be used to access the actor in a safe manner.
 
-        2. The actor is registered in :class:`pykka.ActorRegistry`.
-
-        3. The actor receive loop is started by the actor's associated
-           thread/greenlet.
-
-        :returns: a :class:`ActorRef` which can be used to access the actor in
-            a safe manner
         """
         obj = cls(*args, **kwargs)
         assert obj.actor_ref is not None, (
@@ -151,26 +154,38 @@ class Actor(abc.ABC):
         msg = "Use a subclass of Actor"
         raise NotImplementedError(msg)
 
-    #: The actor URN string is a universally unique identifier for the actor.
-    #: It may be used for looking up a specific actor using
-    #: :meth:`ActorRegistry.get_by_urn`.
     actor_urn: str
+    """
+    The actor URN string is a universally unique identifier for the actor.
 
-    #: The actor's inbox. Use :meth:`ActorRef.tell`, :meth:`ActorRef.ask`, and
-    #: friends to put messages in the inbox.
+    It may be used for looking up a specific actor using
+    [`ActorRegistry.get_by_urn()`][pykka.ActorRegistry.get_by_urn].
+    """
+
     actor_inbox: ActorInbox
+    """
+    The actor's inbox.
+
+    Use [`ActorRef.tell()`][pykka.ActorRef.tell],
+    [`ActorRef.ask()`][pykka.ActorRef.ask], and friends to put messages in the
+    inbox.
+    """
 
     _actor_ref: ActorRef[Any]
 
     @property
     def actor_ref(self: A) -> ActorRef[A]:
-        """The actor's :class:`ActorRef` instance."""
+        """The actor's [`ActorRef`][pykka.ActorRef] instance."""
         # This property only exists to improve the typing of the ActorRef.
         return self._actor_ref
 
-    #: A :class:`threading.Event` representing whether or not the actor should
-    #: continue processing messages. Use :meth:`stop` to change it.
     actor_stopped: threading.Event
+    """
+    A [`threading.Event`][threading.Event] representing whether or not the actor
+    should continue processing messages.
+
+    Use [`stop()`][pykka.Actor.stop] to change it.
+    """
 
     def __init__(
         self,
@@ -179,20 +194,22 @@ class Actor(abc.ABC):
     ) -> None:
         """Create actor.
 
-        Your are free to override :meth:`__init__`, but you must call your
-        superclass' :meth:`__init__` to ensure that fields :attr:`actor_urn`,
-        :attr:`actor_inbox`, and :attr:`actor_ref` are initialized.
+        Your are free to override `__init__()`, but you must call your
+        superclass' `__init__()` to ensure that the fields
+        [`actor_urn`][pykka.Actor.actor_urn],
+        [`actor_inbox`][pykka.Actor.actor_inbox], and
+        [`actor_ref`][pykka.Actor.actor_ref] are initialized.
 
-        You can use :func:`super`::
+        You can use `super()`:
 
             super().__init__()
 
-        Or call you superclass directly::
+        Or call you superclass directly:
 
             pykka.ThreadingActor.__init__(self)
 
-        :meth:`__init__` is called before the actor is started and registered
-        in :class:`ActorRegistry <pykka.ActorRegistry>`.
+        `__init__()` is called before the actor is started and registered
+        in the [`ActorRegistry`][pykka.ActorRegistry].
         """
         self.actor_urn = uuid.uuid4().urn
         self.actor_inbox = self._create_actor_inbox()
@@ -206,7 +223,8 @@ class Actor(abc.ABC):
     def stop(self) -> None:
         """Stop the actor.
 
-        It's equivalent to calling :meth:`ActorRef.stop` with ``block=False``.
+        It's equivalent to calling
+        [`ActorRef.stop(block=False)`][pykka.ActorRef.stop].
         """
         self.actor_ref.tell(messages._ActorStop())  # noqa: SLF001
 
@@ -284,9 +302,11 @@ class Actor(abc.ABC):
         Hook for doing any setup that should be done *after* the actor is
         started, but *before* it starts processing messages.
 
-        For :class:`ThreadingActor`, this method is executed in the actor's own
-        thread, while :meth:`__init__` is executed in the thread that created
-        the actor.
+        !!! note "Threading runtime"
+
+            For [`ThreadingActor`][pykka.ThreadingActor], this method is
+            executed in the actor's own thread, while `__init__()` is executed
+            in the thread that created the actor.
 
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
@@ -299,10 +319,13 @@ class Actor(abc.ABC):
         processed the last message, and *before* the actor stops.
 
         This hook is *not* called when the actor stops because of an unhandled
-        exception. In that case, the :meth:`on_failure` hook is called instead.
+        exception. In that case, the [`on_failure()`][pykka.Actor.on_failure]
+        hook is called instead.
 
-        For :class:`ThreadingActor` this method is executed in the actor's own
-        thread, immediately before the thread exits.
+        !!! note "Threading runtime"
+
+            For [`ThreadingActor`][pykka.ThreadingActor] this method is executed
+            in the actor's own thread, immediately before the thread exits.
 
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
@@ -333,11 +356,13 @@ class Actor(abc.ABC):
         Hook for doing any cleanup *after* an unhandled exception is raised,
         and *before* the actor stops.
 
-        For :class:`ThreadingActor` this method is executed in the actor's own
-        thread, immediately before the thread exits.
+        !!! note "Threading runtime"
+
+            For [`ThreadingActor`][pykka.ThreadingActor] this method is executed in
+            the actor's own thread, immediately before the thread exits.
 
         The method's arguments are the relevant information from
-        :func:`sys.exc_info`.
+        [`sys.exc_info()`][sys.exc_info].
 
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
@@ -362,9 +387,11 @@ class Actor(abc.ABC):
     def on_receive(self, message: Any) -> Any:
         """May be implemented for the actor to handle regular non-proxy messages.
 
-        :param message: the message to handle
-        :type message: any
+        Args:
+            message: the message to handle
 
-        :returns: anything that should be sent as a reply to the sender
+        Returns:
+            anything that should be sent as a reply to the sender
+
         """
         logger.warning(f"Unexpected message received by {self}: {message}")
