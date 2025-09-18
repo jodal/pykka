@@ -10,6 +10,7 @@ edit_uri: edit/main/docs/
 nav:
   - index.md
   - quickstart.md
+  - logging.md
   - debugging.md
   - examples.md
   - Reference:
@@ -19,7 +20,6 @@ nav:
       - api/registry.md
       - api/exceptions.md
       - api/messages.md
-      - api/logging.md
       - api/debug.md
       - api/typing.md
   - Runtimes:
