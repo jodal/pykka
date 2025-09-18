@@ -10,6 +10,7 @@ edit_uri: edit/main/docs/
 nav:
   - index.md
   - quickstart.md
+  - debugging.md
   - examples.md
   - Reference:
       - api/actors.md
