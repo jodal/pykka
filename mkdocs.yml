@@ -11,6 +11,7 @@ nav:
   - index.md
   - quickstart.md
   - logging.md
+  - testing.md
   - debugging.md
   - examples.md
   - Reference:
@@ -25,7 +26,6 @@ nav:
   - Runtimes:
       - runtimes/index.md
       - runtimes/threading.md
-  - testing.md
 
 extra:
   social:
