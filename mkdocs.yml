@@ -27,11 +27,11 @@ nav:
       - reference/proxies.md
       - reference/futures.md
       - reference/registry.md
+      - reference/runtimes.md
       - reference/exceptions.md
       - reference/messages.md
       - reference/debug.md
       - reference/typing.md
-      - reference/runtimes.md
   - Examples:
       - examples/index.md
       - examples/basic.md
