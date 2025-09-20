@@ -1,5 +1,7 @@
 # Introduction
 
+> _Pykka makes it easier to build concurrent applications._
+
 Pykka is a Python implementation of the [actor model](getting-started/model.md).
 The actor model introduces some simple rules to control the sharing of state and
 cooperation between execution units, which makes it easier to build concurrent
@@ -8,11 +10,10 @@ applications.
 ## Installation
 
 Pykka has no dependencies other than Python 3.10 or newer.
-It can be installed from [PyPI](https://pypi.org/project/pykka/),
-e.g. with `uv`:
+It can be installed from [PyPI](https://pypi.org/project/pykka/):
 
 ```console
-$ uv add pykka
+$ python3 -m pip install pykka
 ```
 
 Next up, check out the [Getting started](getting-started/index.md) docs or the

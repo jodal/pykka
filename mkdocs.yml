@@ -2,7 +2,7 @@ site_name: Pykka
 site_description: Pykka makes it easier to build concurrent applications.
 site_url: !ENV READTHEDOCS_CANONICAL_URL
 
-copyright: Copyright © 2010-2025 Stein Magnus Jodal
+copyright: Copyright © 2010-2025 Stein Magnus Jodal and contributors
 repo_name: jodal/pykka
 repo_url: https://github.com/jodal/pykka
 edit_uri: edit/main/docs/
