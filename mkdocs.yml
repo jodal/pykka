@@ -13,7 +13,7 @@ nav:
   - Guides:
       - guides/logging.md
       - guides/testing.md
-      - guides/debugging.md
+      - guides/deadlocks.md
   - Reference:
       - reference/actors.md
       - reference/proxies.md
