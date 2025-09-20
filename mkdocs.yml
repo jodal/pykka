@@ -8,16 +8,20 @@ repo_url: https://github.com/jodal/pykka
 edit_uri: edit/main/docs/
 
 nav:
-  - index.md
+  - Introduction:
+      - index.md
   - Getting started:
+      - getting-started/index.md
       - getting-started/model.md
       - getting-started/actors.md
       - getting-started/proxies.md
   - Guides:
+      - guides/index.md
       - guides/logging.md
       - guides/testing.md
       - guides/deadlocks.md
   - Reference:
+      - reference/index.md
       - reference/actors.md
       - reference/proxies.md
       - reference/futures.md
@@ -28,6 +32,7 @@ nav:
       - reference/typing.md
       - reference/runtimes.md
   - Examples:
+      - examples/index.md
       - examples/basic.md
       - examples/proxy.md
       - examples/cooperation.md

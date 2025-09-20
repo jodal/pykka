@@ -15,6 +15,9 @@ e.g. with `uv`:
 $ uv add pykka
 ```
 
+Next up, check out the [Getting started](getting-started/index.md) docs or the
+[Reference](reference/index.md).
+
 ## Project resources
 
 - [Source code](https://github.com/jodal/pykka)
