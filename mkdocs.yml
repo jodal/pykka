@@ -28,7 +28,7 @@ nav:
       - examples/basic.md
       - examples/proxy.md
       - examples/cooperation.md
-      - examples/resolver.md
+      - examples/worker-pool.md
       - examples/mopidy.md
 
 extra:
