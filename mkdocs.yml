@@ -63,8 +63,6 @@ markdown_extensions:
       repo: pykka
   - pymdownx.snippets
   - pymdownx.superfences
-  - pymdownx.tasklist:
-      custom_checkbox: true
 
 plugins:
   - mkdocstrings:
