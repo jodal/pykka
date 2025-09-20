@@ -7,4 +7,5 @@
 /.venv/
 /dist/
 /docs/_build/
+/site/
 __pycache__/
