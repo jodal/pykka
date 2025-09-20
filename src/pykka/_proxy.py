@@ -316,8 +316,8 @@ def traversable(obj: T) -> T:
                 return True
 
     The third alternative, and the only way in Pykka < 2.0, is to manually
-    mark a class as traversable by setting the ``pykka_traversable`` attribute
-    to :class:`True`:
+    mark a class as traversable by setting the `pykka_traversable` attribute
+    to `True`:
 
         class AnActor(pykka.ThreadingActor):
             playback = Playback()

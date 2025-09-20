@@ -66,7 +66,7 @@ def get_attr_from_parent(
     root: Any,
     attr_path: AttrPath,
 ) -> Any:
-    """Get attribute information from ``__dict__`` on the parent."""
+    """Get attribute information from `__dict__` on the parent."""
     parent = get_attr_directly(root, attr_path[:-1])
     parent_attrs = get_obj_dict(parent)
     attr_name = attr_path[-1]
@@ -92,7 +92,7 @@ def get_attr_directly(
 
 
 def get_obj_dict(obj: Any) -> dict[str, Any]:
-    """Combine ``__dict__`` from ``obj`` and all its superclasses."""
+    """Combine `__dict__` from `obj` and all its superclasses."""
     result: dict[str, Any] = {}
     for cls in reversed(obj.__class__.mro()):
         result.update(cls.__dict__)

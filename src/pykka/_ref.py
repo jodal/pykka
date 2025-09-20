@@ -203,9 +203,9 @@ class ActorRef(Generic[A]):
     ) -> bool | Future[bool]:
         """Send a message to the actor, asking it to stop.
 
-        Returns :class:`True` if actor is stopped or was being stopped at the
-        time of the call. :class:`False` if actor was already dead. If
-        ``block`` is :class:`False`, it returns a future wrapping the result.
+        Returns `True` if actor is stopped or was being stopped at the
+        time of the call. `False` if actor was already dead. If
+        `block` is `False`, it returns a future wrapping the result.
 
         Messages sent to the actor before the actor is asked to stop will
         be processed normally before it stops.
@@ -216,7 +216,7 @@ class ActorRef(Generic[A]):
 
         The actor may not be restarted.
 
-        ``block`` and ``timeout`` works as for :meth:`ask`.
+        `block` and `timeout` works as for [`ask()`][pykka.ActorRef.ask].
 
         Returns:
             a future if not blocking, or a boolean result if blocking

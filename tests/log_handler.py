@@ -44,7 +44,7 @@ class PykkaTestLogHandler(logging.Handler):
     def wait_for_message(
         self, level: LogLevel, num_messages: int = 1, timeout: float = 5
     ) -> None:
-        """Wait until at least ``num_messages`` log messages have been emitted
+        """Wait until at least `num_messages` log messages have been emitted
         to the given log level."""
         deadline = time.time() + timeout
         while time.time() < deadline:
