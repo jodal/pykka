@@ -50,7 +50,7 @@ extra_javascript:
 
 markdown_extensions:
   - admonition
-  - def_list
+  - pymdownx.blocks.definition
   - pymdownx.highlight:
       anchor_linenums: true
       default_lang: python
