@@ -302,11 +302,11 @@ class Actor(abc.ABC):
         Hook for doing any setup that should be done *after* the actor is
         started, but *before* it starts processing messages.
 
-        !!! note "Threading runtime"
-
-            For [`ThreadingActor`][pykka.ThreadingActor], this method is
-            executed in the actor's own thread, while `__init__()` is executed
-            in the thread that created the actor.
+        /// note | Threading runtime
+        For [`ThreadingActor`][pykka.ThreadingActor], this method is
+        executed in the actor's own thread, while `__init__()` is executed
+        in the thread that created the actor.
+        ///
 
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
@@ -322,10 +322,10 @@ class Actor(abc.ABC):
         exception. In that case, the [`on_failure()`][pykka.Actor.on_failure]
         hook is called instead.
 
-        !!! note "Threading runtime"
-
-            For [`ThreadingActor`][pykka.ThreadingActor] this method is executed
-            in the actor's own thread, immediately before the thread exits.
+        /// note | Threading runtime
+        For [`ThreadingActor`][pykka.ThreadingActor] this method is executed
+        in the actor's own thread, immediately before the thread exits.
+        ///
 
         If an exception is raised by this method the stack trace will be
         logged, and the actor will stop.
@@ -356,10 +356,10 @@ class Actor(abc.ABC):
         Hook for doing any cleanup *after* an unhandled exception is raised,
         and *before* the actor stops.
 
-        !!! note "Threading runtime"
-
-            For [`ThreadingActor`][pykka.ThreadingActor] this method is executed in
-            the actor's own thread, immediately before the thread exits.
+        /// note | Threading runtime
+        For [`ThreadingActor`][pykka.ThreadingActor] this method is executed in
+        the actor's own thread, immediately before the thread exits.
+        ///
 
         The method's arguments are the relevant information from
         [`sys.exc_info()`][sys.exc_info].

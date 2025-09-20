@@ -89,13 +89,13 @@ To send a message to the actor, you can either use the
 The message itself can be of any type, for example a dict or your own
 message class type.
 
-!!! warning "Mutable messages"
-
-    For performance reasons, Pykka **does not** clone the message you send
-    before delivering it to the receiver. You are yourself responsible for
-    either using immutable data structures or to
-    [`copy.deepcopy()`][copy.deepcopy] the data you're sending off to other
-    actors.
+/// warning | Mutable messages
+For performance reasons, Pykka **does not** clone the message you send
+before delivering it to the receiver. You are yourself responsible for
+either using immutable data structures or to
+[`copy.deepcopy()`][copy.deepcopy] the data you're sending off to other
+actors.
+///
 
 Summarized in code:
 
@@ -137,11 +137,11 @@ print(answer)
 # => "Hi there!"
 ```
 
-!!! note "Returning `None`"
-
-    `None` is a valid response,
-    so if you return `None` explicitly, or don't return at all,
-    a response containing `None` will be returned to the sender.
+/// note | Returning `None`
+`None` is a valid response,
+so if you return `None` explicitly, or don't return at all,
+a response containing `None` will be returned to the sender.
+///
 
 From the point of view of the actor it doesn't matter whether the
 message was sent using [`tell()`][pykka.ActorRef.tell]

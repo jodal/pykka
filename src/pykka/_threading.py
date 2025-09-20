@@ -28,16 +28,18 @@ class ThreadingFutureResult(NamedTuple):
 class ThreadingFuture(Future[T]):
     """Implementation of [`Future`][pykka.Future] for use with regular Python threads.
 
-    !!! warning "Mutable messages"
-        The future *does not* make a copy of the object which is
-        [`set()`][pykka.Future.set] on it. It is the setters responsibility to
-        only pass immutable objects or make a copy of the object before setting
-        it on the future.
+    /// warning | Mutable messages
+    The future *does not* make a copy of the object which is
+    [`set()`][pykka.Future.set] on it. It is the setters responsibility to
+    only pass immutable objects or make a copy of the object before setting
+    it on the future.
+    ///
 
-    !!! note "Version changed: Pykka 0.14"
-        Previously, the encapsulated value was a copy made with
-        [`copy.deepcopy()`][copy.deepcopy], unless the encapsulated value was a
-        future, in which case the original future was encapsulated.
+    /// note | Version changed: Pykka 0.14
+    Previously, the encapsulated value was a copy made with
+    [`copy.deepcopy()`][copy.deepcopy], unless the encapsulated value was a
+    future, in which case the original future was encapsulated.
+    ///
     """
 
     def __init__(self) -> None:

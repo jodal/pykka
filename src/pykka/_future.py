@@ -89,10 +89,10 @@ class Future(Generic[T]):
         Raises:
             Exception: an exception if `set()` is called multiple times
 
-        !!! note "Version changed: Pykka 4.3"
-
-            Calling `set()` on a future that already has a get hook set now
-            raises an exception.
+        /// note | Version changed: Pykka 4.3
+        Calling `set()` on a future that already has a get hook set now
+        raises an exception.
+        ///
 
         """
         raise NotImplementedError
@@ -115,9 +115,10 @@ class Future(Generic[T]):
         Args:
             exc_info: the encapsulated exception
 
-        !!! note "Version changed: Pykka 4.3"
-            Calling `set_exception()` on a future that already has a get hook
-            set now raises an exception.
+        /// note | Version changed: Pykka 4.3
+        Calling `set_exception()` on a future that already has a get hook
+        set now raises an exception.
+        ///
 
         """
         raise NotImplementedError
@@ -136,11 +137,13 @@ class Future(Generic[T]):
             func: callable accepting a timeout value, to produce return value of
                 `get()`
 
-        !!! note "Version added: Pykka 1.2"
+        /// note | Version added: Pykka 1.2
+        ///
 
-        !!! note "Version changed: Pykka 4.3"
-            Calling `set_get_hook()` on a future that already has a result set
-            now raises an exception.
+        /// note | Version changed: Pykka 4.3
+        Calling `set_get_hook()` on a future that already has a result set
+        now raises an exception.
+        ///
 
         """
         self._get_hook = func
@@ -171,7 +174,8 @@ class Future(Generic[T]):
             [11, 12, 13, 14]
             ```
 
-        !!! note "Version added: Pykka 1.2"
+        /// note | Version added: Pykka 1.2
+        ///
 
         """
         future = self.__class__()
@@ -203,7 +207,8 @@ class Future(Generic[T]):
             ['abc', 123, False]
             ```
 
-        !!! note "Version added: Pykka 1.2"
+        /// note | Version added: Pykka 1.2
+        ///
 
         """
         future = cast("Future[Iterable[Any]]", self.__class__())
@@ -235,15 +240,17 @@ class Future(Generic[T]):
             'bar'
             ```
 
-        !!! note "Version added: Pykka 1.2"
+        /// note | Version added: Pykka 1.2
+        ///
 
-        !!! note "Version changed: Pykka 2.0"
-            Previously, if the future's result was an iterable (except a
-            string), the function was applied to each item in the iterable.
-            This behavior was unpredictable and made regular use cases like
-            extracting a single field from a dict difficult, thus the
-            behavior has been simplified. Since Pykka 2.0, the entire result
-            value is passed to the function.
+        /// note | Version changed: Pykka 2.0
+        Previously, if the future's result was an iterable (except a
+        string), the function was applied to each item in the iterable.
+        This behavior was unpredictable and made regular use cases like
+        extracting a single field from a dict difficult, thus the
+        behavior has been simplified. Since Pykka 2.0, the entire result
+        value is passed to the function.
+        ///
 
         """
         future = cast("Future[M]", self.__class__())
@@ -300,7 +307,8 @@ class Future(Generic[T]):
             5
             ```
 
-        !!! note "Version added: Pykka 1.2"
+        /// note | Version added: Pykka 1.2
+        ///
 
         """
         future = cast("Future[R]", self.__class__())

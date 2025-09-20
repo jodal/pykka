@@ -39,7 +39,8 @@ class _ActorStop(NamedTuple):  # pyright: ignore[reportUnusedClass]
 class ProxyCall(NamedTuple):
     """Message to ask the actor to call the method with the arguments.
 
-    !!! note "Version added: Pykka 2.0"
+    /// note | Version added: Pykka 2.0
+    ///
     """
 
     #: List with the path from the actor to the method.
@@ -55,7 +56,8 @@ class ProxyCall(NamedTuple):
 class ProxyGetAttr(NamedTuple):
     """Message to ask the actor to return the value of the attribute.
 
-    !!! note "Version added: Pykka 2.0"
+    /// note | Version added: Pykka 2.0
+    ///
     """
 
     #: List with the path from the actor to the attribute.
@@ -65,7 +67,8 @@ class ProxyGetAttr(NamedTuple):
 class ProxySetAttr(NamedTuple):
     """Message to ask the actor to set the attribute to the value.
 
-    !!! note "Version added: Pykka 2.0"
+    /// note | Version added: Pykka 2.0
+    ///
     """
 
     #: List with the path from the actor to the attribute.

@@ -58,7 +58,8 @@ def log_thread_tracebacks(*_args: Any, **_kwargs: Any) -> None:
     then let your main thread relax for the rest of your application's life
     cycle.
 
-    !!! note "Version added: Pykka 1.1"
+    /// note | Version added: Pykka 1.1
+    ///
 
     """
     thread_names = {t.ident: t.name for t in threading.enumerate()}

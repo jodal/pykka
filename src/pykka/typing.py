@@ -43,7 +43,8 @@ class Method(Protocol, Generic[P, R_co]):
 def proxy_field(field: T) -> Future[T]:
     """Type a field on an actor proxy.
 
-    !!! note "Version added: Pykka 4.0"
+    /// note | Version added: Pykka 4.0
+    ///
     """
     return field  # type: ignore[return-value]
 
@@ -53,7 +54,8 @@ def proxy_method(
 ) -> Method[P, Future[T]]:
     """Type a method on an actor proxy.
 
-    !!! note "Version added: Pykka 4.0"
+    /// note | Version added: Pykka 4.0
+    ///
     """
     return field  # type: ignore[return-value]
 
@@ -61,7 +63,8 @@ def proxy_method(
 class ActorMemberMixin:
     """Mixin class for typing Actor methods which are accessible via proxy instances.
 
-    !!! note "Version added: Pykka 4.0"
+    /// note | Version added: Pykka 4.0
+    ///
     """
 
     stop = proxy_method(Actor.stop)

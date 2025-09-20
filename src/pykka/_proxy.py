@@ -279,7 +279,8 @@ class CallableProxy(Generic[A]):
         exception on. Thus, the actor's [`on_failure()`][pykka.Actor.on_failure]
         hook is called instead.
 
-        !!! note "Version added: Pykka 2.0"
+        /// note | Version added: Pykka 2.0
+        ///
         """
         message = messages.ProxyCall(
             attr_path=self._attr_path, args=args, kwargs=kwargs
@@ -333,7 +334,8 @@ def traversable(obj: T) -> T:
         proxy = AnActor.start().proxy()
         assert proxy.playback.play().get() is True
 
-    !!! note "Version added: Pykka 2.0"
+    /// note | Version added: Pykka 2.0
+    ///
     """
     if hasattr(obj, "__slots__"):
         msg = (

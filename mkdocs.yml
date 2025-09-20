@@ -49,7 +49,7 @@ extra_javascript:
   - javascript/readthedocs.js
 
 markdown_extensions:
-  - admonition
+  - pymdownx.blocks.admonition
   - pymdownx.blocks.definition
   - pymdownx.highlight:
       anchor_linenums: true
