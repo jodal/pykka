@@ -1,14 +1,26 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import pytest
-from producer import ProducerActor
+from testing import ProducerActor
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
+    from unittest.mock import Mock
+
+    from pytest_mock import MockerFixture
+
+    from pykka import ActorProxy
 
 
 @pytest.fixture
-def consumer_mock(mocker):
+def consumer_mock(mocker: MockerFixture) -> Mock:
     return mocker.Mock()
 
 
 @pytest.fixture
-def producer(consumer_mock):
+def producer(consumer_mock: Mock) -> Generator[ActorProxy[ProducerActor]]:
     # Step 1: The actor under test is wired up with
     # its dependencies and is started.
     proxy = ProducerActor.start(consumer_mock).proxy()
@@ -19,7 +31,7 @@ def producer(consumer_mock):
     proxy.stop()
 
 
-def test_producer_actor(consumer_mock, producer):
+def test_producer_actor(consumer_mock: Mock, producer: ActorProxy[ProducerActor]):
     # Step 2: Interact with the actor.
     # We call .get() on the last future returned by the actor to wait
     # for the actor to process all messages before asserting anything.

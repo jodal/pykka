@@ -1,4 +1,4 @@
-# Testing
+# Unit testing
 
 Pykka actors can be tested using the regular Python testing tools like
 [pytest](https://pytest.org/),
@@ -22,20 +22,20 @@ a typical pattern is the following:
 4.  In the test teardown,
     stop the actor to properly clean up before the next test.
 
-## An example
+## Example
 
 Let's look at an example actor that we want to test:
 
-```title="examples/producer.py"
---8<-- "examples/producer.py"
+```title="examples/testing.py"
+--8<-- "examples/testing.py"
 ```
 
 We can test this actor with [pytest](https://pytest.org/)
 by mocking the consumer and
 asserting that it receives a newly produced item:
 
-```title="examples/producer_test.py"
---8<-- "examples/producer_test.py"
+```title="examples/testing_test.py"
+--8<-- "examples/testing_test.py"
 ```
 
 If this way of setting up and tearing down test resources is unfamiliar to you,
