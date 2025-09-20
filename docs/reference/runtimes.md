@@ -10,3 +10,12 @@ ran on top of
 These alternative implementations were removed in Pykka 3.
 
 Note that Pykka does no attempt at supporting a mix of concurrency runtimes.
+
+## Threading runtime
+
+The default threading runtime has no dependencies other than Pykka itself and
+the Python standard library.
+
+::: pykka.ThreadingFuture
+
+::: pykka.ThreadingActor

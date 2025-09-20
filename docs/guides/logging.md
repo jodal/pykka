@@ -13,38 +13,38 @@ so that you can filter out the parts you're not interested in:
 
 [`logging.CRITICAL`][logging.CRITICAL] (highest)
 
-:   This level is only used by the debug helpers in
-    [`pykka.debug`][pykka.debug].
+: This level is only used by the debug helpers in
+[`pykka.debug`][pykka.debug].
 
 [`logging.ERROR`][logging.ERROR]
 
-:   Exceptions raised by an actor
-    that are not captured into a reply future
-    are logged at this level.
+: Exceptions raised by an actor
+that are not captured into a reply future
+are logged at this level.
 
 [`logging.WARNING`][logging.WARNING]
 
-:   Unhandled messages and other potential programming errors
-    are logged at this level.
+: Unhandled messages and other potential programming errors
+are logged at this level.
 
 [`logging.INFO`][logging.INFO]
 
-:   Exceptions raised by an actor
-    that are captured into a reply future
-    are logged at this level.
-    If the future result is used elsewhere,
-    the exceptions is reraised there too.
-    If the future result isn't used,
-    the log message is the only trace of the exception happening.
+: Exceptions raised by an actor
+that are captured into a reply future
+are logged at this level.
+If the future result is used elsewhere,
+the exceptions is reraised there too.
+If the future result isn't used,
+the log message is the only trace of the exception happening.
 
     To catch bugs earlier,
     it is recommended to show log messages this level during development.
 
 [`logging.DEBUG`][logging.DEBUG] (lowest)
 
-:   Every time an actor is started or stopped,
-    and registered or unregistered in the actor registry,
-    a message is logged at this level.
+: Every time an actor is started or stopped,
+and registered or unregistered in the actor registry,
+a message is logged at this level.
 
 In summary,
 you probably want to always let log messages at
@@ -88,7 +88,7 @@ by increasing the threshold on the Pykka logger to
 ```py
 import logging
 logging.basicConfig(level=logging.DEBUG)
-logging.getLogger('pykka').setLevel(logging.INFO)
+logging.getLogger("pykka").setLevel(logging.INFO)
 ```
 
 Given that you've fixed all unhandled exceptions logged at the
@@ -100,7 +100,7 @@ to avoid logging exceptions that are properly handled:
 ```py
 import logging
 logging.basicConfig(level=logging.DEBUG)
-logging.getLogger('pykka').setLevel(logging.WARNING)
+logging.getLogger("pykka").setLevel(logging.WARNING)
 ```
 
 For more details on how to use [`logging`][logging],

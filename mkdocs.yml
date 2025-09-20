@@ -10,22 +10,26 @@ edit_uri: edit/main/docs/
 nav:
   - index.md
   - quickstart.md
-  - logging.md
-  - testing.md
-  - debugging.md
-  - examples.md
+  - Guides:
+      - guides/logging.md
+      - guides/testing.md
+      - guides/debugging.md
   - Reference:
-      - api/actors.md
-      - api/proxies.md
-      - api/futures.md
-      - api/registry.md
-      - api/exceptions.md
-      - api/messages.md
-      - api/debug.md
-      - api/typing.md
-  - Runtimes:
-      - runtimes/index.md
-      - runtimes/threading.md
+      - reference/actors.md
+      - reference/proxies.md
+      - reference/futures.md
+      - reference/registry.md
+      - reference/exceptions.md
+      - reference/messages.md
+      - reference/debug.md
+      - reference/typing.md
+      - reference/runtimes.md
+  - Examples:
+      - examples/plain.md
+      - examples/proxy.md
+      - examples/counter.md
+      - examples/resolver.md
+      - examples/mopidy.md
 
 extra:
   social:
@@ -86,6 +90,7 @@ theme:
     - navigation.indexes
     - navigation.instant
     - navigation.instant.progress
+    - navigation.sections
   icon:
     logo: fontawesome/solid/spiral
     repo: fontawesome/brands/github
