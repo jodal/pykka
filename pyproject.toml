@@ -34,13 +34,13 @@ dev = [
     { include-group = "tests" },
 ]
 docs = [
-    "mkdocs-material>=9.6",
-    "mkdocstrings[python]>=0.29",
+    "mkdocs-material>=9.6.4",
+    "mkdocstrings[python]>=0.29.1",
 ]
-mypy = ["mypy>=1.17.1"]
-pyright = ["pyright>=1.1.403"]
-ruff = ["ruff>=0.12.8"]
-tests = ["pytest>=7.4.2", "pytest-cov>=4.1.0", "pytest-mock>=3.11.1"]
+mypy = ["mypy>=1.18.2"]
+pyright = ["pyright>=1.1.405"]
+ruff = ["ruff>=0.13.1"]
+tests = ["pytest>=8.3.5", "pytest-cov>=5.0.0", "pytest-mock>=3.14.0"]
 
 
 [tool.coverage.paths]
