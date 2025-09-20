@@ -1,0 +1,124 @@
+site_name: Pykka
+site_description: Pykka makes it easier to build concurrent applications.
+site_url: !ENV READTHEDOCS_CANONICAL_URL
+
+copyright: Copyright © 2010-2025 Stein Magnus Jodal and contributors
+repo_name: jodal/pykka
+repo_url: https://github.com/jodal/pykka
+edit_uri: edit/main/docs/
+
+nav:
+  - Introduction:
+      - index.md
+  - Getting started:
+      - getting-started/index.md
+      - getting-started/model.md
+      - getting-started/actors.md
+      - getting-started/proxies.md
+  - Guides:
+      - guides/index.md
+      - guides/logging.md
+      - guides/testing.md
+      - guides/deadlocks.md
+      - guides/proxy-typing.md
+  - Reference:
+      - reference/index.md
+      - reference/actors.md
+      - reference/proxies.md
+      - reference/futures.md
+      - reference/registry.md
+      - reference/runtimes.md
+      - reference/exceptions.md
+      - reference/messages.md
+      - reference/debug.md
+      - reference/typing.md
+  - Examples:
+      - examples/index.md
+      - examples/basic.md
+      - examples/proxy.md
+      - examples/cooperation.md
+      - examples/worker-pool.md
+      - examples/mopidy.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jodal/pykka
+
+extra_javascript:
+  - javascript/readthedocs.js
+
+markdown_extensions:
+  - pymdownx.blocks.admonition
+  - pymdownx.blocks.definition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      default_lang: python
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: jodal
+      repo: pykka
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          inventories:
+            - https://docs.python.org/3/objects.inv
+          options:
+            docstring_style: google
+            docstring_section_style: list
+            filters:
+              - "!^_[^_]"
+              - "!^__post_init__"
+              - "!^__len__"
+              - "!^__repr__"
+              - "!^__str__"
+            separate_signature: true
+            show_docstring_examples: true
+            show_root_heading: true
+            show_root_toc_entry: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            show_signature_annotations: true
+  - search
+
+theme:
+  name: material
+  features:
+    - content.action.edit
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.sections
+  icon:
+    logo: fontawesome/solid/spiral
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+watch:
+  - docs
+  - src

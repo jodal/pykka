@@ -6,7 +6,7 @@ from typing import (
     Generic,
     Literal,
     TypeVar,
-    Union,
+    cast,
     overload,
 )
 
@@ -29,12 +29,10 @@ A = TypeVar("A", bound="Actor")
 class ActorRef(Generic[A]):
     """Reference to a running actor which may safely be passed around.
 
-    :class:`ActorRef` instances are returned by :meth:`Actor.start` and the
-    lookup methods in :class:`ActorRegistry <pykka.ActorRegistry>`. You should
-    never need to create :class:`ActorRef` instances yourself.
-
-    :param actor: the actor to wrap
-    :type actor: :class:`Actor`
+    [`ActorRef`][pykka.ActorRef] instances are returned by
+    [`Actor.start()`][pykka.Actor.start] and the lookup methods in
+    [`ActorRegistry`][pykka.ActorRegistry]. You should never need to create
+    [`ActorRef`][pykka.ActorRef] instances yourself.
     """
 
     #: The class of the referenced actor.
@@ -69,11 +67,12 @@ class ActorRef(Generic[A]):
         """Check if actor is alive.
 
         This is based on the actor's stopped flag. The actor is not guaranteed
-        to be alive and responding even though :meth:`is_alive` returns
-        :class:`True`.
+        to be alive and responding even though
+        [`is_alive()`][pykka.ActorRef.is_alive] returns `True`.
 
-        :return:
-            Returns :class:`True` if actor is alive, :class:`False` otherwise.
+        Returns:
+            `True` if actor is alive, `False` otherwise.
+
         """
         return not self.actor_stopped.is_set()
 
@@ -86,11 +85,12 @@ class ActorRef(Generic[A]):
         Will generally not block, but if the underlying queue is full it will
         block until a free slot is available.
 
-        :param message: message to send
-        :type message: any
+        Args:
+            message: message to send
 
-        :raise: :exc:`pykka.ActorDeadError` if actor is not available
-        :return: nothing
+        Raises:
+            ActorDeadError: if actor is not available
+
         """
         if not self.is_alive():
             msg = f"{self} not found"
@@ -122,7 +122,7 @@ class ActorRef(Generic[A]):
         *,
         block: bool = True,
         timeout: float | None = None,
-    ) -> Union[Any, Future[Any]]: ...
+    ) -> Any | Future[Any]: ...
 
     def ask(
         self,
@@ -130,31 +130,30 @@ class ActorRef(Generic[A]):
         *,
         block: bool = True,
         timeout: float | None = None,
-    ) -> Union[Any, Future[Any]]:
+    ) -> Any | Future[Any]:
         """Send message to actor and wait for the reply.
 
         The message can be of any type.
-        If ``block`` is :class:`False`, it will immediately return a
-        :class:`Future <pykka.Future>` instead of blocking.
+        If `block` is `False`, it will immediately return a
+        [`Future`][pykka.Future] instead of blocking.
 
-        If ``block`` is :class:`True`, and ``timeout`` is :class:`None`, as
-        default, the method will block until it gets a reply, potentially
-        forever. If ``timeout`` is an integer or float, the method will wait
-        for a reply for ``timeout`` seconds, and then raise
-        :exc:`pykka.Timeout`.
+        If `block` is `True`, and `timeout` is `None`, as default, the method
+        will block until it gets a reply, potentially forever. If `timeout` is
+        an integer or float, the method will wait for a reply for `timeout`
+        seconds, and then raise [`pykka.Timeout`][pykka.Timeout].
 
-        :param message: message to send
-        :type message: any
+        Args:
+            message: message to send
+            block: whether to block while waiting for a reply
+            timeout: seconds to wait before timeout if blocking
 
-        :param block: whether to block while waiting for a reply
-        :type block: boolean
+        Raises:
+            Timeout: if timeout is reached if blocking
+            Exception: any exception returned by the receiving actor if blocking
 
-        :param timeout: seconds to wait before timeout if blocking
-        :type timeout: float or :class:`None`
+        Returns:
+            a future if not blocking, or a response if blocking
 
-        :raise: :exc:`pykka.Timeout` if timeout is reached if blocking
-        :raise: any exception returned by the receiving actor if blocking
-        :return: :class:`pykka.Future`, or response if blocking
         """
         future = self.actor_class._create_future()  # noqa: SLF001
 
@@ -194,14 +193,14 @@ class ActorRef(Generic[A]):
         *,
         block: bool = True,
         timeout: float | None = None,
-    ) -> Union[Any, Future[Any]]: ...
+    ) -> bool | Future[bool]: ...
 
     def stop(
         self,
         *,
         block: bool = True,
         timeout: float | None = None,
-    ) -> Union[Any, Future[Any]]:
+    ) -> bool | Future[bool]:
         """Send a message to the actor, asking it to stop.
 
         Returns :class:`True` if actor is stopped or was being stopped at the
@@ -218,7 +217,9 @@ class ActorRef(Generic[A]):
 
         ``block`` and ``timeout`` works as for :meth:`ask`.
 
-        :return: :class:`pykka.Future`, or a boolean result if blocking
+        Returns:
+            a future if not blocking, or a boolean result if blocking
+
         """
         ask_future = self.ask(_ActorStop(), block=False)
 
@@ -232,6 +233,7 @@ class ActorRef(Generic[A]):
 
         converted_future = ask_future.__class__()
         converted_future.set_get_hook(_stop_result_converter)
+        converted_future = cast("Future[bool]", converted_future)
 
         if block:
             return converted_future.get(timeout=timeout)
@@ -239,17 +241,21 @@ class ActorRef(Generic[A]):
         return converted_future
 
     def proxy(self: ActorRef[A]) -> ActorProxy[A]:
-        """Wrap the :class:`ActorRef` in an :class:`ActorProxy <pykka.ActorProxy>`.
+        """Wrap the [`ActorRef`][pykka.ActorRef] in an [`ActorProxy`][pykka.ActorProxy].
 
-        Using this method like this::
+        Using this method like this:
 
             proxy = AnActor.start().proxy()
 
-        is analogous to::
+        is analogous to:
 
             proxy = ActorProxy(AnActor.start())
 
-        :raise: :exc:`pykka.ActorDeadError` if actor is not available
-        :return: :class:`pykka.ActorProxy`
+        Raises:
+            ActorDeadError: if actor is not available
+
+        Returns:
+            a proxy object wrapping the actor reference.
+
         """
         return ActorProxy(actor_ref=self)

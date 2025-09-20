@@ -34,9 +34,8 @@ dev = [
     { include-group = "tests" },
 ]
 docs = [
-    "sphinx>=6.2.1",
-    "sphinx_rtd_theme>=1.3.0",
-    "tomli>=2.0.1 ; python_version < '3.11'",
+    "mkdocs-material>=9.6",
+    "mkdocstrings[python]>=0.29",
 ]
 mypy = ["mypy>=1.17.1"]
 pyright = ["pyright>=1.1.403"]
@@ -154,6 +153,7 @@ commands = [
     [
         "mypy",
         { replace = "posargs", default = [
+            "examples",
             "src",
             "tests",
         ], extend = true },
@@ -166,6 +166,7 @@ commands = [
     [
         "pyright",
         { replace = "posargs", default = [
+            "examples",
             "src",
             "tests",
         ], extend = true },
@@ -184,4 +185,4 @@ commands = [["ruff", "check", "{posargs:.}"]]
 
 [tool.tox.env.docs]
 dependency_groups = ["docs"]
-commands = [["sphinx-build", "docs", "{envtmpdir}"]]
+commands = [["mkdocs", "build", "-d", "{envtmpdir}"]]

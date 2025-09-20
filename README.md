@@ -15,18 +15,16 @@ The actor model introduces some simple rules to control
 the sharing of state and cooperation between execution units,
 which makes it easier to build concurrent applications.
 
-For a quickstart guide and a complete API reference,
-see the [documentation](https://pykka.readthedocs.io/).
-
 ## Installation
 
-Pykka requires Python 3.10 or newer.
+Pykka has no dependencies other than Python 3.10 or newer.
+It can be installed from [PyPI](https://pypi.org/project/pykka/):
 
-Pykka is available from [PyPI](https://pypi.org/project/pykka/):
+```console
+$ python3 -m pip install pykka
+```
 
-```
-python3 -m pip install pykka
-```
+Next up, check out the [documentation](https://pykka.readthedocs.io/).
 
 ## Project resources
 

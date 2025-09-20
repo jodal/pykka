@@ -1,60 +1,4 @@
-"""The :mod:`pykka.typing` module contains helpers to improve type hints.
-
-Since Pykka 4.0, Pykka has complete type hints for the public API, tested using
-both `Mypy <https://www.mypy-lang.org/>`_ and `Pyright
-<https://github.com/microsoft/pyright>`_.
-
-Due to the dynamic nature of :class:`~pykka.ActorProxy` objects, it is not
-possible to automatically type them correctly. This module contains helpers to
-manually create additional classes that correctly describe the type hints for
-the proxy objects. In cases where a proxy objects is used a lot, this might be
-worth the extra effort to increase development speed and catch bugs earlier.
-
-Example usage::
-
-    from typing import cast
-
-    from pykka import ActorProxy, ThreadingActor
-    from pykka.typing import ActorMemberMixin, proxy_field, proxy_method
-
-
-    # 1) The actor class to be proxied is defined as usual:
-
-    class CircleActor(ThreadingActor):
-        pi = 3.14
-
-        def area(self, radius: float) -> float:
-            return self.pi * radius**2
-
-
-    # 2) In addition, a proxy class is defined, which inherits from ActorMemberMixin
-    # to get the correct type hints for the actor methods:
-
-    class CircleProxy(ActorMemberMixin, ActorProxy[CircleActor]):
-
-        # For each field on the proxy, a proxy_field is defined:
-        pi = proxy_field(CircleActor.pi)
-
-        # For each method on the proxy, a proxy_method is defined:
-        area = proxy_method(CircleActor.area)
-
-
-    # 3) The actor is started like usual, and a proxy is created as usual, but the
-    # proxy is casted to the recently defined proxy class:
-    proxy = cast(CircleProxy, CircleActor.start().proxy())
-
-
-    # Now, the type hints for the proxy are correct:
-
-    reveal_type(proxy.stop)
-    # Revealed type is 'Callable[[], pykka.Future[None]]'
-
-    reveal_type(proxy.pi)
-    # Revealed type is 'pykka.Future[float]'
-
-    reveal_type(proxy.area))
-    # Revealed type is 'Callable[[float], pykka.Future[float]]'
-"""
+"""Type hint helpers."""
 
 from __future__ import annotations
 
@@ -99,7 +43,8 @@ class Method(Protocol, Generic[P, R_co]):
 def proxy_field(field: T) -> Future[T]:
     """Type a field on an actor proxy.
 
-    .. versionadded:: 4.0
+    /// note | Version added: Pykka 4.0
+    ///
     """
     return field  # type: ignore[return-value]
 
@@ -109,7 +54,8 @@ def proxy_method(
 ) -> Method[P, Future[T]]:
     """Type a method on an actor proxy.
 
-    .. versionadded:: 4.0
+    /// note | Version added: Pykka 4.0
+    ///
     """
     return field  # type: ignore[return-value]
 
@@ -117,7 +63,8 @@ def proxy_method(
 class ActorMemberMixin:
     """Mixin class for typing Actor methods which are accessible via proxy instances.
 
-    .. versionadded:: 4.0
+    /// note | Version added: Pykka 4.0
+    ///
     """
 
     stop = proxy_method(Actor.stop)
