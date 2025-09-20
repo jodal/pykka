@@ -27,7 +27,7 @@ nav:
   - Examples:
       - examples/basic.md
       - examples/proxy.md
-      - examples/counter.md
+      - examples/cooperation.md
       - examples/resolver.md
       - examples/mopidy.md
 

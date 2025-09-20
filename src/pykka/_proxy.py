@@ -108,8 +108,8 @@ class ActorProxy(Generic[A]):
     name with `_`.
 
     Example:
-        ```title="examples/counter.py"
-        --8<-- "examples/counter.py"
+        ```title="examples/cooperation.py"
+        --8<-- "examples/cooperation.py"
         ```
 
     Args:
