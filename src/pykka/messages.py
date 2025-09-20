@@ -10,8 +10,8 @@ having to spend any resources on creating a proxy object:
 
     reply = actor_ref.ask(
         ProxyCall(
-            attr_path=['my_method'],
-            args=['foo'],
+            attr_path=('my_method',),
+            args=('foo',),
             kwargs={'bar': 'baz'}
         )
     )
@@ -43,14 +43,14 @@ class ProxyCall(NamedTuple):
     ///
     """
 
-    #: List with the path from the actor to the method.
     attr_path: AttrPath
+    """List with the path from the actor to the method."""
 
-    #: List with positional arguments.
     args: tuple[Any, ...]
+    """List with positional arguments."""
 
-    #: Dict with keyword arguments.
     kwargs: dict[str, Any]
+    """Dict with keyword arguments."""
 
 
 class ProxyGetAttr(NamedTuple):
@@ -60,8 +60,8 @@ class ProxyGetAttr(NamedTuple):
     ///
     """
 
-    #: List with the path from the actor to the attribute.
     attr_path: AttrPath
+    """List with the path from the actor to the attribute."""
 
 
 class ProxySetAttr(NamedTuple):
@@ -71,8 +71,8 @@ class ProxySetAttr(NamedTuple):
     ///
     """
 
-    #: List with the path from the actor to the attribute.
     attr_path: AttrPath
+    """List with the path from the actor to the attribute."""
 
-    #: The value to set the attribute to.
     value: Any
+    """The value to set the attribute to."""

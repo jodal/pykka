@@ -120,8 +120,8 @@ class ActorProxy(Generic[A]):
 
     """
 
-    #: The actor's :class:`pykka.ActorRef` instance.
     actor_ref: ActorRef[A]
+    """The actor's [`pykka.ActorRef`][pykka.ActorRef] instance."""
 
     _actor: A
     _attr_path: AttrPath

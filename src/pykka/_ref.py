@@ -35,17 +35,17 @@ class ActorRef(Generic[A]):
     [`ActorRef`][pykka.ActorRef] instances yourself.
     """
 
-    #: The class of the referenced actor.
     actor_class: type[A]
+    """The class of the referenced actor."""
 
-    #: See :attr:`Actor.actor_urn`.
     actor_urn: str
+    """See [`Actor.actor_urn`][pykka.Actor.actor_urn]."""
 
-    #: See :attr:`Actor.actor_inbox`.
     actor_inbox: ActorInbox
+    """See [`Actor.actor_inbox`][pykka.Actor.actor_inbox]."""
 
-    #: See :attr:`Actor.actor_stopped`.
     actor_stopped: Event
+    """See [`Actor.actor_stopped`][pykka.Actor.actor_stopped]."""
 
     def __init__(
         self,
@@ -211,7 +211,8 @@ class ActorRef(Generic[A]):
         be processed normally before it stops.
 
         Messages sent to the actor after the actor is asked to stop will
-        be replied to with :exc:`pykka.ActorDeadError` after it stops.
+        be replied to with [`ActorDeadError`][pykka.ActorDeadError] after it
+        stops.
 
         The actor may not be restarted.
 

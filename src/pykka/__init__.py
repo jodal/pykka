@@ -30,7 +30,6 @@ __all__ = [
 ]
 
 
-#: Pykka's :pep:`396` and :pep:`440` compatible version number
 __version__: str
 try:
     __version__ = _importlib_metadata.version(__name__)
