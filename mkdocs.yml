@@ -25,7 +25,7 @@ nav:
       - reference/typing.md
       - reference/runtimes.md
   - Examples:
-      - examples/plain.md
+      - examples/basic.md
       - examples/proxy.md
       - examples/counter.md
       - examples/resolver.md
