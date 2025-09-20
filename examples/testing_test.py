@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pytest
 from testing import ProducerActor
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture
-def consumer_mock(mocker: MockerFixture) -> Mock:
+def consumer_mock(mocker: MockerFixture) -> Any:
     return mocker.Mock()
 
 
@@ -31,7 +31,10 @@ def producer(consumer_mock: Mock) -> Generator[ActorProxy[ProducerActor]]:
     proxy.stop()
 
 
-def test_producer_actor(consumer_mock: Mock, producer: ActorProxy[ProducerActor]):
+def test_producer_actor(
+    consumer_mock: Mock,
+    producer: ActorProxy[ProducerActor],
+) -> None:
     # Step 2: Interact with the actor.
     # We call .get() on the last future returned by the actor to wait
     # for the actor to process all messages before asserting anything.

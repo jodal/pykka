@@ -1,4 +1,4 @@
-from typing import cast, reveal_type
+from typing import TYPE_CHECKING, cast
 
 from pykka import ActorProxy, ThreadingActor
 from pykka.typing import ActorMemberMixin, proxy_field, proxy_method
@@ -32,11 +32,12 @@ proxy = cast("CircleProxy", CircleActor.start().proxy())
 
 # Now, the type hints for the proxy are correct:
 
-reveal_type(proxy.stop)
-# Revealed type is 'Callable[[], pykka.Future[None]]'
+if TYPE_CHECKING:
+    reveal_type(proxy.stop)  # noqa: F821
+    # Revealed type is 'Callable[[], pykka.Future[None]]'
 
-reveal_type(proxy.pi)
-# Revealed type is 'pykka.Future[float]'
+    reveal_type(proxy.pi)  # noqa: F821
+    # Revealed type is 'pykka.Future[float]'
 
-reveal_type(proxy.area)
-# Revealed type is 'Callable[[float], pykka.Future[float]]'
+    reveal_type(proxy.area)  # noqa: F821
+    # Revealed type is 'Callable[[float], pykka.Future[float]]'

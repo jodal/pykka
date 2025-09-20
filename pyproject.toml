@@ -153,6 +153,7 @@ commands = [
     [
         "mypy",
         { replace = "posargs", default = [
+            "examples",
             "src",
             "tests",
         ], extend = true },
@@ -165,6 +166,7 @@ commands = [
     [
         "pyright",
         { replace = "posargs", default = [
+            "examples",
             "src",
             "tests",
         ], extend = true },
