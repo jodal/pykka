@@ -9,7 +9,10 @@ edit_uri: edit/main/docs/
 
 nav:
   - index.md
-  - quickstart.md
+  - Getting started:
+      - getting-started/model.md
+      - getting-started/actors.md
+      - getting-started/proxies.md
   - Guides:
       - guides/logging.md
       - guides/testing.md
