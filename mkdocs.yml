@@ -20,6 +20,7 @@ nav:
       - guides/logging.md
       - guides/testing.md
       - guides/deadlocks.md
+      - guides/proxy-typing.md
   - Reference:
       - reference/index.md
       - reference/actors.md
