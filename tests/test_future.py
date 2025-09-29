@@ -170,7 +170,7 @@ def test_get_hook_is_only_called_once_even_if_result_is_none(
     assert hook_func.call_count == 1
 
 
-def test_set_is_not_alloed_on_future_with_get_hook(
+def test_set_is_not_allowed_on_future_with_get_hook(
     future: Future[int],
     mocker: MockerFixture,
 ) -> None:
