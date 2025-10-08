@@ -31,10 +31,10 @@ jobs:
           - name: "pytest (3.13)"
             python: "3.13"
             tox: "3.13"
-            coverage: true
           - name: "pytest (3.14)"
             python: "3.14"
             tox: "3.14"
+            coverage: true
           - name: "mypy"
             python: "3.13"
             tox: mypy
