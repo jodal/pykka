@@ -7,7 +7,7 @@ This example shows:
   [`on_receive()`][pykka.Actor.on_receive] method,
 - how the actor can store internal state, here done by modifying
   `self._stored_messages`,
-- how to start and stop and actor, using [`start()`][pykka.Actor.start] and
+- how to start and stop an actor, using [`start()`][pykka.Actor.start] and
   [`stop()`][pykka.ActorRef.stop], and
 - how to interact with the actor from the outside, using
   [`tell()`][pykka.ActorRef.tell] and [`ask()`][pykka.ActorRef.ask].
