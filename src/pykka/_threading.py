@@ -4,6 +4,7 @@ import queue
 import sys
 import threading
 import time
+from itertools import count
 from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, TypeVar
 
 from pykka import Actor, Future, Timeout
@@ -115,6 +116,9 @@ class ThreadingFuture(Future[T]):
             self._condition.notify_all()
 
 
+_actor_thread_counter = count(0)
+
+
 class ThreadingActor(Actor):
     """Implementation of [`Actor`][pykka.Actor] using regular Python threads."""
 
@@ -144,7 +148,9 @@ class ThreadingActor(Actor):
         return ThreadingFuture()
 
     def _start_actor_loop(self) -> None:
-        thread = threading.Thread(target=self._actor_loop)
-        thread.name = thread.name.replace("Thread", self.__class__.__name__)
+        thread = threading.Thread(
+            target=self._actor_loop,
+            name=f"{self.__class__.__name__}-{next(_actor_thread_counter)}",
+        )
         thread.daemon = self.use_daemon_thread
         thread.start()
