@@ -37,6 +37,6 @@ Next up, check out the [documentation](https://pykka.readthedocs.io/).
 
 ## License
 
-Pykka is copyright 2010-2025 Stein Magnus Jodal and contributors.
+Pykka is copyright 2010-2026 Stein Magnus Jodal and contributors.
 Pykka is licensed under the
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
