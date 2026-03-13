@@ -237,8 +237,6 @@ class Actor(abc.ABC):
             self.on_stop()
         except Exception:  # noqa: BLE001
             self._handle_failure(*sys.exc_info())
-        finally:
-            self._actor_ref._actor = None
 
     def _actor_loop(self) -> None:
         """Run the actor's core loop.
