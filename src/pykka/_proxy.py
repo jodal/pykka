@@ -139,7 +139,10 @@ class ActorProxy(Generic[A]):
             msg = f"{actor_ref} not found"
             raise ActorDeadError(msg)
         self.actor_ref = actor_ref
-        self._actor = actor_ref._actor  # noqa: SLF001
+        self._actor = actor_ref._actor_weakref()  # noqa: SLF001
+        if self._actor is None:
+            msg = f"{actor_ref} not found (weakref has been deallocated)"
+            raise ActorDeadError(msg)
         self._attr_path = attr_path or ()
         self._known_attrs = introspect_attrs(root=self._actor, proxy=self)
         self._actor_proxies = {}

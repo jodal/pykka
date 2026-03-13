@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import weakref
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -51,7 +52,7 @@ class ActorRef(Generic[A]):
         self,
         actor: A,
     ) -> None:
-        self._actor = actor
+        self._actor_weakref = weakref.ref(actor)
         self.actor_class = actor.__class__
         self.actor_urn = actor.actor_urn
         self.actor_inbox = actor.actor_inbox
