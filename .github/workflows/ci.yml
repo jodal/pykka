@@ -55,6 +55,9 @@ jobs:
           - name: "ruff lint"
             python: "3.14"
             tox: ruff-check
+          - name: "ty"
+            python: "3.14"
+            tox: ty
           - name: "zizmor"
             python: "3.14"
             tox: zizmor
