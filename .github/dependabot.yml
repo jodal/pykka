@@ -4,14 +4,32 @@ updates:
   - package-ecosystem: pip
     directory: "/"
     schedule:
-      interval: daily
-    allow:
-      # Only automatically update production dependencies. We update
-      # development dependencies manually in batch to reduce the number of
-      # Dependabot PRs.
-      - dependency-type: production
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      docs:
+        patterns:
+          - "mkdocs*"
+      tests:
+        patterns:
+          - "pytest*"
+      linters:
+        patterns:
+          - "mypy"
+          - "pyright"
+          - "ruff"
+          - "ty"
+          - "tox*"
+          - "zizmor"
 
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
-      interval: daily
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+          - "*"

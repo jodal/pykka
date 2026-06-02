@@ -32,6 +32,7 @@ dev = [
     { include-group = "pyright" },
     { include-group = "ruff" },
     { include-group = "tests" },
+    { include-group = "zizmor" },
 ]
 docs = [
     "mkdocs-material>=9.6.4",
@@ -41,6 +42,7 @@ mypy = ["mypy>=1.18.2"]
 pyright = ["pyright>=1.1.405"]
 ruff = ["ruff>=0.13.1"]
 tests = ["pytest>=8.3.5", "pytest-cov>=5.0.0", "pytest-mock>=3.14.0"]
+zizmor = ["zizmor==1.25.2"]
 
 
 [tool.coverage.paths]
@@ -127,11 +129,12 @@ env_list = [
     "3.12",
     "3.13",
     "3.14",
+    "docs",
     "mypy",
     "pyright",
     "ruff-format",
-    "ruff-lint",
-    "docs",
+    "ruff-check",
+    "zizmor",
 ]
 
 [tool.tox.env_run_base]
@@ -178,7 +181,7 @@ skip_install = true
 dependency_groups = ["ruff"]
 commands = [["ruff", "format", "--check", "{posargs:.}"]]
 
-[tool.tox.env.ruff-lint]
+[tool.tox.env.ruff-check]
 skip_install = true
 dependency_groups = ["ruff"]
 commands = [["ruff", "check", "{posargs:.}"]]
@@ -186,3 +189,8 @@ commands = [["ruff", "check", "{posargs:.}"]]
 [tool.tox.env.docs]
 dependency_groups = ["docs"]
 commands = [["mkdocs", "build", "-d", "{envtmpdir}"]]
+
+[tool.tox.env.zizmor]
+skip_install = true
+dependency_groups = ["zizmor"]
+commands = [["zizmor", "{posargs:.}"]]
