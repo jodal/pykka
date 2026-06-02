@@ -19,6 +19,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: "Docs"
+            python: "3.14"
+            tox: docs
           - name: "pytest (3.10)"
             python: "3.10"
             tox: "3.10"
@@ -36,20 +39,17 @@ jobs:
             tox: "3.14"
             coverage: true
           - name: "mypy"
-            python: "3.13"
+            python: "3.14"
             tox: mypy
           - name: "pyright"
-            python: "3.13"
+            python: "3.14"
             tox: pyright
           - name: "ruff format"
-            python: "3.13"
+            python: "3.14"
             tox: ruff-format
           - name: "ruff lint"
-            python: "3.13"
-            tox: ruff-lint
-          - name: "Docs"
-            python: "3.13"
-            tox: docs
+            python: "3.14"
+            tox: ruff-check
 
     name: ${{ matrix.name }}
     runs-on: ubuntu-24.04
