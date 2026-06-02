@@ -15,7 +15,7 @@ def time_it(func: Callable[[], Any]) -> None:
     start = time.time()
     func()
     elapsed = time.time() - start
-    print(f"{func.__name__!r} took {elapsed:.3f}s")
+    print(f"{getattr(func, '__name__', func)!r} took {elapsed:.3f}s")
 
 
 class SomeObject:

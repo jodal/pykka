@@ -346,5 +346,5 @@ def traversable(obj: T) -> T:
             "an object using slots as traversable."
         )
         raise ValueError(msg)
-    obj._pykka_traversable = True  # type: ignore[attr-defined]  # noqa: SLF001
+    setattr(obj, "_pykka_traversable", True)  # noqa: B010
     return obj

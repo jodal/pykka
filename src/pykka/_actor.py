@@ -340,7 +340,7 @@ class Actor(abc.ABC):
         """Log unexpected failures, unregisters and stops the actor."""
         logger.error(
             f"Unhandled exception in {self}:",
-            exc_info=(exception_type, exception_value, traceback),  # type: ignore[arg-type]
+            exc_info=(exception_type, exception_value, traceback),  # type: ignore[arg-type]   # ty: ignore[invalid-argument-type]
         )
         ActorRegistry.unregister(self.actor_ref)
         self.actor_stopped.set()

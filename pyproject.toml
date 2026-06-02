@@ -32,6 +32,7 @@ dev = [
     { include-group = "pyright" },
     { include-group = "ruff" },
     { include-group = "tests" },
+    { include-group = "ty" },
     { include-group = "zizmor" },
 ]
 docs = [
@@ -42,6 +43,7 @@ mypy = ["mypy>=1.18.2"]
 pyright = ["basedpyright>=1.39.6"]
 ruff = ["ruff>=0.13.1"]
 tests = ["pytest>=8.3.5", "pytest-cov>=5.0.0", "pytest-mock>=3.14.0"]
+ty = ["ty==0.0.42"]
 zizmor = ["zizmor==1.25.2"]
 
 
@@ -150,6 +152,10 @@ commands = [
     ],
 ]
 
+[tool.tox.env.docs]
+dependency_groups = ["docs"]
+commands = [["mkdocs", "build", "-d", "{envtmpdir}"]]
+
 [tool.tox.env.mypy]
 dependency_groups = ["tests", "mypy"]
 commands = [
@@ -186,11 +192,34 @@ skip_install = true
 dependency_groups = ["ruff"]
 commands = [["ruff", "check", "{posargs:.}"]]
 
-[tool.tox.env.docs]
-dependency_groups = ["docs"]
-commands = [["mkdocs", "build", "-d", "{envtmpdir}"]]
+[tool.tox.env.ty]
+dependency_groups = ["tests", "ty"]
+commands = [
+    [
+        "ty",
+        "check",
+        { replace = "posargs", default = [
+            "examples",
+            "src",
+            "tests",
+        ], extend = true },
+    ],
+]
 
 [tool.tox.env.zizmor]
 skip_install = true
 dependency_groups = ["zizmor"]
 commands = [["zizmor", "{posargs:.}"]]
+
+
+[[tool.ty.overrides]]
+include = ["examples/**"]
+
+[tool.ty.overrides.rules]
+undefined-reveal = "ignore"
+
+[[tool.ty.overrides]]
+include = ["tests/**"]
+
+[tool.ty.overrides.rules]
+unsupported-base = "ignore"
