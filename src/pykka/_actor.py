@@ -8,9 +8,11 @@ import uuid
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
+from pykka._context import ROOT, ActorContext, _current_context
 from pykka._introspection import get_attr_directly
 
 if TYPE_CHECKING:
+    import contextvars
     from types import TracebackType
 
     from pykka import Future
@@ -120,7 +122,13 @@ class Actor(abc.ABC):
             "Actor.__init__() have not been called. "
             "Did you forget to call super() in your override?"
         )
+
         ActorRegistry.register(obj.actor_ref)
+
+        parent_context = _current_context.get(ROOT)
+        obj._actor_context = ActorContext(actor=obj, parent=parent_context)
+        parent_context.add_child(obj._actor_context)
+
         logger.debug(f"Starting {obj}")
         obj._start_actor_loop()
         return obj.actor_ref
@@ -172,6 +180,9 @@ class Actor(abc.ABC):
     """
 
     _actor_ref: ActorRef[Any]
+
+    _actor_context: ActorContext
+    _actor_context_token: contextvars.Token[ActorContext]
 
     @property
     def actor_ref(self: A) -> ActorRef[A]:
@@ -248,6 +259,7 @@ class Actor(abc.ABC):
         self._actor_loop_teardown()
 
     def _actor_loop_setup(self) -> None:
+        self._actor_context_token = _current_context.set(self._actor_context)
         try:
             self.on_start()
         except Exception:  # noqa: BLE001
@@ -295,6 +307,9 @@ class Actor(abc.ABC):
                             None,
                         )
                     )
+        if self._actor_context.parent is not None:
+            self._actor_context.parent.remove_child(self._actor_context)
+        _current_context.reset(self._actor_context_token)
 
     def on_start(self) -> None:  # noqa: B027
         """Run code at the beginning of the actor's life.
