@@ -174,9 +174,23 @@ class ActorRegistry:
             a list with the return values for each stop action
 
         """
-        return [  # type: ignore[return-value]
-            ref.stop(block=block, timeout=timeout) for ref in reversed(cls.get_all())
-        ]
+        return (
+            [
+                ref.stop(
+                    block=True,
+                    timeout=timeout,
+                )
+                for ref in reversed(cls.get_all())
+            ]
+            if block
+            else [
+                ref.stop(
+                    block=False,
+                    timeout=timeout,
+                )
+                for ref in reversed(cls.get_all())
+            ]
+        )
 
     @classmethod
     def unregister(

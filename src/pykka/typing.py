@@ -10,6 +10,7 @@ from typing import (
     ParamSpec,
     Protocol,
     TypeVar,
+    cast,
 )
 
 from pykka import Actor
@@ -46,7 +47,7 @@ def proxy_field(field: T) -> Future[T]:
     /// note | Version added: Pykka 4.0
     ///
     """
-    return field  # type: ignore[return-value]
+    return cast("Future[T]", field)
 
 
 def proxy_method(
@@ -57,7 +58,7 @@ def proxy_method(
     /// note | Version added: Pykka 4.0
     ///
     """
-    return field  # type: ignore[return-value]
+    return cast("Method[P, Future[T]]", field)
 
 
 class ActorMemberMixin:

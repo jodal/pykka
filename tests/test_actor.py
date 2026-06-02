@@ -9,6 +9,7 @@ from pykka import Actor, ActorDeadError, ActorRegistry
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    from types import TracebackType
 
     from pykka import ActorRef
     from tests.types import Events, Runtime
@@ -29,7 +30,12 @@ class AnActor(Actor):
     def on_stop(self) -> None:
         self.events.on_stop_was_called.set()
 
-    def on_failure(self, *args: Any) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+    def on_failure(
+        self,
+        exception_type: type[BaseException] | None,
+        exception_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         self.events.on_failure_was_called.set()
 
     def on_receive(self, message: Any) -> None:

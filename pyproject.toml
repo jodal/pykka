@@ -210,3 +210,16 @@ commands = [
 skip_install = true
 dependency_groups = ["zizmor"]
 commands = [["zizmor", "{posargs:.}"]]
+
+
+[[tool.ty.overrides]]
+include = ["examples/**"]
+
+[tool.ty.overrides.rules]
+undefined-reveal = "ignore"
+
+[[tool.ty.overrides]]
+include = ["tests/**"]
+
+[tool.ty.overrides.rules]
+unsupported-base = "ignore"

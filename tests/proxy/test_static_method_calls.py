@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NoReturn
+from typing import TYPE_CHECKING, NoReturn
 
 import pytest
 
@@ -8,6 +8,7 @@ from pykka import Actor
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
+    from types import TracebackType
 
     from pykka import ActorProxy, Future
     from tests.types import Events, Runtime
@@ -23,7 +24,12 @@ class StaticMethodActor(Actor):
     def on_stop(self) -> None:
         self.events.on_stop_was_called.set()
 
-    def on_failure(self, *_args: Any) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+    def on_failure(
+        self,
+        exception_type: type[BaseException] | None,
+        exception_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         self.events.on_failure_was_called.set()
 
     def functional_hello(self, s: str) -> str:
