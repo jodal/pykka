@@ -72,8 +72,7 @@ jobs:
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: ${{ matrix.python }}
-          activate-environment: true
-      - run: uv pip install tox tox-uv
+      - run: uv tool install tox --with tox-uv
       - run: tox -e ${{ matrix.tox }}
         if: ${{ ! matrix.coverage }}
       - run: tox -e ${{ matrix.tox }} -- --cov-report=xml
