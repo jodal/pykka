@@ -41,7 +41,7 @@ docs = [
 ]
 mypy = ["mypy>=1.18.2"]
 pyright = ["basedpyright>=1.39.6"]
-ruff = ["ruff>=0.13.1"]
+ruff = ["ruff>=0.16.3"]
 tests = ["pytest>=8.3.5", "pytest-cov>=5.0.0", "pytest-mock>=3.14.0"]
 ty = ["ty==0.0.63"]
 zizmor = ["zizmor==1.28.0"]
