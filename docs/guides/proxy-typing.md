@@ -15,6 +15,8 @@ to increase development speed and catch bugs earlier.
 
 ## Example
 
+<!-- fmt:off -->
 ```py title="examples/proxy_typing.py"
 --8<-- "examples/proxy_typing.py"
 ```
+<!-- fmt:on -->

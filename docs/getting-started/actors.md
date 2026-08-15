@@ -7,6 +7,7 @@ an [`on_receive(message)`][pykka.Actor.on_receive] method:
 ```py
 import pykka
 
+
 class Greeter(pykka.ThreadingActor):
     def on_receive(self, message):
         print("Hi there!")
@@ -30,6 +31,7 @@ The actor receives the arguments using the regular `__init__()` method:
 ```py
 import pykka
 
+
 class Greeter(pykka.ThreadingActor):
     def __init__(self, greeting="Default greeting"):
         super().__init__()
@@ -37,6 +39,7 @@ class Greeter(pykka.ThreadingActor):
 
     def on_receive(self, message):
         print(self.greeting)
+
 
 actor_ref = Greeter.start(greeting="Hi you!")
 ```
@@ -126,9 +129,11 @@ to the sender of the message by simply returning a value from the
 ```py
 import pykka
 
+
 class Greeter(pykka.ThreadingActor):
     def on_receive(self, message):
         return "Hi there!"
+
 
 actor_ref = Greeter.start()
 
@@ -157,9 +162,11 @@ the exception will propagate to the sender:
 ```py
 import pykka
 
+
 class Raiser(pykka.ThreadingActor):
     def on_receive(self, message):
         raise Exception("Oops")
+
 
 actor_ref = Raiser.start()
 

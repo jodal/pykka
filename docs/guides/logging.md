@@ -75,6 +75,7 @@ is enough to get debug log messages from Pykka:
 
 ```py
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 ```
 
@@ -89,6 +90,7 @@ by increasing the threshold on the Pykka logger to
 
 ```py
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("pykka").setLevel(logging.INFO)
 ```
@@ -101,6 +103,7 @@ to avoid logging exceptions that are properly handled:
 
 ```py
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("pykka").setLevel(logging.WARNING)
 ```
