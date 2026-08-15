@@ -85,6 +85,7 @@ select = ["ALL"]
 ignore = [
     "A003",    # builtin-attribute-shadowing
     "ANN401",  # any-type
+    "CPY",     # flake8-pyright
     "D203",    # one-blank-line-before-class
     "D213",    # multi-line-summary-second-line
     "G004",    # logging-f-string
