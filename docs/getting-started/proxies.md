@@ -16,6 +16,7 @@ Let's create an actor and start it:
 ```py
 import pykka
 
+
 class Calculator(pykka.ThreadingActor):
     def __init__(self):
         super().__init__()
@@ -34,6 +35,7 @@ class Calculator(pykka.ThreadingActor):
         else:
             self.last_result -= a
         return self.last_result
+
 
 actor_ref = Calculator.start()
 ```
@@ -117,12 +119,15 @@ To mark an attribute as traversable, simply mark it with the
 ```py
 import pykka
 
+
 class AnActor(pykka.ThreadingActor):
     playback = pykka.traversable(Playback())
+
 
 class Playback(object):
     def play(self):
         return True
+
 
 proxy = AnActor.start().proxy()
 play_success = proxy.playback.play().get()

@@ -260,7 +260,7 @@ class Actor(abc.ABC):
                 response = self._handle_receive(envelope.message)
                 if envelope.reply_to is not None:
                     envelope.reply_to.set(response)
-            except Exception:  # noqa: BLE001
+            except Exception:
                 if envelope.reply_to is not None:
                     logger.info(
                         f"Exception returned from {self} to caller:",
