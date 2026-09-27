@@ -3,6 +3,8 @@ version: 2
 updates:
   - package-ecosystem: pip
     directory: "/"
+    labels:
+      - dependencies
     schedule:
       interval: monthly
     cooldown:
@@ -25,6 +27,8 @@ updates:
 
   - package-ecosystem: github-actions
     directory: "/"
+    labels:
+      - dependencies
     schedule:
       interval: monthly
     cooldown:
