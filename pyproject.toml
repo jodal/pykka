@@ -146,6 +146,7 @@ env_list = [
     "pyright",
     "ruff-format",
     "ruff-check",
+    "ty",
     "zizmor",
 ]
 
