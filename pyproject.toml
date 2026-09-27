@@ -27,6 +27,7 @@ build-backend = "hatchling.build"
 dev = [
     "tox>=4.21.2",
     "tox-uv>=1.23.2",
+    { include-group = "benchmark" },
     { include-group = "docs" },
     { include-group = "mypy" },
     { include-group = "pyright" },
@@ -35,6 +36,7 @@ dev = [
     { include-group = "ty" },
     { include-group = "zizmor" },
 ]
+benchmark = ["pyperf>=2.9.0"]
 docs = [
     "mkdocs-material>=9.6.4",
     "mkdocstrings[python]>=0.29.1",
@@ -66,6 +68,10 @@ warn_return_any = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = ["pyperf"]
+ignore_missing_imports = true
 
 
 [tool.pyright]
@@ -102,6 +108,9 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"benchmarks/*" = [
+    "D", # pydocstyle
+]
 "docs/*" = [
     "D",      # pydocstyle
     "INP001", # implicit-namespace-package
@@ -158,11 +167,12 @@ dependency_groups = ["docs"]
 commands = [["mkdocs", "build", "-d", "{envtmpdir}"]]
 
 [tool.tox.env.mypy]
-dependency_groups = ["tests", "mypy"]
+dependency_groups = ["benchmark", "tests", "mypy"]
 commands = [
     [
         "mypy",
         { replace = "posargs", default = [
+            "benchmarks",
             "examples",
             "src",
             "tests",
@@ -171,11 +181,12 @@ commands = [
 ]
 
 [tool.tox.env.pyright]
-dependency_groups = ["tests", "pyright"]
+dependency_groups = ["benchmark", "tests", "pyright"]
 commands = [
     [
         "basedpyright",
         { replace = "posargs", default = [
+            "benchmarks",
             "examples",
             "src",
             "tests",
@@ -194,12 +205,13 @@ dependency_groups = ["ruff"]
 commands = [["ruff", "check", "{posargs:.}"]]
 
 [tool.tox.env.ty]
-dependency_groups = ["tests", "ty"]
+dependency_groups = ["benchmark", "tests", "ty"]
 commands = [
     [
         "ty",
         "check",
         { replace = "posargs", default = [
+            "benchmarks",
             "examples",
             "src",
             "tests",
