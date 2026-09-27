@@ -25,7 +25,8 @@ so that you can filter out the parts you're not interested in:
 
 [`logging.WARNING`][logging.WARNING]
 
--   Unhandled messages and other potential programming errors
+-   [Unhandled messages](../getting-started/actors.md#unhandled-messages)
+    and other potential programming errors
     are logged at this level.
 
 [`logging.INFO`][logging.INFO]

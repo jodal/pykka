@@ -176,3 +176,37 @@ except Exception as e:
     print(repr(e))
     # => Exception("Oops")
 ```
+
+## Unhandled messages
+
+The default implementation of [`on_receive()`][pykka.Actor.on_receive]
+logs the message at the [`WARNING`][logging.WARNING] level
+and returns `None`.
+If your actor handles only some messages,
+call `super().on_receive(message)` for the other messages
+to get the same log message:
+
+```py
+import pykka
+
+
+class Greeter(pykka.ThreadingActor):
+    def on_receive(self, message):
+        if message == "Hi?":
+            return "Hi there!"
+        return super().on_receive(message)
+
+
+actor_ref = Greeter.start()
+
+actor_ref.tell("Bye?")
+# => Logs "Unexpected message received by Greeter (urn:uuid:...): Bye?"
+```
+
+See the [logging guide](../guides/logging.md) for how to see Pykka's log messages.
+
+Messages that are sent to a stopped actor are not logged.
+Instead, [`tell()`][pykka.ActorRef.tell] raises
+[`ActorDeadError`][pykka.ActorDeadError],
+and the future returned by [`ask()`][pykka.ActorRef.ask]
+gets [`ActorDeadError`][pykka.ActorDeadError].

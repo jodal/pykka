@@ -387,6 +387,10 @@ class Actor(abc.ABC):
     def on_receive(self, message: Any) -> Any:
         """May be implemented for the actor to handle regular non-proxy messages.
 
+        The default implementation logs the message at the `WARNING` level and
+        returns `None`. Call `super().on_receive(message)` for messages that
+        your actor does not handle, to get the same log message.
+
         Args:
             message: the message to handle
 
