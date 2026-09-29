@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from pykka import Actor, ActorDeadError, Timeout
+from pykka import Actor, ActorDeadError, ActorRegistry, Timeout
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator
@@ -112,6 +112,49 @@ def test_is_alive_returns_false_for_dead_actor(
     actor_ref.stop()
 
     assert not actor_ref.is_alive()
+
+
+def test_context_manager_returns_ref_and_stops_actor(
+    actor_ref: ActorRef[ReferencableActor],
+) -> None:
+    with actor_ref as ref:
+        assert ref is actor_ref
+        assert ref.is_alive()
+        assert ref.ask("ping") == "pong"
+
+    assert not actor_ref.is_alive()
+    assert ActorRegistry.get_by_urn(actor_ref.actor_urn) is None
+
+
+@pytest.mark.parametrize("error", [ValueError("body failed"), KeyboardInterrupt()])
+def test_context_manager_stops_actor_without_suppressing_errors(
+    actor_ref: ActorRef[ReferencableActor],
+    error: BaseException,
+) -> None:
+    with pytest.raises(type(error)) as exc_info, actor_ref:
+        raise error
+
+    assert exc_info.value is error
+    assert not actor_ref.is_alive()
+
+
+def test_context_manager_accepts_actor_stopped_in_block(
+    actor_ref: ActorRef[ReferencableActor],
+) -> None:
+    with actor_ref:
+        assert actor_ref.stop()
+
+    assert not actor_ref.is_alive()
+
+
+def test_context_manager_processes_queued_messages_before_exit(
+    actor_ref: ActorRef[ReferencableActor],
+    received_message: Future[str],
+) -> None:
+    with actor_ref:
+        actor_ref.tell("queued message")
+
+    assert received_message.get(timeout=0) == "queued message"
 
 
 def test_stop_returns_true_if_actor_is_stopped(
