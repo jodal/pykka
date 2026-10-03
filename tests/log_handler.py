@@ -15,7 +15,7 @@ class LogLevel(str, Enum):
 
 
 class PykkaTestLogHandler(logging.Handler):
-    lock: threading.RLock  # type: ignore[assignment]
+    lock: threading.RLock
     events: dict[str, threading.Event]
     messages: dict[LogLevel, list[logging.LogRecord]]
 
