@@ -91,6 +91,7 @@ plugins:
 
 theme:
   name: material
+  custom_dir: overrides
   features:
     - content.action.edit
     - navigation.footer
