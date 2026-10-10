@@ -48,7 +48,7 @@ class ActorProxy(Generic[A]):
         print(actor_proxy.string_attribute.get())
         print(actor_proxy.count().get() + 1)
 
-    If you call a method just for it's side effects and do not care about the
+    If you call a method just for its side effects and do not care about the
     return value, you do not need to accept the returned future or call
     [`get()`][pykka.Future.get] on the future. Simply call the method, and it
     will be executed concurrently with your own code:

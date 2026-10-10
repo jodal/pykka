@@ -77,7 +77,7 @@ ignore_missing_imports = true
 [tool.pyright]
 pythonVersion = "3.11"
 typeCheckingMode = "strict"
-# Already coverd by tests and careful import ordering:
+# Already covered by tests and careful import ordering:
 reportImportCycles = false
 # Already covered by flake8-self:
 reportPrivateUsage = false
