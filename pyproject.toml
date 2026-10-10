@@ -3,7 +3,7 @@ name = "pykka"
 version = "4.4.2"
 description = "Pykka is a Python implementation of the actor model"
 authors = [{ name = "Stein Magnus Jodal", email = "stein.magnus@jodal.no" }]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
 license = "Apache-2.0"
 keywords = ["actor", "concurrency", "threading"]
@@ -75,16 +75,13 @@ ignore_missing_imports = true
 
 
 [tool.pyright]
-pythonVersion = "3.10"
+pythonVersion = "3.11"
 typeCheckingMode = "strict"
 # Already coverd by tests and careful import ordering:
 reportImportCycles = false
 # Already covered by flake8-self:
 reportPrivateUsage = false
 
-
-[tool.ruff]
-target-version = "py310"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -96,7 +93,6 @@ ignore = [
     "D213",    # multi-line-summary-second-line
     "G004",    # logging-f-string
     "PLR2004", # magic-value-comparison
-    "PYI019",  # custom-type-var-for-self -- Remove when requiring Python 3.11
     "RET504",  # unnecessary-assign
     "S101",    # assert
     "TRY003",  # raise-vanilla-args
@@ -136,11 +132,11 @@ keep-runtime-typing = true
 
 [tool.tox]
 env_list = [
-    "3.10",
     "3.11",
     "3.12",
     "3.13",
     "3.14",
+    "3.15",
     "docs",
     "mypy",
     "pyright",

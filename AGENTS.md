@@ -2,7 +2,7 @@
 
 Guidance for coding agents that work in this repo.
 
-Pykka is a Python implementation of the actor model. It supports Python 3.10
+Pykka is a Python implementation of the actor model. It supports Python 3.11
 and newer, and has no runtime dependencies.
 
 ## Layout
@@ -18,8 +18,8 @@ and newer, and has no runtime dependencies.
 CI runs each check as a tox env. Run them with uv:
 
 ```sh
-uv run tox -e 3.14                          # pytest on Python 3.14
-uv run tox -e 3.14 -- tests/test_actor.py   # one test file
+uv run tox -e 3.15                          # pytest on Python 3.15
+uv run tox -e 3.15 -- tests/test_actor.py   # one test file
 uv run tox -e mypy
 uv run tox -e pyright
 uv run tox -e ty
