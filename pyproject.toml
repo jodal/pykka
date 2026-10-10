@@ -126,6 +126,10 @@ ignore = [
 ]
 
 
+[tool.rumdl]
+flavor = "mkdocs"
+
+
 [tool.tox]
 env_list = [
     "3.11",
