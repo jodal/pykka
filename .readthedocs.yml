@@ -4,11 +4,13 @@ build:
   os: "ubuntu-26.04"
   tools:
     python: "3.14"
-  jobs:
-    post_create_environment:
-      - pip install uv
-    post_install:
-      - UV_PROJECT_ENVIRONMENT=$READTHEDOCS_VIRTUALENV_PATH uv sync --all-extras --group docs --link-mode copy
+
+python:
+  install:
+    - method: uv
+      command: sync
+      groups:
+        - docs
 
 mkdocs:
   configuration: mkdocs.yml
