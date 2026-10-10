@@ -166,10 +166,10 @@ class Future(Generic[T]):
             >>> f = pykka.ThreadingFuture()
             >>> g = f.filter(lambda x: x > 10)
             >>> g
-            <pykka.future.ThreadingFuture at ...>
+            <pykka.Future>
             >>> f.set(range(5, 15))
             >>> f.get()
-            [5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+            range(5, 15)
             >>> g.get()
             [11, 12, 13, 14]
             ```
@@ -235,7 +235,7 @@ class Future(Generic[T]):
 
             >>> f = pykka.ThreadingFuture()
             >>> g = f.map(lambda x: x['foo'])
-            >>> f.set({'foo': 'bar'}})
+            >>> f.set({'foo': 'bar'})
             >>> g.get()
             'bar'
             ```
