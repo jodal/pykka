@@ -57,7 +57,7 @@ class ActorProxy(Generic[A]):
 
     If you want to block your own code from continuing while the other method
     is processing, you can use [`get()`][pykka.Future.get] to block until it
-    completes::
+    completes:
 
         actor_proxy.method_with_side_effect().get()
 
@@ -303,7 +303,7 @@ def traversable(obj: T) -> T:
         class AnActor(pykka.ThreadingActor):
             playback = pykka.traversable(Playback())
 
-        class Playback(object):
+        class Playback:
             def play(self):
                 return True
 
@@ -314,7 +314,7 @@ def traversable(obj: T) -> T:
             playback = Playback()
 
         @pykka.traversable
-        class Playback(object):
+        class Playback:
             def play(self):
                 return True
 
@@ -325,14 +325,14 @@ def traversable(obj: T) -> T:
         class AnActor(pykka.ThreadingActor):
             playback = Playback()
 
-        class Playback(object):
+        class Playback:
             pykka_traversable = True
 
             def play(self):
                 return True
 
     When the attribute is marked as traversable, its methods can be executed
-    in the context of the actor through an actor proxy::
+    in the context of the actor through an actor proxy:
 
         proxy = AnActor.start().proxy()
         assert proxy.playback.play().get() is True
