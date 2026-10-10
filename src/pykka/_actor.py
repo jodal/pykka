@@ -5,7 +5,7 @@ import logging
 import sys
 import threading
 import uuid
-from typing import TYPE_CHECKING, Any, Protocol, TypeVar
+from typing import TYPE_CHECKING, Any, Protocol, Self
 
 from pykka import ActorDeadError, ActorRef, ActorRegistry, messages
 from pykka._introspection import get_attr_directly
@@ -20,9 +20,6 @@ __all__ = ["Actor"]
 
 
 logger = logging.getLogger("pykka")
-
-
-A = TypeVar("A", bound="Actor")
 
 
 class ActorInbox(Protocol):
@@ -81,10 +78,10 @@ class Actor(abc.ABC):
 
     @classmethod
     def start(
-        cls: type[A],
+        cls,
         *args: Any,
         **kwargs: Any,
-    ) -> ActorRef[A]:
+    ) -> ActorRef[Self]:
         """Start an actor.
 
         Starting an actor also registers it in the
@@ -174,7 +171,7 @@ class Actor(abc.ABC):
     _actor_ref: ActorRef[Any]
 
     @property
-    def actor_ref(self: A) -> ActorRef[A]:
+    def actor_ref(self) -> ActorRef[Self]:
         """The actor's [`ActorRef`][pykka.ActorRef] instance."""
         # This property only exists to improve the typing of the ActorRef.
         return self._actor_ref
