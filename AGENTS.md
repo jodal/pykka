@@ -2,7 +2,7 @@
 
 Guidance for coding agents that work in this repo.
 
-Pykka is a Python implementation of the actor model. It supports Python 3.10
+Pykka is a Python implementation of the actor model. It supports Python 3.11
 and newer, and has no runtime dependencies.
 
 ## Layout

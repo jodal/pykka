@@ -9,7 +9,7 @@ applications.
 
 ## Installation
 
-Pykka has no dependencies other than Python 3.10 or newer.
+Pykka has no dependencies other than Python 3.11 or newer.
 It can be installed from [PyPI](https://pypi.org/project/pykka/):
 
 ```console
