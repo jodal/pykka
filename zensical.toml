@@ -48,7 +48,7 @@ nav = [
 ]
 
 [project.theme]
-custom_dir = "overrides"
+custom_dir = "docs/_theme"
 features = [
     "content.action.edit",
     "navigation.footer",
@@ -88,6 +88,9 @@ toggle.name = "Switch to light mode"
 [[project.extra.social]]
 icon = "fontawesome/brands/github"
 link = "https://github.com/jodal/pykka"
+
+[project.plugins.exclude]
+glob = ["_theme/*"]
 
 [project.plugins.mkdocstrings]
 default_handler = "python"
