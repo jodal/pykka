@@ -2,11 +2,11 @@ import collections
 import logging
 import threading
 import time
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class LogLevel(str, Enum):
+class LogLevel(StrEnum):
     DEBUG = "debug"
     INFO = "info"
     WARNING = "warning"
