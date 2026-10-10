@@ -41,9 +41,8 @@ To debug the deadlock,
 send the `SIGUSR1` signal to the process,
 which has process ID 1953031 in this example:
 
-```console
-$ kill -SIGUSR1 1953031
-$
+```sh
+kill -SIGUSR1 1953031
 ```
 
 This makes the main thread log the current traceback for each thread.

@@ -10,16 +10,16 @@ and [`unittest.mock`][unittest.mock].
 To test actors in a setting as close to production as possible,
 a typical pattern is the following:
 
-1.  In the test setup,
+1. In the test setup,
     start an actor together with any actors/collaborators it depends on.
     The dependencies will often be replaced by mocks to control their behavior.
-2.  In the test,
+2. In the test,
     [`ask()`][pykka.ActorRef.ask] or
     [`tell()`][pykka.ActorRef.tell] the actor something.
-3.  In the test,
+3. In the test,
     assert on the actor's state or the return value
     from the [`ask()`][pykka.ActorRef.ask] call.
-4.  In the test teardown,
+4. In the test teardown,
     stop the actor to properly clean up before the next test.
 
 ## Example

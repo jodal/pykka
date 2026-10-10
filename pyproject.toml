@@ -96,7 +96,6 @@ ignore = [
     "RET504",  # unnecessary-assign
     "S101",    # assert
     "TRY003",  # raise-vanilla-args
-    "UP007",   # typing-union
     #
     # These rules interfere with `ruff format`
     "COM812", # missing-trailing-comma
@@ -126,8 +125,9 @@ ignore = [
     "TRY002", # raise-vanilla-class
 ]
 
-[tool.ruff.lint.pyupgrade]
-keep-runtime-typing = true
+
+[tool.rumdl]
+flavor = "mkdocs"
 
 
 [tool.tox]
