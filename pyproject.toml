@@ -38,8 +38,8 @@ dev = [
 ]
 benchmark = ["pyperf>=2.9.0"]
 docs = [
-    "mkdocs-material>=9.6.4",
-    "mkdocstrings[python]>=0.29.1",
+    "mkdocstrings-python>=2.0.1",
+    "zensical>=0.0.69",
 ]
 mypy = ["mypy>=2.4.0"]
 pyright = ["basedpyright>=1.39.6"]
@@ -161,7 +161,7 @@ commands = [
 
 [tool.tox.env.docs]
 dependency_groups = ["docs"]
-commands = [["mkdocs", "build", "-d", "{envtmpdir}"]]
+commands = [["zensical", "build", "--clean", "--strict"]]
 
 [tool.tox.env.mypy]
 dependency_groups = ["benchmark", "tests", "mypy"]
