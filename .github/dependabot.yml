@@ -13,6 +13,7 @@ updates:
       docs:
         patterns:
           - "mkdocs*"
+          - "zensical"
       tests:
         patterns:
           - "pytest*"

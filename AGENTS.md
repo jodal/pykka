@@ -11,7 +11,7 @@ and newer, and has no runtime dependencies.
 - `tests/`: the pytest suite
 - `benchmarks/`: pyperf benchmarks, see `benchmarks/README.md`
 - `examples/`: runnable examples
-- `docs/`: the MkDocs site
+- `docs/`: the Zensical site
 
 ## Checks
 
