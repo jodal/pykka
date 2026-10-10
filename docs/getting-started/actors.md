@@ -80,8 +80,8 @@ To send a message to the actor, you can either use the
 [`ask()`][pykka.ActorRef.ask] method on the
 [`ActorRef`][pykka.ActorRef] object:
 
-- [`tell(message)`][pykka.ActorRef.tell] will fire off a message without waiting for an
-  answer. In other words, it will never block.
+- [`tell(message)`][pykka.ActorRef.tell] will fire off a message without waiting
+  for an answer. In other words, it will never block.
 - [`ask(message)`][pykka.ActorRef.ask] will by default block until an answer is
   returned, potentially forever. If you provide a `timeout` keyword argument,
   you can specify for how long it should wait for an answer. If you want an
