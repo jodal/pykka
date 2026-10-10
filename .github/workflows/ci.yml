@@ -25,7 +25,7 @@ jobs:
       matrix:
         include:
           - name: "Docs"
-            python: "3.14"
+            python: "3.15"
             tox: docs
           - name: "pytest (3.10)"
             python: "3.10"
@@ -47,22 +47,22 @@ jobs:
             tox: "3.15"
             coverage: true
           - name: "mypy"
-            python: "3.14"
+            python: "3.15"
             tox: mypy
           - name: "pyright"
-            python: "3.14"
+            python: "3.15"
             tox: pyright
           - name: "ruff format"
-            python: "3.14"
+            python: "3.15"
             tox: ruff-format
           - name: "ruff lint"
-            python: "3.14"
+            python: "3.15"
             tox: ruff-check
           - name: "ty"
-            python: "3.14"
+            python: "3.15"
             tox: ty
           - name: "zizmor"
-            python: "3.14"
+            python: "3.15"
             tox: zizmor
 
     name: ${{ matrix.name }}
