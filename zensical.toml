@@ -6,6 +6,7 @@ copyright = "Copyright © 2010-2026 Stein Magnus Jodal and contributors"
 repo_name = "jodal/pykka"
 repo_url = "https://github.com/jodal/pykka"
 edit_uri = "edit/main/docs/"
+extra_css = ["stylesheets/extra.css"]
 extra_javascript = ["javascript/readthedocs.js"]
 nav = [
     {"Introduction" = [
@@ -63,6 +64,8 @@ repo = "fontawesome/brands/github"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme)"
+primary = "purple"
+accent = "deep purple"
 toggle.icon = "material/brightness-auto"
 toggle.name = "Switch to light mode"
 
@@ -70,6 +73,7 @@ toggle.name = "Switch to light mode"
 media = "(prefers-color-scheme: light)"
 scheme = "default"
 primary = "purple"
+accent = "deep purple"
 toggle.icon = "material/brightness-7"
 toggle.name = "Switch to dark mode"
 
@@ -77,6 +81,7 @@ toggle.name = "Switch to dark mode"
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
 primary = "purple"
+accent = "deep purple"
 toggle.icon = "material/brightness-4"
 toggle.name = "Switch to light mode"
 

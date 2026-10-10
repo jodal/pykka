@@ -1,0 +1,23 @@
+.md-header {
+  color: var(--md-primary-bg-color);
+  background-color: var(--md-primary-fg-color);
+}
+
+.md-header .md-search__button {
+  color: var(--md-primary-bg-color--light);
+  background-color: var(--md-primary-fg-color--light);
+}
+
+.md-header .md-search__button:focus,
+.md-header .md-search__button:hover {
+  color: var(--md-primary-bg-color);
+  background-color: var(--md-primary-fg-color--dark);
+}
+
+.md-header .md-search__button::before {
+  background-color: currentcolor;
+}
+
+.md-header .md-search__button::after {
+  background-color: var(--md-primary-fg-color--dark);
+}
