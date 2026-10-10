@@ -191,7 +191,7 @@ class Actor(abc.ABC):
     ) -> None:
         """Create actor.
 
-        Your are free to override `__init__()`, but you must call your
+        You are free to override `__init__()`, but you must call your
         superclass' `__init__()` to ensure that the fields
         [`actor_urn`][pykka.Actor.actor_urn],
         [`actor_inbox`][pykka.Actor.actor_inbox], and
@@ -201,7 +201,7 @@ class Actor(abc.ABC):
 
             super().__init__()
 
-        Or call you superclass directly:
+        Or call your superclass directly:
 
             pykka.ThreadingActor.__init__(self)
 

@@ -125,9 +125,9 @@ class ThreadingActor(Actor):
     use_daemon_thread: ClassVar[bool] = False
     """
     A boolean value indicating whether this actor is executed on a thread that
-    is a daemon thread (`True`) or not (`False`). This must be set before
-    [`Actor.start()`][pykka.Actor.start] is called, otherwise
-    [`RuntimeError`][RuntimeError] is raised.
+    is a daemon thread (`True`) or not (`False`). The value is read when
+    [`Actor.start()`][pykka.Actor.start] is called. Changes after that have no
+    effect on the running actor.
 
     The entire Python program exits when no alive non-daemon threads are left.
     This means that an actor running on a daemon thread may be interrupted at

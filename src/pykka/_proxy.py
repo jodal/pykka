@@ -48,7 +48,7 @@ class ActorProxy(Generic[A]):
         print(actor_proxy.string_attribute.get())
         print(actor_proxy.count().get() + 1)
 
-    If you call a method just for it's side effects and do not care about the
+    If you call a method just for its side effects and do not care about the
     return value, you do not need to accept the returned future or call
     [`get()`][pykka.Future.get] on the future. Simply call the method, and it
     will be executed concurrently with your own code:
@@ -57,7 +57,7 @@ class ActorProxy(Generic[A]):
 
     If you want to block your own code from continuing while the other method
     is processing, you can use [`get()`][pykka.Future.get] to block until it
-    completes::
+    completes:
 
         actor_proxy.method_with_side_effect().get()
 
@@ -303,7 +303,7 @@ def traversable(obj: T) -> T:
         class AnActor(pykka.ThreadingActor):
             playback = pykka.traversable(Playback())
 
-        class Playback(object):
+        class Playback:
             def play(self):
                 return True
 
@@ -314,7 +314,7 @@ def traversable(obj: T) -> T:
             playback = Playback()
 
         @pykka.traversable
-        class Playback(object):
+        class Playback:
             def play(self):
                 return True
 
@@ -325,14 +325,14 @@ def traversable(obj: T) -> T:
         class AnActor(pykka.ThreadingActor):
             playback = Playback()
 
-        class Playback(object):
+        class Playback:
             pykka_traversable = True
 
             def play(self):
                 return True
 
     When the attribute is marked as traversable, its methods can be executed
-    in the context of the actor through an actor proxy::
+    in the context of the actor through an actor proxy:
 
         proxy = AnActor.start().proxy()
         assert proxy.playback.play().get() is True
