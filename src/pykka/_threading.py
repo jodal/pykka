@@ -56,10 +56,8 @@ class ThreadingFuture(Future[T]):
         deadline: float | None = None if timeout is None else time.monotonic() + timeout
 
         with self._condition:
-            try:
+            if self._get_hook is not None:
                 return super().get(timeout=timeout)
-            except NotImplementedError:
-                pass
 
             while self._result is None:
                 remaining = (
@@ -69,6 +67,13 @@ class ThreadingFuture(Future[T]):
                     msg = f"{timeout} seconds"
                     raise Timeout(msg)
                 self._condition.wait(timeout=remaining)
+                if self._get_hook is not None:
+                    remaining = (
+                        max(0.0, deadline - time.monotonic())
+                        if deadline is not None
+                        else None
+                    )
+                    return super().get(timeout=remaining)
 
             if self._result.exc_info is not None:
                 (exc_type, exc_value, exc_traceback) = self._result.exc_info
