@@ -17,6 +17,7 @@ from pykka.messages import _ActorStop
 
 if TYPE_CHECKING:
     from threading import Event
+    from types import TracebackType
 
     from pykka import Actor, Future
     from pykka._actor import ActorInbox
@@ -63,6 +64,19 @@ class ActorRef(Generic[A]):
 
     def __str__(self) -> str:
         return f"{self.actor_class.__name__} ({self.actor_urn})"
+
+    def __enter__(self) -> ActorRef[A]:
+        """Return this actor reference for use in a `with` block."""
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        """Stop the actor, blocking until it stops, without suppressing exceptions."""
+        self.stop()
 
     def is_alive(self) -> bool:
         """Check if actor is alive.

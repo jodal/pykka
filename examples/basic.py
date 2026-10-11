@@ -27,15 +27,11 @@ class BasicActor(pykka.ThreadingActor):
 
 
 if __name__ == "__main__":
-    # Start the actor
-    actor_ref = BasicActor.start()
+    # Start the actor and stop it automatically when the block exits
+    with BasicActor.start() as actor_ref:
+        # Send some messages to the actor
+        actor_ref.tell({"no": "Norway", "se": "Sweden"})
+        actor_ref.tell({"a": 3, "b": 4, "c": 5})
 
-    # Send some messages to the actor
-    actor_ref.tell({"no": "Norway", "se": "Sweden"})
-    actor_ref.tell({"a": 3, "b": 4, "c": 5})
-
-    # Retrieve and print stored messages
-    print(actor_ref.ask(GetMessages))
-
-    # Stop the actor
-    actor_ref.stop()
+        # Retrieve and print stored messages
+        print(actor_ref.ask(GetMessages))

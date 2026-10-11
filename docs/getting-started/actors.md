@@ -62,6 +62,23 @@ on the [`ActorRef`][pykka.ActorRef] object:
 actor_ref.stop()
 ```
 
+You can also use the actor reference as a context manager
+to stop the actor when a `with` block exits:
+
+```py
+with Greeter.start() as actor_ref:
+    actor_ref.tell("Hi!")
+```
+
+Exiting the block calls [`stop()`][pykka.ActorRef.stop],
+including when an exception is raised in the block.
+Exceptions from the block are not suppressed.
+As with the default `stop()` call,
+this waits for the actor to process earlier queued messages and stop,
+without a timeout.
+Use an explicit `stop(timeout=...)` call instead of a context manager
+if you need a timeout.
+
 If an actor wants to stop itself,
 it can call [`stop()`][pykka.Actor.stop] on itself.
 It will then exit as soon as it has finished processing
