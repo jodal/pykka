@@ -95,7 +95,11 @@ def get_obj_dict(obj: Any) -> dict[str, Any]:
     """Combine `__dict__` from `obj` and all its superclasses."""
     result: dict[str, Any] = {}
     for cls in reversed(obj.__class__.mro()):
-        result.update(cls.__dict__)
+        namespace = cls.__dict__
+        if not result and cls is object:
+            result = namespace.copy()
+        else:
+            result |= namespace
     if hasattr(obj, "__dict__"):
-        result.update(obj.__dict__)
+        result |= obj.__dict__
     return result
