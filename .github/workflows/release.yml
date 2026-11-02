@@ -18,10 +18,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6
         with:
           persist-credentials: false
-      - uses: hynek/build-and-inspect-python-package@2abe76da66d0a6a4a227101f9348ee855797cfa5 # v3.0.1
+      - uses: hynek/build-and-inspect-python-package@67230f7b8410ae0052b39c1efc89d89fff43ff10 # v3.0.2
         id: build
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           name: ${{ steps.build.outputs.artifact-name }}
           path: dist
-      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+      - uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
