@@ -15,28 +15,26 @@ class LogLevel(StrEnum):
 
 
 class PykkaTestLogHandler(logging.Handler):
-    lock: threading.RLock
+    messages_lock: threading.RLock
     events: dict[str, threading.Event]
     messages: dict[LogLevel, list[logging.LogRecord]]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self.lock = (  # pyright: ignore[reportIncompatibleVariableOverride]
-            threading.RLock()
-        )
-        with self.lock:
+        self.messages_lock = threading.RLock()
+        with self.messages_lock:
             self.events = collections.defaultdict(threading.Event)
             self.messages = {}
             self.reset()
         logging.Handler.__init__(self, *args, **kwargs)
 
     def emit(self, record: logging.LogRecord) -> None:
-        with self.lock:
+        with self.messages_lock:
             level = LogLevel(record.levelname.lower())
             self.messages[level].append(record)
             self.events[level].set()
 
     def reset(self) -> None:
-        with self.lock:
+        with self.messages_lock:
             for level in LogLevel:
                 self.events[level].clear()
                 self.messages[level] = []
@@ -48,7 +46,7 @@ class PykkaTestLogHandler(logging.Handler):
         to the given log level."""
         deadline = time.time() + timeout
         while time.time() < deadline:
-            with self.lock:
+            with self.messages_lock:
                 if len(self.messages[level]) >= num_messages:
                     return
                 self.events[level].clear()
