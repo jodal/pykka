@@ -3,13 +3,14 @@ from __future__ import annotations
 import asyncio
 import queue
 import sys
+import threading
 import traceback
 import types
 from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from pykka import Future, Timeout, get_all
+from pykka import Future, ThreadingFuture, Timeout, get_all
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable
@@ -156,6 +157,49 @@ def test_future_supports_yield_from_syntax(
 
     future.set(1)
     assert run_async(get_value()) == 1
+
+
+def test_waiting_future_get_uses_new_hook(mocker: MockerFixture) -> None:
+    future = ThreadingFuture[int]()
+    wait_started = threading.Event()
+    result: queue.Queue[int | Timeout] = queue.Queue()
+    # Observe the wait so the hook is installed after get() is blocked.
+    condition = future._condition  # noqa: SLF001
+    original_wait = condition.wait
+
+    def wait(timeout: float | None = None) -> bool:
+        wait_started.set()
+        return original_wait(timeout)
+
+    mocker.patch.object(condition, "wait", side_effect=wait)
+
+    def get_result() -> None:
+        try:
+            result.put(future.get(timeout=3))
+        except Timeout as exc:
+            result.put(exc)
+
+    thread = threading.Thread(target=get_result)
+    thread.start()
+    try:
+        assert wait_started.wait(timeout=3)
+        future.set_get_hook(lambda timeout: 42)
+        thread.join(timeout=3)
+        assert not thread.is_alive()
+        assert result.get_nowait() == 42
+    finally:
+        thread.join(timeout=3)
+
+
+def test_get_hook_not_implemented_error_is_not_swallowed(
+    future: Future[int],
+) -> None:
+    def hook(timeout: float | None) -> int:
+        raise NotImplementedError("from hook")
+
+    future.set_get_hook(hook)
+    with pytest.raises(NotImplementedError, match="from hook"):
+        future.get(timeout=0)
 
 
 def test_get_hook_is_only_called_once_even_if_result_is_none(
