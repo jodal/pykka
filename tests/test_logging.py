@@ -77,7 +77,7 @@ def test_unexpected_messages_are_logged(
     actor_ref.ask({"unhandled": "message"})
 
     log_handler.wait_for_message(LogLevel.WARNING)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.WARNING]) == 1
         log_record = log_handler.messages[LogLevel.WARNING][0]
 
@@ -94,7 +94,7 @@ def test_exception_is_logged_when_returned_to_caller(
         actor_ref.proxy().raise_exception().get()
 
     log_handler.wait_for_message(LogLevel.INFO)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.INFO]) == 1
         log_record = log_handler.messages[LogLevel.INFO][0]
 
@@ -118,7 +118,7 @@ def test_exception_is_logged_when_not_reply_requested(
     assert events.on_failure_was_called.is_set()
 
     log_handler.wait_for_message(LogLevel.ERROR)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.ERROR]) == 1
         log_record = log_handler.messages[LogLevel.ERROR][0]
 
@@ -141,7 +141,7 @@ def test_base_exception_is_logged(
     assert events.on_stop_was_called.is_set()
 
     log_handler.wait_for_message(LogLevel.DEBUG, num_messages=3)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.DEBUG]) == 3
         log_record = log_handler.messages[LogLevel.DEBUG][0]
 
@@ -160,7 +160,7 @@ def test_exception_in_on_start_is_logged(
     events.on_start_was_called.wait(5)
 
     log_handler.wait_for_message(LogLevel.ERROR)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.ERROR]) == 1
         log_record = log_handler.messages[LogLevel.ERROR][0]
 
@@ -177,7 +177,7 @@ def test_exception_in_on_stop_is_logged(
     events.on_stop_was_called.wait(5)
 
     log_handler.wait_for_message(LogLevel.ERROR)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.ERROR]) == 1
         log_record = log_handler.messages[LogLevel.ERROR][0]
 
@@ -195,7 +195,7 @@ def test_exception_in_on_failure_is_logged(
     events.on_failure_was_called.wait(5)
 
     log_handler.wait_for_message(LogLevel.ERROR, num_messages=2)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.ERROR]) == 2
         log_record = log_handler.messages[LogLevel.ERROR][0]
 

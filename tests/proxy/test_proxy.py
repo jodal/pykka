@@ -184,7 +184,7 @@ def test_actor_proxy_does_not_expose_proxy_to_self(
         actor_ref.stop()
 
     log_handler.wait_for_message(LogLevel.WARNING)
-    with log_handler.lock:
+    with log_handler.messages_lock:
         assert len(log_handler.messages[LogLevel.WARNING]) == 2
         log_record = log_handler.messages[LogLevel.WARNING][0]
 
